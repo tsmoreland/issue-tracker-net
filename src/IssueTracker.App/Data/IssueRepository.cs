@@ -25,7 +25,6 @@ public sealed class IssueRepository
     public IssueRepository(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
-        _dbContext.Database.Migrate();
     }
 
     public async IAsyncEnumerable<IssueSummaryProjection> GetIssueSummaries([EnumeratorCancellation] CancellationToken cancellationToken)
