@@ -46,8 +46,7 @@ public sealed record class Issue(Guid Id)
     public DateTime LastUpdated { get; private set; } = DateTime.UtcNow;
 
 
-    [SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Used by EF", Scope = "member", Target = "~P:IssueTracker.App.Model.Issue.ConcurrencyToken")]
-    private string? ConcurrencyToken { get; set; } = string.Empty;
+    public string? ConcurrencyToken { get; private set; } = Guid.NewGuid().ToString();
 
     public void SetName(string value)
     {

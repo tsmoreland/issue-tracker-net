@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+builder.WebHost
+    .ConfigureKestrel(kestrelServerOptions => kestrelServerOptions.AddServerHeader = false);
 
 // Add services to the container.
 

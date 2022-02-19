@@ -45,4 +45,11 @@ public sealed class IssueRepository
             .AsNoTracking()
             .SingleOrDefaultAsync(i => i.Id == id, cancellationToken);
     }
+
+    public async Task<Issue> AddIssue(Issue issue, CancellationToken cancellationToken)
+    {
+        _dbContext.Issues.Add(issue);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return issue;
+    }
 }

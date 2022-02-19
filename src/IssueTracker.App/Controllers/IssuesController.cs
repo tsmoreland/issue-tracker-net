@@ -15,6 +15,7 @@ using System.Runtime.CompilerServices;
 using IssueTracker.App.Data;
 using IssueTracker.App.Model;
 using IssueTracker.App.Model.Projections;
+using IssueTracker.App.Model.Request;
 using IssueTracker.App.Model.Response;
 using Microsoft.AspNetCore.Mvc;
 
@@ -56,13 +57,21 @@ public class IssuesController : ControllerBase
             : NotFound();
     }
 
-    /*
+    
     // POST api/<IssueController>
     [HttpPost]
-    public void Post([FromBody] string value)
+    public async Task<IActionResult> Post([FromBody] AddOrUpdateIssueDto model, CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        Issue issue = await _repository.AddIssue(model.ToIssue(), cancellationToken);
+        return Ok(IssueDto.FromIssue(issue));
     }
 
+    /*
     // PUT api/<IssueController>/5
     [HttpPut("{id}")]
     public void Put(int id, [FromBody] string value)

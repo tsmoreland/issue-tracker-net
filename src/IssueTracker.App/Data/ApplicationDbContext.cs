@@ -56,7 +56,7 @@ public sealed class ApplicationDbContext : DbContext
         issueEntity.Property(e => e.Name).IsRequired().IsUnicode().HasMaxLength(200);
         issueEntity.Property(e => e.Description).IsUnicode().HasMaxLength(500);
         issueEntity.Property(e => e.Priority).IsRequired();
-        issueEntity.Property("ConcurrencyToken").IsConcurrencyToken();
+        issueEntity.Property(e => e.ConcurrencyToken).IsConcurrencyToken();
 
         issueEntity.HasData
         (
