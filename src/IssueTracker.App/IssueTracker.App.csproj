@@ -45,7 +45,6 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="OpenApi\Filters\" />
   </ItemGroup>
 
 </Project>

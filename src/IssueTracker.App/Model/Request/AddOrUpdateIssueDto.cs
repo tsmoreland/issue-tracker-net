@@ -12,12 +12,14 @@
 //
 
 using System.ComponentModel.DataAnnotations;
+using IssueTracker.App.Attributes;
 
 namespace IssueTracker.App.Model.Request;
 
 /// <summary>
 /// Model used to add or update <see cref="Issue"/>
 /// </summary>
+[SwaggerSchemaName("Add/Edit Issue")]
 public sealed class AddOrUpdateIssueDto
 {
     /// <summary>

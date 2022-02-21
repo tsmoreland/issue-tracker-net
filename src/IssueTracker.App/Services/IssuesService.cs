@@ -11,34 +11,23 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Net.Mime;
-using IssueTracker.App.Attributes;
+using System.Runtime.CompilerServices;
+using IssueTracker.App.Data;
+using IssueTracker.App.Model;
+using IssueTracker.App.Model.Projections;
 using IssueTracker.App.Model.Request;
 using IssueTracker.App.Model.Response;
-using IssueTracker.App.Services;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
-using static IssueTracker.App.Validation.PagingValidation;
 
-namespace IssueTracker.App.Controllers;
+namespace IssueTracker.App.Services;
 
-/// <summary>
-/// Issue Controller
-/// </summary>
-[Route("api/v{version:apiVersion}/issues")]
-[ApiController]
-[ApiVersion("1")]
-[TrimVersionFromSwagger]
-public class UrlVersionedIssuesController : ControllerBase
+public class IssuesService
 {
-    private readonly IssuesService _service;
+    private readonly IssueRepository _repository;
 
-    /// <summary>
-    /// Instantiates a new instance of <see cref="UrlVersionedIssuesController"/>
-    /// </summary>
-    public UrlVersionedIssuesController(IssuesService service)
+    public IssuesService(IssueRepository repository)
     {
-        _service = service;
+        _repository = repository;
     }
 
     /// <summary>
@@ -48,18 +37,19 @@ public class UrlVersionedIssuesController : ControllerBase
     /// <param name="pageSize" example="10">maximum number of items to return</param>
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all issues</returns>
-    [HttpGet]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json")]
-    [Produces(MediaTypeNames.Application.Json)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IAsyncEnumerable<IssueSummaryDto>), MediaTypeNames.Application.Json)]
-    public IActionResult GetAll(
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10,
-        CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<IssueSummaryDto> GetAll(
+        int pageNumber,
+        int pageSize,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        return ValidatePaging(ModelState, pageNumber, pageSize)
-            ? Ok(_service.GetAll(pageNumber, pageSize, cancellationToken))
-            : BadRequest(ModelState);
+        ConfiguredCancelableAsyncEnumerable<IssueSummaryProjection> issues = _repository
+            .GetIssueSummaries(pageNumber, pageSize, cancellationToken)
+            .WithCancellation(cancellationToken);
+
+        await foreach ((Guid id, string name) in issues)
+        {
+            yield return new IssueSummaryDto(id, name);
+        }
     }
 
     /// <summary>
@@ -69,12 +59,12 @@ public class UrlVersionedIssuesController : ControllerBase
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+    public async Task<IssueDto?> Get(Guid id, CancellationToken cancellationToken)
     {
-        IssueDto? issue = await _service.Get(id, cancellationToken);
+        Issue? issue = await _repository.GetUntrackedIssueById(id, cancellationToken);
         return issue is not null
-            ? Ok(issue)
-            : NotFound();
+            ? IssueDto.FromIssue(issue)
+            : null;
     }
 
     /// <summary>
@@ -84,15 +74,10 @@ public class UrlVersionedIssuesController : ControllerBase
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns></returns>
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] AddOrUpdateIssueDto model, CancellationToken cancellationToken)
+    public async Task<IssueDto> Create([FromBody] AddOrUpdateIssueDto model, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(new ValidationProblemDetails(ModelState));
-        }
-
-        IssueDto issue = await _service.Create(model, cancellationToken);
-        return new ObjectResult(issue) { StatusCode = StatusCodes.Status201Created };
+        Issue issue = await _repository.AddIssue(model.ToIssue(), cancellationToken);
+        return IssueDto.FromIssue(issue);
     }
 
     /// <summary>
@@ -103,12 +88,20 @@ public class UrlVersionedIssuesController : ControllerBase
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns></returns>
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(Guid id, [FromBody] AddOrUpdateIssueDto model, CancellationToken cancellationToken)
+    public async Task<IssueDto?> Update(Guid id, [FromBody] AddOrUpdateIssueDto model, CancellationToken cancellationToken)
     {
-        IssueDto? issue = await _service.Update(id, model, cancellationToken);
-        return issue is not null
-            ? Ok(issue)
-            : NotFound();
+        Issue? issue = await _repository.GetIssueById(id, cancellationToken);
+        if (issue is null)
+        {
+            return null;
+        }
+
+        issue.SetTitle(model.Title);
+        issue.SetDescription(model.Description);
+        issue.ChangePriority(model.Priority);
+
+        await _repository.CommitAsync(cancellationToken);
+        return IssueDto.FromIssue(issue);
     }
 
     /// <summary>
@@ -120,7 +113,8 @@ public class UrlVersionedIssuesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        await _service.Delete(id, cancellationToken);
+        await _repository.DeleteIssueById(id, cancellationToken);
+        await _repository.CommitAsync(cancellationToken);
         return new StatusCodeResult(StatusCodes.Status204NoContent);
     }
 }

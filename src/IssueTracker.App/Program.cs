@@ -1,10 +1,11 @@
 using System.IO.Compression;
 using System.Text.Json.Serialization;
 using Hellang.Middleware.ProblemDetails;
-using IssueTracker.App.Configuration;
 using IssueTracker.App.Data;
 using IssueTracker.App.Extensions;
 using IssueTracker.App.Infrastructure;
+using IssueTracker.App.OpenApi;
+using IssueTracker.App.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -64,6 +65,7 @@ builder.Services
 
 builder.Services.AddDbContext<ApplicationDbContext>(optionsLifetime: ServiceLifetime.Singleton);
 builder.Services.AddScoped<IssueRepository>();
+builder.Services.AddScoped<IssuesService>();
 
 WebApplication app = builder.Build();
 using (IServiceScope scope = app.Services.CreateScope())

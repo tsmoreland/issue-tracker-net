@@ -13,6 +13,7 @@
 
 using System.Reflection;
 using IssueTracker.App.Attributes;
+using IssueTracker.App.OpenApi.Filters;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -20,7 +21,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace IssueTracker.App.Configuration;
+namespace IssueTracker.App.OpenApi;
 
 public class SwashbuckleConfiguration : ConfigureNamedOptions<SwaggerGenOptions, IApiVersionDescriptionProvider>
 {
@@ -51,7 +52,8 @@ public class SwashbuckleConfiguration : ConfigureNamedOptions<SwaggerGenOptions,
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 
         options.CustomSchemaIds(SetSchemaName);
-
+        options.OperationFilter<TrimVersionOperationFilter>();
+        options.DocumentFilter<ApplyApiVersionDocumentFilter>();
 
         static void AddSwaggerDocsPerVersion(SwaggerGenOptions options, IEnumerable<ApiVersionDescription> versionDescriptions)
         {

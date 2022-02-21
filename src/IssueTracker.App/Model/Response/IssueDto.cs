@@ -11,35 +11,55 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel.DataAnnotations;
+using IssueTracker.App.Attributes;
+
 namespace IssueTracker.App.Model.Response;
 
 /// <summary>
 /// Issue Details
 /// </summary>
-/// <param name="Id">Issue Id</param>
-/// <param name="Title">Issue Title</param>
-/// <param name="Description">Issue description</param>
-/// <param name="Priority">issue priority</param>
-public record class IssueDto(Guid Id, string Title, string Description, Priority Priority)
+[SwaggerSchemaName("Issue Details")]
+public sealed class IssueDto
 {
+    /// <summary>
+    /// Instantiates a new instance of the <see cref="IssueDto"/> class.
+    /// </summary>
+    public IssueDto(Guid id, string title, string? description, Priority priority)
+    {
+        Id = id;
+        Title = title;
+        Description = description;
+        Priority = priority;
+    }
+
     /// <summary>
     /// Issue Id
     /// </summary>
-    public Guid Id { get; init; } = Id;
+    /// <example>48EE3BF9-C81D-4FE4-AB02-220C0122AFE4</example>
+    [Required]
+    public Guid Id { get; init; }
+
     /// <summary>
     /// Issue Title
     /// </summary>
-    public string Title { get; init; } = Title;
+    /// <example>Example Title</example>
+    [Required]
+    public string Title { get; init; } 
 
     /// <summary>
     /// Issue Description
     /// </summary>
-    public string Description { get; init; } = Description;
+    /// <example>Example Description</example>
+    [Required]
+    public string? Description { get; init; }
 
     /// <summary>
     /// Issue Priority
     /// </summary>
-    public Priority Priority { get; init; } = Priority;
+    /// <example>Medium</example>
+    [Required]
+    public Priority Priority { get; init; } 
 
     /// <summary>
     /// Converts <see cref="Issue"/> to <see cref="IssueDto"/>
