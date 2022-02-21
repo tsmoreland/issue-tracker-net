@@ -16,6 +16,9 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace IssueTracker.App.Data;
 
+/// <summary>
+/// Factory used when adding or removing migrations
+/// </summary>
 public sealed class ApplciationDbContextDesignTimeFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
 {
     /// <inheritdoc />

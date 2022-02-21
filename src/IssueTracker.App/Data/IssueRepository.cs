@@ -27,11 +27,13 @@ public sealed class IssueRepository
         _dbContext = dbContext;
     }
 
-    public async IAsyncEnumerable<IssueSummaryProjection> GetIssueSummaries([EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<IssueSummaryProjection> GetIssueSummaries(int pageNumber, int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         IAsyncEnumerable<IssueSummaryProjection> issues = _dbContext.Issues
             .AsNoTracking()
-            .Select(i => new IssueSummaryProjection(i.Id, i.Name))
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(i => new IssueSummaryProjection(i.Id, i.Title))
             .AsAsyncEnumerable();
         await foreach (IssueSummaryProjection issue in issues.WithCancellation(cancellationToken))
         {
@@ -39,10 +41,15 @@ public sealed class IssueRepository
         }
     }
 
-    public Task<Issue?> GetIssueById(Guid id, CancellationToken cancellationToken)
+    public Task<Issue?> GetUntrackedIssueById(Guid id, CancellationToken cancellationToken)
     {
         return _dbContext.Issues
             .AsNoTracking()
+            .SingleOrDefaultAsync(i => i.Id == id, cancellationToken);
+    }
+    public Task<Issue?> GetIssueById(Guid id, CancellationToken cancellationToken)
+    {
+        return _dbContext.Issues
             .SingleOrDefaultAsync(i => i.Id == id, cancellationToken);
     }
 
@@ -51,5 +58,24 @@ public sealed class IssueRepository
         _dbContext.Issues.Add(issue);
         await _dbContext.SaveChangesAsync(cancellationToken);
         return issue;
+    }
+
+    /// <summary>
+    /// Persists changes to the database
+    /// </summary>
+    /// <param name="cancellationToken">a cancellation token.</param>
+    public Task CommitAsync(CancellationToken cancellationToken)
+    {
+        return _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteIssueById(Guid id, CancellationToken cancellationToken)
+    {
+        Issue? issue = await _dbContext.Issues.FindAsync(new object[] { id }, cancellationToken);
+        if (issue is not null)
+        {
+            _dbContext.Issues.Remove(issue);
+        }
+
     }
 }

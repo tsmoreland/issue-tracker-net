@@ -17,16 +17,25 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace IssueTracker.App.Data;
 
+/// <summary>
+/// Issue Tracker Application Database context
+/// </summary>
 public sealed class ApplicationDbContext : DbContext
 {
     private readonly IConfiguration _configuration;
 
+    /// <summary>
+    /// Instantiates a new instance of the <see cref="ApplicationDbContext"/> class.
+    /// </summary>
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContextOptions, IConfiguration configuration)
         : base(dbContextOptions)
     {
         _configuration = configuration;
     }
 
+    /// <summary>
+    /// Issues data set
+    /// </summary>
     public DbSet<Issue> Issues { get; init; } = null!;
 
     /// <inheritdoc />
@@ -49,19 +58,19 @@ public sealed class ApplicationDbContext : DbContext
     {
         EntityTypeBuilder<Issue> issueEntity = modelBuilder.Entity<Issue>();
         issueEntity.ToTable("Issues").HasKey(e => e.Id);
-        issueEntity.HasIndex(e => e.Name);
+        issueEntity.HasIndex(e => e.Title);
         issueEntity.HasIndex(e => e.Priority);
 
         issueEntity.Property(e => e.Id).IsRequired();
-        issueEntity.Property(e => e.Name).IsRequired().IsUnicode().HasMaxLength(200);
+        issueEntity.Property(e => e.Title).IsRequired().IsUnicode().HasMaxLength(200);
         issueEntity.Property(e => e.Description).IsUnicode().HasMaxLength(500);
         issueEntity.Property(e => e.Priority).IsRequired();
         issueEntity.Property(e => e.ConcurrencyToken).IsConcurrencyToken();
 
         issueEntity.HasData
         (
-            new Issue(Guid.NewGuid(), "First", "First issue", Priority.Medium, new DateTime(2022, 01, 01), Guid.NewGuid().ToString()),
-            new Issue(Guid.NewGuid(), "Second", "Second issue", Priority.Low, new DateTime(2022, 01, 02), Guid.NewGuid().ToString())
+            new Issue(new Guid("1385056E-8AFA-4E09-96DF-AE12EFDF1A29"), "First", "First issue", Priority.Medium, new DateTime(2022, 01, 01), Guid.NewGuid().ToString()),
+            new Issue(new Guid("A28B8C45-6668-4169-940C-C16D71EB69DE"), "Second", "Second issue", Priority.Low, new DateTime(2022, 01, 02), Guid.NewGuid().ToString())
         );
     }
 }
