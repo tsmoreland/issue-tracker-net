@@ -1,7 +1,9 @@
 using System.IO.Compression;
+using System.Reflection;
 using System.Text.Json.Serialization;
 using Hellang.Middleware.ProblemDetails;
 using IssueTracker.App.Data;
+using IssueTracker.App.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +34,11 @@ builder.Services
 builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services
-    .AddSwaggerGen()
+    .AddSwaggerGen(options =>
+    {
+        string xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+    })
     .AddResponseCompression(options =>
     {
         options.EnableForHttps = true;
@@ -58,12 +64,14 @@ using (IServiceScope scope = app.Services.CreateScope())
 
 // Configure the HTTP request pipeline.
 app.UseProblemDetails();
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.UseMigrationsEndPoint();
-}
+
+app.UseSecurityHeaders();
+
+app.UseSwagger();
+
+app.UseSwaggerUI();
+
+app.UseMigrationsEndPoint();
 
 app.UseHttpsRedirection();
 

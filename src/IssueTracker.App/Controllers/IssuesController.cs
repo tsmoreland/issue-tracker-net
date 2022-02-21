@@ -21,67 +21,149 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IssueTracker.App.Controllers;
 
+/// <summary>
+/// Issue Controller
+/// </summary>
 [Route("api/[controller]")]
 [ApiController]
 public class IssuesController : ControllerBase
 {
     private readonly IssueRepository _repository;
 
+    /// <summary>
+    /// Instantiates a new instance of <see cref="IssuesController"/>
+    /// </summary>
     public IssuesController(IssueRepository repository)
     {
         _repository = repository;
     }
 
-    // GET: api/<IssueController>
+    /// <summary>
+    /// Returns all issues 
+    /// </summary>
+    /// <param name="pageNumber" example="1" >current page number to return</param>
+    /// <param name="pageSize" example="10">maximum number of items to return</param>
+    /// <param name="cancellationToken">a cancellation token.</param>
+    /// <returns>all issues</returns>
     [HttpGet]
-    public async IAsyncEnumerable<IssueSummaryDto> GetAll([EnumeratorCancellation] CancellationToken cancellationToken)
+    public IActionResult GetAll(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
     {
-        ConfiguredCancelableAsyncEnumerable<IssueSummaryProjection> issues = _repository
-            .GetIssueSummaries(cancellationToken)
-            .WithCancellation(cancellationToken);
-
-        await foreach ((Guid id, string name) in issues)
+        if (!ValidatePaging(pageNumber, pageSize))
         {
-            yield return new IssueSummaryDto(id, name);
+            return BadRequest(ModelState);
+        }
+        else
+        {
+            return Ok(GetIssueSummaries(_repository, pageNumber, pageSize, cancellationToken));
+        }
+
+        static async IAsyncEnumerable<IssueSummaryDto> GetIssueSummaries(
+            IssueRepository repository,
+            int pageNumber, int pageSize,
+            [EnumeratorCancellation] CancellationToken cancellationToken)
+        {
+            ConfiguredCancelableAsyncEnumerable<IssueSummaryProjection> issues = repository
+                .GetIssueSummaries(pageNumber, pageSize, cancellationToken)
+                .WithCancellation(cancellationToken);
+
+            await foreach ((Guid id, string name) in issues)
+            {
+                yield return new IssueSummaryDto(id, name);
+            }
         }
     }
 
-    // GET api/<IssueController>/5
+    /// <summary>
+    /// Returns issue matching <paramref name="id"/> if found
+    /// </summary>
+    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
+    /// <param name="cancellationToken">A cancellation token</param>
+    /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
     {
-        Issue? issue = await _repository.GetIssueById(id, cancellationToken);
+        Issue? issue = await _repository.GetUntrackedIssueById(id, cancellationToken);
 
         return issue is not null
             ? Ok(IssueDto.FromIssue(issue))
             : NotFound();
     }
 
-    
-    // POST api/<IssueController>
+    /// <summary>
+    /// Adds a new issue 
+    /// </summary>
+    /// <param name="model">the issue to add</param>
+    /// <param name="cancellationToken">A cancellation token</param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] AddOrUpdateIssueDto model, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState);
+            return BadRequest(new ValidationProblemDetails(ModelState));
         }
 
         Issue issue = await _repository.AddIssue(model.ToIssue(), cancellationToken);
+
+        return new ObjectResult(IssueDto.FromIssue(issue)) { StatusCode = StatusCodes.Status201Created };
+    }
+
+    /// <summary>
+    /// Updates existing issue given by <paramref name="id"/>
+    /// </summary>
+    /// <param name="id">unique id of the issue to update</param>
+    /// <param name="model">new values for the issue</param>
+    /// <param name="cancellationToken">A cancellation token</param>
+    /// <returns></returns>
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(Guid id, [FromBody] AddOrUpdateIssueDto model, CancellationToken cancellationToken)
+    {
+        Issue? issue = await _repository.GetIssueById(id, cancellationToken);
+        if (issue is null)
+        {
+            return NotFound();
+        }
+
+        issue.SetTitle(model.Title);
+        issue.SetDescription(model.Description);
+        issue.ChangePriority(model.Priority);
+
+        await _repository.CommitAsync(cancellationToken);
         return Ok(IssueDto.FromIssue(issue));
     }
 
-    /*
-    // PUT api/<IssueController>/5
-    [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
+    /// <summary>
+    /// Deletes the issue given by <paramref name="id"/> 
+    /// </summary>
+    /// <param name="id">unique id of the issue to delete</param>
+    /// <param name="cancellationToken">A cancellation token</param>
+    /// <returns></returns>
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
+        await _repository.DeleteIssueById(id, cancellationToken);
+        await _repository.CommitAsync(cancellationToken);
+        return new StatusCodeResult(StatusCodes.Status204NoContent);
     }
 
-    // DELETE api/<IssueController>/5
-    [HttpDelete("{id}")]
-    public void Delete(int id)
+    private bool ValidatePaging(int pageNumber, int pageSize)
     {
+        if (pageNumber < 1)
+        {
+            ModelState.AddModelError("pageNumber", "must be greater than or equal to 1");
+            return false;
+        }
+        else if (pageSize < 1)
+        {
+            ModelState.AddModelError("pageSize", "must be greater than or equal to 1");
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
-    */
 }
