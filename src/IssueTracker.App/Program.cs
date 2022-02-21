@@ -11,11 +11,13 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Tcell.Agent.AspNetCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.WebHost
-    .ConfigureKestrel(kestrelServerOptions => kestrelServerOptions.AddServerHeader = false);
-
+    .ConfigureKestrel(kestrelServerOptions => kestrelServerOptions.AddServerHeader = false)
+    .UseTcellAgent(environemnt => environemnt.IsProduction());
+    
 // Add services to the container.
 
 builder.Services.AddProblemDetails();

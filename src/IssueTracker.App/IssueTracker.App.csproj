@@ -39,6 +39,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.3" />
 
     <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0" />
+
+    <PackageReference Include="Tcell.Agent" Version="3.0.2" />
   </ItemGroup>
 
   <ItemGroup>
