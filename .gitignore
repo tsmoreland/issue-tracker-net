@@ -359,3 +359,6 @@ MigrationBackup/
 *.db-shm
 
 **/Generated/
+
+# tcell configuration
+tcell_agent.config
