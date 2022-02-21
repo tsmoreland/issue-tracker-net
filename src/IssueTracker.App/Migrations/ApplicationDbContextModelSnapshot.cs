@@ -36,41 +36,41 @@ namespace IssueTracker.App.Migrations
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Name")
+                    b.Property<int>("Priority")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
                         .IsUnicode(true)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Priority")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("Name");
-
                     b.HasIndex("Priority");
+
+                    b.HasIndex("Title");
 
                     b.ToTable("Issues", (string)null);
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f8cd2eb4-6559-437f-a1f9-3adb7b886382"),
-                            ConcurrencyToken = "b7a843f5-6834-4d13-95b7-07fadc6ced87",
+                            Id = new Guid("1385056e-8afa-4e09-96df-ae12efdf1a29"),
+                            ConcurrencyToken = "c431b935-f23e-4d82-8473-3f9c8514a5e3",
                             Description = "First issue",
                             LastUpdated = new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "First",
-                            Priority = 1
+                            Priority = 1,
+                            Title = "First"
                         },
                         new
                         {
-                            Id = new Guid("7b4079ce-bead-4fa6-9c2e-6fb4b853615a"),
-                            ConcurrencyToken = "eb372a55-1209-449b-b499-d7c2894bd8cc",
+                            Id = new Guid("a28b8c45-6668-4169-940c-c16d71eb69de"),
+                            ConcurrencyToken = "f1c76a08-04bd-44ee-93bd-52e09297f004",
                             Description = "Second issue",
                             LastUpdated = new DateTime(2022, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Second",
-                            Priority = 0
+                            Priority = 0,
+                            Title = "Second"
                         });
                 });
 #pragma warning restore 612, 618

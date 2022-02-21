@@ -14,7 +14,7 @@ namespace IssueTracker.App.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
                     Priority = table.Column<int>(type: "INTEGER", nullable: false),
                     LastUpdated = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -27,23 +27,23 @@ namespace IssueTracker.App.Migrations
 
             migrationBuilder.InsertData(
                 table: "Issues",
-                columns: new[] { "Id", "ConcurrencyToken", "Description", "LastUpdated", "Name", "Priority" },
-                values: new object[] { new Guid("5d207bf8-2005-4a15-9dc4-d627c3d5e5e6"), "b664f100-0834-454d-b430-ee3675272431", "Second issue", new DateTime(2022, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), "Second", 0 });
+                columns: new[] { "Id", "ConcurrencyToken", "Description", "LastUpdated", "Priority", "Title" },
+                values: new object[] { new Guid("1385056e-8afa-4e09-96df-ae12efdf1a29"), "c431b935-f23e-4d82-8473-3f9c8514a5e3", "First issue", new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "First" });
 
             migrationBuilder.InsertData(
                 table: "Issues",
-                columns: new[] { "Id", "ConcurrencyToken", "Description", "LastUpdated", "Name", "Priority" },
-                values: new object[] { new Guid("e6156d06-703b-4227-b2ea-ad3bb9fc6350"), "d9f44016-e349-4416-a981-99a930e41bf5", "First issue", new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "First", 1 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Issues_Name",
-                table: "Issues",
-                column: "Name");
+                columns: new[] { "Id", "ConcurrencyToken", "Description", "LastUpdated", "Priority", "Title" },
+                values: new object[] { new Guid("a28b8c45-6668-4169-940c-c16d71eb69de"), "f1c76a08-04bd-44ee-93bd-52e09297f004", "Second issue", new DateTime(2022, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Second" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Issues_Priority",
                 table: "Issues",
                 column: "Priority");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Issues_Title",
+                table: "Issues",
+                column: "Title");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -13,9 +13,23 @@
 
 namespace IssueTracker.App.Model;
 
+/// <summary>
+/// Issue Priorities
+/// </summary>
 public enum Priority
 {
+    /// <summary>
+    ///  Low Priority
+    /// </summary>
     Low,
+
+    /// <summary>
+    /// Medium Priority
+    /// </summary>
     Medium,
+
+    /// <summary>
+    /// High Priority
+    /// </summary>
     High,
 }

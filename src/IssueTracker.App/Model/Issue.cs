@@ -15,49 +15,84 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace IssueTracker.App.Model;
 
+/// <summary>
+/// Issue Entity
+/// </summary>
+/// <param name="Id"></param>
 public sealed record class Issue(Guid Id)
 {
+    /// <summary>
+    /// Instanties a new instance of <see cref="Issue"/>
+    /// </summary>
     public Issue()
         : this(Guid.NewGuid())
     {
     }
 
-    public Issue(string name, string description, Priority priority)
+    /// <summary>
+    /// Instanties a new instance of <see cref="Issue"/>
+    /// </summary>
+    public Issue(string title, string description, Priority priority)
         : this(Guid.NewGuid())
     {
-        Name = name;
+        Title = title;
         Description = description;
         Priority = priority;
         LastUpdated = DateTime.UtcNow;
     }
-    public Issue(Guid id, string name, string description, Priority priority, DateTime lastUpdated, string? concurrencyToken)
+    /// <summary>
+    /// Instanties a new instance of <see cref="Issue"/>, constructor provided primarily for use with entity framework
+    /// </summary>
+    public Issue(Guid id, string title, string description, Priority priority, DateTime lastUpdated, string? concurrencyToken)
         : this(id)
     {
-        Name = name;
+        Title = title;
         Description = description;
         Priority = priority;
         LastUpdated = lastUpdated;
         ConcurrencyToken = concurrencyToken;
     }
 
-    public string Name { get; private set; } = string.Empty;
+    /// <summary>
+    /// Issue Title
+    /// </summary>
+    public string Title { get; private set; } = string.Empty;
+    /// <summary>
+    /// Issue Description
+    /// </summary>
     public string Description { get; private set; } = string.Empty;
+    /// <summary>
+    /// Issue Priority
+    /// </summary>
     public Priority Priority { get; private set; } = Priority.Low;
+    /// <summary>
+    /// Last Updated field used for auditing
+    /// </summary>
     public DateTime LastUpdated { get; private set; } = DateTime.UtcNow;
 
-
+    /// <summary>
+    /// Concurrency token used to detected threading issues when persisting to the database
+    /// </summary>
     public string? ConcurrencyToken { get; private set; } = Guid.NewGuid().ToString();
 
-    public void SetName(string value)
+    /// <summary>
+    /// Update the issue name
+    /// </summary>
+    /// <param name="value">new name</param>
+    /// <exception cref="ArgumentException">if name is empty or whitespace</exception>
+    public void SetTitle(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            throw new ArgumentException("Name cannot be empty");
+            throw new ArgumentException("Title cannot be empty");
         }
-        Name = value;
+        Title = value;
         LastUpdated = DateTime.UtcNow;
     }
-    public void SetDescription(string value)
+    /// <summary>
+    /// Update issue description
+    /// </summary>
+    public void SetDescription(string? value)
     {
         Description = value is { Length: > 0 }
             ? value.Trim()
@@ -65,6 +100,9 @@ public sealed record class Issue(Guid Id)
         LastUpdated = DateTime.UtcNow;
     }
 
+    /// <summary>
+    /// Update issue priority
+    /// </summary>
     public void ChangePriority(Priority priority)
     {
         Priority = priority;

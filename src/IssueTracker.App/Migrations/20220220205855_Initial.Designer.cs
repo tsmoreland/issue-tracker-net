@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IssueTracker.App.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220219004414_Initial")]
+    [Migration("20220220205855_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,41 +38,41 @@ namespace IssueTracker.App.Migrations
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Name")
+                    b.Property<int>("Priority")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
                         .IsUnicode(true)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Priority")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("Name");
-
                     b.HasIndex("Priority");
+
+                    b.HasIndex("Title");
 
                     b.ToTable("Issues", (string)null);
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("e6156d06-703b-4227-b2ea-ad3bb9fc6350"),
-                            ConcurrencyToken = "d9f44016-e349-4416-a981-99a930e41bf5",
+                            Id = new Guid("1385056e-8afa-4e09-96df-ae12efdf1a29"),
+                            ConcurrencyToken = "c431b935-f23e-4d82-8473-3f9c8514a5e3",
                             Description = "First issue",
                             LastUpdated = new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "First",
-                            Priority = 1
+                            Priority = 1,
+                            Title = "First"
                         },
                         new
                         {
-                            Id = new Guid("5d207bf8-2005-4a15-9dc4-d627c3d5e5e6"),
-                            ConcurrencyToken = "b664f100-0834-454d-b430-ee3675272431",
+                            Id = new Guid("a28b8c45-6668-4169-940c-c16d71eb69de"),
+                            ConcurrencyToken = "f1c76a08-04bd-44ee-93bd-52e09297f004",
                             Description = "Second issue",
                             LastUpdated = new DateTime(2022, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Second",
-                            Priority = 0
+                            Priority = 0,
+                            Title = "Second"
                         });
                 });
 #pragma warning restore 612, 618
