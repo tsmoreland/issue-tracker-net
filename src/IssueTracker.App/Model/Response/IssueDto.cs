@@ -13,10 +13,39 @@
 
 namespace IssueTracker.App.Model.Response;
 
-public record class IssueDto(Guid Id, string Name, string Description, Priority Priority)
+/// <summary>
+/// Issue Details
+/// </summary>
+/// <param name="Id">Issue Id</param>
+/// <param name="Title">Issue Title</param>
+/// <param name="Description">Issue description</param>
+/// <param name="Priority">issue priority</param>
+public record class IssueDto(Guid Id, string Title, string Description, Priority Priority)
 {
+    /// <summary>
+    /// Issue Id
+    /// </summary>
+    public Guid Id { get; init; } = Id;
+    /// <summary>
+    /// Issue Title
+    /// </summary>
+    public string Title { get; init; } = Title;
+
+    /// <summary>
+    /// Issue Description
+    /// </summary>
+    public string Description { get; init; } = Description;
+
+    /// <summary>
+    /// Issue Priority
+    /// </summary>
+    public Priority Priority { get; init; } = Priority;
+
+    /// <summary>
+    /// Converts <see cref="Issue"/> to <see cref="IssueDto"/>
+    /// </summary>
     public static IssueDto FromIssue(Issue issue)
     {
-        return new IssueDto(issue.Id, issue.Name, issue.Description, issue.Priority);
+        return new IssueDto(issue.Id, issue.Title, issue.Description, issue.Priority);
     }
 }

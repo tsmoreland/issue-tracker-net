@@ -12,4 +12,8 @@
 //
 
 namespace IssueTracker.App.Model.Projections;
+
+/// <summary>
+/// projection of summary to id and name
+/// </summary>
 public sealed record class IssueSummaryProjection(Guid Id, string Name);

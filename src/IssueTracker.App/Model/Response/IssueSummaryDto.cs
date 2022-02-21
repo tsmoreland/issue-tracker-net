@@ -13,4 +13,20 @@
 
 namespace IssueTracker.App.Model.Response;
 
-public sealed record class IssueSummaryDto(Guid Id, string Name);
+/// <summary>
+/// Short summary of an <see cref="Issue"/>
+/// </summary>
+/// <param name="Id">issue Id</param>
+/// <param name="Title">issue Title</param>
+public sealed record class IssueSummaryDto(Guid Id, string Title)
+{
+    /// <summary>
+    /// Issue Id
+    /// </summary>
+    public Guid Id { get; init; } = Id;
+
+    /// <summary>
+    /// Issue Title
+    /// </summary>
+    public string Title { get; init; } = Title;
+}

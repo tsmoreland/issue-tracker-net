@@ -15,13 +15,48 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IssueTracker.App.Model.Request;
 
-public record AddOrUpdateIssueDto(
-    [Required] [MaxLength(200)] string Name,
-    [MaxLength(500)] string? Description,
-    [Required] Priority Priority)
+/// <summary>
+/// Model used to add or update <see cref="Issue"/>
+/// </summary>
+public sealed class AddOrUpdateIssueDto
 {
+    /// <summary>
+    /// instantiates a new instance of the <see cref="AddOrUpdateIssueDto"/> class.
+    /// </summary>
+    public AddOrUpdateIssueDto(string title, string? description, Priority priority)
+    {
+        Title = title;
+        Description = description;
+        Priority = priority;
+    }
+
+    /// <summary>
+    /// Issue Title
+    /// </summary>
+    /// <example>Example Title</example>
+    [Required]
+    [MaxLength(200)]
+    public string Title { get; init; } 
+
+    /// <summary>
+    /// Issue Description
+    /// </summary>
+    /// <example>Example description</example>
+    [MaxLength(500)]
+    public string? Description { get; init; } 
+
+    /// <summary>
+    /// Issue Priority
+    /// </summary>
+    /// <example>High</example>
+    [Required]
+    public Priority Priority { get; init; } 
+
+    /// <summary>
+    /// Convert Data Transfer Object to <see cref="Issue"/>
+    /// </summary>
     public Issue ToIssue()
     {
-        return new Issue(Name, Description ?? string.Empty, Priority);
+        return new Issue(Title, Description ?? string.Empty, Priority);
     }
 }
