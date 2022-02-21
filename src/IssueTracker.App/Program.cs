@@ -16,7 +16,7 @@ using Tcell.Agent.AspNetCore;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.WebHost
     .ConfigureKestrel(kestrelServerOptions => kestrelServerOptions.AddServerHeader = false)
-    .UseTcellAgent(environemnt => environemnt.IsProduction());
+    .UseTcellAgent(environemnt => environemnt.IsProduction() || environemnt.IsDevelopment());
     
 // Add services to the container.
 

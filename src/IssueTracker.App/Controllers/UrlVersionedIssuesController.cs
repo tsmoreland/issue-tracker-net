@@ -27,17 +27,17 @@ namespace IssueTracker.App.Controllers;
 /// <summary>
 /// Issue Controller
 /// </summary>
-[Route("api/[controller]")]
+[Route("api/issues/v{version:apiVersion}")]
 [ApiController]
 [ApiVersion("1")]
-public class IssuesController : ControllerBase
+public class UrlVersionedIssuesController : ControllerBase
 {
     private readonly IssueRepository _repository;
 
     /// <summary>
-    /// Instantiates a new instance of <see cref="IssuesController"/>
+    /// Instantiates a new instance of <see cref="UrlVersionedIssuesController"/>
     /// </summary>
-    public IssuesController(IssueRepository repository)
+    public UrlVersionedIssuesController(IssueRepository repository)
     {
         _repository = repository;
     }
