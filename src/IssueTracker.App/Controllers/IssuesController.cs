@@ -11,6 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Net;
+using System.Net.Mime;
 using System.Runtime.CompilerServices;
 using IssueTracker.App.Data;
 using IssueTracker.App.Model;
@@ -18,6 +20,7 @@ using IssueTracker.App.Model.Projections;
 using IssueTracker.App.Model.Request;
 using IssueTracker.App.Model.Response;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace IssueTracker.App.Controllers;
 
@@ -26,6 +29,7 @@ namespace IssueTracker.App.Controllers;
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
+[ApiVersion("1")]
 public class IssuesController : ControllerBase
 {
     private readonly IssueRepository _repository;
@@ -46,6 +50,9 @@ public class IssuesController : ControllerBase
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all issues</returns>
     [HttpGet]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IAsyncEnumerable<IssueSummaryDto>), MediaTypeNames.Application.Json)]
     public IActionResult GetAll(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,

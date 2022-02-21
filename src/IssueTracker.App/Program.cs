@@ -1,12 +1,16 @@
 using System.IO.Compression;
-using System.Reflection;
 using System.Text.Json.Serialization;
 using Hellang.Middleware.ProblemDetails;
+using IssueTracker.App.Configuration;
 using IssueTracker.App.Data;
 using IssueTracker.App.Extensions;
+using IssueTracker.App.Infrastructure;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.WebHost
@@ -30,15 +34,19 @@ builder.Services
         jsonOptions.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         jsonOptions.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddAuthorization();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services
-    .AddSwaggerGen(options =>
+
+builder.Services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'V");
+builder.Services.AddApiVersioning(
+    options =>
     {
-        string xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-    })
+        options.ApiVersionReader = new AggregateApiVersionReader();
+        options.AssumeDefaultVersionWhenUnspecified = false;
+        options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+    });
+
+builder.Services
+    .AddSingleton<IConfigureOptions<SwaggerGenOptions>>(p => new SwashbuckleConfiguration(p.GetRequiredService<IApiVersionDescriptionProvider>(), p))
+    .AddSwaggerGen()
     .AddResponseCompression(options =>
     {
         options.EnableForHttps = true;
@@ -63,9 +71,9 @@ using (IServiceScope scope = app.Services.CreateScope())
 }
 
 // Configure the HTTP request pipeline.
-app.UseProblemDetails();
-
 app.UseSecurityHeaders();
+
+app.UseProblemDetails();
 
 app.UseSwagger();
 

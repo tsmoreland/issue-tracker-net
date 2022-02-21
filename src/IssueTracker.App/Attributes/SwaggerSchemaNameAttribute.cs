@@ -11,34 +11,14 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.ComponentModel.DataAnnotations;
-using IssueTracker.App.Attributes;
+namespace IssueTracker.App.Attributes;
 
-namespace IssueTracker.App.Model.Response;
-
-/// <summary>
-/// Short summary of an <see cref="Issue"/>
-/// </summary>
-[SwaggerSchemaName("Issue Summary")]
-public sealed class IssueSummaryDto
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+public sealed class SwaggerSchemaNameAttribute : Attribute
 {
-    public IssueSummaryDto(Guid id, string title)
+    public SwaggerSchemaNameAttribute(string name)
     {
-        Id = id;
-        Title = title;
+        Name = name;
     }
-
-    /// <summary>
-    /// Issue Id
-    /// </summary>
-    /// <example>3C1152EC-DC0C-4AB0-8AF9-10DE5A9705D5</example>
-    [Required]
-    public Guid Id { get; init; } 
-
-    /// <summary>
-    /// Issue Title
-    /// </summary>
-    /// <example>Example Title</example>
-    [Required]
-    public string Title { get; init; }
+    public string Name { get; }
 }
