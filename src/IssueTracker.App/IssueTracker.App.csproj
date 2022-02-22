@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -49,5 +49,19 @@
     <ProjectReference Include="..\..\IssueTracker.Data\IssueTracker.Data.csproj" />
     <ProjectReference Include="..\..\IssueTracker.Middelware.SecurityHeaders\IssueTracker.Middelware.SecurityHeaders.csproj" />
   </ItemGroup>
+
+  <!--
+
+  attempt to copy output from issuetracker.data without project reference
+  <Target Name="IssueTrackerDataTarget" BeforeTargets="AfterBuild">
+    <MSBuild Projects="..\..\IssueTracker.Data\IssueTracker.Data.csproj" BuildInParallel="$(BuildInParallel)" Targets="Build">
+      <Output TaskParameter="TargetOutputs" ItemName="IssueTrackerDataOutput" />
+    </MSBuild>
+
+    <ItemGroup>
+      <Content Include="@(IssueTrackerDataOutput)" />
+    </ItemGroup>
+  </Target>
+  -->
 
 </Project>

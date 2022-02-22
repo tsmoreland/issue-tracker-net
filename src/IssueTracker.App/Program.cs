@@ -1,5 +1,6 @@
 using System.IO.Compression;
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Text.Json.Serialization;
 using Hellang.Middleware.ProblemDetails;
 using IssueTracker.App.Infrastructure;
@@ -14,14 +15,47 @@ using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Tcell.Agent.AspNetCore;
 
-string? appFolder = Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location);
+Assembly? entryAssembly = Assembly.GetEntryAssembly();
+string? appFolder = Path.GetDirectoryName(entryAssembly?.Location);
 if (appFolder is null)
 {
     return;
 }
+string assemblyFilename = entryAssembly?.Location!;
 
-string[] issueTrackerFiles = Directory.GetFiles(appFolder, "IssueTracker.*.dll").Select(file => Path.GetFileName(file)[..^4]).ToArray();
+AssemblyName[] referencedAssemblies = entryAssembly!.GetReferencedAssemblies()
+    .Where(assemblyName => assemblyName.Name?.StartsWith("IssueTracker") == true)
+    .ToArray();
+
+List<string> assemblyFilenames = Directory.GetFiles(appFolder, "IssueTracker.*.dll").ToList();
+
+List<string> unloadedAssemblyFilenames = assemblyFilenames
+    .Where(filename => !string.Equals(filename, assemblyFilename, StringComparison.OrdinalIgnoreCase))
+    .Select(filename => new { File = filename, Asm = AssemblyName.GetAssemblyName(filename) })
+    .Where(pair => !referencedAssemblies.Any(asmName => string.Equals(asmName.Name, pair.Asm.Name, StringComparison.OrdinalIgnoreCase) && asmName.Version == pair.Asm.Version))
+    .Select(pair => pair.File)
+    .ToList();
+
+unloadedAssemblyFilenames.ForEach(filename => AssemblyLoadContext.Default.LoadFromAssemblyPath(filename));
+
+List<string> assemblyNames = assemblyFilenames
+    .Select(AssemblyName.GetAssemblyName)
+    .Where(assemblyName => !referencedAssemblies.Contains(assemblyName))
+    .Select(assemblyName => assemblyName.Name ?? string.Empty)
+    .Where(name => name is {Length: >0})
+    .ToList();
+assemblyNames.ForEach(assemblyName => Assembly.Load(assemblyName));
+
+string[] hostingAssemblyNames = assemblyNames
+    .Where(assemblyName => Assembly.Load(assemblyName).GetTypes().Any(t => typeof(IHostingStartup).IsAssignableFrom(t)))
+    .Select(assemblyName => assemblyName.ToString())
+    .ToArray();
+string issueTrackerAssemblies = string.Join(';', hostingAssemblyNames);
+
+#if bad
+string[] issueTrackerFiles = assemblyFilenames.Select(file => Path.GetFileName(file)[..^4]).ToArray();
 string issueTrackerAssemblies = string.Join(';', issueTrackerFiles);
+#endif
 
 Environment.SetEnvironmentVariable("ASPNETCORE_HOSTINGSTARTUPASSEMBLIES", issueTrackerAssemblies);
 
