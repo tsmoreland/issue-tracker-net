@@ -11,13 +11,13 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.App.Model.Options;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
-namespace IssueTracker.App.Middleware;
+namespace IssueTracker.Middelware.SecurityHeaders;
 
-public sealed class SecurityHeadersMiddleware
+internal sealed class SecurityHeadersMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly IOptions<SecurityHeadersOptions> _options;

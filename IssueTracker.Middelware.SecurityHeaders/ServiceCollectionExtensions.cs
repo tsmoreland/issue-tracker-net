@@ -11,21 +11,21 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.App.Middleware;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace IssueTracker.App.Extensions;
+namespace IssueTracker.Middelware.SecurityHeaders;
 
-/// <summary>
-/// <see cref="ApplicationBuilder"/> extension methods
-/// </summary>
-public static class ApplicationBuilderExtensions
+public static class ServiceCollectionExtensions
 {
-    /// <summary>
-    /// Adds <see cref="SecurityHeadersMiddleware"/> to the application pipeline
-    /// </summary>
-    public static IApplicationBuilder UseSecurityHeaders(this IApplicationBuilder applicationBuilder)
+    public static IServiceCollection AddSecurityHeaders(this IServiceCollection services,
+        Action<SecurityHeadersOptions> setupAction)
     {
-        return applicationBuilder
-            .UseMiddleware<SecurityHeadersMiddleware>();
+        return services.Configure<SecurityHeadersOptions>(setupAction);
+    }
+
+    public static IServiceCollection AddSecurityHeaders(this IServiceCollection services, IConfiguration configuration)
+    {
+        return services.Configure<SecurityHeadersOptions>(configuration.GetSection(SecurityHeadersOptions.SectionName));
     }
 }
