@@ -13,13 +13,14 @@
 
 using System.ComponentModel.DataAnnotations;
 using IssueTracker.App.Attributes;
+using IssueTracker.Core.Model;
 
 namespace IssueTracker.App.Model.Request;
 
 /// <summary>
 /// Model used to add or update <see cref="Issue"/>
 /// </summary>
-[SwaggerSchemaName("Add/Edit Issue")]
+[SwaggerSchemaName("Add or Edit Issue")]
 public sealed class AddOrUpdateIssueDto
 {
     /// <summary>

@@ -13,6 +13,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using IssueTracker.App.Attributes;
+using IssueTracker.Core.Model;
 
 namespace IssueTracker.App.Model.Response;
 

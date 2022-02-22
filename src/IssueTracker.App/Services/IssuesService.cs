@@ -12,20 +12,20 @@
 //
 
 using System.Runtime.CompilerServices;
-using IssueTracker.App.Data;
-using IssueTracker.App.Model;
-using IssueTracker.App.Model.Projections;
 using IssueTracker.App.Model.Request;
 using IssueTracker.App.Model.Response;
+using IssueTracker.Core.Model;
+using IssueTracker.Core.Projections;
+using IssueTracker.Data.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IssueTracker.App.Services;
 
 public class IssuesService
 {
-    private readonly IssueRepository _repository;
+    private readonly IIssueRepository _repository;
 
-    public IssuesService(IssueRepository repository)
+    public IssuesService(IIssueRepository repository)
     {
         _repository = repository;
     }

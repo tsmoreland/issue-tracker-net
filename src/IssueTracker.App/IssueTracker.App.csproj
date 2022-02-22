@@ -18,15 +18,15 @@
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>Default</AnalysisMode>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="6.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Design" Version="1.1.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
@@ -44,7 +44,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
+    <ProjectReference Include="..\..\IssueTracker.Core\IssueTracker.Core.csproj" />
+    <ProjectReference Include="..\..\IssueTracker.Data.Abstractions\IssueTracker.Data.Abstractions.csproj" />
+    <ProjectReference Include="..\..\IssueTracker.Data\IssueTracker.Data.csproj" />
+    <ProjectReference Include="..\..\IssueTracker.Middelware.SecurityHeaders\IssueTracker.Middelware.SecurityHeaders.csproj" />
   </ItemGroup>
 
 </Project>
