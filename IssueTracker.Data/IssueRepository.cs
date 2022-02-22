@@ -12,17 +12,18 @@
 //
 
 using System.Runtime.CompilerServices;
-using IssueTracker.App.Model;
-using IssueTracker.App.Model.Projections;
+using IssueTracker.Core.Model;
+using IssueTracker.Core.Projections;
+using IssueTracker.Data.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
-namespace IssueTracker.App.Data;
+namespace IssueTracker.Data;
 
-public sealed class IssueRepository
+public sealed class IssueRepository : IIssueRepository
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly IssuesDbContext _dbContext;
 
-    public IssueRepository(ApplicationDbContext dbContext)
+    public IssueRepository(IssuesDbContext dbContext)
     {
         _dbContext = dbContext;
     }

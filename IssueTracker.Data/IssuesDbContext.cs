@@ -11,23 +11,24 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.App.Model;
+using IssueTracker.Core.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.Configuration;
 
-namespace IssueTracker.App.Data;
+namespace IssueTracker.Data;
 
 /// <summary>
 /// Issue Tracker Application Database context
 /// </summary>
-public sealed class ApplicationDbContext : DbContext
+public sealed class IssuesDbContext : DbContext
 {
     private readonly IConfiguration _configuration;
 
     /// <summary>
-    /// Instantiates a new instance of the <see cref="ApplicationDbContext"/> class.
+    /// Instantiates a new instance of the <see cref="IssuesDbContext"/> class.
     /// </summary>
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContextOptions, IConfiguration configuration)
+    public IssuesDbContext(DbContextOptions<IssuesDbContext> dbContextOptions, IConfiguration configuration)
         : base(dbContextOptions)
     {
         _configuration = configuration;
@@ -48,7 +49,9 @@ public sealed class ApplicationDbContext : DbContext
 
         string connectionString = _configuration.GetConnectionString("ApplicationConnection");
         optionsBuilder
-            .UseSqlite(connectionString, options => options.MigrationsAssembly(typeof(Program).Assembly.FullName));
+            .UseSqlite(
+                connectionString,
+                options => options.MigrationsAssembly(typeof(IssuesDbContext).Assembly.FullName));
 
         base.OnConfiguring(optionsBuilder);
     }

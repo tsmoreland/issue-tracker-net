@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace IssueTracker.App.Migrations
+namespace IssueTracker.Data.Migrations
 {
     public partial class Initial : Migration
     {
@@ -28,12 +28,12 @@ namespace IssueTracker.App.Migrations
             migrationBuilder.InsertData(
                 table: "Issues",
                 columns: new[] { "Id", "ConcurrencyToken", "Description", "LastUpdated", "Priority", "Title" },
-                values: new object[] { new Guid("1385056e-8afa-4e09-96df-ae12efdf1a29"), "c431b935-f23e-4d82-8473-3f9c8514a5e3", "First issue", new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "First" });
+                values: new object[] { new Guid("1385056e-8afa-4e09-96df-ae12efdf1a29"), "8ee1ef15-42b7-4dc2-843f-2bada4e449d7", "First issue", new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "First" });
 
             migrationBuilder.InsertData(
                 table: "Issues",
                 columns: new[] { "Id", "ConcurrencyToken", "Description", "LastUpdated", "Priority", "Title" },
-                values: new object[] { new Guid("a28b8c45-6668-4169-940c-c16d71eb69de"), "f1c76a08-04bd-44ee-93bd-52e09297f004", "Second issue", new DateTime(2022, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Second" });
+                values: new object[] { new Guid("a28b8c45-6668-4169-940c-c16d71eb69de"), "096122b5-3558-4430-b9e2-bff962596ae5", "Second issue", new DateTime(2022, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Second" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Issues_Priority",

@@ -11,24 +11,29 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Data.Abstractions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 
-namespace IssueTracker.App.Data;
+namespace IssueTracker.Data;
 
-/// <summary>
-/// Factory used when adding or removing migrations
-/// </summary>
-public sealed class ApplciationDbContextDesignTimeFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
+public sealed class IssueDataMigration : IIssueDataMigration
 {
-    /// <inheritdoc />
-    public ApplicationDbContext CreateDbContext(string[] args)
-    {
-        var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-        optionsBuilder.UseSqlite("Data Source=designTime.db");
+    private readonly IssuesDbContext _dbContext;
 
-        return new ApplicationDbContext(
-            optionsBuilder.Options,
-            new ConfigurationBuilder().Build());
+    public IssueDataMigration(IssuesDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
+    /// <inheritdoc />
+    public ValueTask MigrateAsync(CancellationToken cancellationToken)
+    {
+        return new ValueTask(_dbContext.Database.MigrateAsync(cancellationToken));
+    }
+
+    /// <inheritdoc />
+    public void Migrate()
+    {
+        _dbContext.Database.Migrate();
     }
 }
