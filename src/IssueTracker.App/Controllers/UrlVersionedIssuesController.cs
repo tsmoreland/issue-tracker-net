@@ -12,10 +12,10 @@
 //
 
 using System.Net.Mime;
-using IssueTracker.App.Attributes;
-using IssueTracker.App.Model.Request;
-using IssueTracker.App.Model.Response;
-using IssueTracker.App.Services;
+using IssueTracker.Services.Abstractions;
+using IssueTracker.Services.Abstractions.Model.Request;
+using IssueTracker.Services.Abstractions.Model.Response;
+using IssueTracker.SwashbuckleExtensions.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using static IssueTracker.App.Validation.PagingValidation;
@@ -31,12 +31,12 @@ namespace IssueTracker.App.Controllers;
 [TrimVersionFromSwagger]
 public class UrlVersionedIssuesController : ControllerBase
 {
-    private readonly IssuesService _service;
+    private readonly IIssuesService _service;
 
     /// <summary>
     /// Instantiates a new instance of <see cref="UrlVersionedIssuesController"/>
     /// </summary>
-    public UrlVersionedIssuesController(IssuesService service)
+    public UrlVersionedIssuesController(IIssuesService service)
     {
         _service = service;
     }

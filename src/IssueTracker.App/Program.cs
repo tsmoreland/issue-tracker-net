@@ -4,15 +4,10 @@ using System.Runtime.Loader;
 using System.Text.Json.Serialization;
 using Hellang.Middleware.ProblemDetails;
 using IssueTracker.App.Infrastructure;
-using IssueTracker.App.OpenApi;
-using IssueTracker.App.Services;
 using IssueTracker.Data.Abstractions;
 using IssueTracker.Middelware.SecurityHeaders;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using Tcell.Agent.AspNetCore;
 
 Assembly? entryAssembly = Assembly.GetEntryAssembly();
@@ -52,13 +47,7 @@ string[] hostingAssemblyNames = assemblyNames
     .ToArray();
 string issueTrackerAssemblies = string.Join(';', hostingAssemblyNames);
 
-#if bad
-string[] issueTrackerFiles = assemblyFilenames.Select(file => Path.GetFileName(file)[..^4]).ToArray();
-string issueTrackerAssemblies = string.Join(';', issueTrackerFiles);
-#endif
-
 Environment.SetEnvironmentVariable("ASPNETCORE_HOSTINGSTARTUPASSEMBLIES", issueTrackerAssemblies);
-
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.WebHost
@@ -95,8 +84,6 @@ builder.Services.AddApiVersioning(
     });
 
 builder.Services
-    .AddSingleton<IConfigureOptions<SwaggerGenOptions>>(p => new SwashbuckleConfiguration(p.GetRequiredService<IApiVersionDescriptionProvider>(), p))
-    .AddSwaggerGen()
     .AddResponseCompression(options =>
     {
         options.EnableForHttps = true;
@@ -109,8 +96,6 @@ builder.Services
     {
         tokenProviderOptions.TokenLifespan = TimeSpan.FromHours(1);
     });
-
-builder.Services.AddScoped<IssuesService>();
 
 WebApplication app = builder.Build();
 using (IServiceScope scope = app.Services.CreateScope())
