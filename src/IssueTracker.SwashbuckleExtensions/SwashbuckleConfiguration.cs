@@ -12,16 +12,18 @@
 //
 
 using System.Reflection;
-using IssueTracker.App.Attributes;
-using IssueTracker.App.OpenApi.Filters;
+using IssueTracker.SwashbuckleExtensions.Abstractions;
+using IssueTracker.SwashbuckleExtensions.Filters;
+using IssueTracker.SwashBuckleExtensions.Filters;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace IssueTracker.App.OpenApi;
+namespace IssueTracker.SwashBuckleExtensions;
 
 public class SwashbuckleConfiguration : ConfigureNamedOptions<SwaggerGenOptions, IApiVersionDescriptionProvider>
 {
@@ -39,6 +41,8 @@ public class SwashbuckleConfiguration : ConfigureNamedOptions<SwaggerGenOptions,
 
     private static void SetupAction(SwaggerGenOptions options, IApiVersionDescriptionProvider apiVersionDescriptionProvider, IServiceProvider provider)
     {
+        _ = provider; // unused for now
+
         AddSwaggerDocsPerVersion(options, apiVersionDescriptionProvider.ApiVersionDescriptions);
         options.DocInclusionPredicate(
             (documentName, apiDescription) =>
@@ -48,8 +52,21 @@ public class SwashbuckleConfiguration : ConfigureNamedOptions<SwaggerGenOptions,
                     .ImplementedApiVersions
                     .Any(version => $"v{version}" == documentName));
 
-        string xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+        Assembly? entryAssembly = Assembly.GetEntryAssembly();
+        if (entryAssembly is not null)
+        {
+            string baseDirectory = AppContext.BaseDirectory;
+            IEnumerable<string> filenames = (new[] { entryAssembly.GetName() })
+                .Union(entryAssembly.GetReferencedAssemblies())
+                .Where(asm => asm.Name.StartsWith("IssueTracker"))
+                .Select(asm => Path.Combine(baseDirectory, $"{asm.Name}.xml"))
+                .Where(File.Exists);
+            foreach (string filename in filenames)
+            {
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, filename));
+            }
+
+        }
 
         options.CustomSchemaIds(SetSchemaName);
         options.OperationFilter<TrimVersionOperationFilter>();

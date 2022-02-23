@@ -11,14 +11,28 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace IssueTracker.App.Attributes;
+using System.Reflection;
+using IssueTracker.SwashbuckleExtensions.Abstractions;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-public sealed class SwaggerSchemaNameAttribute : Attribute
+namespace IssueTracker.SwashbuckleExtensions.Filters;
+
+public sealed class TrimVersionOperationFilter : IOperationFilter
 {
-    public SwaggerSchemaNameAttribute(string name)
+    /// <inheritdoc />
+    public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        Name = name;
+        if (context.ApiDescription.ActionDescriptor is not ControllerActionDescriptor controllerActionDescriptor)
+        {
+            return;
+        }
+        TrimVersionFromSwaggerAttribute? trimVersionAttribute = controllerActionDescriptor.ControllerTypeInfo.AsType().GetCustomAttribute<TrimVersionFromSwaggerAttribute>();
+        if (trimVersionAttribute is not null)
+        {
+            OpenApiParameter? versionParameter = operation.Parameters.SingleOrDefault(p => p.Name == "version");
+            operation.Parameters.Remove(versionParameter);
+        }
     }
-    public string Name { get; }
 }

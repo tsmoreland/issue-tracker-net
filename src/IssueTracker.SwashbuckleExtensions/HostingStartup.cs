@@ -11,29 +11,30 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using Microsoft.OpenApi.Models;
+using IssueTracker.SwashBuckleExtensions;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace IssueTracker.App.OpenApi.Filters;
+[assembly: HostingStartup(typeof(IssueTracker.SwashbuckleExtensions.HostingStartup))]
 
-public sealed class ApplyApiVersionDocumentFilter : IDocumentFilter
+namespace IssueTracker.SwashbuckleExtensions;
+
+public sealed class HostingStartup : IHostingStartup
 {
     /// <inheritdoc />
-    public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+    public void Configure(IWebHostBuilder builder)
     {
-        if (swaggerDoc.Info.Version is not {Length: > 0})
-        {
-            return;
-        }
+        builder.ConfigureServices(ConfigureServices);
+    }
 
-        var paths = new OpenApiPaths();
-        var pathValues = swaggerDoc
-            .Paths
-            .Select(path => new { Key = path.Key.Replace("/v{version}", $"/v{swaggerDoc.Info.Version}"), path.Value });
-        foreach (var path in pathValues)
-        {
-            paths.Add(path.Key, path.Value);
-        }
-        swaggerDoc.Paths = paths;
+    private static void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSwaggerGen()
+            .AddSingleton<IConfigureOptions<SwaggerGenOptions>>(p =>
+                new SwashbuckleConfiguration(p.GetRequiredService<IApiVersionDescriptionProvider>(), p));
     }
 }
