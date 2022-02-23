@@ -12,16 +12,16 @@
 //
 
 using System.Runtime.CompilerServices;
-using IssueTracker.App.Model.Request;
-using IssueTracker.App.Model.Response;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.Data.Abstractions;
-using Microsoft.AspNetCore.Mvc;
+using IssueTracker.Services.Abstractions;
+using IssueTracker.Services.Abstractions.Model.Request;
+using IssueTracker.Services.Abstractions.Model.Response;
 
-namespace IssueTracker.App.Services;
+namespace IssueTracker.Services;
 
-public class IssuesService
+public class IssuesService : IIssuesService
 {
     private readonly IIssueRepository _repository;
 
@@ -58,7 +58,6 @@ public class IssuesService
     /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
-    [HttpGet("{id}")]
     public async Task<IssueDto?> Get(Guid id, CancellationToken cancellationToken)
     {
         Issue? issue = await _repository.GetUntrackedIssueById(id, cancellationToken);
@@ -73,8 +72,7 @@ public class IssuesService
     /// <param name="model">the issue to add</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns></returns>
-    [HttpPost]
-    public async Task<IssueDto> Create([FromBody] AddOrUpdateIssueDto model, CancellationToken cancellationToken)
+    public async Task<IssueDto> Create(AddOrUpdateIssueDto model, CancellationToken cancellationToken)
     {
         Issue issue = await _repository.AddIssue(model.ToIssue(), cancellationToken);
         return IssueDto.FromIssue(issue);
@@ -87,8 +85,7 @@ public class IssuesService
     /// <param name="model">new values for the issue</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns></returns>
-    [HttpPut("{id}")]
-    public async Task<IssueDto?> Update(Guid id, [FromBody] AddOrUpdateIssueDto model, CancellationToken cancellationToken)
+    public async Task<IssueDto?> Update(Guid id, AddOrUpdateIssueDto model, CancellationToken cancellationToken)
     {
         Issue? issue = await _repository.GetIssueById(id, cancellationToken);
         if (issue is null)
@@ -110,11 +107,9 @@ public class IssuesService
     /// <param name="id">unique id of the issue to delete</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns></returns>
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    public async Task Delete(Guid id, CancellationToken cancellationToken)
     {
         await _repository.DeleteIssueById(id, cancellationToken);
         await _repository.CommitAsync(cancellationToken);
-        return new StatusCodeResult(StatusCodes.Status204NoContent);
     }
 }

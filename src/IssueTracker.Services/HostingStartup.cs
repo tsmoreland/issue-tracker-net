@@ -11,35 +11,24 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.ComponentModel.DataAnnotations;
-using IssueTracker.App.Attributes;
-using IssueTracker.Core.Model;
+using IssueTracker.Services.Abstractions;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace IssueTracker.App.Model.Response;
+[assembly: HostingStartup(typeof(IssueTracker.Services.HostingStartup))]
 
-/// <summary>
-/// Short summary of an <see cref="Issue"/>
-/// </summary>
-[SwaggerSchemaName("Issue Summary")]
-public sealed class IssueSummaryDto
+namespace IssueTracker.Services;
+
+public sealed class HostingStartup : IHostingStartup
 {
-    public IssueSummaryDto(Guid id, string title)
+    /// <inheritdoc />
+    public void Configure(IWebHostBuilder builder)
     {
-        Id = id;
-        Title = title;
+        builder.ConfigureServices(ConfigureServices);
     }
 
-    /// <summary>
-    /// Issue Id
-    /// </summary>
-    /// <example>3C1152EC-DC0C-4AB0-8AF9-10DE5A9705D5</example>
-    [Required]
-    public Guid Id { get; init; } 
-
-    /// <summary>
-    /// Issue Title
-    /// </summary>
-    /// <example>Example Title</example>
-    [Required]
-    public string Title { get; init; }
+    private static void ConfigureServices(IServiceCollection services)
+    {
+        services.AddScoped<IIssuesService, IssuesService>();
+    }
 }

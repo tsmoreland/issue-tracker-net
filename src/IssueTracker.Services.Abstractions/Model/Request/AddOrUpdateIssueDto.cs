@@ -12,61 +12,54 @@
 //
 
 using System.ComponentModel.DataAnnotations;
-using IssueTracker.App.Attributes;
 using IssueTracker.Core.Model;
+using IssueTracker.SwashbuckleExtensions.Abstractions;
 
-namespace IssueTracker.App.Model.Response;
+namespace IssueTracker.Services.Abstractions.Model.Request;
 
 /// <summary>
-/// Issue Details
+/// Model used to add or update <see cref="Issue"/>
 /// </summary>
-[SwaggerSchemaName("Issue Details")]
-public sealed class IssueDto
+[SwaggerSchemaName("Add or Edit Issue")]
+public sealed class AddOrUpdateIssueDto
 {
     /// <summary>
-    /// Instantiates a new instance of the <see cref="IssueDto"/> class.
+    /// instantiates a new instance of the <see cref="AddOrUpdateIssueDto"/> class.
     /// </summary>
-    public IssueDto(Guid id, string title, string? description, Priority priority)
+    public AddOrUpdateIssueDto(string title, string? description, Priority priority)
     {
-        Id = id;
         Title = title;
         Description = description;
         Priority = priority;
     }
 
     /// <summary>
-    /// Issue Id
-    /// </summary>
-    /// <example>48EE3BF9-C81D-4FE4-AB02-220C0122AFE4</example>
-    [Required]
-    public Guid Id { get; init; }
-
-    /// <summary>
     /// Issue Title
     /// </summary>
     /// <example>Example Title</example>
     [Required]
+    [MaxLength(200)]
     public string Title { get; init; } 
 
     /// <summary>
     /// Issue Description
     /// </summary>
-    /// <example>Example Description</example>
-    [Required]
-    public string? Description { get; init; }
+    /// <example>Example description</example>
+    [MaxLength(500)]
+    public string? Description { get; init; } 
 
     /// <summary>
     /// Issue Priority
     /// </summary>
-    /// <example>Medium</example>
+    /// <example>High</example>
     [Required]
     public Priority Priority { get; init; } 
 
     /// <summary>
-    /// Converts <see cref="Issue"/> to <see cref="IssueDto"/>
+    /// Convert Data Transfer Object to <see cref="Issue"/>
     /// </summary>
-    public static IssueDto FromIssue(Issue issue)
+    public Issue ToIssue()
     {
-        return new IssueDto(issue.Id, issue.Title, issue.Description, issue.Priority);
+        return new Issue(Title, Description ?? string.Empty, Priority);
     }
 }
