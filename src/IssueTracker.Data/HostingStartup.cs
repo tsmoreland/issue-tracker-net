@@ -15,11 +15,11 @@ using IssueTracker.Data.Abstractions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-[assembly: HostingStartup(typeof(IssueTracker.Data.HostedStartup))]
+[assembly: HostingStartup(typeof(IssueTracker.Data.HostingStartup))]
 
 namespace IssueTracker.Data;
 
-public sealed class HostedStartup : IHostingStartup
+public sealed class HostingStartup : IHostingStartup
 {
     /// <inheritdoc />
     public void Configure(IWebHostBuilder builder)
