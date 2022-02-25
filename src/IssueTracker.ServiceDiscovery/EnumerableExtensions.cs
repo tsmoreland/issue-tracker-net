@@ -22,4 +22,10 @@ public static class EnumerableExtensions
         string hostingStartupAssemblies = string.Join(';', assemblies.Select(static asm => asm.ToString()));
         Environment.SetEnvironmentVariable("ASPNETCORE_HOSTINGSTARTUPASSEMBLIES", hostingStartupAssemblies);
     }
+
+    internal static bool DoesNotContain(this IEnumerable<AssemblyName> source, AssemblyName assemblyName)
+    {
+        return source.All(asmName => asmName.Name != assemblyName.Name);
+
+    }
 }
