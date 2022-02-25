@@ -35,18 +35,19 @@ internal record struct AssemblyLocation(Assembly Assembly, string Folder, string
     {
         ImmutableArray<AssemblyName> referencedAssemblyNames = Assembly.GetReferencedAssemblies()
             .Where(asm => asm.FullName.StartsWith(rootNamespace))
+            .Union(new [] { Assembly.GetName() })
             .ToImmutableArray();
 
         List<AssemblyName> assemblyNames = GetRelatedAssemblyFilenames(rootNamespace)
             .Select(AssemblyName.GetAssemblyName)
-            .Where(asm => !referencedAssemblyNames.Contains(asm))
+            .Where(asm => referencedAssemblyNames.DoesNotContain(asm))
             .ToList();
         assemblyNames.ForEach(asm => Assembly.Load(asm));
 
         return assemblyNames
             .Select(Assembly.Load)
             .Where(ContainsHostingStartup)
-            .Select(asm => asm.GetName());
+            .Select(asm =>  asm.GetName());
     }
 
     public IEnumerable<AssemblyName> GetReferencedAssemblies(string rootNamespace)
