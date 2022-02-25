@@ -57,6 +57,7 @@
     <ProjectReference Include="..\IssueTracker.Core\IssueTracker.Core.csproj" />
     <ProjectReference Include="..\IssueTracker.Data.Abstractions\IssueTracker.Data.Abstractions.csproj" />
     <ProjectReference Include="..\IssueTracker.Middelware.SecurityHeaders\IssueTracker.Middelware.SecurityHeaders.csproj" />
+    <ProjectReference Include="..\IssueTracker.ServiceDiscovery\IssueTracker.ServiceDiscovery.csproj" />
     <ProjectReference Include="..\IssueTracker.Services.Abstractions\IssueTracker.Services.Abstractions.csproj" />
     <ProjectReference Include="..\IssueTracker.SwashbuckleExtensions.Abstractions\IssueTracker.SwashbuckleExtensions.Abstractions.csproj" />
 
