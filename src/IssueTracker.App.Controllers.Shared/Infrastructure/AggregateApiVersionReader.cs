@@ -11,9 +11,10 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Versioning;
 
-namespace IssueTracker.App.Infrastructure;
+namespace IssueTracker.App.Controllers.Shared.Infrastructure;
 
 /// <summary>
 /// Aggregates multiple ApiVersionReaders allow others to serve as fallback

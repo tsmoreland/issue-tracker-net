@@ -13,7 +13,7 @@
 
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace IssueTracker.App.Validation;
+namespace IssueTracker.App.Controllers.Shared.Validation;
 
 public static class PagingValidation
 {
