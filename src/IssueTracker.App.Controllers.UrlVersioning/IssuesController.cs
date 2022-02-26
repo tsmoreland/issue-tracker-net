@@ -16,11 +16,12 @@ using IssueTracker.Services.Abstractions;
 using IssueTracker.Services.Abstractions.Model.Request;
 using IssueTracker.Services.Abstractions.Model.Response;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using static IssueTracker.App.Validation.PagingValidation;
+using static IssueTracker.App.Controllers.Shared.Validation.PagingValidation;
 
-namespace IssueTracker.App.Controllers;
+namespace IssueTracker.App.Controllers.UrlVersioning;
 
 /// <summary>
 /// Issue Controller
@@ -29,14 +30,14 @@ namespace IssueTracker.App.Controllers;
 [ApiController]
 [ApiVersion("1")]
 [TrimVersionFromSwagger]
-public class UrlVersionedIssuesController : ControllerBase
+public class IssuesController : ControllerBase
 {
     private readonly IIssuesService _service;
 
     /// <summary>
-    /// Instantiates a new instance of <see cref="UrlVersionedIssuesController"/>
+    /// Instantiates a new instance of <see cref="IssuesController"/>
     /// </summary>
-    public UrlVersionedIssuesController(IIssuesService service)
+    public IssuesController(IIssuesService service)
     {
         _service = service;
     }
