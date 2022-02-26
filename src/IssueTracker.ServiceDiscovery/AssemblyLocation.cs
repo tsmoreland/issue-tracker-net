@@ -31,7 +31,7 @@ internal record struct AssemblyLocation(Assembly Assembly, string Folder, string
             : new AssemblyLocation(assembly, appFolder, assembly.Location);
     }
 
-    public IEnumerable<AssemblyName> GetHostingStartupAssemblies(string rootNamespace)
+    public IEnumerable<Assembly> GetAssembliesContainingType<T>(string rootNamespace)
     {
         ImmutableArray<AssemblyName> referencedAssemblyNames = Assembly.GetReferencedAssemblies()
             .Where(asm => asm.FullName.StartsWith(rootNamespace))
@@ -46,23 +46,20 @@ internal record struct AssemblyLocation(Assembly Assembly, string Folder, string
 
         return assemblyNames
             .Select(Assembly.Load)
-            .Where(ContainsHostingStartup)
-            .Select(asm =>  asm.GetName());
+            .Where(ContainsType<T>);
     }
 
-    public IEnumerable<AssemblyName> GetReferencedAssemblies(string rootNamespace)
-    {
-        return Assembly.GetReferencedAssemblies()
-            .Where(assemblyName => assemblyName.Name?.StartsWith(rootNamespace) == true);
-    }
+    public IEnumerable<AssemblyName> GetHostingStartupAssemblies(string rootNamespace) =>
+        GetAssembliesContainingType<IHostingStartup>(rootNamespace)
+            .Select(asm => asm.GetName());
 
     private IEnumerable<string> GetRelatedAssemblyFilenames(string rootNamespace)
     {
         return Directory.GetFiles(Folder, $"{rootNamespace}.*.dll");
     }
 
-    private static bool ContainsHostingStartup(Assembly assembly)
+    private static bool ContainsType<T>(Assembly assembly)
     {
-        return assembly.GetTypes().Any(type => typeof(IHostingStartup).IsAssignableFrom(type));
+        return assembly.GetTypes().Any(type => typeof(T).IsAssignableFrom(type));
     }
 }
