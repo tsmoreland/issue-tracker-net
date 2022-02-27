@@ -2,7 +2,6 @@ using System.IO.Compression;
 using System.Text.Json.Serialization;
 using Hellang.Middleware.ProblemDetails;
 using IssueTracker.App.Controllers.Shared.Infrastructure;
-using IssueTracker.App.Infrastructure;
 using IssueTracker.Data.Abstractions;
 using IssueTracker.Middelware.SecurityHeaders;
 using IssueTracker.ServiceDiscovery;
@@ -22,6 +21,7 @@ builder.WebHost
 // Add services to the container.
 
 builder.Services.AddProblemDetails();
+
 builder.Services
     .AddControllers()
     .ConfigureApiBehaviorOptions(apiBehaviourOptions =>
@@ -69,21 +69,18 @@ using (IServiceScope scope = app.Services.CreateScope())
     migration.Migrate();
 }
 
-// Configure the HTTP request pipeline.
 app.UseSecurityHeaders();
-
 app.UseProblemDetails();
 
 app.UseSwagger();
-
 app.UseSwaggerUI();
-
 app.UseMigrationsEndPoint();
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseEndpoints(endpoints => endpoints.MapControllers());
 
 app.Run();
