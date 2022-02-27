@@ -41,6 +41,10 @@ internal sealed class SecurityHeadersMiddleware
         AddHeaderIfNotPresent(response, "Cache-Control", "no-store");
         AddHeaderIfNotPresent(response, "X-Content-Type-Options", "nosniff");
         AddHeaderIfNotPresent(response, "X-Frame-Options", "DENY");
+        AddHeaderIfNotPresent(response, "x-xss-protection", "1; mode=block");
+        AddHeaderIfNotPresent(response, "Expect-CT", "max-age=0, enforce");
+        AddHeaderIfNotPresent(response, "referrer-policy", "strict-origin-when-cross-origin");
+        AddHeaderIfNotPresent(response, "X-Permitted-Cross-Domain-Policies", "none");
 
         // may want to consider something in security options for these as they may be overkill
         AddHeaderIfNotPresent(response, "Content-Security-Policy",
