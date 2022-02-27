@@ -12,6 +12,7 @@
 //
 
 using System.Reflection;
+using IssueTracker.ServiceDiscovery;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 using IssueTracker.SwashbuckleExtensions.Filters;
 using IssueTracker.SwashBuckleExtensions.Filters;
@@ -52,20 +53,21 @@ public class SwashbuckleConfiguration : ConfigureNamedOptions<SwaggerGenOptions,
                     .ImplementedApiVersions
                     .Any(version => $"v{version}" == documentName));
 
+        IEnumerable<string> xmlFilenames = ControllerDocumentationDiscovery
+            .DiscoverXmlDocumentationFiles();
+        foreach (string filename in xmlFilenames)
+        {
+            options.IncludeXmlComments(filename);
+        }
+
         Assembly? entryAssembly = Assembly.GetEntryAssembly();
         if (entryAssembly is not null)
         {
-            string baseDirectory = AppContext.BaseDirectory;
-            IEnumerable<string> filenames = (new[] { entryAssembly.GetName() })
-                .Union(entryAssembly.GetReferencedAssemblies())
-                .Where(asm => asm.Name.StartsWith("IssueTracker"))
-                .Select(asm => Path.Combine(baseDirectory, $"{asm.Name}.xml"))
-                .Where(File.Exists);
-            foreach (string filename in filenames)
+            string appXmlFilename = Path.ChangeExtension(entryAssembly.Location, "xml");
+            if (File.Exists(appXmlFilename))
             {
-                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, filename));
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, appXmlFilename));
             }
-
         }
 
         options.CustomSchemaIds(SetSchemaName);

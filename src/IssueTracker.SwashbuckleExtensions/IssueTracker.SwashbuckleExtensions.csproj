@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\IssueTracker.ServiceDiscovery\IssueTracker.ServiceDiscovery.csproj" />
     <ProjectReference Include="..\IssueTracker.SwashbuckleExtensions.Abstractions\IssueTracker.SwashbuckleExtensions.Abstractions.csproj" />
   </ItemGroup>
 
