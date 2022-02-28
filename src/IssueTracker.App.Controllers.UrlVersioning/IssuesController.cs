@@ -28,7 +28,6 @@ namespace IssueTracker.App.Controllers.UrlVersioning;
 /// </summary>
 [Route("api/v{version:apiVersion}/issues")]
 [ApiController]
-[ApiVersion("1")]
 [TrimVersionFromSwagger]
 public class IssuesController : ControllerBase
 {
@@ -50,9 +49,10 @@ public class IssuesController : ControllerBase
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all issues</returns>
     [HttpGet]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json")]
-    [Produces(MediaTypeNames.Application.Json)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IAsyncEnumerable<IssueSummaryDto>), MediaTypeNames.Application.Json)]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", "application/xml")]
+    [Produces(MediaTypeNames.Application.Json, "application/xml")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IAsyncEnumerable<IssueSummaryDto>), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [ApiVersion("1")]
     public IActionResult GetAll(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
@@ -70,6 +70,10 @@ public class IssuesController : ControllerBase
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
     [HttpGet("{id}")]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", "application/xml")]
+    [Produces(MediaTypeNames.Application.Json, "application/xml")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IAsyncEnumerable<IssueDto>), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [ApiVersion("1")]
     public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
     {
         IssueDto? issue = await _service.Get(id, cancellationToken);
@@ -83,8 +87,12 @@ public class IssuesController : ControllerBase
     /// </summary>
     /// <param name="model">the issue to add</param>
     /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns></returns>
+    /// <returns>newly created <see cref="IssueDto"/></returns>
     [HttpPost]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", "application/xml")]
+    [Produces(MediaTypeNames.Application.Json, "application/xml")]
+    [SwaggerResponse(StatusCodes.Status201Created, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [ApiVersion("1")]
     public async Task<IActionResult> Post([FromBody] AddOrUpdateIssueDto model, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
@@ -102,8 +110,12 @@ public class IssuesController : ControllerBase
     /// <param name="id">unique id of the issue to update</param>
     /// <param name="model">new values for the issue</param>
     /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns></returns>
+    /// <returns>updated <see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
     [HttpPut("{id}")]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", "application/xml")]
+    [Produces(MediaTypeNames.Application.Json, "application/xml")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [ApiVersion("1")]
     public async Task<IActionResult> Put(Guid id, [FromBody] AddOrUpdateIssueDto model, CancellationToken cancellationToken)
     {
         IssueDto? issue = await _service.Update(id, model, cancellationToken);
@@ -117,11 +129,15 @@ public class IssuesController : ControllerBase
     /// </summary>
     /// <param name="id">unique id of the issue to delete</param>
     /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns></returns>
     [HttpDelete("{id}")]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", "application/xml")]
+    [Produces(MediaTypeNames.Application.Json, "application/xml")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Successful Response", ContentTypes = new [] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
+    [ApiVersion("1")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        await _service.Delete(id, cancellationToken);
-        return new StatusCodeResult(StatusCodes.Status204NoContent);
+        return await _service.Delete(id, cancellationToken)
+            ? new StatusCodeResult(StatusCodes.Status204NoContent)
+            : NotFound();
     }
 }
