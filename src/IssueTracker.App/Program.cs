@@ -24,6 +24,7 @@ builder.Services.AddProblemDetails();
 
 builder.Services
     .AddControllers()
+    .AddXmlDataContractSerializerFormatters()
     .ConfigureApiBehaviorOptions(apiBehaviourOptions =>
     {
         apiBehaviourOptions.SuppressConsumesConstraintForFormFileParameters = true;
