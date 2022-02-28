@@ -28,6 +28,7 @@ public sealed class IssueRepository : IIssueRepository
         _dbContext = dbContext;
     }
 
+    /// <inheritdoc />
     public async IAsyncEnumerable<IssueSummaryProjection> GetIssueSummaries(int pageNumber, int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         IAsyncEnumerable<IssueSummaryProjection> issues = _dbContext.Issues
@@ -42,18 +43,22 @@ public sealed class IssueRepository : IIssueRepository
         }
     }
 
+    /// <inheritdoc />
     public Task<Issue?> GetUntrackedIssueById(Guid id, CancellationToken cancellationToken)
     {
         return _dbContext.Issues
             .AsNoTracking()
             .SingleOrDefaultAsync(i => i.Id == id, cancellationToken);
     }
+
+    /// <inheritdoc />
     public Task<Issue?> GetIssueById(Guid id, CancellationToken cancellationToken)
     {
         return _dbContext.Issues
             .SingleOrDefaultAsync(i => i.Id == id, cancellationToken);
     }
 
+    /// <inheritdoc />
     public async Task<Issue> AddIssue(Issue issue, CancellationToken cancellationToken)
     {
         _dbContext.Issues.Add(issue);
@@ -61,22 +66,24 @@ public sealed class IssueRepository : IIssueRepository
         return issue;
     }
 
-    /// <summary>
-    /// Persists changes to the database
-    /// </summary>
-    /// <param name="cancellationToken">a cancellation token.</param>
+
+    /// <inheritdoc />
     public Task CommitAsync(CancellationToken cancellationToken)
     {
         return _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteIssueById(Guid id, CancellationToken cancellationToken)
+    /// <inheritdoc />
+    public async Task<bool> DeleteIssueById(Guid id, CancellationToken cancellationToken)
     {
         Issue? issue = await _dbContext.Issues.FindAsync(new object[] { id }, cancellationToken);
-        if (issue is not null)
+        if (issue is null)
         {
-            _dbContext.Issues.Remove(issue);
+            return false;
         }
+
+        _dbContext.Issues.Remove(issue);
+        return true;
 
     }
 }

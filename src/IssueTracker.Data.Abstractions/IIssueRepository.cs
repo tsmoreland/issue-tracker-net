@@ -28,5 +28,5 @@ public interface IIssueRepository
     /// <param name="cancellationToken">a cancellation token.</param>
     Task CommitAsync(CancellationToken cancellationToken);
 
-    Task DeleteIssueById(Guid id, CancellationToken cancellationToken);
+    Task<bool> DeleteIssueById(Guid id, CancellationToken cancellationToken);
 }
