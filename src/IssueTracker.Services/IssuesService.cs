@@ -107,9 +107,14 @@ public class IssuesService : IIssuesService
     /// <param name="id">unique id of the issue to delete</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns></returns>
-    public async Task Delete(Guid id, CancellationToken cancellationToken)
+    public async Task<bool> Delete(Guid id, CancellationToken cancellationToken)
     {
-        await _repository.DeleteIssueById(id, cancellationToken);
+        if (!await _repository.DeleteIssueById(id, cancellationToken))
+        {
+            return false;
+        }
+
         await _repository.CommitAsync(cancellationToken);
+        return true;
     }
 }

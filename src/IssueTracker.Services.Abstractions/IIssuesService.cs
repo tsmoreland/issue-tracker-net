@@ -60,6 +60,6 @@ public interface IIssuesService
     /// </summary>
     /// <param name="id">unique id of the issue to delete</param>
     /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns></returns>
-    Task Delete(Guid id, CancellationToken cancellationToken);
+    /// <returns><see langword="true"/> if issue was found and deleted</returns>
+    Task<bool> Delete(Guid id, CancellationToken cancellationToken);
 }
