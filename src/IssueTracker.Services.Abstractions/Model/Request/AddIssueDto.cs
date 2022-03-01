@@ -18,15 +18,15 @@ using IssueTracker.SwashbuckleExtensions.Abstractions;
 namespace IssueTracker.Services.Abstractions.Model.Request;
 
 /// <summary>
-/// Model used to add or update <see cref="Issue"/>
+/// Model used to add <see cref="Issue"/>
 /// </summary>
-[SwaggerSchemaName("Add or Edit Issue")]
-public sealed class AddOrUpdateIssueDto
+[SwaggerSchemaName("Add Issue")]
+public sealed class AddIssueDto
 {
     /// <summary>
-    /// instantiates a new instance of the <see cref="AddOrUpdateIssueDto"/> class.
+    /// instantiates a new instance of the <see cref="AddIssueDto"/> class.
     /// </summary>
-    public AddOrUpdateIssueDto(string title, string? description, Priority priority)
+    public AddIssueDto(string title, string? description, Priority priority)
     {
         Title = title;
         Description = description;
