@@ -72,7 +72,7 @@ public class IssuesService : IIssuesService
     /// <param name="model">the issue to add</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns></returns>
-    public async Task<IssueDto> Create(AddOrUpdateIssueDto model, CancellationToken cancellationToken)
+    public async Task<IssueDto> Create(AddIssueDto model, CancellationToken cancellationToken)
     {
         Issue issue = await _repository.AddIssue(model.ToIssue(), cancellationToken);
         return IssueDto.FromIssue(issue);
@@ -85,7 +85,7 @@ public class IssuesService : IIssuesService
     /// <param name="model">new values for the issue</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns></returns>
-    public async Task<IssueDto?> Update(Guid id, AddOrUpdateIssueDto model, CancellationToken cancellationToken)
+    public async Task<IssueDto?> Update(Guid id, EditIssueDto model, CancellationToken cancellationToken)
     {
         Issue? issue = await _repository.GetIssueById(id, cancellationToken);
         if (issue is null)

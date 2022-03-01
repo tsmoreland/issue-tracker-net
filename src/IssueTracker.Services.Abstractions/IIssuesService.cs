@@ -44,7 +44,7 @@ public interface IIssuesService
     /// <param name="model">the issue to add</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns></returns>
-    Task<IssueDto> Create(AddOrUpdateIssueDto model, CancellationToken cancellationToken);
+    Task<IssueDto> Create(AddIssueDto model, CancellationToken cancellationToken);
 
     /// <summary>
     /// Updates existing issue given by <paramref name="id"/>
@@ -53,7 +53,7 @@ public interface IIssuesService
     /// <param name="model">new values for the issue</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns></returns>
-    Task<IssueDto?> Update(Guid id, AddOrUpdateIssueDto model, CancellationToken cancellationToken);
+    Task<IssueDto?> Update(Guid id, EditIssueDto model, CancellationToken cancellationToken);
 
     /// <summary>
     /// Deletes the issue given by <paramref name="id"/> 
