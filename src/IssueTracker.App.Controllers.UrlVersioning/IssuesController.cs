@@ -93,7 +93,7 @@ public class IssuesController : ControllerBase
     [Produces(MediaTypeNames.Application.Json, "application/xml")]
     [SwaggerResponse(StatusCodes.Status201Created, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [ApiVersion("1")]
-    public async Task<IActionResult> Post([FromBody] AddOrUpdateIssueDto model, CancellationToken cancellationToken)
+    public async Task<IActionResult> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
@@ -116,7 +116,7 @@ public class IssuesController : ControllerBase
     [Produces(MediaTypeNames.Application.Json, "application/xml")]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [ApiVersion("1")]
-    public async Task<IActionResult> Put(Guid id, [FromBody] AddOrUpdateIssueDto model, CancellationToken cancellationToken)
+    public async Task<IActionResult> Put(Guid id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
     {
         IssueDto? issue = await _service.Update(id, model, cancellationToken);
         return issue is not null
