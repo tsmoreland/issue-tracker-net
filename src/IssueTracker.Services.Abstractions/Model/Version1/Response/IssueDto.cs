@@ -15,31 +15,58 @@ using System.ComponentModel.DataAnnotations;
 using IssueTracker.Core.Model;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
-namespace IssueTracker.Services.Abstractions.Model.Response;
+namespace IssueTracker.Services.Abstractions.Model.Version1.Response;
 
 /// <summary>
-/// Short summary of an <see cref="Issue"/>
+/// Issue Details
 /// </summary>
-[SwaggerSchemaName("Issue Summary")]
-public sealed class IssueSummaryDto
+[SwaggerSchemaName("Issue Details")]
+public sealed class IssueDto
 {
-    public IssueSummaryDto(Guid id, string title)
+    /// <summary>
+    /// Instantiates a new instance of the <see cref="IssueDto"/> class.
+    /// </summary>
+    public IssueDto(Guid id, string title, string? description, Priority priority)
     {
         Id = id;
         Title = title;
+        Description = description;
+        Priority = priority;
     }
 
     /// <summary>
     /// Issue Id
     /// </summary>
-    /// <example>3C1152EC-DC0C-4AB0-8AF9-10DE5A9705D5</example>
+    /// <example>48EE3BF9-C81D-4FE4-AB02-220C0122AFE4</example>
     [Required]
-    public Guid Id { get; init; } 
+    public Guid Id { get; init; }
 
     /// <summary>
     /// Issue Title
     /// </summary>
     /// <example>Example Title</example>
     [Required]
-    public string Title { get; init; }
+    public string Title { get; init; } 
+
+    /// <summary>
+    /// Issue Description
+    /// </summary>
+    /// <example>Example Description</example>
+    [Required]
+    public string? Description { get; init; }
+
+    /// <summary>
+    /// Issue Priority
+    /// </summary>
+    /// <example>Medium</example>
+    [Required]
+    public Priority Priority { get; init; } 
+
+    /// <summary>
+    /// Converts <see cref="Issue"/> to <see cref="IssueDto"/>
+    /// </summary>
+    public static IssueDto FromIssue(Issue issue)
+    {
+        return new IssueDto(issue.Id, issue.Title, issue.Description, issue.Priority);
+    }
 }

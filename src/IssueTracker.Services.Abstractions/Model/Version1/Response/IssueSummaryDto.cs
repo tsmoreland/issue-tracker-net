@@ -15,51 +15,31 @@ using System.ComponentModel.DataAnnotations;
 using IssueTracker.Core.Model;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
-namespace IssueTracker.Services.Abstractions.Model.Request;
+namespace IssueTracker.Services.Abstractions.Model.Version1.Response;
 
 /// <summary>
-/// Model used to add <see cref="Issue"/>
+/// Short summary of an <see cref="Issue"/>
 /// </summary>
-[SwaggerSchemaName("Add Issue")]
-public sealed class AddIssueDto
+[SwaggerSchemaName("Issue Summary")]
+public sealed class IssueSummaryDto
 {
-    /// <summary>
-    /// instantiates a new instance of the <see cref="AddIssueDto"/> class.
-    /// </summary>
-    public AddIssueDto(string title, string? description, Priority priority)
+    public IssueSummaryDto(Guid id, string title)
     {
+        Id = id;
         Title = title;
-        Description = description;
-        Priority = priority;
     }
+
+    /// <summary>
+    /// Issue Id
+    /// </summary>
+    /// <example>3C1152EC-DC0C-4AB0-8AF9-10DE5A9705D5</example>
+    [Required]
+    public Guid Id { get; init; } 
 
     /// <summary>
     /// Issue Title
     /// </summary>
     /// <example>Example Title</example>
     [Required]
-    [MaxLength(200)]
-    public string Title { get; init; } 
-
-    /// <summary>
-    /// Issue Description
-    /// </summary>
-    /// <example>Example description</example>
-    [MaxLength(500)]
-    public string? Description { get; init; } 
-
-    /// <summary>
-    /// Issue Priority
-    /// </summary>
-    /// <example>High</example>
-    [Required]
-    public Priority Priority { get; init; } 
-
-    /// <summary>
-    /// Convert Data Transfer Object to <see cref="Issue"/>
-    /// </summary>
-    public Issue ToIssue()
-    {
-        return new Issue(Title, Description ?? string.Empty, Priority);
-    }
+    public string Title { get; init; }
 }
