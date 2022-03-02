@@ -41,7 +41,7 @@ public sealed record class Issue(Guid Id)
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>, constructor provided primarily for use with entity framework
     /// </summary>
-    public Issue(Guid id, string title, string description, Priority priority, DateTime lastUpdated, string? concurrencyToken)
+    public Issue(Guid id, string title, string description, Priority priority, DateTime lastUpdated, string? concurrencyToken, IEnumerable<LinkedIssue> parentIssueEntities, IEnumerable<LinkedIssue> childIssueEntities)
         : this(id)
     {
         Title = title;
@@ -49,6 +49,8 @@ public sealed record class Issue(Guid Id)
         Priority = priority;
         LastUpdated = lastUpdated;
         ConcurrencyToken = concurrencyToken;
+        ParentIssueEntities = parentIssueEntities.ToList();
+        ChildIssueEntities = childIssueEntities.ToList();
     }
 
     /// <summary>
@@ -72,6 +74,26 @@ public sealed record class Issue(Guid Id)
     /// Concurrency token used to detected threading issues when persisting to the database
     /// </summary>
     public string? ConcurrencyToken { get; private set; } = Guid.NewGuid().ToString();
+
+    /// <summary>
+    /// Issues that are linked to this one, this also serves as the ones that may be
+    /// blocking this issue
+    /// </summary>
+    public IEnumerable<LinkedIssue> ParentIssues => ParentIssueEntities.AsEnumerable();
+
+    /// <summary>
+    /// issues which this one links to, this also serves as issues that may be blocked by
+    /// this issue
+    /// </summary>
+    public IEnumerable<LinkedIssue> ChildIssues => ChildIssueEntities.AsEnumerable();
+
+    public IList<LinkedIssue> ParentIssueEntities { get; init; } = new List<LinkedIssue>();
+    public IList<LinkedIssue> ChildIssueEntities { get; init; } = new List<LinkedIssue>();
+
+    public void LinkToIssue(LinkType linkType, Issue issue)
+    {
+        ChildIssueEntities.Add(new LinkedIssue(linkType, this, issue));
+    }
 
     /// <summary>
     /// Update the issue name
