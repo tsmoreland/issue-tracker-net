@@ -33,9 +33,44 @@ public sealed class IssueRepository : IIssueRepository
     {
         IAsyncEnumerable<IssueSummaryProjection> issues = _dbContext.Issues
             .AsNoTracking()
+            .Select(i => new IssueSummaryProjection(i.Id, i.Title))
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
+            .AsAsyncEnumerable();
+        await foreach (IssueSummaryProjection issue in issues.WithCancellation(cancellationToken))
+        {
+            yield return issue;
+        }
+    }
+
+    /// <inheritdoc />
+    public async IAsyncEnumerable<IssueSummaryProjection> GetParentIssues(Guid id, int pageSize, int pageNumber, [EnumeratorCancellation] CancellationToken cancellationToken)
+    {
+        IAsyncEnumerable<IssueSummaryProjection> issues = _dbContext.LinkedIssues
+            .AsNoTracking()
+            .Where(link => link.ParentIssueId == id)
+            .Select(link => link.ChildIssue)
             .Select(i => new IssueSummaryProjection(i.Id, i.Title))
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .AsAsyncEnumerable();
+        await foreach (IssueSummaryProjection issue in issues.WithCancellation(cancellationToken))
+        {
+            yield return issue;
+        }
+
+    }
+
+    /// <inheritdoc />
+    public async IAsyncEnumerable<IssueSummaryProjection> GetChildIssues(Guid id, int pageSize, int pageNumber, [EnumeratorCancellation] CancellationToken cancellationToken)
+    {
+        IAsyncEnumerable<IssueSummaryProjection> issues = _dbContext.LinkedIssues
+            .AsNoTracking()
+            .Where(link => link.ChildIssueId == id)
+            .Select(link => link.ParentIssue)
+            .Select(i => new IssueSummaryProjection(i.Id, i.Title))
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .AsAsyncEnumerable();
         await foreach (IssueSummaryProjection issue in issues.WithCancellation(cancellationToken))
         {

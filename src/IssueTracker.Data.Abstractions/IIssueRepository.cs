@@ -17,7 +17,35 @@ namespace IssueTracker.Data.Abstractions;
 
 public interface IIssueRepository
 {
+    /// <summary>
+    /// Returns all issues 
+    /// </summary>
+    /// <param name="pageNumber" example="1" >current page number to return</param>
+    /// <param name="pageSize" example="10">maximum number of items to return</param>
+    /// <param name="cancellationToken">a cancellation token.</param>
+    /// <returns>all parent issues of an issue given by <paramref name="id"/></returns>
     IAsyncEnumerable<IssueSummaryProjection> GetIssueSummaries(int pageNumber, int pageSize, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Returns all parent issues of an issue given by <paramref name="id"/>
+    /// </summary>
+    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
+    /// <param name="pageNumber" example="1" >current page number to return</param>
+    /// <param name="pageSize" example="10">maximum number of items to return</param>
+    /// <param name="cancellationToken">a cancellation token.</param>
+    /// <returns>all parent issues of an issue given by <paramref name="id"/></returns>
+    IAsyncEnumerable<IssueSummaryProjection>  GetParentIssues(Guid id, int pageSize, int pageNumber, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Returns all child issues of an issue given by <paramref name="id"/>
+    /// </summary>
+    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
+    /// <param name="pageNumber" example="1" >current page number to return</param>
+    /// <param name="pageSize" example="10">maximum number of items to return</param>
+    /// <param name="cancellationToken">a cancellation token.</param>
+    /// <returns>all child issues of an issue given by <paramref name="id"/></returns>
+    IAsyncEnumerable<IssueSummaryProjection>  GetChildIssues(Guid id, int pageSize, int pageNumber, CancellationToken cancellationToken);
+
     Task<Issue?> GetUntrackedIssueById(Guid id, CancellationToken cancellationToken);
     Task<Issue?> GetIssueById(Guid id, CancellationToken cancellationToken);
     Task<Issue> AddIssue(Issue issue, CancellationToken cancellationToken);

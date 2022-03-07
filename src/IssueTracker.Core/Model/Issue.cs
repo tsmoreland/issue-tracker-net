@@ -19,6 +19,9 @@ namespace IssueTracker.Core.Model;
 /// <param name="Id"></param>
 public sealed record class Issue(Guid Id)
 {
+    private IList<LinkedIssue> ParentIssueEntities { get; init; } = new List<LinkedIssue>();
+    private IList<LinkedIssue> ChildIssueEntities { get; init; } = new List<LinkedIssue>();
+
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>
     /// </summary>
@@ -79,16 +82,13 @@ public sealed record class Issue(Guid Id)
     /// Issues that are linked to this one, this also serves as the ones that may be
     /// blocking this issue
     /// </summary>
-    public IEnumerable<LinkedIssue> ParentIssues => ParentIssueEntities.AsEnumerable();
+    public IEnumerable<Issue> ParentIssues => ParentIssueEntities.Select(i => i.ParentIssue);
 
     /// <summary>
     /// issues which this one links to, this also serves as issues that may be blocked by
     /// this issue
     /// </summary>
-    public IEnumerable<LinkedIssue> ChildIssues => ChildIssueEntities.AsEnumerable();
-
-    public IList<LinkedIssue> ParentIssueEntities { get; init; } = new List<LinkedIssue>();
-    public IList<LinkedIssue> ChildIssueEntities { get; init; } = new List<LinkedIssue>();
+    public IEnumerable<Issue> ChildIssues => ChildIssueEntities.Select(i => i.ChildIssue);
 
     public void LinkToIssue(LinkType linkType, Issue issue)
     {
