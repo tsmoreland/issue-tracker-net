@@ -66,6 +66,18 @@ public class IssuesService : IIssuesService
             : null;
     }
 
+    /// <inheritdoc />
+    public IAsyncEnumerable<IssueDto> GetParentIssues(Guid id, int pageSize, int pageNumber, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc />
+    public IAsyncEnumerable<IssueDto> GetChildIssues(Guid id, int pageSize, int pageNumber, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
     /// <summary>
     /// Adds a new issue 
     /// </summary>
