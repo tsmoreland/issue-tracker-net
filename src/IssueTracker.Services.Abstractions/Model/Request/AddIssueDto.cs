@@ -15,69 +15,51 @@ using System.ComponentModel.DataAnnotations;
 using IssueTracker.Core.Model;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
-namespace IssueTracker.Services.Abstractions.Model.Version2.Response;
+namespace IssueTracker.Services.Abstractions.Model.Request;
 
-[SwaggerSchemaName("Issue with Links Details")]
-public sealed class IssueDto
+/// <summary>
+/// Model used to add <see cref="Issue"/>
+/// </summary>
+[SwaggerSchemaName("Add Issue")]
+public sealed class AddIssueDto
 {
     /// <summary>
-    /// Instantiates a new instance of the <see cref="IssueDto"/> class.
+    /// instantiates a new instance of the <see cref="AddIssueDto"/> class.
     /// </summary>
-    public IssueDto(Guid id, string title, string? description, Priority priority, IEnumerable<IssueDto> parents, IEnumerable<IssueDto> children)
+    public AddIssueDto(string title, string? description, Priority priority)
     {
-        Id = id;
         Title = title;
         Description = description;
         Priority = priority;
-        Parents = parents;
-        Children = children;
     }
-
-    /// <summary>
-    /// Issue Id
-    /// </summary>
-    /// <example>48EE3BF9-C81D-4FE4-AB02-220C0122AFE4</example>
-    [Required]
-    public Guid Id { get; init; }
 
     /// <summary>
     /// Issue Title
     /// </summary>
     /// <example>Example Title</example>
     [Required]
+    [MaxLength(200)]
     public string Title { get; init; } 
 
     /// <summary>
     /// Issue Description
     /// </summary>
-    /// <example>Example Description</example>
-    [Required]
-    public string? Description { get; init; }
+    /// <example>Example description</example>
+    [MaxLength(500)]
+    public string? Description { get; init; } 
 
     /// <summary>
     /// Issue Priority
     /// </summary>
-    /// <example>Medium</example>
+    /// <example>High</example>
     [Required]
-    public Priority Priority { get; init; }
+    public Priority Priority { get; init; } 
 
     /// <summary>
-    /// Parent Issues
+    /// Convert Data Transfer Object to <see cref="Issue"/>
     /// </summary>
-    public IEnumerable<IssueDto> Parents { get; }
-
-    /// <summary>
-    /// Child issues
-    /// </summary>
-    public IEnumerable<IssueDto> Children { get; }
-
-    /// <summary>
-    /// Converts <see cref="Issue"/> to <see cref="IssueDto"/>
-    /// </summary>
-    public static IssueDto FromIssue(Issue issue)
+    public Issue ToIssue()
     {
-        return new IssueDto(issue.Id, issue.Title, issue.Description, issue.Priority,
-            issue.ParentIssues.Select(FromIssue),
-            issue.ChildIssues.Select(FromIssue));
+        return new Issue(Title, Description ?? string.Empty, Priority);
     }
 }

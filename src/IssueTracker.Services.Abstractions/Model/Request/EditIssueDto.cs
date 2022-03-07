@@ -15,18 +15,18 @@ using System.ComponentModel.DataAnnotations;
 using IssueTracker.Core.Model;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
-namespace IssueTracker.Services.Abstractions.Model.Version1.Request;
+namespace IssueTracker.Services.Abstractions.Model.Request;
 
 /// <summary>
-/// Model used to add <see cref="Issue"/>
+/// Model to use to update <see cref="Issue"/>
 /// </summary>
-[SwaggerSchemaName("Add Issue")]
-public sealed class AddIssueDto
+[SwaggerSchemaName("Edit Issue")]
+public sealed class EditIssueDto
 {
     /// <summary>
-    /// instantiates a new instance of the <see cref="AddIssueDto"/> class.
+    /// Instantiates a new instance of the <see cref="EditIssueDto"/> class.
     /// </summary>
-    public AddIssueDto(string title, string? description, Priority priority)
+    public EditIssueDto(string title, string? description, Priority priority)
     {
         Title = title;
         Description = description;
