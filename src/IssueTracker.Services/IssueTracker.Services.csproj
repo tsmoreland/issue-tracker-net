@@ -18,6 +18,7 @@
     <ProjectReference Include="..\IssueTracker.Core\IssueTracker.Core.csproj" />
     <ProjectReference Include="..\IssueTracker.Data.Abstractions\IssueTracker.Data.Abstractions.csproj" />
     <ProjectReference Include="..\IssueTracker.Services.Abstractions\IssueTracker.Services.Abstractions.csproj" />
+    <PackageReference Include="MediatR.Contracts" Version="1.0.1" />
   </ItemGroup>
 
 </Project>
