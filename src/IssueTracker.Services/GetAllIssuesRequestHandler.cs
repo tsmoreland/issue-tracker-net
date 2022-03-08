@@ -20,7 +20,7 @@ using MediatR;
 
 namespace IssueTracker.Services;
 
-public sealed class GetAllIssuesRequestHandler : IRequestHandler<GetAllIssuesRequest, IAsyncEnumerable<IssueSummaryProjection>> 
+public sealed class GetAllIssuesRequestHandler : IRequestHandler<GetAllIssuesRequest, IAsyncEnumerable<IssueSummaryDto>> 
 {
     private readonly IIssueRepository _repository;
 
@@ -30,7 +30,13 @@ public sealed class GetAllIssuesRequestHandler : IRequestHandler<GetAllIssuesReq
     }
 
     /// <inheritdoc />
-    public async Task<IAsyncEnumerable<IssueSummaryProjection>> Handle(GetAllIssuesRequest request, CancellationToken cancellationToken)
+    public Task<IAsyncEnumerable<IssueSummaryDto>> Handle(GetAllIssuesRequest request, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(HandleWithEnumerable(request, cancellationToken));
+    }
+
+    private async IAsyncEnumerable<IssueSummaryDto> HandleWithEnumerable(GetAllIssuesRequest request,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         (int pageNumber, int pageSize) = request;
 
