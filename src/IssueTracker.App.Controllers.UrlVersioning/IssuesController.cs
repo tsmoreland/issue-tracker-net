@@ -15,7 +15,9 @@ using System.Net.Mime;
 using IssueTracker.Services.Abstractions;
 using IssueTracker.Services.Abstractions.Model.Request;
 using IssueTracker.Services.Abstractions.Model.Response;
+using IssueTracker.Services.Abstractions.Requests;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -32,13 +34,15 @@ namespace IssueTracker.App.Controllers.UrlVersioning;
 public class IssuesController : ControllerBase
 {
     private readonly IIssuesService _service;
+    private readonly IMediator _mediator;
 
     /// <summary>
     /// Instantiates a new instance of <see cref="IssuesController"/>
     /// </summary>
-    public IssuesController(IIssuesService service)
+    public IssuesController(IIssuesService service, IMediator mediator)
     {
         _service = service;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -53,13 +57,13 @@ public class IssuesController : ControllerBase
     [Produces(MediaTypeNames.Application.Json, "application/xml")]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IAsyncEnumerable<IssueSummaryDto>), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [ApiVersion("1")]
-    public IActionResult GetAll(
+    public async Task<IActionResult> GetAll(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
         CancellationToken cancellationToken = default)
     {
         return ValidatePaging(ModelState, pageNumber, pageSize)
-            ? Ok(_service.GetAll(pageNumber, pageSize, cancellationToken))
+            ? Ok(await _mediator.Send(new GetAllIssuesRequest(pageNumber, pageSize), cancellationToken))
             : BadRequest(ModelState);
     }
 
