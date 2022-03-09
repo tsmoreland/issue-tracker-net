@@ -67,15 +67,23 @@ public class IssuesService : IIssuesService
     }
 
     /// <inheritdoc />
-    public IAsyncEnumerable<IssueDto> GetParentIssues(Guid id, int pageSize, int pageNumber, CancellationToken cancellationToken)
+    public async IAsyncEnumerable<IssueSummaryDto> GetParentIssues(Guid id, int pageSize, int pageNumber, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        IAsyncEnumerable<IssueSummaryProjection> issues = _repository.GetParentIssues(id, pageSize, pageNumber, cancellationToken);
+        await foreach ((Guid issueId, string name) in issues.WithCancellation(cancellationToken))
+        {
+            yield return new IssueSummaryDto(issueId, name);
+        }
     }
 
     /// <inheritdoc />
-    public IAsyncEnumerable<IssueDto> GetChildIssues(Guid id, int pageSize, int pageNumber, CancellationToken cancellationToken)
+    public async IAsyncEnumerable<IssueSummaryDto> GetChildIssues(Guid id, int pageSize, int pageNumber, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        IAsyncEnumerable<IssueSummaryProjection> issues = _repository.GetChildIssues(id, pageSize, pageNumber, cancellationToken);
+        await foreach ((Guid issueId, string name) in issues.WithCancellation(cancellationToken))
+        {
+            yield return new IssueSummaryDto(issueId, name);
+        }
     }
 
     /// <summary>
