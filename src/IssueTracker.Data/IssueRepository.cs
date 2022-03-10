@@ -44,7 +44,7 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
-    public async IAsyncEnumerable<IssueSummaryProjection> GetParentIssues(Guid id, int pageSize, int pageNumber, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<IssueSummaryProjection> GetParentIssues(Guid id, int pageNumber, int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         IAsyncEnumerable<IssueSummaryProjection> issues = _dbContext.LinkedIssues
             .AsNoTracking()
@@ -62,7 +62,7 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
-    public async IAsyncEnumerable<IssueSummaryProjection> GetChildIssues(Guid id, int pageSize, int pageNumber, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<IssueSummaryProjection> GetChildIssues(Guid id, int pageNumber, int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         IAsyncEnumerable<IssueSummaryProjection> issues = _dbContext.LinkedIssues
             .AsNoTracking()
@@ -120,5 +120,13 @@ public sealed class IssueRepository : IIssueRepository
         _dbContext.Issues.Remove(issue);
         return true;
 
+    }
+
+    /// <inheritdoc />
+    public Task<bool> IssueExists(Guid id, CancellationToken cancellationToken)
+    {
+        return _dbContext.Issues
+            .AsNoTracking()
+            .AnyAsync(i => i.Id == id, cancellationToken);
     }
 }

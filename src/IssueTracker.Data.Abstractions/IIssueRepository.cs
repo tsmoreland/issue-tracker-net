@@ -23,7 +23,7 @@ public interface IIssueRepository
     /// <param name="pageNumber" example="1" >current page number to return</param>
     /// <param name="pageSize" example="10">maximum number of items to return</param>
     /// <param name="cancellationToken">a cancellation token.</param>
-    /// <returns>all parent issues of an issue given by <paramref name="id"/></returns>
+    /// <returns>all issues</returns>
     IAsyncEnumerable<IssueSummaryProjection> GetIssueSummaries(int pageNumber, int pageSize, CancellationToken cancellationToken);
 
     /// <summary>
@@ -34,7 +34,7 @@ public interface IIssueRepository
     /// <param name="pageSize" example="10">maximum number of items to return</param>
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all parent issues of an issue given by <paramref name="id"/></returns>
-    IAsyncEnumerable<IssueSummaryProjection>  GetParentIssues(Guid id, int pageSize, int pageNumber, CancellationToken cancellationToken);
+    IAsyncEnumerable<IssueSummaryProjection>  GetParentIssues(Guid id, int pageNumber, int pageSize, CancellationToken cancellationToken);
 
     /// <summary>
     /// Returns all child issues of an issue given by <paramref name="id"/>
@@ -44,7 +44,7 @@ public interface IIssueRepository
     /// <param name="pageSize" example="10">maximum number of items to return</param>
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all child issues of an issue given by <paramref name="id"/></returns>
-    IAsyncEnumerable<IssueSummaryProjection>  GetChildIssues(Guid id, int pageSize, int pageNumber, CancellationToken cancellationToken);
+    IAsyncEnumerable<IssueSummaryProjection>  GetChildIssues(Guid id, int pageNumber, int pageSize, CancellationToken cancellationToken);
 
     Task<Issue?> GetUntrackedIssueById(Guid id, CancellationToken cancellationToken);
     Task<Issue?> GetIssueById(Guid id, CancellationToken cancellationToken);
@@ -57,4 +57,15 @@ public interface IIssueRepository
     Task CommitAsync(CancellationToken cancellationToken);
 
     Task<bool> DeleteIssueById(Guid id, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Returns <see langword="true"/> if issue matching <paramref name="id"/> exists
+    /// </summary>
+    /// <param name="id">id of issue to check</param>
+    /// <param name="cancellationToken">a cancellation token</param>
+    /// <returns>
+    /// an asynchronous task which upon completion contains <see langword="true"/>
+    /// if the issue exists.
+    /// </returns>
+    Task<bool> IssueExists(Guid id, CancellationToken cancellationToken);
 }
