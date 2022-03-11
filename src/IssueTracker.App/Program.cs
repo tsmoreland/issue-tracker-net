@@ -6,6 +6,7 @@ using IssueTracker.Data.Abstractions;
 using IssueTracker.Middelware.SecurityHeaders;
 using IssueTracker.ServiceDiscovery;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.ResponseCompression;
 using Tcell.Agent.AspNetCore;
 
@@ -74,7 +75,14 @@ app.UseSecurityHeaders();
 app.UseProblemDetails();
 
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(options =>
+{
+    IApiVersionDescriptionProvider provider = app.Services .GetRequiredService<IApiVersionDescriptionProvider>();
+    foreach (string groupName in provider.ApiVersionDescriptions.Select(d => d.GroupName))
+    {
+        options.SwaggerEndpoint($"/swagger/{groupName}/swagger.json", groupName.ToUpperInvariant());
+    }
+});
 app.UseMigrationsEndPoint();
 
 app.UseHttpsRedirection();
