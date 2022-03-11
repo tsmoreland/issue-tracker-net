@@ -147,7 +147,7 @@ public class IssuesController : ControllerBase
     [HttpGet("{id}")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", "application/xml")]
     [Produces(MediaTypeNames.Application.Json, "application/xml")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IAsyncEnumerable<IssueDto>), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [ApiVersion("1")]
     public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
     {
