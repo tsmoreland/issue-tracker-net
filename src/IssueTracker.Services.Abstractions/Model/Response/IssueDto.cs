@@ -35,6 +35,20 @@ public sealed class IssueDto
     }
 
     /// <summary>
+    /// Instantiates a new instance of the <see cref="IssueDto"/> class.
+    /// </summary>
+    /// <remarks>
+    /// required for XML serialization, along with public setters
+    /// </remarks>
+    public IssueDto()
+    {
+        Id = Guid.Empty;
+        Title = string.Empty;
+        Description = string.Empty;
+        Priority = Priority.Low;
+    }
+
+    /// <summary>
     /// Issue Id
     /// </summary>
     /// <example>48EE3BF9-C81D-4FE4-AB02-220C0122AFE4</example>
