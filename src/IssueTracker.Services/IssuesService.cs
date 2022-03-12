@@ -30,12 +30,7 @@ public class IssuesService : IIssuesService
         _repository = repository;
     }
 
-    /// <summary>
-    /// Returns issue matching <paramref name="id"/> if found
-    /// </summary>
-    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
+    /// <inheritdoc/>
     public async Task<IssueDto?> Get(Guid id, CancellationToken cancellationToken)
     {
         Issue? issue = await _repository.GetUntrackedIssueById(id, cancellationToken);
@@ -47,7 +42,7 @@ public class IssuesService : IIssuesService
     /// <inheritdoc />
     public async IAsyncEnumerable<IssueSummaryDto> GetParentIssues(Guid id, int pageSize, int pageNumber, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        IAsyncEnumerable<IssueSummaryProjection> issues = _repository.GetParentIssues(id, pageSize, pageNumber, cancellationToken);
+        IAsyncEnumerable<IssueSummaryProjection> issues = _repository.GetParentIssues(id, pageNumber, pageSize, cancellationToken);
         await foreach ((Guid issueId, string name) in issues.WithCancellation(cancellationToken))
         {
             yield return new IssueSummaryDto(issueId, name);
@@ -55,34 +50,23 @@ public class IssuesService : IIssuesService
     }
 
     /// <inheritdoc />
-    public async IAsyncEnumerable<IssueSummaryDto> GetChildIssues(Guid id, int pageSize, int pageNumber, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<IssueSummaryDto> GetChildIssues(Guid id, int pageNumber, int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        IAsyncEnumerable<IssueSummaryProjection> issues = _repository.GetChildIssues(id, pageSize, pageNumber, cancellationToken);
+        IAsyncEnumerable<IssueSummaryProjection> issues = _repository.GetChildIssues(id, pageNumber, pageSize, cancellationToken);
         await foreach ((Guid issueId, string name) in issues.WithCancellation(cancellationToken))
         {
             yield return new IssueSummaryDto(issueId, name);
         }
     }
 
-    /// <summary>
-    /// Adds a new issue 
-    /// </summary>
-    /// <param name="model">the issue to add</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns></returns>
+    /// <inheritdoc/>
     public async Task<IssueDto> Create(AddIssueDto model, CancellationToken cancellationToken)
     {
         Issue issue = await _repository.AddIssue(model.ToIssue(), cancellationToken);
         return IssueDto.FromIssue(issue);
     }
 
-    /// <summary>
-    /// Updates existing issue given by <paramref name="id"/>
-    /// </summary>
-    /// <param name="id">unique id of the issue to update</param>
-    /// <param name="model">new values for the issue</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns></returns>
+    /// <inheritdoc/>
     public async Task<IssueDto?> Update(Guid id, EditIssueDto model, CancellationToken cancellationToken)
     {
         Issue? issue = await _repository.GetIssueById(id, cancellationToken);
@@ -99,12 +83,7 @@ public class IssuesService : IIssuesService
         return IssueDto.FromIssue(issue);
     }
 
-    /// <summary>
-    /// Deletes the issue given by <paramref name="id"/> 
-    /// </summary>
-    /// <param name="id">unique id of the issue to delete</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns></returns>
+    /// <inheritdoc/>
     public async Task<bool> Delete(Guid id, CancellationToken cancellationToken)
     {
         if (!await _repository.DeleteIssueById(id, cancellationToken))

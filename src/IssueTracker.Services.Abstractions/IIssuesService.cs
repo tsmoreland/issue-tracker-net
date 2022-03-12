@@ -33,7 +33,7 @@ public interface IIssuesService
     /// <param name="pageSize" example="10">maximum number of items to return</param>
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all parent issues of an issue given by <paramref name="id"/></returns>
-    IAsyncEnumerable<IssueSummaryDto>  GetParentIssues(Guid id, int pageSize, int pageNumber, CancellationToken cancellationToken);
+    IAsyncEnumerable<IssueSummaryDto>  GetParentIssues(Guid id, int pageNumber, int pageSize, CancellationToken cancellationToken);
 
     /// <summary>
     /// Returns all child issues of an issue given by <paramref name="id"/>
@@ -43,7 +43,7 @@ public interface IIssuesService
     /// <param name="pageSize" example="10">maximum number of items to return</param>
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all child issues of an issue given by <paramref name="id"/></returns>
-    IAsyncEnumerable<IssueSummaryDto>  GetChildIssues(Guid id, int pageSize, int pageNumber, CancellationToken cancellationToken);
+    IAsyncEnumerable<IssueSummaryDto>  GetChildIssues(Guid id, int pageNumber, int pageSize, CancellationToken cancellationToken);
 
     /// <summary>
     /// Adds a new issue 
