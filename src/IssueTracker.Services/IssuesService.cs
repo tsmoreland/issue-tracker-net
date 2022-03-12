@@ -31,28 +31,6 @@ public class IssuesService : IIssuesService
     }
 
     /// <summary>
-    /// Returns all issues 
-    /// </summary>
-    /// <param name="pageNumber" example="1" >current page number to return</param>
-    /// <param name="pageSize" example="10">maximum number of items to return</param>
-    /// <param name="cancellationToken">a cancellation token.</param>
-    /// <returns>all issues</returns>
-    public async IAsyncEnumerable<IssueSummaryDto> GetAll(
-        int pageNumber,
-        int pageSize,
-        [EnumeratorCancellation] CancellationToken cancellationToken)
-    {
-        ConfiguredCancelableAsyncEnumerable<IssueSummaryProjection> issues = _repository
-            .GetIssueSummaries(pageNumber, pageSize, cancellationToken)
-            .WithCancellation(cancellationToken);
-
-        await foreach ((Guid id, string name) in issues)
-        {
-            yield return new IssueSummaryDto(id, name);
-        }
-    }
-
-    /// <summary>
     /// Returns issue matching <paramref name="id"/> if found
     /// </summary>
     /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
