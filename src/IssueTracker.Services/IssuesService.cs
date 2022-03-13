@@ -39,26 +39,6 @@ public class IssuesService : IIssuesService
             : null;
     }
 
-    /// <inheritdoc />
-    public async IAsyncEnumerable<IssueSummaryDto> GetParentIssues(Guid id, int pageSize, int pageNumber, [EnumeratorCancellation] CancellationToken cancellationToken)
-    {
-        IAsyncEnumerable<IssueSummaryProjection> issues = _repository.GetParentIssues(id, pageNumber, pageSize, cancellationToken);
-        await foreach ((Guid issueId, string name) in issues.WithCancellation(cancellationToken))
-        {
-            yield return new IssueSummaryDto(issueId, name);
-        }
-    }
-
-    /// <inheritdoc />
-    public async IAsyncEnumerable<IssueSummaryDto> GetChildIssues(Guid id, int pageNumber, int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken)
-    {
-        IAsyncEnumerable<IssueSummaryProjection> issues = _repository.GetChildIssues(id, pageNumber, pageSize, cancellationToken);
-        await foreach ((Guid issueId, string name) in issues.WithCancellation(cancellationToken))
-        {
-            yield return new IssueSummaryDto(issueId, name);
-        }
-    }
-
     /// <inheritdoc/>
     public async Task<IssueDto> Create(AddIssueDto model, CancellationToken cancellationToken)
     {

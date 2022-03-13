@@ -26,26 +26,6 @@ public interface IIssuesService
     Task<IssueDto?> Get(Guid id, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Returns all parent issues of an issue given by <paramref name="id"/>
-    /// </summary>
-    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
-    /// <param name="pageNumber" example="1" >current page number to return</param>
-    /// <param name="pageSize" example="10">maximum number of items to return</param>
-    /// <param name="cancellationToken">a cancellation token.</param>
-    /// <returns>all parent issues of an issue given by <paramref name="id"/></returns>
-    IAsyncEnumerable<IssueSummaryDto>  GetParentIssues(Guid id, int pageNumber, int pageSize, CancellationToken cancellationToken);
-
-    /// <summary>
-    /// Returns all child issues of an issue given by <paramref name="id"/>
-    /// </summary>
-    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
-    /// <param name="pageNumber" example="1" >current page number to return</param>
-    /// <param name="pageSize" example="10">maximum number of items to return</param>
-    /// <param name="cancellationToken">a cancellation token.</param>
-    /// <returns>all child issues of an issue given by <paramref name="id"/></returns>
-    IAsyncEnumerable<IssueSummaryDto>  GetChildIssues(Guid id, int pageNumber, int pageSize, CancellationToken cancellationToken);
-
-    /// <summary>
     /// Adds a new issue 
     /// </summary>
     /// <param name="model">the issue to add</param>
