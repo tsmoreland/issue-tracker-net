@@ -11,9 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Runtime.CompilerServices;
 using IssueTracker.Core.Model;
-using IssueTracker.Core.Projections;
 using IssueTracker.Data.Abstractions;
 using IssueTracker.Services.Abstractions;
 using IssueTracker.Services.Abstractions.Model.Request;
@@ -37,13 +35,6 @@ public class IssuesService : IIssuesService
         return issue is not null
             ? IssueDto.FromIssue(issue)
             : null;
-    }
-
-    /// <inheritdoc/>
-    public async Task<IssueDto> Create(AddIssueDto model, CancellationToken cancellationToken)
-    {
-        Issue issue = await _repository.AddIssue(model.ToIssue(), cancellationToken);
-        return IssueDto.FromIssue(issue);
     }
 
     /// <inheritdoc/>

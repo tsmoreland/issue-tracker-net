@@ -26,14 +26,6 @@ public interface IIssuesService
     Task<IssueDto?> Get(Guid id, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Adds a new issue 
-    /// </summary>
-    /// <param name="model">the issue to add</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns>the newly created issue</returns>
-    Task<IssueDto> Create(AddIssueDto model, CancellationToken cancellationToken);
-
-    /// <summary>
     /// Updates existing issue given by <paramref name="id"/>
     /// </summary>
     /// <param name="id">unique id of the issue to update</param>
