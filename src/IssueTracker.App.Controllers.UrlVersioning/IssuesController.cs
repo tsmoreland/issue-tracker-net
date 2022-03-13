@@ -105,7 +105,7 @@ public class IssuesController : ControllerBase
             return BadRequest(new ValidationProblemDetails(ModelState));
         }
 
-        IssueDto issue = await _service.Create(model, cancellationToken);
+        IssueDto issue = await _mediator.Send(new CreateIssueRequest(model), cancellationToken);
         return new ObjectResult(issue) { StatusCode = StatusCodes.Status201Created };
     }
 
