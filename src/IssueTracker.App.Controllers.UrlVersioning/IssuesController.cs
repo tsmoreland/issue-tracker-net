@@ -82,7 +82,7 @@ public class IssuesController : ControllerBase
     [SwaggerResponse(StatusCodes.Status404NotFound, "issue not found", typeof(IssueSummaryDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
     {
-        IssueDto? issue = await _service.Get(id, cancellationToken);
+        IssueDto? issue = await _mediator.Send(new FindIssueByIdRequest(id), cancellationToken);
         return issue is not null
             ? Ok(issue)
             : NotFound();
