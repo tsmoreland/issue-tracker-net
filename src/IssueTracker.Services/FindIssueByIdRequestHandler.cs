@@ -36,5 +36,4 @@ public sealed class FindIssueByIdRequestHandler : IRequestHandler<FindIssueByIdR
             ? IssueDto.FromIssue(issue)
             : null;
     }
-    }
 }
