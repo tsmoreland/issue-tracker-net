@@ -17,7 +17,7 @@ using MediatR;
 
 namespace IssueTracker.Services;
 
-public sealed class DeleteIssueRequestHandler : IRequestHandler<DeleteIssueRequest>
+public sealed class DeleteIssueRequestHandler : IRequestHandler<DeleteIssueRequest, bool>
 {
     private readonly IIssueRepository _repository;
 
@@ -27,9 +27,8 @@ public sealed class DeleteIssueRequestHandler : IRequestHandler<DeleteIssueReque
     }
 
     /// <inheritdoc />
-    public Task<Unit> Handle(DeleteIssueRequest request, CancellationToken cancellationToken)
+    public Task<bool> Handle(DeleteIssueRequest request, CancellationToken cancellationToken)
     {
-        return _repository.DeleteIssueById(request.Id, cancellationToken)
-            .ContinueWith(static _ => Unit.Value, TaskContinuationOptions.OnlyOnRanToCompletion);
+        return _repository.DeleteIssueById(request.Id, cancellationToken);
     }
 }

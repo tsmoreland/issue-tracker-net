@@ -15,4 +15,4 @@ using MediatR;
 
 namespace IssueTracker.Services.Abstractions.Requests;
 
-public sealed record class DeleteIssueRequest(Guid Id) : IRequest;
+public sealed record class DeleteIssueRequest(Guid Id) : IRequest<bool>;
