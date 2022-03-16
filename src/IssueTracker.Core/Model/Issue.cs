@@ -121,6 +121,19 @@ public sealed record class Issue(Guid Id)
     }
 
     /// <summary>
+    /// Upates top level properties with values from <paramref name="source"/>.
+    /// Does not affect linked issues
+    /// </summary>
+    public void CopyTopLevelFrom(Issue source)
+    {
+        Title = source.Title;
+        Description = source.Description;
+        Priority = source.Priority;
+
+        LastUpdated = DateTime.UtcNow;
+    }
+
+    /// <summary>
     /// Update issue priority
     /// </summary>
     public void ChangePriority(Priority priority)
