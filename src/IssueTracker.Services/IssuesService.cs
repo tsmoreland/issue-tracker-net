@@ -29,15 +29,6 @@ public class IssuesService : IIssuesService
     }
 
     /// <inheritdoc/>
-    public async Task<IssueDto?> Get(Guid id, CancellationToken cancellationToken)
-    {
-        Issue? issue = await _repository.GetUntrackedIssueById(id, cancellationToken);
-        return issue is not null
-            ? IssueDto.FromIssue(issue)
-            : null;
-    }
-
-    /// <inheritdoc/>
     public async Task<IssueDto?> Update(Guid id, EditIssueDto model, CancellationToken cancellationToken)
     {
         Issue? issue = await _repository.GetIssueById(id, cancellationToken);

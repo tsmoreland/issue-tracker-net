@@ -18,14 +18,6 @@ namespace IssueTracker.Services.Abstractions;
 public interface IIssuesService
 {
     /// <summary>
-    /// Returns issue matching <paramref name="id"/> if found
-    /// </summary>
-    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
-    Task<IssueDto?> Get(Guid id, CancellationToken cancellationToken);
-
-    /// <summary>
     /// Updates existing issue given by <paramref name="id"/>
     /// </summary>
     /// <param name="id">unique id of the issue to update</param>
