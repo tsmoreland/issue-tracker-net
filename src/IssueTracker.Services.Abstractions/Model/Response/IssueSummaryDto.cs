@@ -29,6 +29,13 @@ public sealed class IssueSummaryDto
         Title = title;
     }
 
+    public IssueSummaryDto()
+    {
+        Id = Guid.Empty;
+        Title = string.Empty;
+
+    }
+
     /// <summary>
     /// Issue Id
     /// </summary>
