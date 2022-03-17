@@ -11,7 +11,6 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Services.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,8 +29,6 @@ public sealed class HostingStartup : IHostingStartup
 
     private static void ConfigureServices(IServiceCollection services)
     {
-        services.AddScoped<IIssuesService, IssuesService>();
-
         // this can be called multiple times so we're safe to do this here and any number of other places
         // because MediatR uses a singleton (static class) to track the items added
         services.AddMediatR(typeof(HostingStartup).Assembly);
