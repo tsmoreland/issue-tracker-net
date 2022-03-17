@@ -12,7 +12,6 @@
 //
 
 using System.Net.Mime;
-using IssueTracker.Services.Abstractions;
 using IssueTracker.Services.Abstractions.Model.Request;
 using IssueTracker.Services.Abstractions.Model.Response;
 using IssueTracker.Services.Abstractions.Requests;
@@ -34,15 +33,13 @@ namespace IssueTracker.App.Controllers.UrlVersioning;
 [ApiVersion("1")]
 public class IssuesController : ControllerBase
 {
-    private readonly IIssuesService _service;
     private readonly IMediator _mediator;
 
     /// <summary>
     /// Instantiates a new instance of <see cref="IssuesController"/>
     /// </summary>
-    public IssuesController(IIssuesService service, IMediator mediator)
+    public IssuesController(IMediator mediator)
     {
-        _service = service;
         _mediator = mediator;
     }
 
@@ -124,7 +121,12 @@ public class IssuesController : ControllerBase
     [SwaggerResponse(StatusCodes.Status404NotFound, "issue not found", typeof(IssueSummaryDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     public async Task<IActionResult> Put(Guid id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
     {
-        IssueDto? issue = await _service.Update(id, model, cancellationToken);
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new ValidationProblemDetails(ModelState));
+        }
+
+        IssueDto? issue = await _mediator.Send(new EditIssueRequest(id, model), cancellationToken);
         return issue is not null
             ? Ok(issue)
             : NotFound();
@@ -143,7 +145,7 @@ public class IssuesController : ControllerBase
     [SwaggerResponse(StatusCodes.Status404NotFound, "issue not found", typeof(IssueSummaryDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        return await _service.Delete(id, cancellationToken)
+        return await _mediator.Send(new DeleteIssueRequest(id), cancellationToken)
             ? new StatusCodeResult(StatusCodes.Status204NoContent)
             : NotFound();
     }
