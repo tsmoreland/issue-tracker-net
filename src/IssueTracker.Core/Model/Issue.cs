@@ -90,6 +90,11 @@ public sealed record class Issue(Guid Id)
     /// </summary>
     public IEnumerable<Issue> ChildIssues => ChildIssueEntities.Select(i => i.ChildIssue);
 
+    /// <summary>
+    /// adds link to child issue 
+    /// </summary>
+    /// <param name="linkType">the type of link</param>
+    /// <param name="issue">the issue to link to</param>
     public void LinkToIssue(LinkType linkType, Issue issue)
     {
         ChildIssueEntities.Add(new LinkedIssue(linkType, this, issue));
