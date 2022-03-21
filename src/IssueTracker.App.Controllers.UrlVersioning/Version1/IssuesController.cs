@@ -12,7 +12,7 @@
 //
 
 using System.Net.Mime;
-using IssueTracker.Services.Abstractions.Model.Request;
+using IssueTracker.App.Controllers.UrlVersioning.Version1.Request;
 using IssueTracker.Services.Abstractions.Model.Response;
 using IssueTracker.Services.Abstractions.Requests;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
@@ -22,7 +22,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using static IssueTracker.App.Controllers.Shared.Validation.PagingValidation;
 
-namespace IssueTracker.App.Controllers.UrlVersioning;
+namespace IssueTracker.App.Controllers.UrlVersioning.Version1;
 
 /// <summary>
 /// Issue Controller
@@ -102,7 +102,7 @@ public class IssuesController : ControllerBase
             return BadRequest(new ValidationProblemDetails(ModelState));
         }
 
-        IssueDto issue = await _mediator.Send(new CreateIssueRequest(model), cancellationToken);
+        IssueDto issue = await _mediator.Send(new CreateIssueRequest(model.ToModel()), cancellationToken);
         return new ObjectResult(issue) { StatusCode = StatusCodes.Status201Created };
     }
 
@@ -126,7 +126,7 @@ public class IssuesController : ControllerBase
             return BadRequest(new ValidationProblemDetails(ModelState));
         }
 
-        IssueDto? issue = await _mediator.Send(new EditIssueRequest(id, model), cancellationToken);
+        IssueDto? issue = await _mediator.Send(new EditIssueRequest(id, model.ToModel()), cancellationToken);
         return issue is not null
             ? Ok(issue)
             : NotFound();
