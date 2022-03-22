@@ -26,11 +26,12 @@ public sealed class EditIssueDto
     /// <summary>
     /// Instantiates a new instance of the <see cref="EditIssueDto"/> class.
     /// </summary>
-    public EditIssueDto(string title, string? description, Priority priority)
+    public EditIssueDto(string title, string? description, Priority priority, IssueType type)
     {
         Title = title;
         Description = description;
         Priority = priority;
+        Type = type;
     }
 
     /// <summary>
@@ -53,13 +54,19 @@ public sealed class EditIssueDto
     /// </summary>
     /// <example>High</example>
     [Required]
-    public Priority Priority { get; init; } 
+    public Priority Priority { get; init; }
+
+    /// <summary>
+    /// Issue Type
+    /// </summary>
+    [Required]
+    public IssueType Type { get; init; }
 
     /// <summary>
     /// Convert Data Transfer Object to <see cref="Issue"/>
     /// </summary>
-    public Issue ToIssue()
+    public Issue ToModel()
     {
-        return new Issue(Title, Description ?? string.Empty, Priority);
+        return new Issue(Title, Description ?? string.Empty, Priority, Type);
     }
 }
