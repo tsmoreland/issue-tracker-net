@@ -33,23 +33,34 @@ public sealed record class Issue(Guid Id)
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>
     /// </summary>
-    public Issue(string title, string description, Priority priority)
+    public Issue(string title, string description, Priority priority, IssueType type)
         : this(Guid.NewGuid())
     {
         Title = title;
         Description = description;
         Priority = priority;
+        Type = type;
         LastUpdated = DateTime.UtcNow;
     }
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>, constructor provided primarily for use with entity framework
     /// </summary>
-    public Issue(Guid id, string title, string description, Priority priority, DateTime lastUpdated, string? concurrencyToken, IEnumerable<LinkedIssue> parentIssueEntities, IEnumerable<LinkedIssue> childIssueEntities)
+    public Issue(
+        Guid id,
+        string title,
+        string description,
+        Priority priority,
+        IssueType type,
+        DateTime lastUpdated,
+        string? concurrencyToken,
+        IEnumerable<LinkedIssue> parentIssueEntities,
+        IEnumerable<LinkedIssue> childIssueEntities)
         : this(id)
     {
         Title = title;
         Description = description;
         Priority = priority;
+        Type = type;
         LastUpdated = lastUpdated;
         ConcurrencyToken = concurrencyToken;
         ParentIssueEntities = parentIssueEntities.ToList();
@@ -68,6 +79,12 @@ public sealed record class Issue(Guid Id)
     /// Issue Priority
     /// </summary>
     public Priority Priority { get; private set; } = Priority.Low;
+
+    /// <summary>
+    /// Issue Type
+    /// </summary>
+    public IssueType Type { get; private set; } = IssueType.Defect;
+
     /// <summary>
     /// Last Updated field used for auditing
     /// </summary>
