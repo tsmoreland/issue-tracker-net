@@ -81,14 +81,17 @@ public sealed class IssuesDbContext : DbContext
         issueEntity.Ignore(e => e.ParentIssues);
         issueEntity.Ignore(e => e.ChildIssues);
 
-        Issue first = new(new Guid("1385056E-8AFA-4E09-96DF-AE12EFDF1A29"), "First", "First issue", Priority.Medium,
+        Issue first = new(new Guid("1385056E-8AFA-4E09-96DF-AE12EFDF1A29"), "First", "First issue",
+            Priority.Medium, IssueType.Epic,
             new DateTime(2022, 01, 01, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString(),
             Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>());
         Issue second = new (new Guid("A28B8C45-6668-4169-940C-C16D71EB69DE"), "Second", "Second issue",
-            Priority.Low, new DateTime(2022, 01, 020, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString(),
+            Priority.Low, IssueType.Story,
+            new DateTime(2022, 01, 020, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString(),
             Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>());
         Issue third = new (new Guid("502AD68E-7B37-4426-B422-23B6A9B1B7CA"), "Third", "Third issue",
-            Priority.Medium, new DateTime(2022, 01, 020, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString(),
+            Priority.Medium, IssueType.Story,
+            new DateTime(2022, 01, 020, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString(),
             Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>());
         issueEntity.HasData(first, second, third);
 

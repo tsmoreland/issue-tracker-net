@@ -43,7 +43,7 @@ public sealed class EditIssueRequestHandler : IRequestHandler<EditIssueRequest, 
                     return null;
                 }
 
-                issue.CopyTopLevelFrom(model.ToIssue());
+                issue.CopyTopLevelFrom(model.ToModel());
                 return IssueDto.FromIssue(issue);
 
             }, TaskContinuationOptions.OnlyOnRanToCompletion);
