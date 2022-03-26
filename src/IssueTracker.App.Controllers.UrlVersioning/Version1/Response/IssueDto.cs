@@ -26,13 +26,12 @@ public sealed class IssueDto
     /// <summary>
     /// Instantiates a new instance of the <see cref="IssueDto"/> class.
     /// </summary>
-    public IssueDto(Guid id, string title, string? description, Priority priority, IssueType type)
+    public IssueDto(Guid id, string title, string? description, Priority priority)
     {
         Id = id;
         Title = title;
         Description = description;
         Priority = priority;
-        Type = type;
     }
 
     /// <summary>
@@ -88,6 +87,6 @@ public sealed class IssueDto
     /// </summary>
     public static IssueDto FromIssue(Issue issue)
     {
-        return new IssueDto(issue.Id, issue.Title, issue.Description, issue.Priority, issue.Type);
+        return new IssueDto(issue.Id, issue.Title, issue.Description, issue.Priority);
     }
 }

@@ -11,16 +11,13 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.ComponentModel.DataAnnotations;
 using IssueTracker.Core.Model;
-using IssueTracker.SwashbuckleExtensions.Abstractions;
 
 namespace IssueTracker.Services.Abstractions.Model.Request;
 
 /// <summary>
 /// Model used to add <see cref="Issue"/>
 /// </summary>
-[SwaggerSchemaName("Add Issue")]
 public sealed class AddIssueDto
 {
     /// <summary>
@@ -38,28 +35,23 @@ public sealed class AddIssueDto
     /// Issue Title
     /// </summary>
     /// <example>Example Title</example>
-    [Required]
-    [MaxLength(200)]
     public string Title { get; init; } 
 
     /// <summary>
     /// Issue Description
     /// </summary>
     /// <example>Example description</example>
-    [MaxLength(500)]
     public string? Description { get; init; } 
 
     /// <summary>
     /// Issue Priority
     /// </summary>
     /// <example>High</example>
-    [Required]
     public Priority Priority { get; init; }
 
     /// <summary>
     /// Issue Type
     /// </summary>
-    [Required]
     public IssueType Type { get; init; }
 
     /// <summary>

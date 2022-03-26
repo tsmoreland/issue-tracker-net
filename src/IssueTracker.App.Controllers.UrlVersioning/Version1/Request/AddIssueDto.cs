@@ -56,9 +56,9 @@ public sealed class AddIssueDto
     public Priority Priority { get; init; } 
 
     /// <summary>
-    /// 
+    /// Converts DTO to Model
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Model</returns>
     public Services.Abstractions.Model.Request.AddIssueDto ToModel()
     {
         return new Services.Abstractions.Model.Request.AddIssueDto(Title, Description, Priority, IssueType.Defect);

@@ -12,6 +12,7 @@
 //
 
 using System.Net.Mime;
+using IssueTracker.App.Controllers.UrlVersioning.Version2.Request;
 using IssueTracker.Services.Abstractions.Model.Response;
 using IssueTracker.Services.Abstractions.Requests;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
@@ -21,7 +22,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using static IssueTracker.App.Controllers.Shared.Validation.PagingValidation;
 
-namespace IssueTracker.App.Controllers.UrlVersioning;
+namespace IssueTracker.App.Controllers.UrlVersioning.Version2;
 
 /// <summary>
 /// Issues Controller (v2)
@@ -109,5 +110,52 @@ public sealed class IssueV2Controller : ControllerBase
 
         ModelState.AddModelError(nameof(id), "issue not found");
         return NotFound(ModelState);
+    }
+
+    /// <summary>
+    /// Adds a new issue 
+    /// </summary>
+    /// <param name="model">the issue to add</param>
+    /// <param name="cancellationToken">A cancellation token</param>
+    /// <returns>newly created <see cref="IssueDto"/></returns>
+    [HttpPost]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", "application/xml")]
+    [Produces(MediaTypeNames.Application.Json, "application/xml")]
+    [SwaggerResponse(StatusCodes.Status201Created, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    public async Task<IActionResult> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new ValidationProblemDetails(ModelState));
+        }
+
+        IssueDto issue = await _mediator.Send(new CreateIssueRequest(model.ToModel()), cancellationToken);
+        return new ObjectResult(issue) { StatusCode = StatusCodes.Status201Created };
+    }
+
+    /// <summary>
+    /// Updates existing issue given by <paramref name="id"/>
+    /// </summary>
+    /// <param name="id">unique id of the issue to update</param>
+    /// <param name="model">new values for the issue</param>
+    /// <param name="cancellationToken">A cancellation token</param>
+    /// <returns>updated <see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
+    [HttpPut("{id}")]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", "application/xml")]
+    [Produces(MediaTypeNames.Application.Json, "application/xml")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid argument", typeof(IssueSummaryDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "issue not found", typeof(IssueSummaryDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    public async Task<IActionResult> Put(Guid id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new ValidationProblemDetails(ModelState));
+        }
+
+        IssueDto? issue = await _mediator.Send(new EditIssueRequest(id, model.ToModel()), cancellationToken);
+        return issue is not null
+            ? Ok(issue)
+            : NotFound();
     }
 }

@@ -11,22 +11,19 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.ComponentModel.DataAnnotations;
 using IssueTracker.Core.Model;
-using IssueTracker.SwashbuckleExtensions.Abstractions;
 
 namespace IssueTracker.Services.Abstractions.Model.Request;
 
 /// <summary>
 /// Model to use to update <see cref="Issue"/>
 /// </summary>
-[SwaggerSchemaName("Edit Issue")]
 public sealed class EditIssueDto
 {
     /// <summary>
     /// Instantiates a new instance of the <see cref="EditIssueDto"/> class.
     /// </summary>
-    public EditIssueDto(string title, string? description, Priority priority, IssueType type)
+    public EditIssueDto(string title, string? description, Priority priority, IssueType? type)
     {
         Title = title;
         Description = description;
@@ -38,35 +35,30 @@ public sealed class EditIssueDto
     /// Issue Title
     /// </summary>
     /// <example>Example Title</example>
-    [Required]
-    [MaxLength(200)]
     public string Title { get; init; } 
 
     /// <summary>
     /// Issue Description
     /// </summary>
     /// <example>Example description</example>
-    [MaxLength(500)]
     public string? Description { get; init; } 
 
     /// <summary>
     /// Issue Priority
     /// </summary>
     /// <example>High</example>
-    [Required]
     public Priority Priority { get; init; }
 
     /// <summary>
     /// Issue Type
     /// </summary>
-    [Required]
-    public IssueType Type { get; init; }
+    public IssueType? Type { get; init; }
 
     /// <summary>
     /// Convert Data Transfer Object to <see cref="Issue"/>
     /// </summary>
     public Issue ToModel()
     {
-        return new Issue(Title, Description ?? string.Empty, Priority, Type);
+        return new Issue(Title, Description ?? string.Empty, Priority, Type ?? IssueType.Defect);
     }
 }
