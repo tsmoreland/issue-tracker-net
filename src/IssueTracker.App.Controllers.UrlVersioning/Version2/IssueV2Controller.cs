@@ -13,7 +13,7 @@
 
 using System.Net.Mime;
 using IssueTracker.App.Controllers.UrlVersioning.Version2.Request;
-using IssueTracker.Services.Abstractions.Model.Response;
+using IssueTracker.App.Controllers.UrlVersioning.Version2.Response;
 using IssueTracker.Services.Abstractions.Requests;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 using MediatR;
@@ -44,6 +44,48 @@ public sealed class IssueV2Controller : ControllerBase
     }
 
     /// <summary>
+    /// Returns all issues 
+    /// </summary>
+    /// <param name="pageNumber" example="1" >current page number to return</param>
+    /// <param name="pageSize" example="10">maximum number of items to return</param>
+    /// <param name="cancellationToken">a cancellation token.</param>
+    /// <returns>all issues</returns>
+    [HttpGet]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", "application/xml")]
+    [Produces(MediaTypeNames.Application.Json, "application/xml")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IAsyncEnumerable<IssueSummaryDto>), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(IAsyncEnumerable<IssueSummaryDto>), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    public async Task<IActionResult> GetAll(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        return ValidatePaging(ModelState, pageNumber, pageSize)
+            ? Ok(IssueSummaryDto.MapFrom(await _mediator.Send(new GetAllIssuesRequest(pageNumber, pageSize), cancellationToken), cancellationToken))
+            : BadRequest(ModelState);
+    }
+
+    /// <summary>
+    /// Returns issue matching <paramref name="id"/> if found
+    /// </summary>
+    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
+    /// <param name="cancellationToken">A cancellation token</param>
+    /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
+    [HttpGet("{id}")]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", "application/xml")]
+    [Produces(MediaTypeNames.Application.Json, "application/xml")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid argument", typeof(IssueSummaryDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "issue not found", typeof(IssueSummaryDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+    {
+        IssueDto? issue = IssueDto.FromProjection(await _mediator.Send(new FindIssueByIdRequest(id), cancellationToken));
+        return issue is not null
+            ? Ok(issue)
+            : NotFound();
+    }
+
+    /// <summary>
     /// Returns all parent issues 
     /// </summary>
     /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
@@ -70,7 +112,7 @@ public sealed class IssueV2Controller : ControllerBase
 
         if (await _mediator.Send(new IssueExistsRequest(id), cancellationToken))
         {
-            return Ok(await _mediator.Send(new GetParentIssuesRequest(id, pageNumber, pageSize), cancellationToken));
+            return Ok(IssueSummaryDto.MapFrom(await _mediator.Send(new GetParentIssuesRequest(id, pageNumber, pageSize), cancellationToken), cancellationToken));
         }
 
         ModelState.AddModelError(nameof(id), "issue not found");
@@ -105,7 +147,7 @@ public sealed class IssueV2Controller : ControllerBase
 
         if (await _mediator.Send(new IssueExistsRequest(id), cancellationToken))
         {
-            return Ok(await _mediator.Send(new GetChildIssuesRequest(id, pageNumber, pageSize), cancellationToken));
+            return Ok(IssueSummaryDto.MapFrom(await _mediator.Send(new GetChildIssuesRequest(id, pageNumber, pageSize), cancellationToken), cancellationToken));
         }
 
         ModelState.AddModelError(nameof(id), "issue not found");
@@ -129,7 +171,7 @@ public sealed class IssueV2Controller : ControllerBase
             return BadRequest(new ValidationProblemDetails(ModelState));
         }
 
-        IssueDto issue = await _mediator.Send(new CreateIssueRequest(model.ToModel()), cancellationToken);
+        IssueDto issue = IssueDto.FromProjection(await _mediator.Send(new CreateIssueRequest(model.ToModel()), cancellationToken));
         return new ObjectResult(issue) { StatusCode = StatusCodes.Status201Created };
     }
 
@@ -153,9 +195,27 @@ public sealed class IssueV2Controller : ControllerBase
             return BadRequest(new ValidationProblemDetails(ModelState));
         }
 
-        IssueDto? issue = await _mediator.Send(new EditIssueRequest(id, model.ToModel()), cancellationToken);
+        IssueDto? issue = IssueDto.FromProjection(await _mediator.Send(new EditIssueRequest(id, model.ToModel()), cancellationToken));
         return issue is not null
             ? Ok(issue)
+            : NotFound();
+    }
+
+    /// <summary>
+    /// Deletes the issue given by <paramref name="id"/> 
+    /// </summary>
+    /// <param name="id">unique id of the issue to delete</param>
+    /// <param name="cancellationToken">A cancellation token</param>
+    [HttpDelete("{id}")]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", "application/xml")]
+    [Produces(MediaTypeNames.Application.Json, "application/xml")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Successful Response", ContentTypes = new [] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid argument", typeof(IssueSummaryDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "issue not found", typeof(IssueSummaryDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    {
+        return await _mediator.Send(new DeleteIssueRequest(id), cancellationToken)
+            ? new StatusCodeResult(StatusCodes.Status204NoContent)
             : NotFound();
     }
 }
