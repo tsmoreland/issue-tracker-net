@@ -66,8 +66,8 @@ public sealed class EditIssueDto
     /// Converts DTO to Model
     /// </summary>
     /// <returns>Model</returns>
-    public Services.Abstractions.Model.Request.EditIssueDto ToModel()
+    public Services.Abstractions.Model.EditIssueDto ToModel()
     {
-        return new Services.Abstractions.Model.Request.EditIssueDto(Title, Description, Priority, Type);
+        return new Services.Abstractions.Model.EditIssueDto(Title, Description, Priority, Type);
     }
 }
