@@ -13,7 +13,7 @@
 
 using IssueTracker.Core.Model;
 using IssueTracker.Data.Abstractions;
-using IssueTracker.Services.Abstractions.Model.Response;
+using IssueTracker.Services.Abstractions.Projections;
 using IssueTracker.Services.Abstractions.Requests;
 using MediatR;
 
