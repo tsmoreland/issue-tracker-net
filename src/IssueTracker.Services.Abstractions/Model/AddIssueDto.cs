@@ -11,22 +11,20 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.ComponentModel.DataAnnotations;
 using IssueTracker.Core.Model;
 
-namespace IssueTracker.Services.Abstractions.Model.Response;
+namespace IssueTracker.Services.Abstractions.Model;
 
 /// <summary>
-/// Issue Details
+/// Model used to add <see cref="Issue"/>
 /// </summary>
-public sealed class IssueDto
+public sealed class AddIssueDto
 {
     /// <summary>
-    /// Instantiates a new instance of the <see cref="IssueDto"/> class.
+    /// instantiates a new instance of the <see cref="AddIssueDto"/> class.
     /// </summary>
-    public IssueDto(Guid id, string title, string? description, Priority priority, IssueType type)
+    public AddIssueDto(string title, string? description, Priority priority, IssueType type)
     {
-        Id = id;
         Title = title;
         Description = description;
         Priority = priority;
@@ -34,59 +32,33 @@ public sealed class IssueDto
     }
 
     /// <summary>
-    /// Instantiates a new instance of the <see cref="IssueDto"/> class.
-    /// </summary>
-    /// <remarks>
-    /// required for XML serialization, along with public setters
-    /// </remarks>
-    public IssueDto()
-    {
-        Id = Guid.Empty;
-        Title = string.Empty;
-        Description = string.Empty;
-        Priority = Priority.Low;
-        Type = IssueType.Defect;
-    }
-
-    /// <summary>
-    /// Issue Id
-    /// </summary>
-    /// <example>48EE3BF9-C81D-4FE4-AB02-220C0122AFE4</example>
-    [Required]
-    public Guid Id { get; init; }
-
-    /// <summary>
     /// Issue Title
     /// </summary>
     /// <example>Example Title</example>
-    [Required]
     public string Title { get; init; } 
 
     /// <summary>
     /// Issue Description
     /// </summary>
-    /// <example>Example Description</example>
-    [Required]
-    public string? Description { get; init; }
+    /// <example>Example description</example>
+    public string? Description { get; init; } 
 
     /// <summary>
     /// Issue Priority
     /// </summary>
-    /// <example>Medium</example>
-    [Required]
-    public Priority Priority { get; init; } 
+    /// <example>High</example>
+    public Priority Priority { get; init; }
 
     /// <summary>
     /// Issue Type
     /// </summary>
-    [Required]
     public IssueType Type { get; init; }
 
     /// <summary>
-    /// Converts <see cref="Issue"/> to <see cref="IssueDto"/>
+    /// Convert Data Transfer Object to <see cref="Issue"/>
     /// </summary>
-    public static IssueDto FromIssue(Issue issue)
+    public Issue ToIssue()
     {
-        return new IssueDto(issue.Id, issue.Title, issue.Description, issue.Priority, issue.Type);
+        return new Issue(Title, Description ?? string.Empty, Priority, Type);
     }
 }

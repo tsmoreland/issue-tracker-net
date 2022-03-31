@@ -13,7 +13,7 @@
 
 using IssueTracker.Core.Model;
 
-namespace IssueTracker.Services.Abstractions.Model.Request;
+namespace IssueTracker.Services.Abstractions.Model;
 
 /// <summary>
 /// Model to use to update <see cref="Issue"/>

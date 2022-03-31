@@ -14,7 +14,7 @@
 using System.ComponentModel.DataAnnotations;
 using IssueTracker.Core.Model;
 
-namespace IssueTracker.Services.Abstractions.Model.Response;
+namespace IssueTracker.Services.Abstractions.Projections;
 
 /// <summary>
 /// Short summary of an <see cref="Issue"/>
