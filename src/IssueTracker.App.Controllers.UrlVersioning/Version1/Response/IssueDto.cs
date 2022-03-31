@@ -14,6 +14,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using IssueTracker.Core.Model;
+using IssueTracker.Services.Abstractions.Projections;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
 namespace IssueTracker.App.Controllers.UrlVersioning.Version1.Response;
@@ -84,12 +85,12 @@ public sealed class IssueDto
     public IssueType Type { get; init; }
 
     /// <summary>
-    /// Converts <see cref="Services.Abstractions.Model.Response.IssueDto"/> to <see cref="IssueDto"/>
+    /// Converts <see cref="Services.Abstractions.Projections.IssueDto"/> to <see cref="IssueDto"/>
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
     [return: NotNullIfNotNull("model")]
-    public static IssueDto? FromProjection(Services.Abstractions.Model.Response.IssueDto? model)
+    public static IssueDto? FromProjection(Services.Abstractions.Projections.IssueDto? model)
     {
         return model is null
             ? null
