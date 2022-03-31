@@ -12,87 +12,69 @@
 //
 
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using IssueTracker.Core.Model;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
 namespace IssueTracker.App.Controllers.UrlVersioning.Version1.Response;
 
 /// <summary>
-/// Issue Details
+/// Short summary of an <see cref="Issue"/>
 /// </summary>
-[SwaggerSchemaName("Issue Details")]
-public sealed class IssueDto
+[SwaggerSchemaName("Issue Summary")]
+public sealed class IssueSummaryDto
 {
     /// <summary>
-    /// Instantiates a new instance of the <see cref="IssueDto"/> class.
+    /// Instantiates a new instance of he IssueSummaryDto Class
     /// </summary>
-    public IssueDto(Guid id, string title, string? description, Priority priority)
+    public IssueSummaryDto(Guid id, string title)
     {
         Id = id;
         Title = title;
-        Description = description;
-        Priority = priority;
     }
 
     /// <summary>
-    /// Instantiates a new instance of the <see cref="IssueDto"/> class.
+    /// Instantiates a new instance of he IssueSummaryDto Class
     /// </summary>
-    /// <remarks>
-    /// required for XML serialization, along with public setters
-    /// </remarks>
-    public IssueDto()
+    public IssueSummaryDto()
     {
         Id = Guid.Empty;
         Title = string.Empty;
-        Description = string.Empty;
-        Priority = Priority.Low;
+
     }
 
     /// <summary>
     /// Issue Id
     /// </summary>
-    /// <example>48EE3BF9-C81D-4FE4-AB02-220C0122AFE4</example>
+    /// <example>3C1152EC-DC0C-4AB0-8AF9-10DE5A9705D5</example>
     [Required]
-    public Guid Id { get; init; }
+    public Guid Id { get; init; } 
 
     /// <summary>
     /// Issue Title
     /// </summary>
     /// <example>Example Title</example>
     [Required]
-    public string Title { get; init; } 
+    public string Title { get; init; }
 
     /// <summary>
-    /// Issue Description
+    /// Converts service DTO to versioned API DTO, for latest version of API the class is expected to be equivalent
     /// </summary>
-    /// <example>Example Description</example>
-    [Required]
-    public string? Description { get; init; }
-
-    /// <summary>
-    /// Issue Priority
-    /// </summary>
-    /// <example>Medium</example>
-    [Required]
-    public Priority Priority { get; init; }
-
-    /// <summary>
-    /// Issue Type
-    /// </summary>
-    [Required]
-    public IssueType Type { get; init; }
-
-    /// <summary>
-    /// Converts <see cref="Services.Abstractions.Model.Response.IssueDto"/> to <see cref="IssueDto"/>
-    /// </summary>
-    /// <param name="model"></param>
-    /// <returns></returns>
-    [return: NotNullIfNotNull("model")]
-    public static IssueDto? FromProjection(Services.Abstractions.Model.Response.IssueDto? model)
+    public static IssueSummaryDto FromProjection(Services.Abstractions.Model.Response.IssueSummaryDto model)
     {
-        return model is null
-            ? null
-            : new IssueDto(model.Id, model.Title, model.Description, model.Priority);
+        return new IssueSummaryDto(model.Id, model.Title);
+    }
+
+    /// <summary>
+    /// Converts an asynchronous collection of <see cref="Services.Abstractions.Model.Response.IssueSummaryDto"/> to
+    /// an asynchronous colleciton of <see cref="IssueSummaryDto"/>
+    /// </summary>
+    public static async IAsyncEnumerable<IssueSummaryDto> MapFrom(
+        IAsyncEnumerable<Services.Abstractions.Model.Response.IssueSummaryDto> source, [EnumeratorCancellation] CancellationToken cancellationToken)
+    {
+        await foreach (Services.Abstractions.Model.Response.IssueSummaryDto issueSummary in source.WithCancellation(cancellationToken))
+        {
+            yield return FromProjection(issueSummary);
+        }
     }
 }
