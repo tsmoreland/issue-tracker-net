@@ -13,14 +13,12 @@
 
 using System.ComponentModel.DataAnnotations;
 using IssueTracker.Core.Model;
-using IssueTracker.SwashbuckleExtensions.Abstractions;
 
 namespace IssueTracker.Services.Abstractions.Model.Response;
 
 /// <summary>
 /// Short summary of an <see cref="Issue"/>
 /// </summary>
-[SwaggerSchemaName("Issue Summary")]
 public sealed class IssueSummaryDto
 {
     public IssueSummaryDto(Guid id, string title)

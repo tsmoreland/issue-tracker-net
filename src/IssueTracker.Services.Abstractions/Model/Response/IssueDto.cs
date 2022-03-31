@@ -13,25 +13,24 @@
 
 using System.ComponentModel.DataAnnotations;
 using IssueTracker.Core.Model;
-using IssueTracker.SwashbuckleExtensions.Abstractions;
 
 namespace IssueTracker.Services.Abstractions.Model.Response;
 
 /// <summary>
 /// Issue Details
 /// </summary>
-[SwaggerSchemaName("Issue Details")]
 public sealed class IssueDto
 {
     /// <summary>
     /// Instantiates a new instance of the <see cref="IssueDto"/> class.
     /// </summary>
-    public IssueDto(Guid id, string title, string? description, Priority priority)
+    public IssueDto(Guid id, string title, string? description, Priority priority, IssueType type)
     {
         Id = id;
         Title = title;
         Description = description;
         Priority = priority;
+        Type = type;
     }
 
     /// <summary>
@@ -46,6 +45,7 @@ public sealed class IssueDto
         Title = string.Empty;
         Description = string.Empty;
         Priority = Priority.Low;
+        Type = IssueType.Defect;
     }
 
     /// <summary>
@@ -77,10 +77,16 @@ public sealed class IssueDto
     public Priority Priority { get; init; } 
 
     /// <summary>
+    /// Issue Type
+    /// </summary>
+    [Required]
+    public IssueType Type { get; init; }
+
+    /// <summary>
     /// Converts <see cref="Issue"/> to <see cref="IssueDto"/>
     /// </summary>
     public static IssueDto FromIssue(Issue issue)
     {
-        return new IssueDto(issue.Id, issue.Title, issue.Description, issue.Priority);
+        return new IssueDto(issue.Id, issue.Title, issue.Description, issue.Priority, issue.Type);
     }
 }
