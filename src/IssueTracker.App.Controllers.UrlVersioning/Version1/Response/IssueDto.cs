@@ -27,7 +27,7 @@ public sealed class IssueDto
     /// <summary>
     /// Instantiates a new instance of the <see cref="IssueDto"/> class.
     /// </summary>
-    public IssueDto(Guid id, string title, string? description, Priority priority)
+    public IssueDto(Guid id, string title, string description, Priority priority)
     {
         Id = id;
         Title = title;
