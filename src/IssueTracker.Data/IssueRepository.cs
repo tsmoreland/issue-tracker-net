@@ -51,7 +51,7 @@ public sealed class IssueRepository : IIssueRepository
             .Where(link => link.ParentIssueId == id)
             .Select(link => link.ChildIssue)
             .Select(i => new IssueSummaryProjection(i.Id, i.Title))
-            .OrderBy(i => i.Name)
+            .OrderBy(i => i.Title)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .AsAsyncEnumerable();
