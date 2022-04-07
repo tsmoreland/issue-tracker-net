@@ -8,6 +8,7 @@ using IssueTracker.ServiceDiscovery;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.ResponseCompression;
+using Serilog;
 using Tcell.Agent.AspNetCore;
 
 HostingStartupDiscovery
@@ -15,6 +16,8 @@ HostingStartupDiscovery
     .SetHostingStartupAssemblies();
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+builder.Host
+    .UseSerilog((context, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(context.Configuration));
 builder.WebHost
     .ConfigureKestrel(kestrelServerOptions => kestrelServerOptions.AddServerHeader = false)
     .UseTcellAgent(environemnt => environemnt.IsProduction() || environemnt.IsDevelopment());
