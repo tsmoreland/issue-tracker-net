@@ -11,19 +11,24 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System.Web.Mvc;
+using IssueTracker.App.Controllers.UrlVersioning;
+using IssueTracker.App.Infrastructure;
+using IssueTracker.Data;
+using IssueTracker.Services;
 using Microsoft.Extensions.DependencyInjection;
-
 
 namespace IssueTracker.App
 {
-    public sealed class ServiceConfig
+    public static class ServiceConfig
     {
         public static void Configure(IServiceCollection services)
         {
+            services.AddUrlVersioningControllers();
+            services.AddIssueServices();
+            services.AddIssueData();
+
+            services.AddScoped<IControllerFactory, ControllerFactoryWithServices>();
         }
 
     }

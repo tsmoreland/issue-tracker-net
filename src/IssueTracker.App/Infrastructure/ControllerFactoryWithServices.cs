@@ -11,29 +11,29 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using IssueTracker.Core.Model;
-using IssueTracker.Core.Requests;
-using IssueTracker.Data.Abstractions;
-using MediatR;
+using System.Web.Mvc;
+using System.Web.Routing;
 
-namespace IssueTracker.Services.Handlers;
-
-public sealed class FindIssueByIdRequestHandler : IRequestHandler<FindIssueByIdRequest, Issue>
+namespace IssueTracker.App.Infrastructure
 {
-    private readonly IIssueRepository _repository;
-
-    public FindIssueByIdRequestHandler(IIssueRepository repository)
+    public class ControllerFactoryWithServices : DefaultControllerFactory
     {
-        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-    }
+        public ControllerFactoryWithServices(IControllerActivator controllerActivator)
+            : base(controllerActivator)
+        {
+            
+        }
 
-    /// <inheritdoc />
-    public Task<Issue> Handle(FindIssueByIdRequest request, CancellationToken cancellationToken)
-    {
-        Guid id = request.Id;
-        return _repository.GetIssueById(id, cancellationToken);
+        public ControllerFactoryWithServices()
+            : base()
+        {
+            
+        }
+
+        /// <inheritdoc/>
+        public override IController CreateController(RequestContext requestContext, string controllerName)
+        {
+            return base.CreateController(requestContext, controllerName);
+        }
     }
 }

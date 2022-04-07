@@ -11,20 +11,44 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using IssueTracker.Core.Projections;
 using IssueTracker.Core.Requests;
+using IssueTracker.Data.Abstractions;
 using MediatR;
 
-namespace IssueTracker.Services.Handlers
+namespace IssueTracker.Services.Handlers;
+
+public sealed class GetAllIssuesRequestHandler : IRequestHandler<GetAllIssuesRequest, IAsyncEnumerable<IssueSummaryProjection>>
 {
-    public sealed class GetAllIssuesRequestHandler : IRequestHandler<GetAllIssuesRequest, IAsyncEnumerable<IssueSummaryProjection>>
+    private readonly IIssueRepository _repository;
+
+    public GetAllIssuesRequestHandler(IIssueRepository repository)
     {
-        /// <inheritdoc />
-        public Task<IAsyncEnumerable<IssueSummaryProjection>> Handle(GetAllIssuesRequest request, CancellationToken cancellationToken)
+        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+    }
+
+    /// <inheritdoc />
+    public Task<IAsyncEnumerable<IssueSummaryProjection>> Handle(GetAllIssuesRequest request, CancellationToken cancellationToken)
+    {
+        (int pageNumber, int pageSize) = request;
+        return Task.FromResult(HandleWithEnumerable(pageNumber, pageSize, cancellationToken));
+    }
+
+    private async IAsyncEnumerable<IssueSummaryProjection> HandleWithEnumerable(int pageNumber, int pageSize,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
+    {
+        ConfiguredCancelableAsyncEnumerable<IssueSummaryProjection> issues = _repository
+            .GetIssueSummaries(pageNumber, pageSize, cancellationToken)
+            .WithCancellation(cancellationToken);
+
+        await foreach (IssueSummaryProjection projection in issues)
         {
+            yield return projection;
         }
     }
 }

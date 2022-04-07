@@ -16,35 +16,113 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Http.Dependencies;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace IssueTracker.App.Infrastructure
 {
-    public sealed class ServiceDependencyResolver : IDependencyResolver
+    public sealed class ServiceDependencyResolver : IDependencyResolver, Microsoft.Practices.ServiceLocation.IServiceLocator
     {
 
-        /// <inheritdoc />
-        public object GetService(Type serviceType) 
+        /// <inheritdoc cref="IDependencyResolver.GetService(Type)" />
+        public object GetService(Type serviceType)
         {
-            throw new NotImplementedException();
+            IServiceProvider serviceProvider = GetServiceProvider();
+            return serviceProvider.GetService(serviceType);
         }
 
         /// <inheritdoc />
         public IEnumerable<object> GetServices(Type serviceType) 
         {
-            throw new NotImplementedException();
+            IServiceProvider serviceProvider = GetServiceProvider();
+            return serviceProvider.GetServices(serviceType);
         }
 
         /// <inheritdoc />
         public IDependencyScope BeginScope() 
         {
-            throw new NotImplementedException();
+            IServiceProvider serviceProvider = GetServiceProvider();
+            IServiceScope scope = serviceProvider.CreateScope();
+            return new DepedencyScopeFacade(scope);
+        }
+
+
+        /// <inheritdoc />
+        public object GetInstance(Type serviceType)
+        {
+            IServiceProvider serviceProvider = GetServiceProvider();
+            return serviceProvider.GetRequiredService(serviceType); 
+        }
+
+        /// <inheritdoc />
+        public object GetInstance(Type serviceType, string key)
+        {
+            IServiceProvider serviceProvider = GetServiceProvider();
+            // ignoring key until we need it, they'll need to work something else out
+            return serviceProvider.GetRequiredService(serviceType); 
+        }
+
+        /// <inheritdoc />
+        public TService GetInstance<TService>()
+        {
+            IServiceProvider serviceProvider = GetServiceProvider();
+            return serviceProvider.GetRequiredService<TService>(); 
+        }
+
+        /// <inheritdoc />
+        public TService GetInstance<TService>(string key)
+        {
+            IServiceProvider serviceProvider = GetServiceProvider();
+            // ignoring key until we need it, they'll need to work something else out
+            return serviceProvider.GetRequiredService<TService>(); 
+        }
+
+
+        /// <inheritdoc />
+        public IEnumerable<object> GetAllInstances(Type serviceType)
+        {
+            IServiceProvider serviceProvider = GetServiceProvider();
+            return serviceProvider.GetServices(serviceType).Cast<object>();
+        }
+
+        /// <inheritdoc />
+        public IEnumerable<TService> GetAllInstances<TService>()
+        {
+            IServiceProvider serviceProvider = GetServiceProvider();
+            return serviceProvider.GetServices<TService>();
+        }
+
+        private static IServiceProvider GetServiceProvider()
+        {
+            IServiceScope scope = (IServiceScope)HttpContext.Current?.Items[typeof(IServiceScope)];
+            return scope?.ServiceProvider;
+        }
+
+        private sealed class DepedencyScopeFacade : IDependencyScope
+        {
+            private readonly IServiceScope _scope;
+
+            public DepedencyScopeFacade(IServiceScope scope)
+            {
+                _scope = scope ?? throw new ArgumentNullException(nameof(scope));
+            }
+
+            /// <inheritdoc />
+            public object GetService(Type serviceType) => _scope.ServiceProvider.GetService(serviceType);
+
+            /// <inheritdoc />
+            public IEnumerable<object> GetServices(Type serviceType) => _scope.ServiceProvider.GetServices(serviceType);
+
+            /// <inheritdoc/>
+            public void Dispose() => _scope.Dispose();
+
         }
 
 
         /// <inheritdoc />
         public void Dispose()
         {
-            throw new NotImplementedException();
+            // no-op
         }
+
     }
 }

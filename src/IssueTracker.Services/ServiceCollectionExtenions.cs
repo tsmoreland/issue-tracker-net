@@ -12,28 +12,23 @@
 //
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
-using IssueTracker.Core.Model;
-using IssueTracker.Core.Requests;
-using IssueTracker.Data.Abstractions;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace IssueTracker.Services.Handlers;
-
-public sealed class FindIssueByIdRequestHandler : IRequestHandler<FindIssueByIdRequest, Issue>
+namespace IssueTracker.Services
 {
-    private readonly IIssueRepository _repository;
-
-    public FindIssueByIdRequestHandler(IIssueRepository repository)
+    public static class ServiceCollectionExtenions
     {
-        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-    }
+        public static IServiceCollection AddIssueServices(this IServiceCollection services)
+        {
+            if (services is null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
 
-    /// <inheritdoc />
-    public Task<Issue> Handle(FindIssueByIdRequest request, CancellationToken cancellationToken)
-    {
-        Guid id = request.Id;
-        return _repository.GetIssueById(id, cancellationToken);
+            services.AddMediatR(typeof(ServiceCollectionExtenions).Assembly);
+
+            return services;
+        }
     }
 }

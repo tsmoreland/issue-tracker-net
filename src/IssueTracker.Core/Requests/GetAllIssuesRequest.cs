@@ -26,5 +26,11 @@ namespace IssueTracker.Core.Requests
         }
         public int PageNumber { get; }
         public int PageSize { get; }
+
+        public void Deconstruct(out int pageNumber, out int pageSize)
+        {
+            pageNumber = PageNumber;
+            pageSize = PageSize;
+        }
     }
 }
