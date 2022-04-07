@@ -17,6 +17,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Mvc;
 using IssueTracker.App.Controllers.UrlVersioning.Version1.Response;
 using IssueTracker.Core.Projections;
 using IssueTracker.Core.Requests;
@@ -25,14 +26,15 @@ using static IssueTracker.App.Controllers.UrlVersioning.Validation.PagingValidat
 
 namespace IssueTracker.App.Controllers.UrlVersioning.Version1;
 
-[Route("api/v1/issues")]
+[System.Web.Http.Route("api/v1/issues")]
 public sealed class IssueController : ApiController
 {
     private readonly IMediator _mediator;
 
-    public IssueController(IMediator mediator)
+    public IssueController()
     {
-        _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+        _mediator = DependencyResolver.Current.GetService<IMediator>() ??
+                    throw new InvalidOperationException("invalid services? choose a better exception");
     }
 
     /// <summary>
@@ -42,7 +44,7 @@ public sealed class IssueController : ApiController
     /// <param name="pageSize" example="10">maximum number of items to return</param>
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all issues</returns>
-    [HttpGet]
+    [System.Web.Http.HttpGet]
     public async Task<IHttpActionResult> GetAll(int pageNumber = 1, int pageSize = 10, CancellationToken cancellationToken = default)
     {
         if (!ValidatePaging(ModelState, pageNumber, pageSize))
@@ -59,8 +61,8 @@ public sealed class IssueController : ApiController
             : BadRequest(ModelState);
     }
 
-    [HttpGet]
-    [Route("{id}")]
+    [System.Web.Http.HttpGet]
+    [System.Web.Http.Route("{id}")]
     public async Task<IHttpActionResult> Get(Guid id, CancellationToken cancellationToken)
     {
         IssueDto issue = IssueDto.From(await _mediator.Send(new FindIssueByIdRequest(id), cancellationToken));

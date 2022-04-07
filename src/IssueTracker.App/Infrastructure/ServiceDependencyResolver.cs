@@ -50,7 +50,8 @@ namespace IssueTracker.App.Infrastructure
         public object GetInstance(Type serviceType)
         {
             IServiceProvider serviceProvider = GetServiceProvider();
-            return serviceProvider.GetRequiredService(serviceType); 
+            object @object = serviceProvider.GetRequiredService(serviceType);
+            return @object;
         }
 
         /// <inheritdoc />

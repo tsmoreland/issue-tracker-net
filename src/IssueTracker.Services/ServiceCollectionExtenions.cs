@@ -12,6 +12,9 @@
 //
 
 using System;
+using System.Collections.Generic;
+using IssueTracker.Core.Projections;
+using IssueTracker.Core.Requests;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -26,7 +29,10 @@ namespace IssueTracker.Services
                 throw new ArgumentNullException(nameof(services));
             }
 
-            services.AddMediatR(typeof(ServiceCollectionExtenions).Assembly);
+            services.AddMediatR(typeof(Handlers.FindIssueByIdRequestHandler).Assembly);
+            services
+                .AddScoped<IRequestHandler<GetAllIssuesRequest, IAsyncEnumerable<IssueSummaryProjection>>,
+                    Handlers.GetAllIssuesRequestHandler>();
 
             return services;
         }
