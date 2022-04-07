@@ -27,8 +27,8 @@ builder.WebHost
 builder.Services.AddProblemDetails();
 
 builder.Services
-    .AddControllers()
-    .AddXmlDataContractSerializerFormatters()
+    .AddControllers(options => options.RespectBrowserAcceptHeader = true)
+    .AddXmlSerializerFormatters()
     .ConfigureApiBehaviorOptions(apiBehaviourOptions =>
     {
         apiBehaviourOptions.SuppressConsumesConstraintForFormFileParameters = true;
