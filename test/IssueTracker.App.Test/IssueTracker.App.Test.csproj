@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <LangVersion>10</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+
+    <PackageReference Include="Moq" Version="4.17.2" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+    <PackageReference Include="coverlet.collector" Version="3.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\IssueTracker.App.Controllers.UrlVersioning\IssueTracker.App.Controllers.UrlVersioning.csproj" />
+    <ProjectReference Include="..\..\src\IssueTracker.App\IssueTracker.App.csproj" />
+    <ProjectReference Include="..\..\src\IssueTracker.Core\IssueTracker.Core.csproj" />
+    <ProjectReference Include="..\..\src\IssueTracker.Data.Abstractions\IssueTracker.Data.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\IssueTracker.Data\IssueTracker.Data.csproj" />
+    <ProjectReference Include="..\..\src\IssueTracker.Services\IssueTracker.Services.csproj" />
+  </ItemGroup>
+
+
+</Project>

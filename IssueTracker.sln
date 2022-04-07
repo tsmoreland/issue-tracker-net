@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Core", "src\IssueTracker.Core\IssueTracker.Core.csproj", "{66BB8353-0E08-49D6-85B9-7A634C05A9D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Core", "src\IssueTracker.Core\IssueTracker.Core.csproj", "{66BB8353-0E08-49D6-85B9-7A634C05A9D6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{BAFE4027-73EB-4E86-9BB2-A3C24F10D5E0}"
 EndProject
@@ -20,15 +20,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{AC6E69FA-5B0C-495A-998A-ABC1A273E58C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.App.Controllers.UrlVersioning", "src\IssueTracker.App.Controllers.UrlVersioning\IssueTracker.App.Controllers.UrlVersioning.csproj", "{8F1A159E-80AF-49CC-91D0-4165BD422E0A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.App.Controllers.UrlVersioning", "src\IssueTracker.App.Controllers.UrlVersioning\IssueTracker.App.Controllers.UrlVersioning.csproj", "{8F1A159E-80AF-49CC-91D0-4165BD422E0A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.SwashBuckleExtensions.Abstractions", "src\IssueTracker.SwashBuckleExtensions.Abstractions\IssueTracker.SwashBuckleExtensions.Abstractions.csproj", "{459A85E1-3FF9-466B-88CF-E3D6EC599B69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.SwashBuckleExtensions.Abstractions", "src\IssueTracker.SwashBuckleExtensions.Abstractions\IssueTracker.SwashBuckleExtensions.Abstractions.csproj", "{459A85E1-3FF9-466B-88CF-E3D6EC599B69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Services", "src\IssueTracker.Services\IssueTracker.Services.csproj", "{44E215C9-7B62-4B15-A0FC-F7CEC68F3C98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Services", "src\IssueTracker.Services\IssueTracker.Services.csproj", "{44E215C9-7B62-4B15-A0FC-F7CEC68F3C98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Data.Abstractions", "src\IssueTracker.Data.Abstractions\IssueTracker.Data.Abstractions.csproj", "{C9F7A65E-C6D1-405D-882F-9C6C01C35A93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Data.Abstractions", "src\IssueTracker.Data.Abstractions\IssueTracker.Data.Abstractions.csproj", "{C9F7A65E-C6D1-405D-882F-9C6C01C35A93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Data", "src\IssueTracker.Data\IssueTracker.Data.csproj", "{90216DB7-781C-4DDE-A252-B4CE144338FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Data", "src\IssueTracker.Data\IssueTracker.Data.csproj", "{90216DB7-781C-4DDE-A252-B4CE144338FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.App.Test", "test\IssueTracker.App.Test\IssueTracker.App.Test.csproj", "{1DE1D980-3447-413C-AEE2-0C7119C48754}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,6 +66,10 @@ Global
 		{90216DB7-781C-4DDE-A252-B4CE144338FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90216DB7-781C-4DDE-A252-B4CE144338FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90216DB7-781C-4DDE-A252-B4CE144338FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DE1D980-3447-413C-AEE2-0C7119C48754}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DE1D980-3447-413C-AEE2-0C7119C48754}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DE1D980-3447-413C-AEE2-0C7119C48754}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DE1D980-3447-413C-AEE2-0C7119C48754}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +82,7 @@ Global
 		{44E215C9-7B62-4B15-A0FC-F7CEC68F3C98} = {AC6E69FA-5B0C-495A-998A-ABC1A273E58C}
 		{C9F7A65E-C6D1-405D-882F-9C6C01C35A93} = {CF77FF9D-50DC-4043-ACDC-CC4C1139C77D}
 		{90216DB7-781C-4DDE-A252-B4CE144338FD} = {CF77FF9D-50DC-4043-ACDC-CC4C1139C77D}
+		{1DE1D980-3447-413C-AEE2-0C7119C48754} = {BAFE4027-73EB-4E86-9BB2-A3C24F10D5E0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {41D00C5F-A56C-4CCC-9A26-B418E79D4F1D}
