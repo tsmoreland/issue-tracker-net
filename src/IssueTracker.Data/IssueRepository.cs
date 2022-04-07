@@ -14,71 +14,113 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.Data.Abstractions;
 
-namespace IssueTracker.Data
+namespace IssueTracker.Data;
+
+public sealed class IssueRepository : IIssueRepository
 {
-    public sealed class IssueRepository : IIssueRepository
+    private readonly object _lock = new ();
+    // concurrent dictionary would be better but this is faster
+    private readonly Dictionary<Guid, Issue> _issuesById = new ();
+    // concurrent dictionary would be more difficult for these as it's the same data indexed by different means
+    private readonly Dictionary<Guid, LinkedIssue> _linkedIssuesById = new ();
+    private readonly Dictionary<Guid, LinkedIssue> _linkedIssuesByChildId = new ();
+    private readonly Dictionary<Guid, LinkedIssue> _linkedIssuesByParentId = new ();
+
+    /// <inheritdoc />
+    public async IAsyncEnumerable<IssueSummaryProjection> GetIssueSummaries(int pageNumber, int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        private ConcurrentDictionary<Guid, Issue> _issuesById = new ConcurrentDictionary<Guid, Issue>();
-
-
-        /// <inheritdoc />
-        public IAsyncEnumerable<IssueSummaryProjection> GetIssueSummaries(int pageNumber, int pageSize, CancellationToken cancellationToken)
+        await Task.CompletedTask;
+        List<IssueSummaryProjection> issues;
+        lock (_lock)
         {
-            throw new NotImplementedException();
+            issues = _issuesById.Values.Select(i => new IssueSummaryProjection(i.Id, i.Title)).ToList();
         }
 
-        /// <inheritdoc />
-        public IAsyncEnumerable<IssueSummaryProjection> GetParentIssues(Guid id, int pageNumber, int pageSize, CancellationToken cancellationToken) 
+        foreach (IssueSummaryProjection issue in issues)
         {
-            throw new NotImplementedException();
+            yield return issue;
+        }
+    }
+
+    /// <inheritdoc />
+    public IAsyncEnumerable<IssueSummaryProjection> GetParentIssues(Guid id, int pageNumber, int pageSize, CancellationToken cancellationToken) 
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc />
+    public IAsyncEnumerable<IssueSummaryProjection> GetChildIssues(Guid id, int pageNumber, int pageSize, CancellationToken cancellationToken) 
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc />
+    public Task<Issue> GetUntrackedIssueById(Guid id, CancellationToken cancellationToken)
+    {
+        return GetIssueById(id, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public Task<Issue> GetIssueById(Guid id, CancellationToken cancellationToken) 
+    {
+        lock (_lock)
+        {
+            return _issuesById.ContainsKey(id)
+                ? Task.FromResult(_issuesById[id])
+                : Task.FromResult<Issue>(null);
+        }
+    }
+
+    /// <inheritdoc />
+    public Task<Issue> AddIssue(Issue issue, CancellationToken cancellationToken) 
+    {
+        if (issue is null)
+        {
+            throw new ArgumentNullException(nameof(issue));
         }
 
-        /// <inheritdoc />
-        public IAsyncEnumerable<IssueSummaryProjection> GetChildIssues(Guid id, int pageNumber, int pageSize, CancellationToken cancellationToken) 
+        lock (_lock)
         {
-            throw new NotImplementedException();
+            _issuesById[issue.Id] = issue;
         }
 
-        /// <inheritdoc />
-        public Task<Issue> GetUntrackedIssueById(Guid id, CancellationToken cancellationToken) 
-        {
-            throw new NotImplementedException();
-        }
+        return Task.FromResult(issue);
+    }
 
-        /// <inheritdoc />
-        public Task<Issue> GetIssueById(Guid id, CancellationToken cancellationToken) 
-        {
-            throw new NotImplementedException();
-        }
+    /// <inheritdoc />
+    public Task CommitAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
 
-        /// <inheritdoc />
-        public Task<Issue> AddIssue(Issue issue, CancellationToken cancellationToken) 
+    /// <inheritdoc />
+    public Task<bool> DeleteIssueById(Guid id, CancellationToken cancellationToken) 
+    {
+        lock (_lock)
         {
-            throw new NotImplementedException();
+            if (_issuesById.ContainsKey(id))
+            {
+                _issuesById.Remove(id);
+                return Task.FromResult(true);
+            }
         }
+        return Task.FromResult(false);
+    }
 
-        /// <inheritdoc />
-        public Task CommitAsync(CancellationToken cancellationToken) 
+    /// <inheritdoc />
+    public Task<bool> IssueExists(Guid id, CancellationToken cancellationToken)
+    {
+        lock (_lock)
         {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public Task<bool> DeleteIssueById(Guid id, CancellationToken cancellationToken) 
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public Task<bool> IssueExists(Guid id, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
+            return Task.FromResult(_issuesById.ContainsKey(id));
         }
     }
 }
