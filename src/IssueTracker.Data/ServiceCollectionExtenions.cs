@@ -12,6 +12,7 @@
 //
 
 using System;
+using IssueTracker.Data.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace IssueTracker.Data
@@ -25,7 +26,7 @@ namespace IssueTracker.Data
                 throw new ArgumentNullException(nameof(services));
             }
 
-            services.AddSingleton<IssueRepository, IssueRepository>();
+            services.AddSingleton<IIssueRepository, IssueRepository>();
 
             return services;
         }
