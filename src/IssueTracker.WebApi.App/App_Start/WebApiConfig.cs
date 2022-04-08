@@ -1,9 +1,9 @@
 ﻿using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Dispatcher;
-using IssueTracker.App.Infrastructure;
+using IssueTracker.WebApi.App.Infrastructure;
 
-namespace IssueTracker.App
+namespace IssueTracker.WebApi.App
 {
     public static class WebApiConfig
     {

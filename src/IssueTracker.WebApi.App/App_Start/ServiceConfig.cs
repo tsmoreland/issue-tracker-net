@@ -13,12 +13,12 @@
 
 using System.Web.Mvc;
 using IssueTracker.App.Controllers.UrlVersioning;
-using IssueTracker.App.Infrastructure;
+using IssueTracker.WebApi.App.Infrastructure;
 using IssueTracker.Data;
 using IssueTracker.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace IssueTracker.App
+namespace IssueTracker.WebApi.App
 {
     public static class ServiceConfig
     {

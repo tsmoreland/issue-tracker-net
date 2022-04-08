@@ -12,30 +12,29 @@
 //
 
 using System;
-using System.Net;
-using System.Web.Http;
-using System.Web.Http.Controllers;
-using System.Web.Http.Routing;
+using System.Linq;
+using System.Web.Mvc;
+using System.Web.Routing;
+using IssueTracker.App.Controllers;
 
-namespace IssueTracker.App.Infrastructure
+namespace IssueTracker.WebApi.App.Infrastructure
 {
-    public sealed class CustomApiControllerActionSelector : ApiControllerActionSelector
+    public sealed class CustomControllerFactory : DefaultControllerFactory
     {
-        /// <inheritdoc />
-        public override HttpActionDescriptor SelectAction(HttpControllerContext controllerContext)
+
+        public override IController CreateController(RequestContext requestContext, string controllerName)
         {
             try
             {
-                return base.SelectAction(controllerContext);
+                return base.CreateController(requestContext, controllerName);
             }
-            catch (HttpResponseException ex) when (ex.Response.StatusCode == HttpStatusCode.NotFound || ex.Response.StatusCode == HttpStatusCode.MethodNotAllowed)
+            catch (Exception)
             {
-                IHttpRouteData routeData = controllerContext.RouteData;
-                routeData.Values["action"] = nameof(Controllers.ErrorApiController.EndpointNotFound);
-                IHttpController controller = new Controllers.ErrorApiController();
-                controllerContext.Controller = controller;
-                controllerContext.ControllerDescriptor = new HttpControllerDescriptor(controllerContext.Configuration, "ErrorApi", controller.GetType());
-                return base.SelectAction(controllerContext);
+                requestContext.RouteData.Values["url"] = $"{nameof(ErrorController)}/{nameof(ErrorController.EndpointNotFound)}";
+                requestContext.RouteData.Values["MS_DirectRouteMatches"] = Enumerable.Empty<RouteData>();
+                requestContext.RouteData.Values["controller"] = nameof(ErrorController);
+                requestContext.RouteData.Values["action"] = nameof(ErrorController.EndpointNotFound);
+                return base.CreateController(requestContext, controllerName);
             }
         }
     }

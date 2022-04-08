@@ -1,11 +1,11 @@
 using System.Web.Http;
 using WebActivatorEx;
-using IssueTracker.App;
+using IssueTracker.WebApi.App;
 using Swashbuckle.Application;
 
 [assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
-namespace IssueTracker.App
+namespace IssueTracker.WebApi.App
 {
     public class SwaggerConfig
     {

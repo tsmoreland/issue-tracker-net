@@ -1,7 +1,7 @@
 ﻿using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace IssueTracker.App
+namespace IssueTracker.WebApi.App
 {
     public class RouteConfig
     {

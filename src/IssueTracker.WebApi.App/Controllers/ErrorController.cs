@@ -11,13 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Net.Http;
-using System.Net.Mime;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http.Description;
-using System.Web.Http.Results;
 using System.Web.Mvc;
 using HttpGetAttribute = System.Web.Http.HttpGetAttribute;
 using HttpPostAttribute = System.Web.Http.HttpPostAttribute;
@@ -27,7 +22,7 @@ using HttpHeadAttribute = System.Web.Http.HttpHeadAttribute;
 using HttpOptionsAttribute = System.Web.Http.HttpOptionsAttribute;
 using AcceptVerbsAttribute = System.Web.Http.AcceptVerbsAttribute;
 
-namespace IssueTracker.App.Controllers
+namespace IssueTracker.WebApi.App.Controllers
 {
     public sealed class ErrorController : Controller
     {

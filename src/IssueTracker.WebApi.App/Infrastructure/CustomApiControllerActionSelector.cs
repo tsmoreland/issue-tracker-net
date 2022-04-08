@@ -12,29 +12,30 @@
 //
 
 using System;
-using System.Linq;
-using System.Web.Mvc;
-using System.Web.Routing;
-using IssueTracker.App.Controllers;
+using System.Net;
+using System.Web.Http;
+using System.Web.Http.Controllers;
+using System.Web.Http.Routing;
 
-namespace IssueTracker.App.Infrastructure
+namespace IssueTracker.WebApi.App.Infrastructure
 {
-    public sealed class CustomControllerFactory : DefaultControllerFactory
+    public sealed class CustomApiControllerActionSelector : ApiControllerActionSelector
     {
-
-        public override IController CreateController(RequestContext requestContext, string controllerName)
+        /// <inheritdoc />
+        public override HttpActionDescriptor SelectAction(HttpControllerContext controllerContext)
         {
             try
             {
-                return base.CreateController(requestContext, controllerName);
+                return base.SelectAction(controllerContext);
             }
-            catch (Exception)
+            catch (HttpResponseException ex) when (ex.Response.StatusCode == HttpStatusCode.NotFound || ex.Response.StatusCode == HttpStatusCode.MethodNotAllowed)
             {
-                requestContext.RouteData.Values["url"] = $"{nameof(ErrorController)}/{nameof(ErrorController.EndpointNotFound)}";
-                requestContext.RouteData.Values["MS_DirectRouteMatches"] = Enumerable.Empty<RouteData>();
-                requestContext.RouteData.Values["controller"] = nameof(ErrorController);
-                requestContext.RouteData.Values["action"] = nameof(ErrorController.EndpointNotFound);
-                return base.CreateController(requestContext, controllerName);
+                IHttpRouteData routeData = controllerContext.RouteData;
+                routeData.Values["action"] = nameof(Controllers.ErrorApiController.EndpointNotFound);
+                IHttpController controller = new Controllers.ErrorApiController();
+                controllerContext.Controller = controller;
+                controllerContext.ControllerDescriptor = new HttpControllerDescriptor(controllerContext.Configuration, "ErrorApi", controller.GetType());
+                return base.SelectAction(controllerContext);
             }
         }
     }

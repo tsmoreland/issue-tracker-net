@@ -3,15 +3,15 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
-using IssueTracker.App.Infrastructure;
+using IssueTracker.WebApi.App.Infrastructure;
 using IssueTracker.Data.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
-[assembly: PreApplicationStartMethod(typeof(IssueTracker.App.WebApiApplication), "InitModule")]
+[assembly: PreApplicationStartMethod(typeof(IssueTracker.WebApi.App.WebApiApplication), "InitModule")]
 
-namespace IssueTracker.App
+namespace IssueTracker.WebApi.App
 {
-    public class WebApiApplication : System.Web.HttpApplication
+    public class WebApiApplication : HttpApplication
     {
         private IServiceProvider _provider;
 
