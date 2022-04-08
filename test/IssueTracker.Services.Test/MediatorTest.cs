@@ -12,24 +12,19 @@
 //
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using IssueTracker.Core.Requests;
 using IssueTracker.Data.Abstractions;
-using IssueTracker.Services;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 
-namespace IssueTracker.App.Test;
+namespace IssueTracker.Services.Test;
 
 public sealed class MediatorTest
 {
-    Mock<IIssueRepository> _repository = null!;
+    private Mock<IIssueRepository> _repository = null!;
 
     [SetUp]
     public void SetUp()

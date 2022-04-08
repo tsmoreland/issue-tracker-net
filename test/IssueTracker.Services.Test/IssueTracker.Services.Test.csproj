@@ -26,11 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\IssueTracker.App.Controllers.UrlVersioning\IssueTracker.App.Controllers.UrlVersioning.csproj" />
-    <ProjectReference Include="..\..\src\IssueTracker.App\IssueTracker.App.csproj" />
     <ProjectReference Include="..\..\src\IssueTracker.Core\IssueTracker.Core.csproj" />
     <ProjectReference Include="..\..\src\IssueTracker.Data.Abstractions\IssueTracker.Data.Abstractions.csproj" />
-    <ProjectReference Include="..\..\src\IssueTracker.Data\IssueTracker.Data.csproj" />
     <ProjectReference Include="..\..\src\IssueTracker.Services\IssueTracker.Services.csproj" />
   </ItemGroup>
 
