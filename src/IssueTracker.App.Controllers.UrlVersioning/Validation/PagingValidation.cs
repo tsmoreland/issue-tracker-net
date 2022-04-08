@@ -15,8 +15,14 @@ using System.Web.Http.ModelBinding;
 
 namespace IssueTracker.App.Controllers.UrlVersioning.Validation
 {
+    /// <summary>
+    /// Paging validation methods
+    /// </summary>
     public static class PagingValidation
     {
+        /// <summary>
+        /// Validates page number and size are non-negative
+        /// </summary>
         public static bool ValidatePaging(ModelStateDictionary modelState, int pageNumber, int pageSize)
         {
             if (pageNumber < 1)

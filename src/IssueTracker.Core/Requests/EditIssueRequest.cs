@@ -12,30 +12,26 @@
 //
 
 using System;
-using System.Linq;
-using System.Web.Mvc;
-using System.Web.Routing;
-using IssueTracker.WebApi.App.Controllers;
+using IssueTracker.Core.Model;
+using MediatR;
 
-namespace IssueTracker.WebApi.App.Infrastructure
+namespace IssueTracker.Core.Requests
 {
-    public sealed class CustomControllerFactory : DefaultControllerFactory
+    public sealed class EditIssueRequest : IRequest<Issue>
     {
-
-        public override IController CreateController(RequestContext requestContext, string controllerName)
+        public EditIssueRequest(Guid id, Issue issue)
         {
-            try
-            {
-                return base.CreateController(requestContext, controllerName);
-            }
-            catch (Exception)
-            {
-                requestContext.RouteData.Values["url"] = $"{nameof(ErrorController)}/{nameof(ErrorController.EndpointNotFound)}";
-                requestContext.RouteData.Values["MS_DirectRouteMatches"] = Enumerable.Empty<RouteData>();
-                requestContext.RouteData.Values["controller"] = nameof(ErrorController);
-                requestContext.RouteData.Values["action"] = nameof(ErrorController.EndpointNotFound);
-                return base.CreateController(requestContext, controllerName);
-            }
+            Id = id;
+            Issue = issue;
+        }
+
+        public Guid Id { get; }
+        public Issue Issue { get; }
+
+        public void Deconstruct(out Guid id, out Issue issue)
+        {
+            id = Id;
+            issue = Issue;
         }
     }
 }

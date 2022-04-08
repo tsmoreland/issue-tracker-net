@@ -16,8 +16,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace IssueTracker.App.Controllers.UrlVersioning
 {
+    /// <summary>
+    /// Extension methods used to add controllers to <see cref="IServiceCollection"/>
+    /// </summary>
     public static class ServiceCollectionExtenions
     {
+        /// <summary>
+        /// Add URL Versioned controllers to <see cref="IServiceCollection"/>
+        /// </summary>
         public static IServiceCollection AddUrlVersioningControllers(this IServiceCollection services)
         {
             if (services is null)

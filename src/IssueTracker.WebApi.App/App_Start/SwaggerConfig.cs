@@ -1,9 +1,13 @@
+using System;
+using System.IO;
+using System.Reflection;
+using System.Web;
 using System.Web.Http;
-using WebActivatorEx;
+using System.Xml.XPath;
 using IssueTracker.WebApi.App;
 using Swashbuckle.Application;
 
-[assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
+[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
 namespace IssueTracker.WebApi.App
 {
@@ -101,7 +105,7 @@ namespace IssueTracker.WebApi.App
                         // those comments into the generated docs and UI. You can enable this by providing the path to one or
                         // more Xml comment files.
                         //
-                        //c.IncludeXmlComments(GetXmlCommentsPath());
+                        c.IncludeXmlComments(GetXmlCommentsPath());
 
                         // Swashbuckle makes a best attempt at generating Swagger compliant JSON schemas for the various types
                         // exposed in your API. However, there may be occasions when more control of the output is needed.
@@ -250,6 +254,23 @@ namespace IssueTracker.WebApi.App
                         //
                         //c.EnableApiKeySupport("apiKey", "header");
                     });
+        }
+
+        private static Func<XPathDocument> GetXmlCommentsPath()
+        {
+            return GetXmlCommentsForUrlVersionedControllers;
+        }
+
+        private static XPathDocument GetXmlCommentsForUrlVersionedControllers()
+        {
+            string folder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin");
+
+            // ideally these Func's would be handled in the controller assembly itself and we'd find them at runtime during start up, but
+            // keeping this simple(r) for now
+            string xmlPath = Path.Combine(folder, "IssueTracker.App.Controllers.UrlVersioning.xml");
+            return File.Exists(xmlPath)
+                ? new XPathDocument(xmlPath)
+                : null;
         }
     }
 }

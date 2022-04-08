@@ -11,31 +11,26 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Linq;
-using System.Web.Mvc;
-using System.Web.Routing;
-using IssueTracker.WebApi.App.Controllers;
+using System.Threading;
+using System.Threading.Tasks;
+using IssueTracker.Core.Requests;
+using IssueTracker.Data.Abstractions;
+using MediatR;
 
-namespace IssueTracker.WebApi.App.Infrastructure
+namespace IssueTracker.Services.Handlers;
+
+public sealed class DeleteIssueRequestHandler : IRequestHandler<DeleteIssueRequest, bool>
 {
-    public sealed class CustomControllerFactory : DefaultControllerFactory
-    {
+    private readonly IIssueRepository _repository;
 
-        public override IController CreateController(RequestContext requestContext, string controllerName)
-        {
-            try
-            {
-                return base.CreateController(requestContext, controllerName);
-            }
-            catch (Exception)
-            {
-                requestContext.RouteData.Values["url"] = $"{nameof(ErrorController)}/{nameof(ErrorController.EndpointNotFound)}";
-                requestContext.RouteData.Values["MS_DirectRouteMatches"] = Enumerable.Empty<RouteData>();
-                requestContext.RouteData.Values["controller"] = nameof(ErrorController);
-                requestContext.RouteData.Values["action"] = nameof(ErrorController.EndpointNotFound);
-                return base.CreateController(requestContext, controllerName);
-            }
-        }
+    public DeleteIssueRequestHandler(IIssueRepository repository)
+    {
+        _repository = repository;
+    }
+
+    /// <inheritdoc />
+    public Task<bool> Handle(DeleteIssueRequest request, CancellationToken cancellationToken)
+    {
+        return _repository.DeleteIssueById(request.Id, cancellationToken);
     }
 }
