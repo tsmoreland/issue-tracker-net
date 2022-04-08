@@ -12,25 +12,31 @@
 //
 
 using System;
-using IssueTracker.Data.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
+using System.Net;
+using System.Web.Http;
+using System.Web.Http.Controllers;
+using System.Web.Http.Routing;
 
-namespace IssueTracker.Data
+namespace IssueTracker.App.Infrastructure
 {
-    public static class ServiceCollectionExtenions
+    public sealed class CustomApiControllerActionSelector : ApiControllerActionSelector
     {
-        public static IServiceCollection AddIssueData(this IServiceCollection services)
+        /// <inheritdoc />
+        public override HttpActionDescriptor SelectAction(HttpControllerContext controllerContext)
         {
-            if (services is null)
+            try
             {
-                throw new ArgumentNullException(nameof(services));
+                return base.SelectAction(controllerContext);
             }
-
-            // normally a repository would be scoped but since this is in memory we'll use singleton
-            services.AddSingleton<IIssueRepository, IssueRepository>();
-            services.AddTransient<IIssueDataMigration, IssueDataMigration>();
-
-            return services;
+            catch (HttpResponseException ex) when (ex.Response.StatusCode == HttpStatusCode.NotFound || ex.Response.StatusCode == HttpStatusCode.MethodNotAllowed)
+            {
+                IHttpRouteData routeData = controllerContext.RouteData;
+                routeData.Values["action"] = nameof(Controllers.ErrorApiController.EndpointNotFound);
+                IHttpController controller = new Controllers.ErrorApiController();
+                controllerContext.Controller = controller;
+                controllerContext.ControllerDescriptor = new HttpControllerDescriptor(controllerContext.Configuration, "ErrorApi", controller.GetType());
+                return base.SelectAction(controllerContext);
+            }
         }
     }
 }

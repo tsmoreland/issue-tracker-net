@@ -50,6 +50,14 @@
     <Reference Include="MediatR.Extensions.Microsoft.DependencyInjection, Version=9.0.0.0, Culture=neutral, PublicKeyToken=bb9a41a5e8aaa7e2, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MediatR.Extensions.Microsoft.DependencyInjection.9.0.0\lib\netstandard2.0\MediatR.Extensions.Microsoft.DependencyInjection.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.AspNet.WebApi.Versioning, Version=4.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Versioning.4.1.1\lib\net45\Microsoft.AspNet.WebApi.Versioning.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.WebApi.Versioning.ApiExplorer, Version=4.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Versioning.ApiExplorer.4.1.1\lib\net45\Microsoft.AspNet.WebApi.Versioning.ApiExplorer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Bcl.AsyncInterfaces.6.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
@@ -68,6 +76,9 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Swashbuckle.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cd1bb07a5ac7c7bc, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Swashbuckle.Core.5.6.0\lib\net40\Swashbuckle.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -135,22 +146,30 @@
       <Private>True</Private>
       <HintPath>..\..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\WebActivatorEx.2.0\lib\net40\WebActivatorEx.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\ServiceConfig.cs" />
+    <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Controllers\ErrorApiController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Filters\ExceptionToErrorResponseFilterAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\CustomApiControllerActionSelector.cs" />
+    <Compile Include="Infrastructure\CustomControllerFactory.cs" />
+    <Compile Include="Infrastructure\CustomControllerSelector.cs" />
     <Compile Include="Infrastructure\ServiceDependencyResolver.cs" />
     <Compile Include="Infrastructure\ServiceScopeModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -175,6 +194,10 @@
       <Project>{66bb8353-0e08-49d6-85b9-7a634c05a9d6}</Project>
       <Name>IssueTracker.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\IssueTracker.Data.Abstractions\IssueTracker.Data.Abstractions.csproj">
+      <Project>{C9F7A65E-C6D1-405D-882F-9C6C01C35A93}</Project>
+      <Name>IssueTracker.Data.Abstractions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IssueTracker.Data\IssueTracker.Data.csproj">
       <Project>{90216db7-781c-4dde-a252-b4ce144338fd}</Project>
       <Name>IssueTracker.Data</Name>
@@ -182,6 +205,10 @@
     <ProjectReference Include="..\IssueTracker.Services\IssueTracker.Services.csproj">
       <Project>{44e215c9-7b62-4b15-a0fc-f7cec68f3c98}</Project>
       <Name>IssueTracker.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IssueTracker.SwashBuckleExtensions.Abstractions\IssueTracker.SwashBuckleExtensions.Abstractions.csproj">
+      <Project>{459A85E1-3FF9-466B-88CF-E3D6EC599B69}</Project>
+      <Name>IssueTracker.SwashBuckleExtensions.Abstractions</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
@@ -202,7 +229,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>6946</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://localhost:44311/</IISUrl>
+          <IISUrl>https://localhost:44311</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

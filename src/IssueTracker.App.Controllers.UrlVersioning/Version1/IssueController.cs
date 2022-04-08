@@ -56,9 +56,7 @@ public sealed class IssueController : ApiController
             .MapFrom(await _mediator.Send(new GetAllIssuesRequest(pageNumber, pageSize), cancellationToken), cancellationToken)
             .ToListAsync(cancellationToken);
 
-        return ValidatePaging(ModelState, pageNumber, pageSize)
-            ? Ok(summary)
-            : BadRequest(ModelState);
+        return Ok(summary);
     }
 
     [System.Web.Http.HttpGet]

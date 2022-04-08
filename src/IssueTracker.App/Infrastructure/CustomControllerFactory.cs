@@ -12,25 +12,30 @@
 //
 
 using System;
-using IssueTracker.Data.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
+using System.Web.Mvc;
+using System.Web.Routing;
+using IssueTracker.App.Controllers;
 
-namespace IssueTracker.Data
+namespace IssueTracker.App.Infrastructure
 {
-    public static class ServiceCollectionExtenions
+    public sealed class CustomControllerFactory : DefaultControllerFactory
     {
-        public static IServiceCollection AddIssueData(this IServiceCollection services)
+
+        public override IController CreateController(RequestContext requestContext, string controllerName)
         {
-            if (services is null)
+            try
             {
-                throw new ArgumentNullException(nameof(services));
+                return base.CreateController(requestContext, controllerName);
             }
-
-            // normally a repository would be scoped but since this is in memory we'll use singleton
-            services.AddSingleton<IIssueRepository, IssueRepository>();
-            services.AddTransient<IIssueDataMigration, IssueDataMigration>();
-
-            return services;
+            catch (Exception)
+            {
+                requestContext.RouteData.Values["url"] = $"{nameof(ErrorController)}/{nameof(ErrorController.EndpointNotFound)}";
+                requestContext.RouteData.Values["MS_DirectRouteMatches"] = Enumerable.Empty<RouteData>();
+                requestContext.RouteData.Values["controller"] = nameof(ErrorController);
+                requestContext.RouteData.Values["action"] = nameof(ErrorController.EndpointNotFound);
+                return base.CreateController(requestContext, controllerName);
+            }
         }
     }
 }

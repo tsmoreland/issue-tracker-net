@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Http;
+﻿using System.Web.Http;
+using System.Web.Http.Controllers;
+using System.Web.Http.Dispatcher;
+using IssueTracker.App.Infrastructure;
 
 namespace IssueTracker.App
 {
@@ -11,14 +11,14 @@ namespace IssueTracker.App
         {
             // Web API configuration and services
 
+            config.Services.Replace(typeof(IHttpControllerSelector),
+                new CustomControllerSelector(config));
+            config.Services.Replace(typeof(IHttpActionSelector),
+                new CustomApiControllerActionSelector());
+
+
             // Web API routes
             config.MapHttpAttributeRoutes();
-
-            config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
-            );
         }
     }
 }

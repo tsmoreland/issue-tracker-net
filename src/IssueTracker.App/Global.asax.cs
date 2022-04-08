@@ -4,6 +4,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
 using IssueTracker.App.Infrastructure;
+using IssueTracker.Data.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: PreApplicationStartMethod(typeof(IssueTracker.App.WebApiApplication), "InitModule")]
@@ -21,7 +22,7 @@ namespace IssueTracker.App
 
         protected void Application_Start()
         {
-
+            GlobalConfiguration.Configuration.Filters.Add(new Filters.ExceptionToErrorResponseFilterAttribute());
 
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
@@ -33,8 +34,14 @@ namespace IssueTracker.App
             _provider = services.BuildServiceProvider();
 
             ServiceScopeModule.SetServiceProvider(_provider);
-
             DependencyResolver.SetResolver(new ServiceDependencyResolver());
+            
+            using (IServiceScope scope = _provider.CreateScope())
+            {
+                IIssueDataMigration migration =  scope.ServiceProvider.GetRequiredService<IIssueDataMigration>();
+                migration.Migrate();
+            }
+
         }
 
         protected void Application_End()

@@ -12,25 +12,26 @@
 //
 
 using System;
-using IssueTracker.Data.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http.Filters;
 
-namespace IssueTracker.Data
+namespace IssueTracker.App.Filters
 {
-    public static class ServiceCollectionExtenions
+    public sealed class ExceptionToErrorResponseFilterAttribute : ExceptionFilterAttribute
     {
-        public static IServiceCollection AddIssueData(this IServiceCollection services)
+        /// <inheritdoc />
+        public override void OnException(HttpActionExecutedContext actionExecutedContext)
         {
-            if (services is null)
+            switch (actionExecutedContext.Exception)
             {
-                throw new ArgumentNullException(nameof(services));
+                case ArgumentException _:
+                    actionExecutedContext.Response = new HttpResponseMessage(HttpStatusCode.BadRequest);
+                    break;
+                default:
+                    actionExecutedContext.Response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+                    break;
             }
-
-            // normally a repository would be scoped but since this is in memory we'll use singleton
-            services.AddSingleton<IIssueRepository, IssueRepository>();
-            services.AddTransient<IIssueDataMigration, IssueDataMigration>();
-
-            return services;
         }
     }
 }
