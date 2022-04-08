@@ -125,7 +125,7 @@ public sealed class IssueController : ApiController
             return Request.CreateErrorResponse(System.Net.HttpStatusCode.BadRequest, ModelState);
         }
 
-        IssueDto? issue = IssueDto.From(await _mediator.Send(new EditIssueRequest(id, model.ToModel()), cancellationToken));
+        IssueDto issue = IssueDto.From(await _mediator.Send(new EditIssueRequest(id, model.ToModel()), cancellationToken));
         return issue is not null
             ? Request.CreateResponse(System.Net.HttpStatusCode.OK, issue)
             : Request.CreateErrorResponse(System.Net.HttpStatusCode.NotFound, "issue not found");

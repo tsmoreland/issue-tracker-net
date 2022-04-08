@@ -22,6 +22,9 @@ using IssueTracker.SwashBuckleExtensions.Abstractions;
 
 namespace IssueTracker.App.Controllers.UrlVersioning.Version1.Response
 {
+    /// <summary>
+    /// Issue Short Summary, intended for bulk retrieval
+    /// </summary>
     [SwaggerSchemaName("Issue Summary")]
     public sealed class IssueSummaryDto
     {

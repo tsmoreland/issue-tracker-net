@@ -24,7 +24,7 @@ using IssueTracker.Data.Abstractions;
 
 namespace IssueTracker.Data;
 
-public sealed class IssueRepository : IIssueRepository
+public sealed class InMemoryIssueRepository : IIssueRepository
 {
     private readonly object _lock = new ();
     // concurrent dictionary would be better but this is faster

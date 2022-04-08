@@ -27,7 +27,7 @@ namespace IssueTracker.Data
             }
 
             // normally a repository would be scoped but since this is in memory we'll use singleton
-            services.AddSingleton<IIssueRepository, IssueRepository>();
+            services.AddSingleton<IIssueRepository, InMemoryIssueRepository>();
             services.AddTransient<IIssueDataMigration, IssueDataMigration>();
 
             return services;
