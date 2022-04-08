@@ -31,7 +31,7 @@ namespace IssueTracker.App.Controllers.UrlVersioning.Version1;
 /// <summary>
 /// Issue Controller
 /// </summary>
-[System.Web.Http.Route("api/v1/issues")]
+[System.Web.Http.RoutePrefix("api/v1/issues")]
 public sealed class IssueController : ApiController
 {
     private readonly IMediator _mediator;
@@ -54,6 +54,7 @@ public sealed class IssueController : ApiController
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all issues</returns>
     [System.Web.Http.HttpGet]
+    [System.Web.Http.Route("")]
     public async Task<HttpResponseMessage> GetAll(int pageNumber = 1, int pageSize = 10, CancellationToken cancellationToken = default)
     {
         if (!ValidatePaging(ModelState, pageNumber, pageSize))
@@ -94,6 +95,7 @@ public sealed class IssueController : ApiController
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>newly created <see cref="IssueDto"/></returns>
     [System.Web.Http.HttpPost]
+    [System.Web.Http.Route("")]
     [SwaggerResponse(201, Description = "Successful Response", Type = typeof(IssueDto))]  
     public async Task<HttpResponseMessage> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
