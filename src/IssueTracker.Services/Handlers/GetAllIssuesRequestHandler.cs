@@ -48,6 +48,11 @@ public sealed class GetAllIssuesRequestHandler : IRequestHandler<GetAllIssuesReq
 
         await foreach (IssueSummaryProjection projection in issues.WithCancellation(cancellationToken))
         {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                yield break;
+            }
+
             yield return projection;
         }
     }
