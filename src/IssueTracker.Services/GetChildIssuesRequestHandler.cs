@@ -19,7 +19,7 @@ using MediatR;
 
 namespace IssueTracker.Services;
 
-public sealed class GetChildIssuesRequestHandler : IRequestHandler<GetChildIssuesRequest, IAsyncEnumerable<IssueSummaryProjection>> 
+public sealed class GetChildIssuesRequestHandler : IRequestHandler<GetChildIssuesRequest, IAsyncEnumerable<LinkedIssueSummaryProjection>> 
 {
     private readonly IIssueRepository _repository;
 
@@ -29,23 +29,23 @@ public sealed class GetChildIssuesRequestHandler : IRequestHandler<GetChildIssue
     }
 
     /// <inheritdoc />
-    public Task<IAsyncEnumerable<IssueSummaryProjection>> Handle(GetChildIssuesRequest request, CancellationToken cancellationToken)
+    public Task<IAsyncEnumerable<LinkedIssueSummaryProjection>> Handle(GetChildIssuesRequest request, CancellationToken cancellationToken)
     {
         return Task.FromResult(HandleWithEnumerable(request, cancellationToken));
     }
 
-    private async IAsyncEnumerable<IssueSummaryProjection> HandleWithEnumerable(GetChildIssuesRequest request,
+    private async IAsyncEnumerable<LinkedIssueSummaryProjection> HandleWithEnumerable(GetChildIssuesRequest request,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         (Guid id, int pageNumber, int pageSize) = request;
 
-        ConfiguredCancelableAsyncEnumerable<IssueSummaryProjection> issues = _repository
+        ConfiguredCancelableAsyncEnumerable<LinkedIssueSummaryProjection> issues = _repository
             .GetChildIssues(id, pageNumber, pageSize, cancellationToken)
             .WithCancellation(cancellationToken);
 
-        await foreach ((Guid issueId, string name) in issues)
+        await foreach (LinkedIssueSummaryProjection projection in issues)
         {
-            yield return new IssueSummaryProjection(issueId, name);
+            yield return projection;
         }
     }
 }

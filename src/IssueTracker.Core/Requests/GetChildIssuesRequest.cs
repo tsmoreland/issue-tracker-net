@@ -16,4 +16,4 @@ using MediatR;
 
 namespace IssueTracker.Core.Requests;
 
-public sealed record GetChildIssuesRequest(Guid IssueId, int PageNumber, int PageSize) : IRequest<IAsyncEnumerable<IssueSummaryProjection>>;
+public sealed record GetChildIssuesRequest(Guid IssueId, int PageNumber, int PageSize) : IRequest<IAsyncEnumerable<LinkedIssueSummaryProjection>>;

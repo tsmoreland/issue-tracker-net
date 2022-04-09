@@ -63,7 +63,7 @@ public sealed class IssueSummaryDto
     /// </summary>
     public static IssueSummaryDto FromProjection(IssueSummaryProjection model)
     {
-        (Guid id, string? title) = model;
+        (Guid id, string? title, _, _) = model;
         return new IssueSummaryDto(id, title);
     }
 

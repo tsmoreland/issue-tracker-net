@@ -43,9 +43,9 @@ public sealed class GetAllIssuesRequestHandler : IRequestHandler<GetAllIssuesReq
             .GetIssueSummaries(pageNumber, pageSize, cancellationToken)
             .WithCancellation(cancellationToken);
 
-        await foreach ((Guid id, string title) in issues)
+        await foreach (IssueSummaryProjection projection in issues)
         {
-            yield return new IssueSummaryProjection(id, title);
+            yield return projection;
         }
     }
 }

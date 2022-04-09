@@ -11,9 +11,16 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Core.Projections;
-using MediatR;
+using IssueTracker.Core.Model;
 
-namespace IssueTracker.Core.Requests;
+namespace IssueTracker.Core.Projections;
 
-public sealed record GetParentIssuesRequest(Guid IssueId, int PageNumber, int PageSize) : IRequest<IAsyncEnumerable<LinkedIssueSummaryProjection>>;
+/// <summary>
+/// projection of Issue and Link Type providing summary details for bulk retrieval
+/// </summary>
+public sealed record class LinkedIssueSummaryProjection(
+    Guid Id,
+    string Title,
+    Priority Priority,
+    IssueType IssueType,
+    LinkType LinkType);

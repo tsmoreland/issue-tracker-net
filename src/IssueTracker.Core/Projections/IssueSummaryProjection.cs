@@ -11,9 +11,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Core.Model;
+
 namespace IssueTracker.Core.Projections;
 
 /// <summary>
-/// projection of summary to id and name
+/// projection of Issue providing summary details for bulk retrieval
 /// </summary>
-public sealed record class IssueSummaryProjection(Guid Id, string Title);
+public sealed record class IssueSummaryProjection(Guid Id, string Title, Priority Priority, IssueType Type);
