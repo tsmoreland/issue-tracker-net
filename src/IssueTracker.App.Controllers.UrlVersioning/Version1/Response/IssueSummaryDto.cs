@@ -14,7 +14,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using IssueTracker.Core.Model;
-using IssueTracker.Services.Abstractions.Projections;
+using IssueTracker.Core.Projections;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
 namespace IssueTracker.App.Controllers.UrlVersioning.Version1.Response;
@@ -61,19 +61,20 @@ public sealed class IssueSummaryDto
     /// <summary>
     /// Converts service DTO to versioned API DTO, for latest version of API the class is expected to be equivalent
     /// </summary>
-    public static IssueSummaryDto FromProjection(Services.Abstractions.Projections.IssueSummaryDto model)
+    public static IssueSummaryDto FromProjection(IssueSummaryProjection model)
     {
-        return new IssueSummaryDto(model.Id, model.Title);
+        (Guid id, string? title) = model;
+        return new IssueSummaryDto(id, title);
     }
 
     /// <summary>
-    /// Converts an asynchronous collection of <see cref="Services.Abstractions.Projections.IssueSummaryDto"/> to
+    /// Converts an asynchronous collection of <see cref="IssueSummaryProjection"/> to
     /// an asynchronous colleciton of <see cref="IssueSummaryDto"/>
     /// </summary>
     public static async IAsyncEnumerable<IssueSummaryDto> MapFrom(
-        IAsyncEnumerable<Services.Abstractions.Projections.IssueSummaryDto> source, [EnumeratorCancellation] CancellationToken cancellationToken)
+        IAsyncEnumerable<IssueSummaryProjection> source, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        await foreach (Services.Abstractions.Projections.IssueSummaryDto issueSummary in source.WithCancellation(cancellationToken))
+        await foreach (IssueSummaryProjection issueSummary in source.WithCancellation(cancellationToken))
         {
             yield return FromProjection(issueSummary);
         }

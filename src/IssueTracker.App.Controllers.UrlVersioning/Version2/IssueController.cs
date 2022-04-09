@@ -14,7 +14,7 @@
 using System.Net.Mime;
 using IssueTracker.App.Controllers.UrlVersioning.Version2.Request;
 using IssueTracker.App.Controllers.UrlVersioning.Version2.Response;
-using IssueTracker.Services.Abstractions.Requests;
+using IssueTracker.Core.Requests;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -31,14 +31,14 @@ namespace IssueTracker.App.Controllers.UrlVersioning.Version2;
 [Route("api/v{version:apiVersion}/issues")]
 [TrimVersionFromSwagger]
 [ApiVersion("2")]
-public sealed class IssueV2Controller : ControllerBase
+public sealed class IssueController : ControllerBase
 {
     private readonly IMediator _mediator;
 
     /// <summary>
-    /// Instantiates a new instance of the <see cref="IssueV2Controller"/> class.
+    /// Instantiates a new instance of the <see cref="IssueController"/> class.
     /// </summary>
-    public IssueV2Controller(IMediator mediator)
+    public IssueController(IMediator mediator)
     {
         _mediator = mediator;
     }
@@ -83,7 +83,7 @@ public sealed class IssueV2Controller : ControllerBase
     [SwaggerResponse(StatusCodes.Status404NotFound, "issue not found", typeof(IssueSummaryDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
     {
-        IssueDto? issue = IssueDto.FromProjection(await _mediator.Send(new FindIssueByIdRequest(id), cancellationToken));
+        IssueDto? issue = IssueDto.From(await _mediator.Send(new FindIssueByIdRequest(id), cancellationToken));
         return issue is not null
             ? Ok(issue)
             : NotFound();
@@ -175,7 +175,7 @@ public sealed class IssueV2Controller : ControllerBase
             return BadRequest(new ValidationProblemDetails(ModelState));
         }
 
-        IssueDto issue = IssueDto.FromProjection(await _mediator.Send(new CreateIssueRequest(model.ToModel()), cancellationToken));
+        IssueDto issue = IssueDto.From(await _mediator.Send(new CreateIssueRequest(model.ToModel()), cancellationToken));
         return new ObjectResult(issue) { StatusCode = StatusCodes.Status201Created };
     }
 
@@ -199,7 +199,7 @@ public sealed class IssueV2Controller : ControllerBase
             return BadRequest(new ValidationProblemDetails(ModelState));
         }
 
-        IssueDto? issue = IssueDto.FromProjection(await _mediator.Send(new EditIssueRequest(id, model.ToModel()), cancellationToken));
+        IssueDto? issue = IssueDto.From(await _mediator.Send(new EditIssueRequest(id, model.ToModel()), cancellationToken));
         return issue is not null
             ? Ok(issue)
             : NotFound();

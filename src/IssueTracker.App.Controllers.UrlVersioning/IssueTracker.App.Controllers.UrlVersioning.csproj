@@ -15,7 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\IssueTracker.App.Controllers.Shared\IssueTracker.App.Controllers.Shared.csproj" />
     <ProjectReference Include="..\IssueTracker.Core\IssueTracker.Core.csproj" />
-    <ProjectReference Include="..\IssueTracker.Services.Abstractions\IssueTracker.Services.Abstractions.csproj" />
+    <ProjectReference Include="..\IssueTracker.SwashbuckleExtensions.Abstractions\IssueTracker.SwashbuckleExtensions.Abstractions.csproj" />
   </ItemGroup>
 
   <ItemGroup>
