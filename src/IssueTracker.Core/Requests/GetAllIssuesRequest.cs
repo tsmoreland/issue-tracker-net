@@ -11,8 +11,9 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Core.Projections;
 using MediatR;
 
-namespace IssueTracker.Services.Abstractions.Requests;
+namespace IssueTracker.Core.Requests;
 
-public sealed record class IssueExistsRequest(Guid id) : IRequest<bool>;
+public sealed record GetAllIssuesRequest(int PageNumber, int PageSize) : IRequest<IAsyncEnumerable<IssueSummaryProjection>>;
