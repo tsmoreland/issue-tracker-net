@@ -23,6 +23,7 @@ using IssueTracker.App.Controllers.UrlVersioning.Version1.Request;
 using IssueTracker.App.Controllers.UrlVersioning.Version1.Response;
 using IssueTracker.Core.Requests;
 using MediatR;
+using Microsoft.Web.Http;
 using Swashbuckle.Swagger.Annotations;
 using static IssueTracker.App.Controllers.UrlVersioning.Validation.PagingValidation;
 
@@ -31,7 +32,8 @@ namespace IssueTracker.App.Controllers.UrlVersioning.Version1;
 /// <summary>
 /// Issue Controller
 /// </summary>
-[System.Web.Http.RoutePrefix("api/v1/issues")]
+[System.Web.Http.RoutePrefix("api/v{version:apiVersion}/issues")]
+[ApiVersion("1")]
 public sealed class IssueController : ApiController
 {
     private readonly IMediator _mediator;
