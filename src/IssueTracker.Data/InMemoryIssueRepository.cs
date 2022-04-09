@@ -12,7 +12,6 @@
 //
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -41,7 +40,7 @@ public sealed class InMemoryIssueRepository : IIssueRepository
         List<IssueSummaryProjection> issues;
         lock (_lock)
         {
-            issues = _issuesById.Values.Select(i => new IssueSummaryProjection(i.Id, i.Title)).ToList();
+            issues = _issuesById.Values.Select(i => new IssueSummaryProjection(i.Id, i.Title, i.Priority, i.Type)).ToList();
         }
 
         foreach (IssueSummaryProjection issue in issues)

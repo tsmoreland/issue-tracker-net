@@ -16,13 +16,14 @@ using IssueTracker.Core.Model;
 
 namespace IssueTracker.Core.Projections
 {
-    public sealed class IssueSummaryProjection : IEquatable<IssueSummaryProjection>
+    public sealed class LinkedIssueSummaryProjection : IEquatable<LinkedIssueSummaryProjection>
     {
-        public IssueSummaryProjection(Guid id, string name, Priority priority, IssueType issueType)
+        public LinkedIssueSummaryProjection(Guid id, string name, Priority priority, IssueType issueType, LinkType linkType)
         {
             Id = id;
             Priority = priority;
             IssueType = issueType;
+            LinkType = linkType;
             Title = name ?? string.Empty;
         }
 
@@ -30,23 +31,25 @@ namespace IssueTracker.Core.Projections
         public string Title { get; }
         public Priority Priority { get; }
         public IssueType IssueType { get; }
+        public LinkType LinkType { get; }
 
 
-        public IssueSummaryProjection With(Guid? id = null, string name = null, Priority? priority = null, IssueType? issueType = null)
+        public LinkedIssueSummaryProjection With(Guid? id = null, string name = null, Priority? priority = null, IssueType? issueType = null, LinkType? linkType = null)
         {
-            return new IssueSummaryProjection(id ?? Id, name ?? Title, priority ?? Priority, issueType ?? IssueType);
+            return new LinkedIssueSummaryProjection(id ?? Id, name ?? Title, priority ?? Priority, issueType ?? IssueType, linkType ?? LinkType);
         }
 
-        public void Deconstruct(out Guid id, out string name, out Priority priority, out IssueType issueType)
+        public void Deconstruct(out Guid id, out string name, out Priority priority, out IssueType issueType, out LinkType linkType)
         {
             id = Id;
             name = Title;
             priority = Priority;
             issueType = IssueType;
+            linkType = LinkType;
         }
 
         /// <inheritdoc />
-        public bool Equals(IssueSummaryProjection other)
+        public bool Equals(LinkedIssueSummaryProjection other)
         {
             if (other is null)
             {
@@ -58,17 +61,20 @@ namespace IssueTracker.Core.Projections
                 return true;
             }
 
-            return Id.Equals(other.Id);
+            return Id.Equals(other.Id) && LinkType == other.LinkType;
         }
 
         /// <inheritdoc />
         public override bool Equals(object obj) =>
-            ReferenceEquals(this, obj) || obj is IssueSummaryProjection other && Equals(other);
+            ReferenceEquals(this, obj) || obj is LinkedIssueSummaryProjection other && Equals(other);
 
         /// <inheritdoc />
         public override int GetHashCode()
         {
-            return Id.GetHashCode();
+            unchecked
+            {
+                return (Id.GetHashCode() * 397) ^ (LinkType.GetHashCode() * 397);
+            }
         }
     }
 }
