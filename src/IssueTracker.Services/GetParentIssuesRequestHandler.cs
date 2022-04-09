@@ -13,14 +13,13 @@
 
 using System.Runtime.CompilerServices;
 using IssueTracker.Core.Projections;
+using IssueTracker.Core.Requests;
 using IssueTracker.Data.Abstractions;
-using IssueTracker.Services.Abstractions.Projections;
-using IssueTracker.Services.Abstractions.Requests;
 using MediatR;
 
 namespace IssueTracker.Services;
 
-public sealed class GetParentIssuesRequestHandler : IRequestHandler<GetParentIssuesRequest, IAsyncEnumerable<IssueSummaryDto>> 
+public sealed class GetParentIssuesRequestHandler : IRequestHandler<GetParentIssuesRequest, IAsyncEnumerable<IssueSummaryProjection>> 
 {
     private readonly IIssueRepository _repository;
 
@@ -30,12 +29,12 @@ public sealed class GetParentIssuesRequestHandler : IRequestHandler<GetParentIss
     }
 
     /// <inheritdoc />
-    public Task<IAsyncEnumerable<IssueSummaryDto>> Handle(GetParentIssuesRequest request, CancellationToken cancellationToken)
+    public Task<IAsyncEnumerable<IssueSummaryProjection>> Handle(GetParentIssuesRequest request, CancellationToken cancellationToken)
     {
         return Task.FromResult(HandleWithEnumerable(request, cancellationToken));
     }
 
-    private async IAsyncEnumerable<IssueSummaryDto> HandleWithEnumerable(GetParentIssuesRequest request,
+    private async IAsyncEnumerable<IssueSummaryProjection> HandleWithEnumerable(GetParentIssuesRequest request,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         (Guid id, int pageNumber, int pageSize) = request;
@@ -44,9 +43,9 @@ public sealed class GetParentIssuesRequestHandler : IRequestHandler<GetParentIss
             .GetParentIssues(id, pageNumber, pageSize, cancellationToken)
             .WithCancellation(cancellationToken);
 
-        await foreach ((Guid issueId, string name) in issues)
+        await foreach (IssueSummaryProjection issueSummary in issues)
         {
-            yield return new IssueSummaryDto(issueId, name);
+            yield return issueSummary;
         }
     }
 }

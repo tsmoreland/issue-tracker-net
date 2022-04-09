@@ -13,14 +13,13 @@
 
 using System.Runtime.CompilerServices;
 using IssueTracker.Core.Projections;
+using IssueTracker.Core.Requests;
 using IssueTracker.Data.Abstractions;
-using IssueTracker.Services.Abstractions.Projections;
-using IssueTracker.Services.Abstractions.Requests;
 using MediatR;
 
 namespace IssueTracker.Services;
 
-public sealed class GetAllIssuesRequestHandler : IRequestHandler<GetAllIssuesRequest, IAsyncEnumerable<IssueSummaryDto>> 
+public sealed class GetAllIssuesRequestHandler : IRequestHandler<GetAllIssuesRequest, IAsyncEnumerable<IssueSummaryProjection>> 
 {
     private readonly IIssueRepository _repository;
 
@@ -30,12 +29,12 @@ public sealed class GetAllIssuesRequestHandler : IRequestHandler<GetAllIssuesReq
     }
 
     /// <inheritdoc />
-    public Task<IAsyncEnumerable<IssueSummaryDto>> Handle(GetAllIssuesRequest request, CancellationToken cancellationToken)
+    public Task<IAsyncEnumerable<IssueSummaryProjection>> Handle(GetAllIssuesRequest request, CancellationToken cancellationToken)
     {
         return Task.FromResult(HandleWithEnumerable(request, cancellationToken));
     }
 
-    private async IAsyncEnumerable<IssueSummaryDto> HandleWithEnumerable(GetAllIssuesRequest request,
+    private async IAsyncEnumerable<IssueSummaryProjection> HandleWithEnumerable(GetAllIssuesRequest request,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         (int pageNumber, int pageSize) = request;
@@ -46,7 +45,7 @@ public sealed class GetAllIssuesRequestHandler : IRequestHandler<GetAllIssuesReq
 
         await foreach ((Guid id, string title) in issues)
         {
-            yield return new IssueSummaryDto(id, title);
+            yield return new IssueSummaryProjection(id, title);
         }
     }
 }

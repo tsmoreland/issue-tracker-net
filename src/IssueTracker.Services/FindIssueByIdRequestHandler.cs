@@ -12,14 +12,13 @@
 //
 
 using IssueTracker.Core.Model;
+using IssueTracker.Core.Requests;
 using IssueTracker.Data.Abstractions;
-using IssueTracker.Services.Abstractions.Projections;
-using IssueTracker.Services.Abstractions.Requests;
 using MediatR;
 
 namespace IssueTracker.Services;
 
-public sealed class FindIssueByIdRequestHandler : IRequestHandler<FindIssueByIdRequest, IssueDto?>
+public sealed class FindIssueByIdRequestHandler : IRequestHandler<FindIssueByIdRequest, Issue?>
 {
     private readonly IIssueRepository _repository;
 
@@ -29,11 +28,8 @@ public sealed class FindIssueByIdRequestHandler : IRequestHandler<FindIssueByIdR
     }
 
     /// <inheritdoc />
-    public async Task<IssueDto?> Handle(FindIssueByIdRequest request, CancellationToken cancellationToken)
+    public Task<Issue?> Handle(FindIssueByIdRequest request, CancellationToken cancellationToken)
     {
-        Issue? issue = await _repository.GetUntrackedIssueById(request.Id, cancellationToken);
-        return issue is not null
-            ? IssueDto.FromIssue(issue)
-            : null;
+        return _repository.GetUntrackedIssueById(request.Id, cancellationToken);
     }
 }

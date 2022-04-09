@@ -12,14 +12,13 @@
 //
 
 using IssueTracker.Core.Model;
+using IssueTracker.Core.Requests;
 using IssueTracker.Data.Abstractions;
-using IssueTracker.Services.Abstractions.Projections;
-using IssueTracker.Services.Abstractions.Requests;
 using MediatR;
 
 namespace IssueTracker.Services;
 
-public sealed class CreateIssueRequestHandler : IRequestHandler<CreateIssueRequest, IssueDto>
+public sealed class CreateIssueRequestHandler : IRequestHandler<CreateIssueRequest, Issue>
 {
     private readonly IIssueRepository _repository;
 
@@ -29,9 +28,8 @@ public sealed class CreateIssueRequestHandler : IRequestHandler<CreateIssueReque
     }
 
     /// <inheritdoc />
-    public async Task<IssueDto> Handle(CreateIssueRequest request, CancellationToken cancellationToken)
+    public Task<Issue> Handle(CreateIssueRequest request, CancellationToken cancellationToken)
     {
-        Issue issue = await _repository.AddIssue(request.Model.ToIssue(), cancellationToken);
-        return IssueDto.FromIssue(issue);
+        return _repository.AddIssue(request.Model, cancellationToken);
     }
 }

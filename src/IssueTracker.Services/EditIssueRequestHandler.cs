@@ -12,15 +12,13 @@
 //
 
 using IssueTracker.Core.Model;
+using IssueTracker.Core.Requests;
 using IssueTracker.Data.Abstractions;
-using IssueTracker.Services.Abstractions.Model;
-using IssueTracker.Services.Abstractions.Projections;
-using IssueTracker.Services.Abstractions.Requests;
 using MediatR;
 
 namespace IssueTracker.Services;
 
-public sealed class EditIssueRequestHandler : IRequestHandler<EditIssueRequest, IssueDto?>
+public sealed class EditIssueRequestHandler : IRequestHandler<EditIssueRequest, Issue?>
 {
     private readonly IIssueRepository _repository;
 
@@ -30,9 +28,9 @@ public sealed class EditIssueRequestHandler : IRequestHandler<EditIssueRequest, 
     }
 
     /// <inheritdoc />
-    public Task<IssueDto?> Handle(EditIssueRequest request, CancellationToken cancellationToken)
+    public Task<Issue?> Handle(EditIssueRequest request, CancellationToken cancellationToken)
     {
-        (Guid id, EditIssueDto model) = request;
+        (Guid id, Issue model) = request;
         return _repository.GetIssueById(id, cancellationToken)
             .ContinueWith(t =>
             {
@@ -43,8 +41,8 @@ public sealed class EditIssueRequestHandler : IRequestHandler<EditIssueRequest, 
                     return null;
                 }
 
-                issue.CopyTopLevelFrom(model.ToModel());
-                return IssueDto.FromIssue(issue);
+                issue.CopyTopLevelFrom(model);
+                return issue;
 
             }, TaskContinuationOptions.OnlyOnRanToCompletion);
     }

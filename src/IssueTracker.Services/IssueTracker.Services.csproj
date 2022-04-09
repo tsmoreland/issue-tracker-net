@@ -13,7 +13,6 @@
   <ItemGroup>
     <ProjectReference Include="..\IssueTracker.Core\IssueTracker.Core.csproj" />
     <ProjectReference Include="..\IssueTracker.Data.Abstractions\IssueTracker.Data.Abstractions.csproj" />
-    <ProjectReference Include="..\IssueTracker.Services.Abstractions\IssueTracker.Services.Abstractions.csproj" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
     <PackageReference Include="MediatR" Version="10.0.1" />
   </ItemGroup>
