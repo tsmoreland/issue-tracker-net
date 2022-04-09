@@ -7,6 +7,7 @@ using System.Web.Routing;
 using IssueTracker.WebApi.App.Infrastructure;
 using IssueTracker.Data.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Web.Http.Description;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
@@ -36,7 +37,11 @@ namespace IssueTracker.WebApi.App
             jsonFormatter.SerializerSettings.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy() { OverrideSpecifiedNames = false }, true));
 
             AreaRegistration.RegisterAllAreas();
-            GlobalConfiguration.Configure(WebApiConfig.Register);
+
+            ApiDescriptionGroupCollection apiDescriptions = null;
+            GlobalConfiguration.Configure(config => apiDescriptions = WebApiConfig.Register(config));
+            GlobalConfiguration.Configure(config => SwaggerConfig.Register(config, apiDescriptions));
+
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 

@@ -1,24 +1,24 @@
 using System;
 using System.IO;
 using System.Reflection;
-using System.Web;
 using System.Web.Http;
+using System.Web.Http.Description;
 using System.Xml.XPath;
-using IssueTracker.WebApi.App;
+using Microsoft.Web.Http.Description;
 using Swashbuckle.Application;
-
-[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
 namespace IssueTracker.WebApi.App
 {
     public class SwaggerConfig
     {
-        public static void Register()
+        public static void Register(HttpConfiguration config, ApiDescriptionGroupCollection apiDescriptions)
         {
             Assembly thisAssembly = typeof(SwaggerConfig).Assembly;
 
-            GlobalConfiguration.Configuration
-                .EnableSwagger(c =>
+            config
+                .EnableSwagger(
+                    "{apiVersion}/swagger",
+                    c =>
                     {
                         // By default, the service root url is inferred from the request used to access the docs.
                         // However, there may be situations (e.g. proxy and load-balanced environments) where this does not
@@ -36,7 +36,7 @@ namespace IssueTracker.WebApi.App
                         // hold additional metadata for an API. Version and title are required but you can also provide
                         // additional fields by chaining methods off SingleApiVersion.
                         //
-                        c.SingleApiVersion("v1", "IssueTracker.App");
+                        //c.SingleApiVersion("v1", "IssueTracker.App");
 
                         // If you want the output Swagger docs to be indented properly, enable the "PrettyPrint" option.
                         //
@@ -47,13 +47,15 @@ namespace IssueTracker.WebApi.App
                         // included in the docs for a given API version. Like "SingleApiVersion", each call to "Version"
                         // returns an "Info" builder so you can provide additional metadata per API version.
                         //
-                        //c.MultipleApiVersions(
-                        //    (apiDesc, targetApiVersion) => ResolveVersionSupportByRouteConstraint(apiDesc, targetApiVersion),
-                        //    (vc) =>
-                        //    {
-                        //        vc.Version("v2", "Swashbuckle Dummy API V2");
-                        //        vc.Version("v1", "Swashbuckle Dummy API V1");
-                        //    });
+                        c.MultipleApiVersions(
+                            (apiDescription, version) => apiDescription.GetGroupName() == version,
+                            info =>
+                            {
+                                foreach (ApiDescriptionGroup group in apiDescriptions)
+                                {
+                                    info.Version(group.Name, $"Issue REST API v{group.ApiVersion}");
+                                }
+                            });
 
                         // You can use "BasicAuth", "ApiKey" or "OAuth2" options to describe security schemes for the API.
                         // See https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md for more details.
@@ -65,7 +67,7 @@ namespace IssueTracker.WebApi.App
                         //c.BasicAuth("basic")
                         //    .Description("Basic HTTP Authentication");
                         //
-						// NOTE: You must also configure 'EnableApiKeySupport' below in the SwaggerUI section
+                        // NOTE: You must also configure 'EnableApiKeySupport' below in the SwaggerUI section
                         //c.ApiKey("apiKey")
                         //    .Description("API Key Authentication")
                         //    .Name("apiKey")
