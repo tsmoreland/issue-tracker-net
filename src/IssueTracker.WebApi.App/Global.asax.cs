@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http.Formatting;
+using System.Reflection;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -45,6 +46,7 @@ namespace IssueTracker.WebApi.App
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             IServiceCollection services = new ServiceCollection();
             ServiceConfig.Configure(services);
             _provider = services.BuildServiceProvider();
@@ -54,16 +56,46 @@ namespace IssueTracker.WebApi.App
             
             using (IServiceScope scope = _provider.CreateScope())
             {
-                IIssueDataMigration migration =  scope.ServiceProvider.GetRequiredService<IIssueDataMigration>();
-                migration.Migrate();
+                try
+                {
+                    SQLitePCL.Batteries.Init();
+
+                    IIssueDataMigration migration =  scope.ServiceProvider.GetRequiredService<IIssueDataMigration>();
+                    Assembly assembly = Assembly.Load(new AssemblyName("SQLitePCLRaw.batteries_v2"));
+                    if (assembly != null)
+                    {
+                        Type type = assembly.GetType("SQLitePCL.Batteries_V2", throwOnError: true);
+                        MethodInfo mi = type?.GetMethod("Init", Type.EmptyTypes);
+                        mi?.Invoke(null, null);
+                    }
+
+                    migration.Migrate();
+                }
+                catch (Exception ex)
+                {
+                    // TODO: shift to some form of logging
+                    Console.WriteLine(ex.ToString());
+                }
             }
 
         }
 
+
         protected void Application_End()
         {
+            AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;
             _provider = null;
         }
+
+        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            if (args.Name == "e_sqlite3")
+            {
+            }
+
+            return Assembly.Load(args.Name);
+        }
+
     }
 
 }

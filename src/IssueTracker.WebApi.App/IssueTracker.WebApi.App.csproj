@@ -354,6 +354,9 @@
   <Import Project="..\..\packages\Tcell.Agent.Instrumentation.3.0.2\build\Tcell.Agent.Instrumentation.targets" Condition="Exists('..\..\packages\Tcell.Agent.Instrumentation.3.0.2\build\Tcell.Agent.Instrumentation.targets')" />
   <Import Project="..\..\packages\Tcell.AspNet.Agent.AzureWebApp.3.0.1\build\Tcell.AspNet.Agent.AzureWebApp.targets" Condition="Exists('..\..\packages\Tcell.AspNet.Agent.AzureWebApp.3.0.1\build\Tcell.AspNet.Agent.AzureWebApp.targets')" />
   <Import Project="..\..\packages\SQLitePCLRaw.lib.e_sqlite3.2.0.7\build\net461\SQLitePCLRaw.lib.e_sqlite3.targets" Condition="Exists('..\..\packages\SQLitePCLRaw.lib.e_sqlite3.2.0.7\build\net461\SQLitePCLRaw.lib.e_sqlite3.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(TargetDir)\runtimes\win-x64\native\e_sqlite3.dll" "$(TargetDir)\e_sqlite3.dll"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
