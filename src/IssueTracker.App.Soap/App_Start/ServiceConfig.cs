@@ -12,51 +12,26 @@
 //
 
 using System;
-using System.Web;
-using IssueTracker.App.Shared.Infrastructure;
+using System.Configuration;
+using System.IO;
+using IssueTracker.Data;
+using IssueTracker.Data.Abstractions;
+using IssueTracker.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace IssueTracker.App.Soap
 {
-    public class Global : HttpApplication
+    public static class ServiceConfig
     {
-
-        protected void Application_Start(object sender, EventArgs e)
+        public static void Configure(IServiceCollection services)
         {
-            IServiceCollection services = new ServiceCollection();
-            ServiceConfig.Configure(services);
-            IServiceProvider provider = services.BuildServiceProvider();
-            ServiceScopeModule.SetServiceProvider(provider);
-
-        }
-
-        protected void Session_Start(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Application_BeginRequest(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Application_AuthenticateRequest(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Application_Error(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Session_End(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Application_End(object sender, EventArgs e)
-        {
+            services.AddIssueData();
+            services.AddIssueServices();
+            services
+                .AddTransient(_ => new DatabaseOptions
+                {
+                    DatabaseFileName =  Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigurationManager.AppSettings["DatabaseFilename"])
+                });
 
         }
     }

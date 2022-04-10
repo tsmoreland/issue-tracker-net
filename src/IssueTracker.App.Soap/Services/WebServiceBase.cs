@@ -13,51 +13,18 @@
 
 using System;
 using System.Web;
-using IssueTracker.App.Shared.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace IssueTracker.App.Soap
+namespace IssueTracker.App.Soap.Services
 {
-    public class Global : HttpApplication
+    public abstract class WebServiceBase : System.Web.Services.WebService
     {
+        protected IServiceProvider ServiceProvider { get; }
 
-        protected void Application_Start(object sender, EventArgs e)
+        protected WebServiceBase()
         {
-            IServiceCollection services = new ServiceCollection();
-            ServiceConfig.Configure(services);
-            IServiceProvider provider = services.BuildServiceProvider();
-            ServiceScopeModule.SetServiceProvider(provider);
-
-        }
-
-        protected void Session_Start(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Application_BeginRequest(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Application_AuthenticateRequest(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Application_Error(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Session_End(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Application_End(object sender, EventArgs e)
-        {
-
+            IServiceScope scope = (IServiceScope)HttpContext.Current?.Items[typeof(IServiceScope)];
+            ServiceProvider = scope?.ServiceProvider ?? throw new InvalidOperationException("Missing Service Provider in Http Context items");
         }
     }
 }

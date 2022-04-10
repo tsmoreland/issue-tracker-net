@@ -12,52 +12,17 @@
 //
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web;
-using IssueTracker.App.Shared.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace IssueTracker.App.Soap
 {
-    public class Global : HttpApplication
+    /// <summary>
+    /// Address settings used by web servcie(s)
+    /// </summary>
+    internal static class AddressSettings
     {
-
-        protected void Application_Start(object sender, EventArgs e)
-        {
-            IServiceCollection services = new ServiceCollection();
-            ServiceConfig.Configure(services);
-            IServiceProvider provider = services.BuildServiceProvider();
-            ServiceScopeModule.SetServiceProvider(provider);
-
-        }
-
-        protected void Session_Start(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Application_BeginRequest(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Application_AuthenticateRequest(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Application_Error(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Session_End(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Application_End(object sender, EventArgs e)
-        {
-
-        }
+        public const string Namespace = "http://localhost:44338/";
     }
 }

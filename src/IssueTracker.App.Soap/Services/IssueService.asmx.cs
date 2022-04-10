@@ -12,52 +12,39 @@
 //
 
 using System;
-using System.Web;
-using IssueTracker.App.Shared.Infrastructure;
+using System.Collections.Generic;
+using System.Threading;
+using System.Web.Services;
+using IssueTracker.App.Soap.Model.Response;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace IssueTracker.App.Soap
+namespace IssueTracker.App.Soap.Services
 {
-    public class Global : HttpApplication
+    /// <summary>
+    /// Summary description for IssueService
+    /// </summary>
+    [WebService(Namespace = AddressSettings.Namespace)]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [System.ComponentModel.ToolboxItem(false)]
+    public class IssueService : WebServiceBase
     {
+        IMediator _mediator;
 
-        protected void Application_Start(object sender, EventArgs e)
+        public IssueService()
         {
-            IServiceCollection services = new ServiceCollection();
-            ServiceConfig.Configure(services);
-            IServiceProvider provider = services.BuildServiceProvider();
-            ServiceScopeModule.SetServiceProvider(provider);
-
+            _mediator = ServiceProvider.GetRequiredService<IMediator>() ?? throw new InvalidOperationException("Missing dependency: IMediator");
         }
 
-        protected void Session_Start(object sender, EventArgs e)
+        public async IAsyncEnumerable<IssueSummaryDto> GetAllIssues(int pageNumber, int pageSize)
         {
-
         }
 
-        protected void Application_BeginRequest(object sender, EventArgs e)
+
+        [WebMethod]
+        public string HelloWorld()
         {
-
-        }
-
-        protected void Application_AuthenticateRequest(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Application_Error(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Session_End(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Application_End(object sender, EventArgs e)
-        {
-
+            return "Hello World";
         }
     }
 }
