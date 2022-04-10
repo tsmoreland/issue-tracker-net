@@ -14,12 +14,16 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Services;
+using IssueTracker.App.Shared.Validation;
 using IssueTracker.App.Soap.Model.Response;
+using IssueTracker.Core.Projections;
+using IssueTracker.Core.Requests;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace IssueTracker.App.Soap.Services
+namespace IssueTracker.App.Soap
 {
     /// <summary>
     /// Summary description for IssueService
@@ -29,22 +33,32 @@ namespace IssueTracker.App.Soap.Services
     [System.ComponentModel.ToolboxItem(false)]
     public class IssueService : WebServiceBase
     {
-        IMediator _mediator;
+        private readonly IMediator _mediator;
 
         public IssueService()
         {
             _mediator = ServiceProvider.GetRequiredService<IMediator>() ?? throw new InvalidOperationException("Missing dependency: IMediator");
         }
 
-        public async IAsyncEnumerable<IssueSummaryDto> GetAllIssues(int pageNumber, int pageSize)
-        {
-        }
-
-
+        /// <summary>
+        /// Get All Issues 
+        /// </summary>
+        /// <param name="pageNumber">current page number</param>
+        /// <param name="pageSize">number of items to return</param>
+        /// <returns>Returns All issues</returns>
+        /// <exception cref="NotImplementedException"></exception>
         [WebMethod]
-        public string HelloWorld()
+        public List<IssueSummaryDto> GetAllIssues(int pageNumber = 1, int pageSize = 10)
         {
-            return "Hello World";
+            PagingValidation.ThrowIfPagingIsInvalid(pageNumber, pageSize);
+
+            // very bad practice to use Result but at the time of writing I was having problems getting
+            // async/await to work in this web service, this is hopefully a temporary measure
+            IAsyncEnumerable<IssueSummaryProjection> projections = _mediator
+                .Send(new GetAllIssuesRequest(pageNumber, pageSize), CancellationToken.None).Result;
+
+            List<IssueSummaryDto> dataTransferObjects = IssueSummaryDto.MapFrom(projections).Result;
+            return dataTransferObjects;
         }
     }
 }
