@@ -269,8 +269,6 @@
     <Compile Include="Infrastructure\CustomApiControllerActionSelector.cs" />
     <Compile Include="Infrastructure\CustomControllerFactory.cs" />
     <Compile Include="Infrastructure\CustomControllerSelector.cs" />
-    <Compile Include="Infrastructure\ServiceDependencyResolver.cs" />
-    <Compile Include="Infrastructure\ServiceScopeModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -293,6 +291,10 @@
     <ProjectReference Include="..\IssueTracker.App.Controllers.UrlVersioning\IssueTracker.App.Controllers.UrlVersioning.csproj">
       <Project>{8f1a159e-80af-49cc-91d0-4165bd422e0a}</Project>
       <Name>IssueTracker.App.Controllers.UrlVersioning</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IssueTracker.App.Shared\IssueTracker.App.Shared.csproj">
+      <Project>{49f9a9fa-f7a0-4065-a335-cca2ac1a0902}</Project>
+      <Name>IssueTracker.App.Shared</Name>
     </ProjectReference>
     <ProjectReference Include="..\IssueTracker.Core\IssueTracker.Core.csproj">
       <Project>{66bb8353-0e08-49d6-85b9-7a634c05a9d6}</Project>

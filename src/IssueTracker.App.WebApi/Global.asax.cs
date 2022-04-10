@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Net.Http.Formatting;
-using System.Reflection;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
-using IssueTracker.App.WebApi.Infrastructure;
+using IssueTracker.App.Shared.Infrastructure;
 using IssueTracker.Data.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Web.Http.Description;

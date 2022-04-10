@@ -15,7 +15,7 @@ using System;
 using System.Web;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace IssueTracker.App.WebApi.Infrastructure
+namespace IssueTracker.App.Shared.Infrastructure
 {
     public class ServiceScopeModule : IHttpModule
     {
