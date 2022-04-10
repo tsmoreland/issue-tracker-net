@@ -56,26 +56,8 @@ namespace IssueTracker.WebApi.App
             
             using (IServiceScope scope = _provider.CreateScope())
             {
-                try
-                {
-                    SQLitePCL.Batteries.Init();
-
-                    IIssueDataMigration migration =  scope.ServiceProvider.GetRequiredService<IIssueDataMigration>();
-                    Assembly assembly = Assembly.Load(new AssemblyName("SQLitePCLRaw.batteries_v2"));
-                    if (assembly != null)
-                    {
-                        Type type = assembly.GetType("SQLitePCL.Batteries_V2", throwOnError: true);
-                        MethodInfo mi = type?.GetMethod("Init", Type.EmptyTypes);
-                        mi?.Invoke(null, null);
-                    }
-
-                    migration.Migrate();
-                }
-                catch (Exception ex)
-                {
-                    // TODO: shift to some form of logging
-                    Console.WriteLine(ex.ToString());
-                }
+                IIssueDataMigration migration =  scope.ServiceProvider.GetRequiredService<IIssueDataMigration>();
+                migration.Migrate();
             }
 
         }
