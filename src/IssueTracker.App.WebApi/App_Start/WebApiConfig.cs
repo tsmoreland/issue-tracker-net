@@ -15,11 +15,11 @@ using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Dispatcher;
 using System.Web.Http.Routing;
-using IssueTracker.WebApi.App.Infrastructure;
+using IssueTracker.App.WebApi.Infrastructure;
 using Microsoft.Web.Http.Description;
 using Microsoft.Web.Http.Routing;
 
-namespace IssueTracker.WebApi.App
+namespace IssueTracker.App.WebApi
 {
     public static class WebApiConfig
     {

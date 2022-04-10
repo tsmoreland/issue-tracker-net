@@ -16,7 +16,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http.Filters;
 
-namespace IssueTracker.WebApi.App.Filters
+namespace IssueTracker.App.WebApi.Filters
 {
     public sealed class ExceptionToErrorResponseFilterAttribute : ExceptionFilterAttribute
     {

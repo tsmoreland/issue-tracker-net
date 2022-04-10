@@ -15,9 +15,9 @@ using System;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
-using IssueTracker.WebApi.App.Controllers;
+using IssueTracker.App.WebApi.Controllers;
 
-namespace IssueTracker.WebApi.App.Infrastructure
+namespace IssueTracker.App.WebApi.Infrastructure
 {
     public sealed class CustomControllerFactory : DefaultControllerFactory
     {

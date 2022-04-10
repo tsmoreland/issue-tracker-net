@@ -11,6 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+//#define USE_IN_MEMORY_REPOSITORY
+
 using System;
 using IssueTracker.Data.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,9 +28,14 @@ namespace IssueTracker.Data
                 throw new ArgumentNullException(nameof(services));
             }
 
+#if USE_IN_MEMORY_REPOSITORY
             // normally a repository would be scoped but since this is in memory we'll use singleton
             services.AddSingleton<IIssueRepository, InMemoryIssueRepository>();
-            services.AddTransient<IIssueDataMigration, IssueDataMigration>();
+            services.AddTransient<IIssueDataMigration, InMemoryIssueDataMigration>();
+#else
+            services.AddScoped<IIssueRepository, SimpleDapperIssueRepository>();
+            services.AddTransient<IIssueDataMigration, SimpleDapperIssueDataMigration>();
+#endif
 
             return services;
         }

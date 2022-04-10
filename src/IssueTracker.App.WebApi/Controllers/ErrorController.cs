@@ -22,7 +22,7 @@ using HttpHeadAttribute = System.Web.Http.HttpHeadAttribute;
 using HttpOptionsAttribute = System.Web.Http.HttpOptionsAttribute;
 using AcceptVerbsAttribute = System.Web.Http.AcceptVerbsAttribute;
 
-namespace IssueTracker.WebApi.App.Controllers
+namespace IssueTracker.App.WebApi.Controllers
 {
     public sealed class ErrorController : Controller
     {

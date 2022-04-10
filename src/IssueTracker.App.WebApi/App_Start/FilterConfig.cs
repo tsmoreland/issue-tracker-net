@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 
-namespace IssueTracker.WebApi.App
+namespace IssueTracker.App.WebApi
 {
     public class FilterConfig
     {

@@ -13,7 +13,7 @@
 using System.Web.Http;
 using System.Web.Http.Description;
 
-namespace IssueTracker.WebApi.App.Controllers
+namespace IssueTracker.App.WebApi.Controllers
 {
     public sealed class ErrorApiController : ApiController
     {

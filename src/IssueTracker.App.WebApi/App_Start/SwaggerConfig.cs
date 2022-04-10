@@ -7,7 +7,7 @@ using System.Xml.XPath;
 using Microsoft.Web.Http.Description;
 using Swashbuckle.Application;
 
-namespace IssueTracker.WebApi.App
+namespace IssueTracker.App.WebApi
 {
     public class SwaggerConfig
     {

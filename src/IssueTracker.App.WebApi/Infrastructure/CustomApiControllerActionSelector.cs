@@ -17,7 +17,7 @@ using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Routing;
 
-namespace IssueTracker.WebApi.App.Infrastructure
+namespace IssueTracker.App.WebApi.Infrastructure
 {
     public sealed class CustomApiControllerActionSelector : ApiControllerActionSelector
     {

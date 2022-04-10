@@ -18,7 +18,7 @@ using System.Web;
 using System.Web.Http.Dependencies;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace IssueTracker.WebApi.App.Infrastructure
+namespace IssueTracker.App.WebApi.Infrastructure
 {
     public sealed class ServiceDependencyResolver : IDependencyResolver, Microsoft.Practices.ServiceLocation.IServiceLocator
     {

@@ -5,16 +5,16 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
-using IssueTracker.WebApi.App.Infrastructure;
+using IssueTracker.App.WebApi.Infrastructure;
 using IssueTracker.Data.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Web.Http.Description;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
-[assembly: PreApplicationStartMethod(typeof(IssueTracker.WebApi.App.WebApiApplication), "InitModule")]
+[assembly: PreApplicationStartMethod(typeof(IssueTracker.App.WebApi.WebApiApplication), "InitModule")]
 
-namespace IssueTracker.WebApi.App
+namespace IssueTracker.App.WebApi
 {
     public class WebApiApplication : HttpApplication
     {
