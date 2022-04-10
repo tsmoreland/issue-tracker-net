@@ -92,7 +92,7 @@ namespace IssueTracker.App.Controllers.UrlVersioning.Version2.Response
         /// </summary>
         public static LinkedIssueSummaryDto FromProjection(LinkedIssueSummaryProjection model)
         {
-            (Guid id, string? title, Priority priority, IssueType issueType, LinkType linkType) = model;
+            (Guid id, string title, Priority priority, IssueType issueType, LinkType linkType) = model;
             return new LinkedIssueSummaryDto(id, title, priority, issueType, linkType);
         }
 

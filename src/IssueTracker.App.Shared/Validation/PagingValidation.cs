@@ -13,7 +13,7 @@
 
 using System.Web.Http.ModelBinding;
 
-namespace IssueTracker.App.Controllers.UrlVersioning.Validation
+namespace IssueTracker.App.Shared.Validation
 {
     /// <summary>
     /// Paging validation methods

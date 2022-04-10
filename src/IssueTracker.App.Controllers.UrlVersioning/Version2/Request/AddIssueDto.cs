@@ -26,7 +26,7 @@ namespace IssueTracker.App.Controllers.UrlVersioning.Version2.Request
         /// <summary>
         /// instantiates a new instance of the <see cref="AddIssueDto"/> class.
         /// </summary>
-        public AddIssueDto(string title, string? description, Priority priority, IssueType type)
+        public AddIssueDto(string title, string description, Priority priority, IssueType type)
         {
             Title = title;
             Description = description;
@@ -47,7 +47,7 @@ namespace IssueTracker.App.Controllers.UrlVersioning.Version2.Request
         /// </summary>
         /// <example>Example description</example>
         [MaxLength(500)]
-        public string? Description { get; private set; }
+        public string Description { get; private set; }
 
         /// <summary>
         /// Issue Priority

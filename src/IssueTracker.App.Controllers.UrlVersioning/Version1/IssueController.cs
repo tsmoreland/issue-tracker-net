@@ -25,7 +25,7 @@ using IssueTracker.Core.Requests;
 using MediatR;
 using Microsoft.Web.Http;
 using Swashbuckle.Swagger.Annotations;
-using static IssueTracker.App.Controllers.UrlVersioning.Validation.PagingValidation;
+using static IssueTracker.App.Shared.Validation.PagingValidation;
 
 namespace IssueTracker.App.Controllers.UrlVersioning.Version1;
 

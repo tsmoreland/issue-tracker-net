@@ -183,5 +183,11 @@ namespace IssueTracker.Core.Model
             Priority = priority;
             LastUpdated = DateTime.UtcNow;
         }
+
+        public void UpdateConncurrencyToken()
+        {
+            ConcurrencyToken = Guid.NewGuid().ToString();
+            LastUpdated = DateTime.UtcNow;
+        }
     }
 }

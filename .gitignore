@@ -351,3 +351,6 @@ MigrationBackup/
 
 # ignore tCell config file
 tcell_agent.config
+
+# sqlite databases
+*.db
