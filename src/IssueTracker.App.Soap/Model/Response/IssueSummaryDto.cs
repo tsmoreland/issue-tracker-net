@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading.Tasks;
 using IssueTracker.Core.Projections;
 
 namespace IssueTracker.App.Soap.Model.Response
@@ -46,14 +47,14 @@ namespace IssueTracker.App.Soap.Model.Response
         /// </summary>
         /// <example>3C1152EC-DC0C-4AB0-8AF9-10DE5A9705D5</example>
         [DataMember]
-        public Guid Id { get; private set; } 
+        public Guid Id { get; set; } 
 
         /// <summary>
         /// Issue Title
         /// </summary>
         /// <example>Example Title</example>
         [DataMember]
-        public string Title { get; private set; }
+        public string Title { get; set; }
 
         /// <summary>
         /// Converts service DTO to versioned API DTO, for latest version of API the class is expected to be equivalent
@@ -68,10 +69,13 @@ namespace IssueTracker.App.Soap.Model.Response
         /// Converts an asynchronous collection of <see cref="IssueSummaryDto"/> to
         /// an asynchronous colleciton of <see cref="IssueSummaryDto"/>
         /// </summary>
-        public static IEnumerable<IssueSummaryDto> MapFrom(
-            IEnumerable<IssueSummaryProjection> source)
+        public static async Task<List<IssueSummaryDto>> MapFrom(
+            IAsyncEnumerable<IssueSummaryProjection> source)
         {
-            return source.Select(FromProjection);
+            return await source
+                .Select(FromProjection)
+                .ToListAsync();
+
         }
     }
 }
