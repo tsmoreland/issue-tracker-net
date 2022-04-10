@@ -19,11 +19,11 @@ using IssueTracker.Data.Abstractions;
 
 namespace IssueTracker.Data;
 
-public sealed class IssueDataMigration : IIssueDataMigration
+public sealed class InMemoryIssueDataMigration : IIssueDataMigration
 {
     private readonly IIssueRepository _repository;
 
-    public IssueDataMigration(IIssueRepository repository)
+    public InMemoryIssueDataMigration(IIssueRepository repository)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
