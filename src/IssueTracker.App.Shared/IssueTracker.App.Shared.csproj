@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\IssueTracker.Data.Abstractions\IssueTracker.Data.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="System.Web" Version="4.0.0.0" />
   </ItemGroup>
 

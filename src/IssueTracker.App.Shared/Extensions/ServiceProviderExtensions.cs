@@ -12,42 +12,28 @@
 //
 
 using System;
-using System.Web.Http.ModelBinding;
+using IssueTracker.Data.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace IssueTracker.App.Shared.Validation
+namespace IssueTracker.App.Shared.Extensions
 {
-    /// <summary>
-    /// Paging validation methods
-    /// </summary>
-    public static class PagingValidation
+    public static class ServiceProviderExtensions
     {
-        public static void ThrowIfPagingIsInvalid(int pageNumber, int pageSize)
+        public static void MigrateDatabaseOrThrow(this IServiceProvider serviceProvider)
         {
-            if (pageNumber < 1)
+            using (IServiceScope scope = serviceProvider.CreateScope())
             {
-                throw new ArgumentException("must be greater than or equal to 1", nameof(pageNumber));
-            }
-            if (pageSize < 1)
-            {
-                throw new ArgumentException("must be greater than or equal to 1", nameof(pageSize));
-            }
-        }
-
-
-        /// <summary>
-        /// Validates page number and size are non-negative
-        /// </summary>
-        public static bool ValidatePaging(ModelStateDictionary modelState, int pageNumber, int pageSize)
-        {
-            try
-            {
-                ThrowIfPagingIsInvalid(pageNumber, pageSize);
-                return true;
-            }
-            catch (ArgumentException ex)
-            {
-                modelState.AddModelError(ex.ParamName, ex.Message);
-                return false;
+                IIssueDataMigration migration =  scope.ServiceProvider.GetRequiredService<IIssueDataMigration>();
+                try
+                {
+                    migration.Migrate();
+                }
+                catch (Exception ex)
+                {
+                    // TODO: replace with logging
+                    Console.WriteLine(ex.ToString());
+                    throw;
+                }
             }
         }
     }
