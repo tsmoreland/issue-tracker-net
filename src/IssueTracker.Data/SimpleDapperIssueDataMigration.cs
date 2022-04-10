@@ -12,14 +12,13 @@
 //
 
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
-using IssueTracker.Core.Model;
 using IssueTracker.Data.Abstractions;
 using Microsoft.Data.Sqlite;
 using Dapper;
+using IssueTracker.Data.Migrations;
 
 namespace IssueTracker.Data;
 
@@ -42,21 +41,24 @@ public sealed class SimpleDapperIssueDataMigration : IIssueDataMigration
             System.IO.File.WriteAllBytes(_databaseOptions.DatabaseFileName, Array.Empty<byte>());
         }
 
-        using (IDbConnection connection = new SqliteConnection(_databaseOptions.ConnectionString))
+        IDbConnection connection = new SqliteConnection(_databaseOptions.ConnectionString);
+        try
         {
-            try
-            {
-                connection.Open();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-
-            await MigrateDatabase(connection);
+            connection.Open();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+            return;
         }
 
-        await SeedDatabase();
+        await connection.ExecuteAsync(@"CREATE TABLE IF NOT EXISTS ""Migrations""
+(
+  ""MigrationId"" TEXT NOT NULL CONSTRAINT ""PK_Issues"" PRIMARY KEY,
+)");
+
+        SimpleDapperMigrations migrations = new ();
+        migrations.Migrate(connection);
     }
 
     /// <inheritdoc />
@@ -64,55 +66,5 @@ public sealed class SimpleDapperIssueDataMigration : IIssueDataMigration
     {
         // generally not recommended but keeping this simple for now
         MigrateAsync(CancellationToken.None).Wait();
-    }
-
-    private static async Task MigrateDatabase(IDbConnection connection)
-    {
-        await connection.ExecuteAsync(@"CREATE TABLE IF NOT EXISTS ""Issues""
-(
-  ""Id"" TEXT NOT NULL CONSTRAINT ""PK_Issues"" PRIMARY KEY,
-  ""Title"" TEXT NOT NULL,
-  ""Description"" TEXT NOT NULL,
-  ""Priority"" INTEGER NOT NULL,
-  ""LastUpdated"" TEXT NOT NULL,
-  ""ConcurrencyToken"" TEXT NULL,
-  ""Type"" INTEGER NOT NULL DEFAULT 0
-)");
-
-        await connection.ExecuteAsync(@"CREATE TABLE IF NOT EXISTS ""LinkedIssue""
-(
-  ""ParentIssueId"" TEXT NOT NULL,
-  ""ChildIssueId"" TEXT NOT NULL,
-  ""LinkType"" INTEGER NOT NULL,
-  CONSTRAINT ""PK_LinkedIssue"" PRIMARY KEY (""ParentIssueId"", ""ChildIssueId""),
-  CONSTRAINT ""FK_LinkedIssue_Issues_ChildIssueId"" FOREIGN KEY (""ChildIssueId"") REFERENCES ""Issues"" (""Id"") ON DELETE RESTRICT,
-  CONSTRAINT ""FK_LinkedIssue_Issues_ParentIssueId"" FOREIGN KEY (""ParentIssueId"") REFERENCES ""Issues"" (""Id"") ON DELETE RESTRICT
-)"
-        );
-    }
-
-    private async Task SeedDatabase()
-    {
-        await using SimpleDapperIssueRepository repository = new(_databaseOptions);
-        foreach (Issue issue in SeedIssues())
-        {
-            await repository.AddIssue(issue, CancellationToken.None);
-        }
-    }
-
-    private static IEnumerable<Issue> SeedIssues()
-    {
-        yield return new Issue(new Guid("1385056E-8AFA-4E09-96DF-AE12EFDF1A29"), "First", "First issue",
-            Priority.Medium, IssueType.Epic,
-            new DateTime(2022, 01, 01, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString(),
-            Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>());
-        yield return new Issue(new Guid("A28B8C45-6668-4169-940C-C16D71EB69DE"), "Second", "Second issue",
-            Priority.Low, IssueType.Story,
-            new DateTime(2022, 01, 020, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString(),
-            Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>());
-        yield return new Issue(new Guid("502AD68E-7B37-4426-B422-23B6A9B1B7CA"), "Third", "Third issue",
-            Priority.Medium, IssueType.Story,
-            new DateTime(2022, 01, 020, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString(),
-            Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>());
     }
 }
