@@ -35,6 +35,8 @@ public sealed class SimpleDapperIssueDataMigration : IIssueDataMigration
     /// <inheritdoc />
     public async Task MigrateAsync(CancellationToken cancellationToken)
     {
+        SQLitePCL.Batteries.Init();
+
         if (!_databaseOptions.DatabaseExists())
         {
             System.IO.File.WriteAllBytes(_databaseOptions.DatabaseFileName, Array.Empty<byte>());

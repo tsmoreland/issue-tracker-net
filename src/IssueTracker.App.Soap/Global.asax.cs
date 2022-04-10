@@ -11,33 +11,47 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#define USE_IN_MEMORY_REPOSITORY
-
 using System;
-using IssueTracker.Data.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
+using System.Web;
 
-namespace IssueTracker.Data
+namespace IssueTracker.App.Soap
 {
-    public static class ServiceCollectionExtenions
+    public class Global : HttpApplication
     {
-        public static IServiceCollection AddIssueData(this IServiceCollection services)
+
+        protected void Application_Start(object sender, EventArgs e)
         {
-            if (services is null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
 
-#if USE_IN_MEMORY_REPOSITORY
-            // normally a repository would be scoped but since this is in memory we'll use singleton
-            services.AddSingleton<IIssueRepository, InMemoryIssueRepository>();
-            services.AddTransient<IIssueDataMigration, InMemoryIssueDataMigration>();
-#else
-            services.AddScoped<IIssueRepository, SimpleDapperIssueRepository>();
-            services.AddTransient<IIssueDataMigration, SimpleDapperIssueDataMigration>();
-#endif
+        }
 
-            return services;
+        protected void Session_Start(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void Application_BeginRequest(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void Application_AuthenticateRequest(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void Application_Error(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void Session_End(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void Application_End(object sender, EventArgs e)
+        {
+
         }
     }
 }

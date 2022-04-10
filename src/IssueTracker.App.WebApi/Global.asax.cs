@@ -46,7 +46,6 @@ namespace IssueTracker.App.WebApi
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             IServiceCollection services = new ServiceCollection();
             ServiceConfig.Configure(services);
             _provider = services.BuildServiceProvider();
@@ -57,7 +56,16 @@ namespace IssueTracker.App.WebApi
             using (IServiceScope scope = _provider.CreateScope())
             {
                 IIssueDataMigration migration =  scope.ServiceProvider.GetRequiredService<IIssueDataMigration>();
-                migration.Migrate();
+                try
+                {
+                    migration.Migrate();
+                }
+                catch (Exception ex)
+                {
+                    // TODO: replace with logging
+                    Console.WriteLine(ex.ToString());
+                    throw;
+                }
             }
 
         }
@@ -65,19 +73,8 @@ namespace IssueTracker.App.WebApi
 
         protected void Application_End()
         {
-            AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;
             _provider = null;
         }
-
-        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            if (args.Name == "e_sqlite3")
-            {
-            }
-
-            return Assembly.Load(args.Name);
-        }
-
     }
 
 }
