@@ -13,13 +13,21 @@
 
 using System;
 using System.Web;
+using IssueTracker.App.Shared.Extensions;
 using IssueTracker.App.Shared.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+
+[assembly: PreApplicationStartMethod(typeof(IssueTracker.App.Soap.Global), "InitModule")]
 
 namespace IssueTracker.App.Soap
 {
     public class Global : HttpApplication
     {
+
+        public static void InitModule()
+        {
+            RegisterModule(typeof(ServiceScopeModule));
+        }
 
         protected void Application_Start(object sender, EventArgs e)
         {
@@ -28,6 +36,7 @@ namespace IssueTracker.App.Soap
             IServiceProvider provider = services.BuildServiceProvider();
             ServiceScopeModule.SetServiceProvider(provider);
 
+            provider.MigrateDatabaseOrThrow();
         }
 
         protected void Session_Start(object sender, EventArgs e)
