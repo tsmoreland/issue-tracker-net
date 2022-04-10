@@ -4,8 +4,8 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
+using IssueTracker.App.Shared.Extensions;
 using IssueTracker.App.Shared.Infrastructure;
-using IssueTracker.Data.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Web.Http.Description;
 using Newtonsoft.Json.Converters;
@@ -51,22 +51,8 @@ namespace IssueTracker.App.WebApi
 
             ServiceScopeModule.SetServiceProvider(_provider);
             DependencyResolver.SetResolver(new ServiceDependencyResolver());
-            
-            using (IServiceScope scope = _provider.CreateScope())
-            {
-                IIssueDataMigration migration =  scope.ServiceProvider.GetRequiredService<IIssueDataMigration>();
-                try
-                {
-                    migration.Migrate();
-                }
-                catch (Exception ex)
-                {
-                    // TODO: replace with logging
-                    Console.WriteLine(ex.ToString());
-                    throw;
-                }
-            }
 
+            _provider.MigrateDatabaseOrThrow();
         }
 
 
