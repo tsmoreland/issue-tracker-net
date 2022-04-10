@@ -11,35 +11,19 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Configuration;
 using System.IO;
-using System.Web.Mvc;
-using IssueTracker.App.Controllers.UrlVersioning;
-using IssueTracker.WebApi.App.Infrastructure;
-using IssueTracker.Data;
-using IssueTracker.Data.Abstractions;
-using IssueTracker.Services;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace IssueTracker.WebApi.App
+namespace IssueTracker.Data.Abstractions
 {
-    public static class ServiceConfig
+    public sealed class DatabaseOptions
     {
-        public static void Configure(IServiceCollection services)
+        public string ConnectionString => $"Data Source={DatabaseFileName}";
+
+        public string DatabaseFileName { get; set; }
+
+        public bool DatabaseExists()
         {
-            services.AddUrlVersioningControllers();
-            services.AddIssueData();
-            services.AddIssueServices();
-
-            services.AddScoped<IControllerFactory, CustomControllerFactory>();
-
-            services
-                .AddTransient(_ => new DatabaseOptions
-                {
-                    DatabaseFileName =  Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigurationManager.AppSettings["DatabaseFilename"])
-                });
+            return File.Exists(DatabaseFileName);
         }
-
     }
 }
