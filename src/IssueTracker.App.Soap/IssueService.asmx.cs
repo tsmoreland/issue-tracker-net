@@ -14,7 +14,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Web.Services;
 using IssueTracker.App.Shared.Validation;
 using IssueTracker.App.Soap.Model.Response;
@@ -48,7 +47,7 @@ namespace IssueTracker.App.Soap
         /// <returns>Returns All issues</returns>
         /// <exception cref="NotImplementedException"></exception>
         [WebMethod]
-        public List<IssueSummaryDto> GetAllIssues(int pageNumber = 1, int pageSize = 10)
+        public IssueSummariesDto GetAllIssues(int pageNumber = 1, int pageSize = 10)
         {
             PagingValidation.ThrowIfPagingIsInvalid(pageNumber, pageSize);
 
@@ -58,7 +57,23 @@ namespace IssueTracker.App.Soap
                 .Send(new GetAllIssuesRequest(pageNumber, pageSize), CancellationToken.None).Result;
 
             List<IssueSummaryDto> dataTransferObjects = IssueSummaryDto.MapFrom(projections).Result;
-            return dataTransferObjects;
+            return new IssueSummariesDto(dataTransferObjects);
+        }
+
+        /// <summary>
+        /// Returns <see cref="IssueDto"/> matching <paramref name="id"/>
+        /// </summary>
+        /// <param name="id">id of the iss</param>
+        /// <returns><see cref="IssueDto"/></returns>
+        /// <exception cref="KeyNotFoundException">
+        /// if no issue matching <paramref name="id"/> is found
+        /// </exception>
+        [WebMethod]
+        public IssueDto GetIssueById(Guid id)
+        {
+            IssueDto dto = IssueDto.From(_mediator.Send(new FindIssueByIdRequest(id), CancellationToken.None).Result);
+
+            return dto ?? throw new KeyNotFoundException($"no issue matching {id} found");
         }
     }
 }
