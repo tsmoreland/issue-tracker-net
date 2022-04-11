@@ -44,7 +44,6 @@ namespace IssueTracker.App.Controllers.UrlVersioning.Version1.Response
         {
             Id = Guid.Empty;
             Title = string.Empty;
-
         }
 
         /// <summary>

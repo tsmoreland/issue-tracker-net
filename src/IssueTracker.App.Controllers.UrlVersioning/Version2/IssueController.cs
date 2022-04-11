@@ -19,21 +19,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Mvc;
-using IssueTracker.App.Controllers.UrlVersioning.Version1.Request;
-using IssueTracker.App.Controllers.UrlVersioning.Version1.Response;
+using IssueTracker.App.Controllers.UrlVersioning.Version2.Request;
+using IssueTracker.App.Controllers.UrlVersioning.Version2.Response;
 using IssueTracker.Core.Requests;
 using MediatR;
 using Microsoft.Web.Http;
 using Swashbuckle.Swagger.Annotations;
 using static IssueTracker.App.Shared.Validation.PagingValidation;
 
-namespace IssueTracker.App.Controllers.UrlVersioning.Version1;
+namespace IssueTracker.App.Controllers.UrlVersioning.Version2;
 
 /// <summary>
-/// Issue Controller
+/// Issues Controller (v2)
 /// </summary>
 [System.Web.Http.RoutePrefix("api/v{version:apiVersion}/issues")]
-[ApiVersion("1")]
+[ApiVersion("2")]
 public sealed class IssueController : ApiController
 {
     private readonly IMediator _mediator;
@@ -59,7 +59,10 @@ public sealed class IssueController : ApiController
     [System.Web.Http.Route("")]
     [SwaggerResponse(200, "Successful Response", Type = typeof(List<IssueSummaryDto>))]
     [SwaggerResponse(400, Description = "Invalid argument", Type = typeof(List<IssueSummaryDto>))]
-    public async Task<HttpResponseMessage> GetAll(int pageNumber = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+    public async Task<HttpResponseMessage> GetAll(
+        int pageNumber = 1,
+        int pageSize = 10,
+        CancellationToken cancellationToken = default)
     {
         if (!ValidatePaging(ModelState, pageNumber, pageSize))
         {
@@ -82,8 +85,8 @@ public sealed class IssueController : ApiController
     [System.Web.Http.HttpGet]
     [System.Web.Http.Route("{id}")]
     [SwaggerResponse(200, "Successful Response", Type = typeof(IssueDto))]
-    [SwaggerResponse(400, Description = "Invalid argument", Type = typeof(IssueSummaryDto))]
-    [SwaggerResponse(404, Description = "issue not found", Type = typeof(IssueSummaryDto))]
+    [SwaggerResponse(400, Description = "Invalid argument", Type = typeof(IssueDto))]
+    [SwaggerResponse(404, Description = "Issue not found", Type = typeof(IssueDto))]
     public async Task<HttpResponseMessage> Get(Guid id, CancellationToken cancellationToken)
     {
         IssueDto issue = IssueDto.From(await _mediator.Send(new FindIssueByIdRequest(id), cancellationToken));
@@ -91,6 +94,76 @@ public sealed class IssueController : ApiController
             ? Request.CreateResponse(System.Net.HttpStatusCode.OK, issue)
             : Request.CreateErrorResponse(System.Net.HttpStatusCode.NotFound, "issue not found");
     }
+
+    /*
+    /// <summary>
+    /// Returns all parent issues 
+    /// </summary>
+    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
+    /// <param name="pageNumber" example="1" >current page number to return</param>
+    /// <param name="pageSize" example="10">maximum number of items to return</param>
+    /// <param name="cancellationToken">a cancellation token.</param>
+    /// <returns>all parent issues</returns>
+    [System.Web.Http.HttpGet]
+    [System.Web.Http.Route("{id}/parents")]
+    [SwaggerResponse(200, "Successful Response", Type = typeof(List<IssueSummaryDto>))]
+    [SwaggerResponse(400, Description = "Invalid argument", Type = typeof(List<IssueSummaryDto>))]
+    [SwaggerResponse(404, Description = "Issue not found", Type = typeof(List<IssueSummaryDto>))]
+    public async Task<HttpResponseMessage> GetParentIssues(
+        Guid id,
+        int pageNumber = 1,
+        int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        if (!ValidatePaging(ModelState, pageNumber, pageSize))
+        {
+            return Request.CreateErrorResponse(System.Net.HttpStatusCode.BadRequest, ModelState);
+        }
+
+        if (await _mediator.Send(new IssueExistsRequest(id), cancellationToken))
+        {
+            return Ok(LinkedIssueSummaryDto.MapFrom(await _mediator.Send(new GetParentIssuesRequest(id, pageNumber, pageSize), cancellationToken), cancellationToken));
+        }
+
+        ModelState.AddModelError(nameof(id), "issue not found");
+        return Request.CreateErrorResponse(System.Net.HttpStatusCode.NotFound, "issue not found");
+    }
+    */
+
+    /*
+    /// <summary>
+    /// Returns all child issues 
+    /// </summary>
+    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
+    /// <param name="pageNumber" example="1" >current page number to return</param>
+    /// <param name="pageSize" example="10">maximum number of items to return</param>
+    /// <param name="cancellationToken">a cancellation token.</param>
+    /// <returns>all child issues</returns>
+    [System.Web.Http.HttpGet]
+    [System.Web.Http.Route("{id}/children")]
+    [SwaggerResponse(200, "Successful Response", Type = typeof(List<IssueSummaryDto>))]
+    [SwaggerResponse(400, Description = "Invalid argument", Type = typeof(List<IssueSummaryDto>))]
+    [SwaggerResponse(404, Description = "Issue not found", Type = typeof(List<IssueSummaryDto>))]
+    public async Task<HttpResponseMessage> GetChildIssues(
+        [FromRoute] Guid id,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        if (!ValidatePaging(ModelState, pageNumber, pageSize))
+        {
+            return Request.CreateErrorResponse(System.Net.HttpStatusCode.BadRequest, ModelState);
+        }
+
+        if (await _mediator.Send(new IssueExistsRequest(id), cancellationToken))
+        {
+            return Ok(LinkedIssueSummaryDto.MapFrom(await _mediator.Send(new GetChildIssuesRequest(id, pageNumber, pageSize), cancellationToken), cancellationToken));
+        }
+
+        ModelState.AddModelError(nameof(id), "issue not found");
+        return Request.CreateErrorResponse(System.Net.HttpStatusCode.NotFound, "issue not found");
+    }
+    */
 
     /// <summary>
     /// Adds a new issue 
@@ -100,7 +173,8 @@ public sealed class IssueController : ApiController
     /// <returns>newly created <see cref="IssueDto"/></returns>
     [System.Web.Http.HttpPost]
     [System.Web.Http.Route("")]
-    [SwaggerResponse(201, Description = "Successful Response", Type = typeof(IssueDto))]  
+    [SwaggerResponse(201, "Successful Response", Type = typeof(IssueDto))]
+    [SwaggerResponse(400, Description = "Invalid argument", Type = typeof(IssueDto))]
     public async Task<HttpResponseMessage> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
@@ -121,9 +195,9 @@ public sealed class IssueController : ApiController
     /// <returns>updated <see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
     [System.Web.Http.HttpPut]
     [System.Web.Http.Route("{id}")]
-    [SwaggerResponse(200, Description = "Successful Response", Type = typeof(IssueDto))]
-    [SwaggerResponse(400, "Invalid argument", Type = typeof(IssueSummaryDto))]
-    [SwaggerResponse(404, "issue not found", Type = typeof(IssueSummaryDto))]
+    [SwaggerResponse(200, "Successful Response", Type = typeof(IssueDto))]
+    [SwaggerResponse(400, Description = "Invalid argument", Type = typeof(IssueDto))]
+    [SwaggerResponse(404, Description = "Issue not found", Type = typeof(IssueDto))]
     public async Task<HttpResponseMessage> Put(Guid id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
@@ -144,9 +218,9 @@ public sealed class IssueController : ApiController
     /// <param name="cancellationToken">A cancellation token</param>
     [System.Web.Http.HttpDelete]
     [System.Web.Http.Route("{id}")]
-    [SwaggerResponse(204, Description = "Successful Response")]
-    [SwaggerResponse(400, Description = "Invalid argument", Type = typeof(IssueSummaryDto))]
-    [SwaggerResponse(404, Description = "issue not found", Type = typeof(IssueSummaryDto))]
+    [SwaggerResponse(204, "Successful Response", Type = typeof(IssueDto))]
+    [SwaggerResponse(400, Description = "Invalid argument", Type = typeof(IssueDto))]
+    [SwaggerResponse(404, Description = "Issue not found", Type = typeof(IssueDto))]
     public async Task<HttpResponseMessage> Delete(Guid id, CancellationToken cancellationToken)
     {
         return await _mediator.Send(new DeleteIssueRequest(id), cancellationToken)
