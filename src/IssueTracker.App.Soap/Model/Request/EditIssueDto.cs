@@ -22,21 +22,25 @@ using IssueTracker.Core.Model;
 namespace IssueTracker.App.Soap.Model.Request
 {
     /// <summary>
-    /// Add Issue Data Transfer Object
+    /// Edit issue data transfer object
     /// </summary>
-    public class AddIssueDto
+    [DataContract]
+    public class EditIssueDto
     {
         /// <summary>
-        /// instantiates a new instance of the <see cref="AddIssueDto"/> class.
+        /// Instantiates a new instance of the <see cref="EditIssueDto"/> class.
         /// </summary>
-        public AddIssueDto(string title, string description, Priority priority)
+        public EditIssueDto(string title, string description, Priority priority)
         {
             Title = title;
             Description = description;
             Priority = priority;
         }
 
-        public AddIssueDto()
+        /// <summary>
+        /// Instantiates a new instance of the <see cref="EditIssueDto"/> class.
+        /// </summary>
+        public EditIssueDto()
         {
             Title = string.Empty;
             Description = string.Empty;
@@ -62,7 +66,7 @@ namespace IssueTracker.App.Soap.Model.Request
         /// </summary>
         /// <example>High</example>
         [DataMember]
-        public Priority Priority { get; private set; } 
+        public Priority Priority { get; private set; }
 
         /// <summary>
         /// Returns <see langword="true"/> if properties are valid

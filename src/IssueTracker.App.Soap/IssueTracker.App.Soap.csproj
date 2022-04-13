@@ -198,6 +198,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Model\Request\AddIssueDto.cs" />
+    <Compile Include="Model\Request\EditIssueDto.cs" />
     <Compile Include="Model\Response\IssueDto.cs" />
     <Compile Include="Model\Response\IssueSummariesDto.cs" />
     <Compile Include="Model\Response\IssueSummaryDto.cs" />
@@ -241,9 +242,7 @@
       <Name>IssueTracker.Services</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

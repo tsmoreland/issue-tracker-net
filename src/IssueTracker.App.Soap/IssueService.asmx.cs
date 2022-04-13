@@ -85,6 +85,11 @@ namespace IssueTracker.App.Soap
         [WebMethod]
         public IssueDto Add(AddIssueDto model)
         {
+            if (!model.IsValid)
+            {
+                throw new ArgumentException("Provided argument is not valid, please check values and try again");
+            }
+
             Issue issue = _mediator.Send(new CreateIssueRequest(model.ToModel()), CancellationToken.None).Result;
             return IssueDto.From(issue);
         }
