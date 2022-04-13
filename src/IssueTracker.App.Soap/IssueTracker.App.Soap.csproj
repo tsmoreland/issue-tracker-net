@@ -197,6 +197,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Model\Request\AddIssueDto.cs" />
     <Compile Include="Model\Response\IssueDto.cs" />
     <Compile Include="Model\Response\IssueSummariesDto.cs" />
     <Compile Include="Model\Response\IssueSummaryDto.cs" />
@@ -241,7 +242,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Model\Request\" />
     <Folder Include="Services\" />
   </ItemGroup>
   <PropertyGroup>

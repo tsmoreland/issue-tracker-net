@@ -16,7 +16,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Web.Services;
 using IssueTracker.App.Shared.Validation;
+using IssueTracker.App.Soap.Model.Request;
 using IssueTracker.App.Soap.Model.Response;
+using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.Core.Requests;
 using MediatR;
@@ -72,8 +74,19 @@ namespace IssueTracker.App.Soap
         public IssueDto GetIssueById(Guid id)
         {
             IssueDto dto = IssueDto.From(_mediator.Send(new FindIssueByIdRequest(id), CancellationToken.None).Result);
-
             return dto ?? throw new KeyNotFoundException($"no issue matching {id} found");
+        }
+
+        /// <summary>
+        /// Adds a new issue 
+        /// </summary>
+        /// <param name="model">the issue to add</param>
+        /// <returns>the added model</returns>
+        [WebMethod]
+        public IssueDto Add(AddIssueDto model)
+        {
+            Issue issue = _mediator.Send(new CreateIssueRequest(model.ToModel()), CancellationToken.None).Result;
+            return IssueDto.From(issue);
         }
     }
 }
