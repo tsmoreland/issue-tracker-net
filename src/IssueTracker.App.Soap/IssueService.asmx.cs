@@ -93,5 +93,28 @@ namespace IssueTracker.App.Soap
             Issue issue = _mediator.Send(new CreateIssueRequest(model.ToModel()), CancellationToken.None).Result;
             return IssueDto.From(issue);
         }
+
+        /// <summary>
+        /// Edits an existing issue matching <paramref name="id"/>
+        /// </summary>
+        /// <param name="id">unique id of the issue to update</param>
+        /// <param name="model">new values for the issue</param>
+        /// <returns>The updated issue</returns>
+        [WebMethod]
+        public IssueDto Edit(Guid id, EditIssueDto model)
+        {
+            if (!model.IsValid)
+            {
+                throw new ArgumentException("Provided argument is not valid, please check values and try again");
+            }
+
+            Issue issue = _mediator.Send(new EditIssueRequest(id, model.ToModel()), CancellationToken.None).Result;
+            if (issue is null)
+            {
+                throw new KeyNotFoundException($"No issue matching {id} was found");
+            }
+
+            return IssueDto.From(issue);
+        }
     }
 }
