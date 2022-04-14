@@ -83,7 +83,7 @@ namespace IssueTracker.App.Soap
         /// <param name="model">the issue to add</param>
         /// <returns>the added model</returns>
         [WebMethod]
-        public IssueDto Add(AddIssueDto model)
+        public IssueDto AddIssue(AddIssueDto model)
         {
             if (!model.IsValid)
             {
@@ -101,7 +101,7 @@ namespace IssueTracker.App.Soap
         /// <param name="model">new values for the issue</param>
         /// <returns>The updated issue</returns>
         [WebMethod]
-        public IssueDto Edit(Guid id, EditIssueDto model)
+        public IssueDto EditIssue(Guid id, EditIssueDto model)
         {
             if (!model.IsValid)
             {
@@ -115,6 +115,15 @@ namespace IssueTracker.App.Soap
             }
 
             return IssueDto.From(issue);
+        }
+
+        [WebMethod]
+        public void DeleteIssue(Guid id)
+        {
+            if (!_mediator.Send(new DeleteIssueRequest(id), CancellationToken.None).Result)
+            {
+                throw new KeyNotFoundException($"No issue matching {id} was found");
+            }
         }
     }
 }
