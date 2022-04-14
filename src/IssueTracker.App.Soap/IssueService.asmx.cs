@@ -36,6 +36,10 @@ namespace IssueTracker.App.Soap
     {
         private readonly IMediator _mediator;
 
+        /// <summary>
+        /// Initializes the <see cref="IssueService"/> webservice
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
         public IssueService()
         {
             _mediator = ServiceProvider.GetRequiredService<IMediator>() ?? throw new InvalidOperationException("Missing dependency: IMediator");

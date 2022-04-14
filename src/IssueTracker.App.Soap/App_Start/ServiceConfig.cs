@@ -21,8 +21,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace IssueTracker.App.Soap
 {
+    /// <summary>
+    /// Add services to <see cref="IServiceCollection"/>
+    /// </summary>
     public static class ServiceConfig
     {
+        /// <summary>
+        /// Adds dependencies to <paramref name="services"/>
+        /// </summary>
         public static void Configure(IServiceCollection services)
         {
             services.AddIssueData();

@@ -17,6 +17,9 @@ using IssueTracker.Core.Model;
 
 namespace IssueTracker.App.Soap.Model.Response
 {
+    /// <summary>
+    /// Issue Data Transfer object
+    /// </summary>
     [DataContract]
     public sealed class IssueDto
     {

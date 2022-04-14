@@ -36,6 +36,9 @@ namespace IssueTracker.App.Soap.Model.Request
             Priority = priority;
         }
 
+        /// <summary>
+        /// instantiates a new instance of the <see cref="AddIssueDto"/> class.
+        /// </summary>
         public AddIssueDto()
         {
             Title = string.Empty;

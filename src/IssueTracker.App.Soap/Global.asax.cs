@@ -21,14 +21,23 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace IssueTracker.App.Soap
 {
+    /// <summary>
+    /// SOAP Web service application
+    /// </summary>
     public class Global : HttpApplication
     {
 
+        /// <summary>
+        /// Initialize Module used to setup scoped services
+        /// </summary>
         public static void InitModule()
         {
             RegisterModule(typeof(ServiceScopeModule));
         }
 
+        /// <summary>
+        /// Handle Application Start event.
+        /// </summary>
         protected void Application_Start(object sender, EventArgs e)
         {
             IServiceCollection services = new ServiceCollection();
@@ -39,31 +48,49 @@ namespace IssueTracker.App.Soap
             provider.MigrateDatabaseOrThrow();
         }
 
+        /// <summary>
+        /// Handle Session Start event.
+        /// </summary>
         protected void Session_Start(object sender, EventArgs e)
         {
 
         }
 
+        /// <summary>
+        /// Handle Begin request event.
+        /// </summary>
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
 
         }
 
+        /// <summary>
+        /// Handle authenticate request event.
+        /// </summary>
         protected void Application_AuthenticateRequest(object sender, EventArgs e)
         {
 
         }
 
+        /// <summary>
+        /// Handle Application Error event.
+        /// </summary>
         protected void Application_Error(object sender, EventArgs e)
         {
 
         }
 
+        /// <summary>
+        /// Handle Session End event.
+        /// </summary>
         protected void Session_End(object sender, EventArgs e)
         {
 
         }
 
+        /// <summary>
+        /// Handle Application End event.
+        /// </summary>
         protected void Application_End(object sender, EventArgs e)
         {
 

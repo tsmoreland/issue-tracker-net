@@ -20,6 +20,9 @@ using IssueTracker.Core.Projections;
 
 namespace IssueTracker.App.Soap.Model.Response
 {
+    /// <summary>
+    /// Issue Summary Data Transfer Object
+    /// </summary>
     [DataContract]
     public sealed class IssueSummaryDto 
     {

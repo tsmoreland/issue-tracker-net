@@ -17,10 +17,22 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace IssueTracker.App.Soap
 {
+    /// <summary>
+    /// Base class for webservices, used to setup <see cref="IServiceProvider"/>
+    /// </summary>
     public abstract class WebServiceBase : System.Web.Services.WebService
     {
+        /// <summary>
+        /// <see cref="IServiceProvider"/>
+        /// </summary>
         protected IServiceProvider ServiceProvider { get; }
 
+        /// <summary>
+        /// initializes <see cref="ServiceProvider"/>
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        /// if unable to locate <see cref="IServiceProvider"/> in <see cref="HttpContext.Items"/>
+        /// ></exception>
         protected WebServiceBase()
         {
             IServiceScope scope = (IServiceScope)HttpContext.Current?.Items[typeof(IServiceScope)];
