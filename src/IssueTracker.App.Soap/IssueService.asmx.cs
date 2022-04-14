@@ -117,6 +117,13 @@ namespace IssueTracker.App.Soap
             return IssueDto.From(issue);
         }
 
+        /// <summary>
+        /// Delete issue given by <paramref name="id"/>
+        /// </summary>
+        /// <param name="id">unique id of the issue to be deleted</param>
+        /// <exception cref="KeyNotFoundException">
+        /// if no issue matching <paramref name="id"/> is found
+        /// </exception>
         [WebMethod]
         public void DeleteIssue(Guid id)
         {
