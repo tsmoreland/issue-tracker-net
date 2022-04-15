@@ -54,7 +54,7 @@ public sealed class SimpleDapperIssueDataMigration : IIssueDataMigration
 
         await connection.ExecuteAsync(@"CREATE TABLE IF NOT EXISTS ""Migrations""
 (
-  ""MigrationId"" TEXT NOT NULL CONSTRAINT ""PK_Issues"" PRIMARY KEY,
+  ""MigrationId"" TEXT NOT NULL CONSTRAINT ""PK_MigrationId"" PRIMARY KEY
 )");
 
         SimpleDapperMigrations migrations = new ();
