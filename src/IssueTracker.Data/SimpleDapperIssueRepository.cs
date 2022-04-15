@@ -13,6 +13,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using IssueTracker.Core.Model;
@@ -44,10 +46,25 @@ public sealed class SimpleDapperIssueRepository
     }
 
     /// <inheritdoc />
-    public IAsyncEnumerable<IssueSummaryProjection> GetIssueSummaries(int pageNumber, int pageSize, CancellationToken cancellationToken)
+    public async IAsyncEnumerable<IssueSummaryProjection> GetIssueSummaries(int pageNumber, int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         ThrowIfDisposed();
-        throw new NotImplementedException();
+
+        string query = $@"SELECT Id, Title, Priority, Type as IssueType
+FROM
+Issues
+ORDER BY Title
+LIMIT {pageSize} OFFSET {GetOffSet(pageNumber, pageSize)}";
+
+        IEnumerable<IssueSummaryProjection> projections = await _dbConnection.QueryAsync<IssueSummaryProjection>(query);
+        foreach (IssueSummaryProjection projection in projections)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                break;
+            }
+            yield return projection;
+        }
     }
 
     /// <inheritdoc />
@@ -67,21 +84,26 @@ public sealed class SimpleDapperIssueRepository
     /// <inheritdoc />
     public Task<Issue> GetUntrackedIssueById(Guid id, CancellationToken cancellationToken)
     {
-        ThrowIfDisposed();
-        throw new NotImplementedException();
+        return GetIssueById(id, cancellationToken);
     }
 
     /// <inheritdoc />
-    public Task<Issue> GetIssueById(Guid id, CancellationToken cancellationToken)
+    public async Task<Issue> GetIssueById(Guid id, CancellationToken cancellationToken)
     {
         ThrowIfDisposed();
-        throw new NotImplementedException();
+
+        Issue issue = (await _dbConnection.QueryAsync<Issue>(
+            @"SELECT Id, Title, Description, Priority, LastUpdated, ConcurrencyToken, Type
+FROM Issue
+Where Id = @id", new { id })).SingleOrDefault();
+        return issue;
     }
 
     /// <inheritdoc />
     public async Task<Issue> AddIssue(Issue issue, CancellationToken cancellationToken)
     {
         ThrowIfDisposed();
+        ThrowIfArgumentNull(issue, nameof(issue));
 
         await _dbConnection.ExecuteAsync(@"INSERT INTO Issues
 (""Id"", ""Title"", ""Description"", ""Priority"", ""LastUpdated"", ""ConcurrencyToken"", ""Type"")
@@ -95,7 +117,7 @@ VALUES
     public Task CommitAsync(CancellationToken cancellationToken)
     {
         ThrowIfDisposed();
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     /// <inheritdoc />
@@ -111,11 +133,11 @@ VALUES
         ThrowIfDisposed();
         throw new NotImplementedException();
     }
-
-    ~SimpleDapperIssueRepository()
+    private static int GetOffSet(int pageNumber, int pageSize)
     {
-        Dispose(false);
+        return (pageNumber - 1) * pageSize;
     }
+
 
     private static void ThrowIfArgumentNull(object value, string parameterName)
     {
@@ -131,6 +153,11 @@ VALUES
         {
             throw new ObjectDisposedException("data connection has been closed.");
         }
+    }
+
+    ~SimpleDapperIssueRepository()
+    {
+        Dispose(false);
     }
 
     /// <inheritdoc />
