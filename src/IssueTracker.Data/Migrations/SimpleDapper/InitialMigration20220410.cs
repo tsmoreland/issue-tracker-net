@@ -19,14 +19,16 @@ using IssueTracker.Core.Model;
 
 namespace IssueTracker.Data.Migrations.SimpleDapper;
 
-internal sealed class InitialMigration20220410 : IMigration
+internal sealed class InitialMigration20220410 : MigrationBase
 {
     /// <inheritdoc />
-    public string Id => "20220410_Initial";
+    public override string Id => "20220410_Initial";
 
     /// <inheritdoc />
-    public void Up(IDbConnection connection)
+    public override void Up(IDbConnection connection)
     {
+        using IDbTransaction transaction = connection.BeginTransaction();
+
         connection.Execute(@"CREATE TABLE IF NOT EXISTS ""Issues""
 (
   ""Id"" TEXT NOT NULL CONSTRAINT ""PK_Issues"" PRIMARY KEY,
@@ -56,10 +58,14 @@ internal sealed class InitialMigration20220410 : IMigration
 VALUES
 (@Id, @Title, @Description, @Priority, @LastUpdated, @ConcurrencyToken, @Type)", issue);
         }
+
+        AddMigrationId(connection);
+
+        transaction.Commit();
     }
 
     /// <inheritdoc />
-    public void Down(IDbConnection connection)
+    public override void Down(IDbConnection connection)
     {
     }
 

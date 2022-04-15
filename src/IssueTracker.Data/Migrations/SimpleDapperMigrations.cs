@@ -25,14 +25,14 @@ public sealed class SimpleDapperMigrations
     public void Migrate(IDbConnection connection)
     {
         List<string> existingMigrations = GetMigraitons(connection).ToList();
-        List<IMigration> migrations = Migrations.ToList();
+        List<MigrationBase> migrations = Migrations.ToList();
 
 
-        IEnumerable<IMigration> toRemove = existingMigrations
+        IEnumerable<MigrationBase> toRemove = existingMigrations
             .Select(id => migrations.FirstOrDefault(m => m.Id == id))
             .Where(migration => migration is not null);
 
-        foreach (IMigration migration in toRemove)
+        foreach (MigrationBase migration in toRemove)
         {
             migrations.Remove(migration);
         }
@@ -47,7 +47,7 @@ public sealed class SimpleDapperMigrations
             .Select(m => m.MigrationId);
     }
 
-    private IEnumerable<IMigration> Migrations
+    private static IEnumerable<MigrationBase> Migrations
     {
         get
         {

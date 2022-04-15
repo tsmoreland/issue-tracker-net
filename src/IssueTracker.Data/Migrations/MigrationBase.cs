@@ -12,14 +12,28 @@
 //
 
 using System.Data;
+using Dapper;
+using IssueTracker.Data.Model;
 
 namespace IssueTracker.Data.Migrations;
 
-internal interface IMigration
+internal abstract class MigrationBase
 {
-    string Id { get; }
+    protected MigrationBase()
+    {
+    }
 
-    void Up(IDbConnection connection);
-    void Down(IDbConnection connection);
+    public abstract string Id { get; }
 
+    public abstract void Up(IDbConnection connection);
+    public abstract void Down(IDbConnection connection);
+
+    public void AddMigrationId(IDbConnection connection)
+    {
+        Migration migration = new() { MigrationId = Id };
+        connection.Execute(@"INSERT INTO Migrations
+('MigrationId') 
+VALUES 
+(@MigrationId)", migration);
+    }
 }
