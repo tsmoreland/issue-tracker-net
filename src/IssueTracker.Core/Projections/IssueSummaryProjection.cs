@@ -12,18 +12,34 @@
 //
 
 using System;
+using IssueTracker.Core.Extensions;
 using IssueTracker.Core.Model;
 
 namespace IssueTracker.Core.Projections
 {
     public sealed class IssueSummaryProjection : IEquatable<IssueSummaryProjection>
     {
-        public IssueSummaryProjection(Guid id, string name, Priority priority, IssueType issueType)
+        public IssueSummaryProjection(Guid id, string title, Priority priority, IssueType issueType)
         {
             Id = id;
+            Title = title ?? string.Empty;
             Priority = priority;
             IssueType = issueType;
-            Title = name ?? string.Empty;
+        }
+
+        public IssueSummaryProjection(string id, string title, int priority, int issueType)
+        {
+            Id = Guid.Parse(id);
+            Title = title ?? string.Empty;
+            Priority = priority.ToPriorityOrThrow();
+            IssueType = issueType.ToIssueTypeOrThrow();
+        }
+        public IssueSummaryProjection(string id, string title, long priority, long issueType)
+        {
+            Id = Guid.Parse(id);
+            Title = title ?? string.Empty;
+            Priority = priority.ToPriorityOrThrow();
+            IssueType = issueType.ToIssueTypeOrThrow();
         }
 
         public Guid Id { get; }
