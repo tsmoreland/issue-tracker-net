@@ -47,6 +47,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GRPC", "GRPC", "{AF6DF8B6-C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.GrpcApi.App", "src\IssueTracker.GrpcApi.App\IssueTracker.GrpcApi.App.csproj", "{3920ECE2-DB8A-4CCE-A6BA-516356E100B4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.GrpcApi.Services", "src\IssueTracker.GrpcApi.Services\IssueTracker.GrpcApi.Services.csproj", "{8BD4EB97-C5AC-4197-A842-F67635A48CD1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +103,10 @@ Global
 		{3920ECE2-DB8A-4CCE-A6BA-516356E100B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3920ECE2-DB8A-4CCE-A6BA-516356E100B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3920ECE2-DB8A-4CCE-A6BA-516356E100B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BD4EB97-C5AC-4197-A842-F67635A48CD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BD4EB97-C5AC-4197-A842-F67635A48CD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BD4EB97-C5AC-4197-A842-F67635A48CD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BD4EB97-C5AC-4197-A842-F67635A48CD1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -120,6 +126,7 @@ Global
 		{A08D7323-67EB-4370-A9F0-90203B9A1A0A} = {390046E2-814B-4466-B941-9B0684750103}
 		{AF6DF8B6-CA34-4F45-8296-3CDD9429E289} = {13D0B969-90F7-4214-BC8C-5432426C746A}
 		{3920ECE2-DB8A-4CCE-A6BA-516356E100B4} = {AF6DF8B6-CA34-4F45-8296-3CDD9429E289}
+		{8BD4EB97-C5AC-4197-A842-F67635A48CD1} = {AF6DF8B6-CA34-4F45-8296-3CDD9429E289}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8421BB6A-BA23-402F-AC65-8492F4641EA7}

@@ -1,26 +1,30 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.44.0" />
+    <PackageReference Include="Grpc.Core" Version="2.45.0" />
+    <PackageReference Include="MediatR" Version="10.0.1" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\IssueTracker.Core\IssueTracker.Core.csproj" />
-    <ProjectReference Include="..\IssueTracker.GrpcApi.Services\IssueTracker.GrpcApi.Services.csproj" />
   </ItemGroup>
 
-  <!-- Attempting to handle this in separate project
   <ItemGroup>
     <Protobuf Include="..\..\issueTracker.proto" GrpcServices="Server">
       <Link>Protos\issueTracker.proto</Link>
     </Protobuf>
   </ItemGroup>
-  -->
 
 </Project>

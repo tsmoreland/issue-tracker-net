@@ -86,10 +86,10 @@ app.UseSwaggerUI(options =>
         options.SwaggerEndpoint($"/swagger/{groupName}/swagger.json", groupName.ToUpperInvariant());
     }
 });
-app.UseMigrationsEndPoint();
-
+app.UseHsts();
 app.UseHttpsRedirection();
 
+app.UseMigrationsEndPoint();
 app.UseRouting();
 app.UseAuthorization();
 

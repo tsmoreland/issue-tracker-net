@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-option csharp_namespace = "IssueTracker.GrpApi.DataTransferObject";
+option csharp_namespace = "IssueTracker.GrpcApi.Grpc.Services";
 
-service IssueTrackerService1 {
+service IssueTrackerService {
     rpc AddIssue(AddIssueMessage) returns (StatusMessage);
     rpc EditIssue(EditIssueMessage) returns (StatusMessage);
     rpc GetIssueById(IssueByIdQueryMessage) returns (IssueMessage);
@@ -51,8 +51,8 @@ message AddIssueMessage {
 
 message EditIssueMessage {
     string Id = 1;
-    string Title = 1;
-    string Description = 2;
-    string Priority = 3;
+    string Title = 2;
+    string Description = 3;
+    string Priority = 4;
 }
 
