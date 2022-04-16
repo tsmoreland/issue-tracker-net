@@ -30,6 +30,14 @@ public sealed class CreateIssueRequestHandler : IRequestHandler<CreateIssueReque
     /// <inheritdoc />
     public Task<Issue> Handle(CreateIssueRequest request, CancellationToken cancellationToken)
     {
-        return _repository.AddIssue(request.Model, cancellationToken);
+        return _repository.AddIssue(request.Model, cancellationToken)
+            .ContinueWith(t =>
+            {
+                Issue issue = t.Result;
+                return _repository
+                    .CommitAsync(cancellationToken)
+                    .ContinueWith(_ => issue, TaskContinuationOptions.OnlyOnRanToCompletion);
+            }, TaskContinuationOptions.OnlyOnRanToCompletion)
+            .Unwrap();
     }
 }
