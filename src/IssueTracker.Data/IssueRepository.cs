@@ -89,15 +89,15 @@ public sealed class IssueRepository : IIssueRepository
     public Task<Issue?> GetIssueById(Guid id, CancellationToken cancellationToken)
     {
         return _dbContext.Issues
-            .SingleOrDefaultAsync(i => i.Id == id, cancellationToken);
+            .FindAsync(new object[] { id }, cancellationToken)
+            .AsTask();
     }
 
     /// <inheritdoc />
-    public async Task<Issue> AddIssue(Issue issue, CancellationToken cancellationToken)
+    public Task<Issue> AddIssue(Issue issue, CancellationToken cancellationToken)
     {
         _dbContext.Issues.Add(issue);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-        return issue;
+        return Task.FromResult(issue);
     }
 
 
