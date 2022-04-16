@@ -137,7 +137,6 @@ public sealed class IssueController : ControllerBase
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IAsyncEnumerable<LinkedIssueSummaryDto>), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [ApiVersion("2")]
     public async Task<IActionResult> GetChildIssues(
         [FromRoute] Guid id,
         [FromQuery] int pageNumber = 1,
