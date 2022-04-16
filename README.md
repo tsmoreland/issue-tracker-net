@@ -29,5 +29,7 @@ Databases would be the big example for this, external tools used by the applicat
 ## Services
 The service layer is intended to co-ordinate between the domain and infrastructure layers
 
-## App
+## App 
 The application itself which for the most part should just translate inputs and send to the service layer to execute
+
+As there are multiple Applications they are prepending by the type, currently this consists of RestApi - A RESTful service and GrcpApi, the beginnings of an equivalent GRPC API
