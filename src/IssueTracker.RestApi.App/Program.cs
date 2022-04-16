@@ -1,9 +1,9 @@
 using System.IO.Compression;
 using System.Text.Json.Serialization;
 using Hellang.Middleware.ProblemDetails;
-using IssueTracker.App.Controllers.Shared.Infrastructure;
 using IssueTracker.Data.Abstractions;
 using IssueTracker.Middelware.SecurityHeaders;
+using IssueTracker.RestApi.Controllers.Shared.Infrastructure;
 using IssueTracker.ServiceDiscovery;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
