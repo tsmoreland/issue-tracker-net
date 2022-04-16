@@ -1,4 +1,4 @@
-# Sample REST API 
+# Sample API(s)
 
 Simple REST API(s) demonstrating swagger gen with an increasingly complex range of methods (eventually multiple apps to covert the different levels).  A .NET Framework equivalent of [Issue Tracker .NET6](https://github.com/tsmoreland/issue-tracker-testapp)
 
