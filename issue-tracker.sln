@@ -41,6 +41,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.RestApi.App", "src\IssueTracker.RestApi.App\IssueTracker.RestApi.App.csproj", "{A08D7323-67EB-4370-A9F0-90203B9A1A0A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GRPC", "GRPC", "{AF6DF8B6-CA34-4F45-8296-3CDD9429E289}"
+	ProjectSection(SolutionItems) = preProject
+		issueTracker.proto = issueTracker.proto
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.GrpcApi.App", "src\IssueTracker.GrpcApi.App\IssueTracker.GrpcApi.App.csproj", "{3920ECE2-DB8A-4CCE-A6BA-516356E100B4}"
 EndProject
