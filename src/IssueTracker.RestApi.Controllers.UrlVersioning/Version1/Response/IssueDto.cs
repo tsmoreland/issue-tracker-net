@@ -12,71 +12,87 @@
 //
 
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using IssueTracker.Core.Model;
-using IssueTracker.Core.Projections;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
-namespace IssueTracker.App.Controllers.UrlVersioning.Version1.Response;
+namespace IssueTracker.RestApi.Controllers.UrlVersioning.Version1.Response;
 
 /// <summary>
-/// Short summary of an <see cref="Issue"/>
+/// Issue Details
 /// </summary>
-[SwaggerSchemaName("Issue Summary")]
-public sealed class IssueSummaryDto
+[SwaggerSchemaName("Issue Details")]
+public sealed class IssueDto
 {
     /// <summary>
-    /// Instantiates a new instance of he IssueSummaryDto Class
+    /// Instantiates a new instance of the <see cref="IssueDto"/> class.
     /// </summary>
-    public IssueSummaryDto(Guid id, string title)
+    public IssueDto(Guid id, string title, string? description, Priority priority)
     {
         Id = id;
         Title = title;
+        Description = description;
+        Priority = priority;
     }
 
     /// <summary>
-    /// Instantiates a new instance of he IssueSummaryDto Class
+    /// Instantiates a new instance of the <see cref="IssueDto"/> class.
     /// </summary>
-    public IssueSummaryDto()
+    /// <remarks>
+    /// required for XML serialization, along with public setters
+    /// </remarks>
+    public IssueDto()
     {
         Id = Guid.Empty;
         Title = string.Empty;
-
+        Description = string.Empty;
+        Priority = Priority.Low;
     }
 
     /// <summary>
     /// Issue Id
     /// </summary>
-    /// <example>3C1152EC-DC0C-4AB0-8AF9-10DE5A9705D5</example>
+    /// <example>48EE3BF9-C81D-4FE4-AB02-220C0122AFE4</example>
     [Required]
-    public Guid Id { get; init; } 
+    public Guid Id { get; init; }
 
     /// <summary>
     /// Issue Title
     /// </summary>
     /// <example>Example Title</example>
     [Required]
-    public string Title { get; init; }
+    public string Title { get; init; } 
 
     /// <summary>
-    /// Converts service DTO to versioned API DTO, for latest version of API the class is expected to be equivalent
+    /// Issue Description
     /// </summary>
-    public static IssueSummaryDto FromProjection(IssueSummaryProjection model)
-    {
-        (Guid id, string? title, _, _) = model;
-        return new IssueSummaryDto(id, title);
-    }
+    /// <example>Example Description</example>
+    [Required]
+    public string? Description { get; init; }
 
     /// <summary>
-    /// Converts an asynchronous collection of <see cref="IssueSummaryProjection"/> to
-    /// an asynchronous colleciton of <see cref="IssueSummaryDto"/>
+    /// Issue Priority
     /// </summary>
-    public static async IAsyncEnumerable<IssueSummaryDto> MapFrom(
-        IAsyncEnumerable<IssueSummaryProjection> source, [EnumeratorCancellation] CancellationToken cancellationToken)
+    /// <example>Medium</example>
+    [Required]
+    public Priority Priority { get; init; }
+
+    /// <summary>
+    /// Issue Type
+    /// </summary>
+    [Required]
+    public IssueType Type { get; init; }
+
+    /// <summary>
+    /// Converts <see cref="Issue"/> to <see cref="IssueDto"/>
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    [return: NotNullIfNotNull("model")]
+    public static IssueDto? From(Issue? model)
     {
-        await foreach (IssueSummaryProjection issueSummary in source.WithCancellation(cancellationToken))
-        {
-            yield return FromProjection(issueSummary);
-        }
+        return model is null
+            ? null
+            : new IssueDto(model.Id, model.Title, model.Description, model.Priority);
     }
 }

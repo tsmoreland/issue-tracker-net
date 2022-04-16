@@ -17,7 +17,7 @@ using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
-namespace IssueTracker.App.Controllers.UrlVersioning.Version2.Response;
+namespace IssueTracker.RestApi.Controllers.UrlVersioning.Version2.Response;
 
 /// <summary>
 /// Short summary of an <see cref="Issue"/>
@@ -94,7 +94,7 @@ public sealed class LinkedIssueSummaryDto
 
     /// <summary>
     /// Converts an asynchronous collection of <see cref="IssueSummaryProjection"/> to
-    /// an asynchronous colleciton of <see cref="Version1.Response.IssueSummaryDto"/>
+    /// an asynchronous colleciton of <see cref="RestApi.Controllers.UrlVersioning.Version1.Response.IssueSummaryDto"/>
     /// </summary>
     public static async IAsyncEnumerable<LinkedIssueSummaryDto> MapFrom(
         IAsyncEnumerable<LinkedIssueSummaryProjection> source, [EnumeratorCancellation] CancellationToken cancellationToken)

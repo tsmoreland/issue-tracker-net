@@ -12,33 +12,33 @@
 //
 
 using System.Net.Mime;
-using IssueTracker.App.Controllers.UrlVersioning.Version1.Request;
-using IssueTracker.App.Controllers.UrlVersioning.Version1.Response;
+using IssueTracker.RestApi.Controllers.UrlVersioning.Version2.Request;
+using IssueTracker.RestApi.Controllers.UrlVersioning.Version2.Response;
 using IssueTracker.Core.Requests;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using static IssueTracker.App.Controllers.Shared.Validation.PagingValidation;
+using static IssueTracker.RestApi.Controllers.Shared.Validation.PagingValidation;
 
-namespace IssueTracker.App.Controllers.UrlVersioning.Version1;
+namespace IssueTracker.RestApi.Controllers.UrlVersioning.Version2;
 
 /// <summary>
-/// Issue Controller
+/// Issues Controller (v2)
 /// </summary>
-[Route("api/v{version:apiVersion}/issues")]
 [ApiController]
+[Route("api/v{version:apiVersion}/issues")]
 [TrimVersionFromSwagger]
-[ApiVersion("1")]
-public class IssuesController : ControllerBase
+[ApiVersion("2")]
+public sealed class IssueController : ControllerBase
 {
     private readonly IMediator _mediator;
 
     /// <summary>
-    /// Instantiates a new instance of <see cref="IssuesController"/>
+    /// Instantiates a new instance of the <see cref="IssueController"/> class.
     /// </summary>
-    public IssuesController(IMediator mediator)
+    public IssueController(IMediator mediator)
     {
         _mediator = mediator;
     }
@@ -90,6 +90,75 @@ public class IssuesController : ControllerBase
     }
 
     /// <summary>
+    /// Returns all parent issues 
+    /// </summary>
+    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
+    /// <param name="pageNumber" example="1" >current page number to return</param>
+    /// <param name="pageSize" example="10">maximum number of items to return</param>
+    /// <param name="cancellationToken">a cancellation token.</param>
+    /// <returns>all parent issues</returns>
+    [HttpGet("{id}/parents")]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
+    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IAsyncEnumerable<LinkedIssueSummaryDto>), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    public async Task<IActionResult> GetParentIssues(
+        [FromRoute] Guid id,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        if (!ValidatePaging(ModelState, pageNumber, pageSize))
+        {
+            return BadRequest(ModelState);
+        }
+
+        if (await _mediator.Send(new IssueExistsRequest(id), cancellationToken))
+        {
+            return Ok(LinkedIssueSummaryDto.MapFrom(await _mediator.Send(new GetParentIssuesRequest(id, pageNumber, pageSize), cancellationToken), cancellationToken));
+        }
+
+        ModelState.AddModelError(nameof(id), "issue not found");
+        return NotFound(ModelState);
+    }
+
+    /// <summary>
+    /// Returns all child issues 
+    /// </summary>
+    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
+    /// <param name="pageNumber" example="1" >current page number to return</param>
+    /// <param name="pageSize" example="10">maximum number of items to return</param>
+    /// <param name="cancellationToken">a cancellation token.</param>
+    /// <returns>all child issues</returns>
+    [HttpGet("{id}/children")]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
+    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IAsyncEnumerable<LinkedIssueSummaryDto>), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [ApiVersion("2")]
+    public async Task<IActionResult> GetChildIssues(
+        [FromRoute] Guid id,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        if (!ValidatePaging(ModelState, pageNumber, pageSize))
+        {
+            return BadRequest(ModelState);
+        }
+
+        if (await _mediator.Send(new IssueExistsRequest(id), cancellationToken))
+        {
+            return Ok(LinkedIssueSummaryDto.MapFrom(await _mediator.Send(new GetChildIssuesRequest(id, pageNumber, pageSize), cancellationToken), cancellationToken));
+        }
+
+        ModelState.AddModelError(nameof(id), "issue not found");
+        return NotFound(ModelState);
+    }
+
+    /// <summary>
     /// Adds a new issue 
     /// </summary>
     /// <param name="model">the issue to add</param>
@@ -97,7 +166,6 @@ public class IssuesController : ControllerBase
     /// <returns>newly created <see cref="IssueDto"/></returns>
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status201Created, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     public async Task<IActionResult> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)

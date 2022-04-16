@@ -15,23 +15,22 @@ using System.ComponentModel.DataAnnotations;
 using IssueTracker.Core.Model;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
-namespace IssueTracker.App.Controllers.UrlVersioning.Version2.Request;
+namespace IssueTracker.RestApi.Controllers.UrlVersioning.Version1.Request;
 
 /// <summary>
-/// Model to use to update <see cref="Issue"/>
+/// Model used to add <see cref="Issue"/>
 /// </summary>
-[SwaggerSchemaName("Edit Issue")]
-public sealed class EditIssueDto
+[SwaggerSchemaName("Add Issue")]
+public sealed class AddIssueDto
 {
     /// <summary>
-    /// Instantiates a new instance of the <see cref="EditIssueDto"/> class.
+    /// instantiates a new instance of the <see cref="AddIssueDto"/> class.
     /// </summary>
-    public EditIssueDto(string title, string? description, Priority priority, IssueType type)
+    public AddIssueDto(string title, string? description, Priority priority)
     {
         Title = title;
         Description = description;
         Priority = priority;
-        Type = type;
     }
 
     /// <summary>
@@ -54,13 +53,7 @@ public sealed class EditIssueDto
     /// </summary>
     /// <example>High</example>
     [Required]
-    public Priority Priority { get; init; }
-
-    /// <summary>
-    /// Issue Type
-    /// </summary>
-    [Required]
-    public IssueType Type { get; init; }
+    public Priority Priority { get; init; } 
 
     /// <summary>
     /// Converts DTO to Model
@@ -68,6 +61,6 @@ public sealed class EditIssueDto
     /// <returns>Model</returns>
     public Issue ToModel()
     {
-        return new Issue(Title, Description ?? string.Empty, Priority, Type);
+        return new Issue(Title, Description ?? string.Empty, Priority, IssueType.Defect);
     }
 }

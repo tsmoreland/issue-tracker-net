@@ -15,7 +15,7 @@ using System.ComponentModel.DataAnnotations;
 using IssueTracker.Core.Model;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
-namespace IssueTracker.App.Controllers.UrlVersioning.Version2.Request;
+namespace IssueTracker.RestApi.Controllers.UrlVersioning.Version2.Request;
 
 /// <summary>
 /// Model used to add <see cref="Issue"/>
