@@ -14,7 +14,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Versioning;
 
-namespace IssueTracker.App.Controllers.Shared.Infrastructure;
+namespace IssueTracker.RestApi.Controllers.Shared.Infrastructure;
 
 /// <summary>
 /// Aggregates multiple ApiVersionReaders allow others to serve as fallback
