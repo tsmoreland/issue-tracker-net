@@ -1,4 +1,4 @@
-# Sample REST API 
+# Sample API(s)
 
 Simple REST API(s) demonstrating swagger gen with an increasingly complex range of methods (eventually multiple apps to covert the different levels)
 
