@@ -4,9 +4,9 @@
     "IssueTracker.GrpcApi.App": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "weatherforecast",
-      "applicationUrl": "https://localhost:7147;http://localhost:5147",
+      "launchBrowser": false,
+      "launchUrl": "",
+      "applicationUrl": "https://localhost:7147",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
