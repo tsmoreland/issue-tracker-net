@@ -33,3 +33,7 @@ The service layer is intended to co-ordinate between the domain and infrastructu
 The application itself which for the most part should just translate inputs and send to the service layer to execute
 
 As there are multiple Applications they are prepending by the type, currently this consists of RestApi - A RESTful service and GrcpApi, the beginnings of an equivalent GRPC API
+
+### GRPC Notes
+
+The GRPC app requires a valid certifacate, as a way around this for development purposes the HTTP port should be used
