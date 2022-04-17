@@ -20,7 +20,7 @@ namespace IssueTracker.GrpcApi.Services;
 
 internal static class IssueSummariesMessageFactory
 {
-    public static bool IsValid(this PagedRequestMessage message, [NotNullWhen(false)] out IssueSummariesMessage? error)
+    public static bool IsValid(this PagedIssueRequestMessage message, [NotNullWhen(false)] out IssueSummariesMessage? error)
     {
         (int pageNumber, int pageSize) = (message.PageNumber, message.PageSize);
 
@@ -45,7 +45,7 @@ internal static class IssueSummariesMessageFactory
         return new IssueSummariesMessage { Status = ResultCode.InvalidArgument };
     }
 
-    public static GetAllIssuesRequest ToMediatorRequest(this PagedRequestMessage message)
+    public static GetAllIssuesRequest ToMediatorRequest(this PagedIssueRequestMessage message)
     {
         (int pageNumber, int pageSize) = (message.PageNumber, message.PageSize);
         return new GetAllIssuesRequest(pageNumber, pageSize);
