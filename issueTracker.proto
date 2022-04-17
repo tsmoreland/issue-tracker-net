@@ -6,7 +6,8 @@ service IssueTrackerService {
     rpc AddIssue(AddIssueMessage) returns (StatusMessage);
     rpc EditIssue(EditIssueMessage) returns (StatusMessage);
     rpc GetIssueById(IssueByIdQueryMessage) returns (IssueMessage);
-    rpc GetIssues(PagedRequestMessage) returns (IssueSummariesMessage);
+    rpc GetIssues(PagedIssueRequestMessage) returns (IssueSummariesMessage);
+    rpc GetAllIssues(SortedIssueRequestMessage) returns (stream IssueSummaryMessage);
 }
 
 enum ResultCode {
@@ -17,9 +18,27 @@ enum ResultCode {
     InvalidArgument = 4;
 }
 
-message PagedRequestMessage {
+enum IssueSortBy {
+    Title = 0;
+    Priority = 1;
+}
+
+enum SortOrder {
+    Ascending = 0;
+    Descending = 1;
+}
+
+
+message PagedIssueRequestMessage {
     int32 PageNumber = 1;
     int32 PageSize = 2;
+    IssueSortBy SortBy = 3;
+    SortOrder Direction = 4;
+}
+
+message SortedIssueRequestMessage {
+    IssueSortBy SortBy = 1;
+    SortOrder Direction = 2;
 }
 
 message StatusMessage {
