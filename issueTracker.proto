@@ -6,6 +6,7 @@ service IssueTrackerService {
     rpc AddIssue(AddIssueMessage) returns (StatusMessage);
     rpc EditIssue(EditIssueMessage) returns (StatusMessage);
     rpc GetIssueById(IssueByIdQueryMessage) returns (IssueMessage);
+    rpc GetIssues(PagedRequestMessage) returns (IssueSummariesMessage);
 }
 
 enum ResultCode {
@@ -14,6 +15,11 @@ enum ResultCode {
     Failure = 2;
     NotFound = 3;
     InvalidArgument = 4;
+}
+
+message PagedRequestMessage {
+    int32 PageNumber = 1;
+    int32 PageSize = 2;
 }
 
 message StatusMessage {

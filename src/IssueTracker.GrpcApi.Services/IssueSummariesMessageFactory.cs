@@ -11,51 +11,52 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Core.Model;
+using System.Diagnostics.CodeAnalysis;
+using IssueTracker.Core.Projections;
+using IssueTracker.Core.Requests;
 using IssueTracker.GrpcApi.Grpc.Services;
 
 namespace IssueTracker.GrpcApi.Services;
 
-internal static class IssueMessageFactory
+internal static class IssueSummariesMessageFactory
 {
+    public static bool IsValid(this PagedRequestMessage message, [NotNullWhen(false)] out IssueSummariesMessage? error)
+    {
+        (int pageNumber, int pageSize) = (message.PageNumber, message.PageSize);
 
-    private static readonly IssueMessage s_flyweight = new ()
-    {
-        Id = Guid.Empty.ToString(), Title = string.Empty, Description = string.Empty, Priority = (int)Priority.Low,
-    };
+        if (pageNumber <= 0)
+        {
+            error = InvalidArgument();
+            return false;
+        }
 
-    public static IssueMessage InvalidArgument()
-    {
-        return new IssueMessage
+        if (pageSize <= 0)
         {
-            Id = s_flyweight.Id,
-            Title = s_flyweight.Title,
-            Description = s_flyweight.Description,
-            Priority = s_flyweight.Priority,
-            Status = ResultCode.InvalidArgument,
-        };
-    }
-    public static IssueMessage NotFound()
-    {
-        return new IssueMessage
-        {
-            Id = s_flyweight.Id,
-            Title = s_flyweight.Title,
-            Description = s_flyweight.Description,
-            Priority = s_flyweight.Priority,
-            Status = ResultCode.NotFound,
-        };
+            error = InvalidArgument();
+            return false;
+        }
+
+        error = null;
+        return true;
     }
 
-    public static IssueMessage FromIssue(Issue issue)
+    public static IssueSummariesMessage InvalidArgument()
     {
-        return new IssueMessage
+        return new IssueSummariesMessage { Status = ResultCode.InvalidArgument };
+    }
+
+    public static GetAllIssuesRequest ToMediatorRequest(this PagedRequestMessage message)
+    {
+        (int pageNumber, int pageSize) = (message.PageNumber, message.PageSize);
+        return new GetAllIssuesRequest(pageNumber, pageSize);
+    }
+
+    public static IssueSummaryMessage ToMessage(this IssueSummaryProjection projection)
+    {
+        return new IssueSummaryMessage
         {
-            Id = issue.Id.ToString(),
-            Title = issue.Title,
-            Description = issue.Description,
-            Priority = (int)issue.Priority,
-            Status = ResultCode.Success
+            Id = projection.Id.ToString(),
+            Title = projection.Title,
         };
     }
 }

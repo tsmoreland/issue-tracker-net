@@ -11,8 +11,10 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Linq;
 using Grpc.Core;
 using IssueTracker.Core.Model;
+using IssueTracker.Core.Projections;
 using IssueTracker.Core.Requests;
 using IssueTracker.GrpcApi.Grpc.Services;
 using MediatR;
@@ -49,4 +51,24 @@ public sealed class IssueService : IssueTrackerServiceBase
             : IssueMessageFactory.NotFound(); 
     }
 
+    /// <inheritdoc/>
+    public override async Task<IssueSummariesMessage> GetIssues(PagedRequestMessage request, ServerCallContext context)
+    {
+        if (!request.IsValid(out IssueSummariesMessage? error))
+        {
+            return error;
+        }
+
+        IAsyncEnumerable<IssueSummaryProjection> projections = await _mediator.Send(request.ToMediatorRequest(), context.CancellationToken);
+
+        IssueSummariesMessage summariesMessage = new ();
+        await foreach (IssueSummaryProjection projection in projections)
+        {
+            summariesMessage.Summaries.Add(projection.ToMessage());
+        }
+
+        summariesMessage.Status = ResultCode.Success;
+
+        return summariesMessage;
+    }
 }
