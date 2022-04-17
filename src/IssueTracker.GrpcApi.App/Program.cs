@@ -21,8 +21,6 @@ builder.WebHost
         kestrelServerOptions.AddServerHeader = false;
         kestrelServerOptions.ConfigureEndpointDefaults(endpointDefaults =>
             endpointDefaults.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2);
-        kestrelServerOptions.ConfigureHttpsDefaults(httpsOptions =>
-            httpsOptions.SslProtocols =  System.Security.Authentication.SslProtocols.Tls11 | System.Security.Authentication.SslProtocols.Tls12);
     });
 ConfigureServices(builder.Services, builder.Environment, builder.Configuration);
 
@@ -70,18 +68,18 @@ static void ConfigureServices(IServiceCollection services, IHostEnvironment envi
 
 static void ConfigurePipeline(WebApplication app)
 {
-    //app.UseSecurityHeaders();
-    //app.UseProblemDetails();
+    app.UseSecurityHeaders();
+    app.UseProblemDetails();
 
     if (app.Environment.IsDevelopment())
     {
+        app.UseMigrationsEndPoint();
     }
     else
     {
-        //app.UseHsts();
-        //app.UseHttpsRedirection();
+        app.UseHsts();
+        app.UseHttpsRedirection();
     }
-    //app.UseMigrationsEndPoint();
  
     app.UseRouting();
     app.UseCors();
