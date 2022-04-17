@@ -52,7 +52,7 @@ public sealed class IssueService : IssueTrackerServiceBase
     }
 
     /// <inheritdoc/>
-    public override async Task<IssueSummariesMessage> GetIssues(PagedRequestMessage request, ServerCallContext context)
+    public override async Task<IssueSummariesMessage> GetIssues(PagedIssueRequestMessage request, ServerCallContext context)
     {
         if (!request.IsValid(out IssueSummariesMessage? error))
         {
@@ -70,5 +70,26 @@ public sealed class IssueService : IssueTrackerServiceBase
         summariesMessage.Status = ResultCode.Success;
 
         return summariesMessage;
+    }
+
+    public override async Task GetAllIssues(SortedIssueRequestMessage request, IServerStreamWriter<IssueSummaryMessage> responseStream, ServerCallContext context)
+    {
+        _ = request; // unused for now
+
+        IAsyncEnumerable<IssueSummaryProjection> projections = await _mediator.Send(new GetAllIssuesRequest(1, int.MaxValue), context.CancellationToken);
+
+        Task lastWrite = Task.CompletedTask;
+        await foreach (IssueSummaryProjection projection in projections)
+        {
+            await lastWrite;
+            if (context.CancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            lastWrite = responseStream.WriteAsync(projection.ToMessage());
+        }
+
+        await lastWrite;
     }
 }
