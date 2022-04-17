@@ -16,4 +16,4 @@ using MediatR;
 
 namespace IssueTracker.Core.Requests;
 
-public sealed record GetAllIssuesRequest(int PageNumber, int PageSize) : IRequest<IAsyncEnumerable<IssueSummaryProjection>>;
+public sealed record GetPagedAndSortedIssuesRequest(int PageNumber, int PageSize) : IRequest<IAsyncEnumerable<IssueSummaryProjection>>;

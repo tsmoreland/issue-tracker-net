@@ -45,10 +45,10 @@ internal static class IssueSummariesMessageFactory
         return new IssueSummariesMessage { Status = ResultCode.InvalidArgument };
     }
 
-    public static GetAllIssuesRequest ToMediatorRequest(this PagedIssueRequestMessage message)
+    public static GetPagedAndSortedIssuesRequest ToMediatorRequest(this PagedIssueRequestMessage message)
     {
         (int pageNumber, int pageSize) = (message.PageNumber, message.PageSize);
-        return new GetAllIssuesRequest(pageNumber, pageSize);
+        return new GetPagedAndSortedIssuesRequest(pageNumber, pageSize);
     }
 
     public static IssueSummaryMessage ToMessage(this IssueSummaryProjection projection)

@@ -76,7 +76,7 @@ public sealed class IssueService : IssueTrackerServiceBase
     {
         _ = request; // unused for now
 
-        IAsyncEnumerable<IssueSummaryProjection> projections = await _mediator.Send(new GetAllIssuesRequest(1, int.MaxValue), context.CancellationToken);
+        IAsyncEnumerable<IssueSummaryProjection> projections = await _mediator.Send(new GetPagedAndSortedIssuesRequest(1, int.MaxValue), context.CancellationToken);
 
         Task lastWrite = Task.CompletedTask;
         await foreach (IssueSummaryProjection projection in projections)

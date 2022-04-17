@@ -61,7 +61,7 @@ public sealed class IssueController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         List<IssueSummaryDto> summary = await IssueSummaryDto
-            .MapFrom(await _mediator.Send(new GetAllIssuesRequest(pageNumber, pageSize), cancellationToken), cancellationToken)
+            .MapFrom(await _mediator.Send(new GetPagedAndSortedIssuesRequest(pageNumber, pageSize), cancellationToken), cancellationToken)
             .ToListAsync(cancellationToken);
 
         return ValidatePaging(ModelState, pageNumber, pageSize)
