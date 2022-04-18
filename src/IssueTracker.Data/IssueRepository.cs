@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
@@ -29,10 +30,11 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
-    public async IAsyncEnumerable<IssueSummaryProjection> GetIssueSummaries(int pageNumber, int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<IssueSummaryProjection> GetIssueSummaries(int pageNumber, int pageSize, Issue.SortBy sortBy, SortDirection direction, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         IAsyncEnumerable<IssueSummaryProjection> issues = _dbContext.Issues
             .AsNoTracking()
+            .Sort(sortBy, direction)
             .Select(i => new IssueSummaryProjection(i.Id, i.Title, i.Priority, i.Type))
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
@@ -58,7 +60,6 @@ public sealed class IssueRepository : IIssueRepository
         {
             yield return summary;
         }
-
     }
 
     /// <inheritdoc />

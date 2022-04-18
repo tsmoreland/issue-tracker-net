@@ -22,9 +22,11 @@ public interface IIssueRepository
     /// </summary>
     /// <param name="pageNumber" example="1" >current page number to return</param>
     /// <param name="pageSize" example="10">maximum number of items to return</param>
+    /// <param name="sortBy">property to sort on</param>
+    /// <param name="direction">sort direction</param>
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all issues</returns>
-    IAsyncEnumerable<IssueSummaryProjection> GetIssueSummaries(int pageNumber, int pageSize, CancellationToken cancellationToken);
+    IAsyncEnumerable<IssueSummaryProjection> GetIssueSummaries(int pageNumber, int pageSize, Issue.SortBy sortBy, SortDirection direction, CancellationToken cancellationToken);
 
     /// <summary>
     /// Returns all parent issues of an issue given by <paramref name="id"/>
