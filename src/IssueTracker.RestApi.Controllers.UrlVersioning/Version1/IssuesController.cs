@@ -60,8 +60,9 @@ public class IssuesController : ControllerBase
         [FromQuery] int pageSize = 10,
         CancellationToken cancellationToken = default)
     {
+        GetPagedAndSortedIssuesRequest request = new (pageNumber, pageSize, Core.Model.Issue.SortBy.Title, Core.Model.SortDirection.Ascending);
         List<IssueSummaryDto> summary = await IssueSummaryDto
-            .MapFrom(await _mediator.Send(new GetPagedAndSortedIssuesRequest(pageNumber, pageSize), cancellationToken), cancellationToken)
+            .MapFrom(await _mediator.Send(request, cancellationToken), cancellationToken)
             .ToListAsync(cancellationToken);
 
         return ValidatePaging(ModelState, pageNumber, pageSize)

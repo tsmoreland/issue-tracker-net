@@ -60,8 +60,11 @@ public sealed class IssueController : ControllerBase
         [FromQuery] int pageSize = 10,
         CancellationToken cancellationToken = default)
     {
+        GetPagedAndSortedIssuesRequest request = new (pageNumber, pageSize,
+            Core.Model.Issue.SortBy.Title, Core.Model.SortDirection.Ascending);
+
         List<IssueSummaryDto> summary = await IssueSummaryDto
-            .MapFrom(await _mediator.Send(new GetPagedAndSortedIssuesRequest(pageNumber, pageSize), cancellationToken), cancellationToken)
+            .MapFrom(await _mediator.Send(request, cancellationToken), cancellationToken)
             .ToListAsync(cancellationToken);
 
         return ValidatePaging(ModelState, pageNumber, pageSize)
@@ -116,7 +119,11 @@ public sealed class IssueController : ControllerBase
 
         if (await _mediator.Send(new IssueExistsRequest(id), cancellationToken))
         {
-            return Ok(LinkedIssueSummaryDto.MapFrom(await _mediator.Send(new GetParentIssuesRequest(id, pageNumber, pageSize), cancellationToken), cancellationToken));
+            return Ok(LinkedIssueSummaryDto
+                .MapFrom(await _mediator
+                    .Send(new GetParentIssuesRequest(id, pageNumber, pageSize, Core.Model.Issue.SortBy.Title, Core.Model.SortDirection.Ascending)
+                        , cancellationToken)
+                    , cancellationToken));
         }
 
         ModelState.AddModelError(nameof(id), "issue not found");
@@ -150,7 +157,11 @@ public sealed class IssueController : ControllerBase
 
         if (await _mediator.Send(new IssueExistsRequest(id), cancellationToken))
         {
-            return Ok(LinkedIssueSummaryDto.MapFrom(await _mediator.Send(new GetChildIssuesRequest(id, pageNumber, pageSize), cancellationToken), cancellationToken));
+            return Ok(LinkedIssueSummaryDto
+                .MapFrom(await _mediator
+                    .Send(new GetChildIssuesRequest(id, pageNumber, pageSize, Core.Model.Issue.SortBy.Title, Core.Model.SortDirection.Ascending)
+                        , cancellationToken)
+                    , cancellationToken));
         }
 
         ModelState.AddModelError(nameof(id), "issue not found");
