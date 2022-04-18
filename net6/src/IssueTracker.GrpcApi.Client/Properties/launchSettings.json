@@ -1,0 +1,11 @@
+﻿{
+  "profiles": {
+    "IssueTracker.GrpcApi.Client": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
