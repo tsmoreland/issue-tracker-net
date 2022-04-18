@@ -68,6 +68,25 @@ public sealed record class Issue(Guid Id)
     }
 
     /// <summary>
+    /// Issue Sort Column
+    /// </summary>
+    public enum SortBy
+    {
+        /// <summary>
+        /// Order by title alphabetically
+        /// </summary>
+        Title = 0,
+        /// <summary>
+        /// Order by <see cref="Model.Priority"/>
+        /// </summary>
+        Priority = 1,
+        /// <summary>
+        /// Order by <see cref="Model.IssueType"/>
+        /// </summary>
+        Type = 2,
+    }
+
+    /// <summary>
     /// Issue Title
     /// </summary>
     public string Title { get; private set; } = string.Empty;
@@ -163,4 +182,5 @@ public sealed record class Issue(Guid Id)
         Priority = priority;
         LastUpdated = DateTime.UtcNow;
     }
+
 }

@@ -11,9 +11,14 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using MediatR;
 
 namespace IssueTracker.Core.Requests;
 
-public sealed record GetPagedAndSortedIssuesRequest(int PageNumber, int PageSize) : IRequest<IAsyncEnumerable<IssueSummaryProjection>>;
+public sealed record GetPagedAndSortedIssuesRequest(
+    int PageNumber,
+    int PageSize,
+    Issue.SortBy SortBy,
+    SortDirection Direction) : IRequest<IAsyncEnumerable<IssueSummaryProjection>>;
