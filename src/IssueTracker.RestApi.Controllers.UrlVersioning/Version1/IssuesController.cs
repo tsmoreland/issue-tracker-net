@@ -12,8 +12,8 @@
 //
 
 using System.Net.Mime;
-using IssueTracker.RestApi.Controllers.UrlVersioning.Version1.Request;
-using IssueTracker.RestApi.Controllers.UrlVersioning.Version1.Response;
+using IssueTracker.RestApi.DataTransferObjects.Version1.Request;
+using IssueTracker.RestApi.DataTransferObjects.Version1.Response;
 using IssueTracker.Core.Requests;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 using MediatR;

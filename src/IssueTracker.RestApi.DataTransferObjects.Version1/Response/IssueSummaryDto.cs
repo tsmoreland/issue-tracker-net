@@ -17,7 +17,7 @@ using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
-namespace IssueTracker.RestApi.Controllers.UrlVersioning.Version1.Response;
+namespace IssueTracker.RestApi.DataTransferObjects.Version1.Response;
 
 /// <summary>
 /// Short summary of an <see cref="Issue"/>

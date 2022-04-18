@@ -12,55 +12,87 @@
 //
 
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using IssueTracker.Core.Model;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
-namespace IssueTracker.RestApi.Controllers.UrlVersioning.Version1.Request;
+namespace IssueTracker.RestApi.DataTransferObjects.Version1.Response;
 
 /// <summary>
-/// Model used to add <see cref="Issue"/>
+/// Issue Details
 /// </summary>
-[SwaggerSchemaName("Add Issue")]
-public sealed class AddIssueDto
+[SwaggerSchemaName("Issue Details")]
+public sealed class IssueDto
 {
     /// <summary>
-    /// instantiates a new instance of the <see cref="AddIssueDto"/> class.
+    /// Instantiates a new instance of the <see cref="IssueDto"/> class.
     /// </summary>
-    public AddIssueDto(string title, string? description, Priority priority)
+    public IssueDto(Guid id, string title, string? description, Priority priority)
     {
+        Id = id;
         Title = title;
         Description = description;
         Priority = priority;
     }
 
     /// <summary>
+    /// Instantiates a new instance of the <see cref="IssueDto"/> class.
+    /// </summary>
+    /// <remarks>
+    /// required for XML serialization, along with public setters
+    /// </remarks>
+    public IssueDto()
+    {
+        Id = Guid.Empty;
+        Title = string.Empty;
+        Description = string.Empty;
+        Priority = Priority.Low;
+    }
+
+    /// <summary>
+    /// Issue Id
+    /// </summary>
+    /// <example>48EE3BF9-C81D-4FE4-AB02-220C0122AFE4</example>
+    [Required]
+    public Guid Id { get; init; }
+
+    /// <summary>
     /// Issue Title
     /// </summary>
     /// <example>Example Title</example>
     [Required]
-    [MaxLength(200)]
     public string Title { get; init; } 
 
     /// <summary>
     /// Issue Description
     /// </summary>
-    /// <example>Example description</example>
-    [MaxLength(500)]
-    public string? Description { get; init; } 
+    /// <example>Example Description</example>
+    [Required]
+    public string? Description { get; init; }
 
     /// <summary>
     /// Issue Priority
     /// </summary>
-    /// <example>High</example>
+    /// <example>Medium</example>
     [Required]
-    public Priority Priority { get; init; } 
+    public Priority Priority { get; init; }
 
     /// <summary>
-    /// Converts DTO to Model
+    /// Issue Type
     /// </summary>
-    /// <returns>Model</returns>
-    public Issue ToModel()
+    [Required]
+    public IssueType Type { get; init; }
+
+    /// <summary>
+    /// Converts <see cref="Issue"/> to <see cref="IssueDto"/>
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    [return: NotNullIfNotNull("model")]
+    public static IssueDto? From(Issue? model)
     {
-        return new Issue(Title, Description ?? string.Empty, Priority, IssueType.Defect);
+        return model is null
+            ? null
+            : new IssueDto(model.Id, model.Title, model.Description, model.Priority);
     }
 }

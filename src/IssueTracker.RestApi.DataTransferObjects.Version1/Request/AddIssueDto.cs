@@ -15,18 +15,18 @@ using System.ComponentModel.DataAnnotations;
 using IssueTracker.Core.Model;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
-namespace IssueTracker.RestApi.Controllers.UrlVersioning.Version1.Request;
+namespace IssueTracker.RestApi.DataTransferObjects.Version1.Request;
 
 /// <summary>
-/// Model to use to update <see cref="Issue"/>
+/// Model used to add <see cref="Issue"/>
 /// </summary>
-[SwaggerSchemaName("Edit Issue")]
-public sealed class EditIssueDto
+[SwaggerSchemaName("Add Issue")]
+public sealed class AddIssueDto
 {
     /// <summary>
-    /// Instantiates a new instance of the <see cref="EditIssueDto"/> class.
+    /// instantiates a new instance of the <see cref="AddIssueDto"/> class.
     /// </summary>
-    public EditIssueDto(string title, string? description, Priority priority)
+    public AddIssueDto(string title, string? description, Priority priority)
     {
         Title = title;
         Description = description;
@@ -63,5 +63,4 @@ public sealed class EditIssueDto
     {
         return new Issue(Title, Description ?? string.Empty, Priority, IssueType.Defect);
     }
-
 }
