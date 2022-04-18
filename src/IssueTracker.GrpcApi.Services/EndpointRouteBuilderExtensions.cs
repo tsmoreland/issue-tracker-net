@@ -26,7 +26,10 @@ public static class EndpointRouteBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(builder, nameof(builder));
 
-        builder.MapGrpcService<IssueService>();
+        builder
+            .MapGrpcService<IssueService>()
+            .EnableGrpcWeb()
+            .RequireCors("AllowAll"); // probably a bad idea of production, but this app isn't
         return builder;
     }
 }

@@ -86,11 +86,9 @@ static void ConfigurePipeline(WebApplication app)
     app.UseAuthentication();
     app.UseAuthorization();
 
-    app
-        .UseEndpoints(endpoints =>
-        {
-            endpoints.MapGrpcServices();
-            endpoints.MapGet("/", () => new { error = "REST not supported, use GRPC client" });
-        });
+    app.UseGrpcWeb();
+    app.MapGrpcServices();
+
+    app.MapGet("/", () => new { error = "REST not supported, use GRPC client" });
 }
 
