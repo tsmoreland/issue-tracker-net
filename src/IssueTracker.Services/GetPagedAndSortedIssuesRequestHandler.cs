@@ -12,6 +12,7 @@
 //
 
 using System.Runtime.CompilerServices;
+using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.Core.Requests;
 using IssueTracker.Data.Abstractions;
@@ -37,10 +38,10 @@ public sealed class GetPagedAndSortedIssuesRequestHandler : IRequestHandler<GetP
     private async IAsyncEnumerable<IssueSummaryProjection> HandleWithEnumerable(GetPagedAndSortedIssuesRequest request,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        (int pageNumber, int pageSize) = request;
+        (int pageNumber, int pageSize, Issue.SortBy sortBy, SortDirection direction) = request;
 
         ConfiguredCancelableAsyncEnumerable<IssueSummaryProjection> issues = _repository
-            .GetIssueSummaries(pageNumber, pageSize, cancellationToken)
+            .GetIssueSummaries(pageNumber, pageSize, sortBy, direction, cancellationToken)
             .WithCancellation(cancellationToken);
 
         await foreach (IssueSummaryProjection projection in issues)

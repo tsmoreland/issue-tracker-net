@@ -37,7 +37,7 @@ public sealed class GetChildIssuesRequestHandler : IRequestHandler<GetChildIssue
     private async IAsyncEnumerable<LinkedIssueSummaryProjection> HandleWithEnumerable(GetChildIssuesRequest request,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        (Guid id, int pageNumber, int pageSize) = request;
+        (Guid id, int pageNumber, int pageSize, _, _) = request;
 
         ConfiguredCancelableAsyncEnumerable<LinkedIssueSummaryProjection> issues = _repository
             .GetChildIssues(id, pageNumber, pageSize, cancellationToken)
