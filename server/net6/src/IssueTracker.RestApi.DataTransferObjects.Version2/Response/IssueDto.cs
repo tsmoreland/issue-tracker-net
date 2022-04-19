@@ -16,7 +16,7 @@ using System.Diagnostics.CodeAnalysis;
 using IssueTracker.Core.Model;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
-namespace IssueTracker.RestApi.Controllers.UrlVersioning.Version2.Response;
+namespace IssueTracker.RestApi.DataTransferObjects.Version2.Response;
 
 /// <summary>
 /// Issue Details

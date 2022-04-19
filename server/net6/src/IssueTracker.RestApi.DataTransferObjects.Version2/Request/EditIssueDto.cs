@@ -15,7 +15,7 @@ using System.ComponentModel.DataAnnotations;
 using IssueTracker.Core.Model;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
-namespace IssueTracker.RestApi.Controllers.UrlVersioning.Version2.Request;
+namespace IssueTracker.RestApi.DataTransferObjects.Version2.Request;
 
 /// <summary>
 /// Model to use to update <see cref="Issue"/>

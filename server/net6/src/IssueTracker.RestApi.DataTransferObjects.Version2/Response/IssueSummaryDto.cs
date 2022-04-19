@@ -17,35 +17,34 @@ using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
-namespace IssueTracker.RestApi.Controllers.UrlVersioning.Version2.Response;
+namespace IssueTracker.RestApi.DataTransferObjects.Version2.Response;
 
 /// <summary>
 /// Short summary of an <see cref="Issue"/>
 /// </summary>
-[SwaggerSchemaName("Linked Issue Summary")]
-public sealed class LinkedIssueSummaryDto
+[SwaggerSchemaName("Issue Summary")]
+public sealed class IssueSummaryDto
 {
     /// <summary>
     /// Instantiates a new instance of he IssueSummaryDto Class
     /// </summary>
-    public LinkedIssueSummaryDto(Guid id, string title, Priority priority, IssueType issueType, LinkType linkType)
+    public IssueSummaryDto(Guid id, string title, Priority priority, IssueType type)
     {
         Id = id;
         Title = title;
         Priority = priority;
-        IssueType = issueType;
-        LinkType = linkType;
+        Type = type;
     }
 
     /// <summary>
     /// Instantiates a new instance of he IssueSummaryDto Class
     /// </summary>
-    public LinkedIssueSummaryDto()
+    public IssueSummaryDto()
     {
         Id = Guid.Empty;
         Title = string.Empty;
         Priority = Priority.Low;
-        IssueType = IssueType.Defect;
+        Type = IssueType.Defect;
     }
 
     /// <summary>
@@ -70,36 +69,29 @@ public sealed class LinkedIssueSummaryDto
     public Priority Priority { get; init; }
 
     /// <summary>
-    /// Issue <see cref="Core.Model.IssueType">Type</see>
+    /// Issue <see cref="IssueType">Type</see>
     /// </summary>
     /// <value example="Defect">Issue <see cref="IssueType">Type</see></value>
     [Required]
-    public IssueType IssueType { get; init; }
-
-    /// <summary>
-    /// Issue <see cref="Core.Model.LinkType">Type</see>
-    /// </summary>
-    /// <value example="Defect">Issue <see cref="Core.Model.LinkType">Type</see></value>
-    [Required]
-    public LinkType LinkType { get; init; }
+    public IssueType Type { get; init; }
 
     /// <summary>
     /// Converts service DTO to versioned API DTO, for latest version of API the class is expected to be equivalent
     /// </summary>
-    public static LinkedIssueSummaryDto FromProjection(LinkedIssueSummaryProjection model)
+    public static IssueSummaryDto FromProjection(IssueSummaryProjection model)
     {
-        (Guid id, string? title, Priority priority, IssueType issueType, LinkType linkType) = model;
-        return new LinkedIssueSummaryDto(id, title, priority, issueType, linkType);
+        (Guid id, string? title, Priority priority, IssueType type) = model;
+        return new IssueSummaryDto(id, title, priority, type);
     }
 
     /// <summary>
     /// Converts an asynchronous collection of <see cref="IssueSummaryProjection"/> to
-    /// an asynchronous colleciton of <see cref="RestApi.Controllers.UrlVersioning.Version1.Response.IssueSummaryDto"/>
+    /// an asynchronous colleciton of <see cref="IssueSummaryDto"/>
     /// </summary>
-    public static async IAsyncEnumerable<LinkedIssueSummaryDto> MapFrom(
-        IAsyncEnumerable<LinkedIssueSummaryProjection> source, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public static async IAsyncEnumerable<IssueSummaryDto> MapFrom(
+        IAsyncEnumerable<IssueSummaryProjection> source, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        await foreach (LinkedIssueSummaryProjection issueSummary in source.WithCancellation(cancellationToken))
+        await foreach (IssueSummaryProjection issueSummary in source.WithCancellation(cancellationToken))
         {
             yield return FromProjection(issueSummary);
         }
