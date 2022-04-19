@@ -1,0 +1,95 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>5</WarningLevel>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <WarningLevel>5</WarningLevel>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>Default</AnalysisMode>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="6.4.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.4" />
+    <PackageReference Include="Serilog" Version="2.10.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.0" />
+
+    <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0" />
+
+    <PackageReference Include="Tcell.Agent" Version="3.1.0" />
+
+    <!--
+
+    Current approach is to use concrete projects as project referenes which doesn't seem to copy this transitive
+    dependency, a better approach may be to simply update all projects to build to a common folder rather than
+    relying on copy local, a fully package reference would also resolve this (as does directly referencing the item
+    with the missed dependency) but we shouldn't need that ideally, if this were a growing project not having these
+    references would allow a more plugin approach
+    -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.4" />
+
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IssueTracker.Core\IssueTracker.Core.csproj" />
+    <ProjectReference Include="..\IssueTracker.Data.Abstractions\IssueTracker.Data.Abstractions.csproj" />
+    <ProjectReference Include="..\IssueTracker.Middelware.SecurityHeaders\IssueTracker.Middelware.SecurityHeaders.csproj" />
+    <ProjectReference Include="..\IssueTracker.RestApi.Controllers.Shared\IssueTracker.RestApi.Controllers.Shared.csproj" />
+    <ProjectReference Include="..\IssueTracker.RestApi.Controllers.UrlVersioning\IssueTracker.RestApi.Controllers.UrlVersioning.csproj" />
+    <ProjectReference Include="..\IssueTracker.ServiceDiscovery\IssueTracker.ServiceDiscovery.csproj" />
+    <ProjectReference Include="..\IssueTracker.SwashbuckleExtensions.Abstractions\IssueTracker.SwashbuckleExtensions.Abstractions.csproj" />
+
+    <ProjectReference Include="..\IssueTracker.Data\IssueTracker.Data.csproj">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\IssueTracker.Services\IssueTracker.Services.csproj">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\IssueTracker.SwashbuckleExtensions\IssueTracker.SwashbuckleExtensions.csproj">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </ProjectReference>
+  </ItemGroup>
+
+  <!--
+
+  attempt to copy output from issuetracker.data without project reference
+  <Target Name="IssueTrackerDataTarget" BeforeTargets="AfterBuild">
+    <MSBuild Projects="..\..\IssueTracker.Data\IssueTracker.Data.csproj" BuildInParallel="$(BuildInParallel)" Targets="Build">
+      <Output TaskParameter="TargetOutputs" ItemName="IssueTrackerDataOutput" />
+    </MSBuild>
+
+    <ItemGroup>
+      <Content Include="@(IssueTrackerDataOutput)" />
+    </ItemGroup>
+  </Target>
+  -->
+
+</Project>
