@@ -37,4 +37,3 @@ As there are multiple Applications they are prepending by the type, currently th
 ### GRPC Notes
 
 The GRPC app requires a valid certifacate, as a way around this for development purposes the HTTP port should be used
->>>>>>> 01582de161fe66af5060cdf7485690609d6ac762
