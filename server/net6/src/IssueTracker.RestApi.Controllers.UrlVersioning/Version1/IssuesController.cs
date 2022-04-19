@@ -15,6 +15,7 @@ using System.Net.Mime;
 using IssueTracker.RestApi.DataTransferObjects.Version1.Request;
 using IssueTracker.RestApi.DataTransferObjects.Version1.Response;
 using IssueTracker.Core.Requests;
+using IssueTracker.RestApi.DataTransferObjects.Version1.QueryParameters;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -48,8 +49,10 @@ public class IssuesController : ControllerBase
     /// </summary>
     /// <param name="pageNumber" example="1" >current page number to return</param>
     /// <param name="pageSize" example="10">maximum number of items to return</param>
+    /// <param name="orderBy">property to order results by</param>
+    /// <param name="direction">direction to order results by</param>
     /// <param name="cancellationToken">a cancellation token.</param>
-    /// <returns>all issues</returns>
+    /// <returns>all issues in batches of <paramref name="pageSize"/></returns>
     [HttpGet]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
@@ -58,9 +61,11 @@ public class IssuesController : ControllerBase
     public async Task<IActionResult> GetAll(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
+        [FromQuery] IssueSortBy orderBy = IssueSortBy.Title,
+        [FromQuery] SortDirection direction = SortDirection.Ascending,
         CancellationToken cancellationToken = default)
     {
-        GetPagedAndSortedIssuesRequest request = new (pageNumber, pageSize, Core.Model.Issue.SortBy.Title, Core.Model.SortDirection.Ascending);
+        GetPagedAndSortedIssuesRequest request = new (pageNumber, pageSize, orderBy.ToModel(), direction.ToModel());
         List<IssueSummaryDto> summary = await IssueSummaryDto
             .MapFrom(await _mediator.Send(request, cancellationToken), cancellationToken)
             .ToListAsync(cancellationToken);
