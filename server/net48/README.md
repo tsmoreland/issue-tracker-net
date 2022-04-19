@@ -1,10 +1,10 @@
 # Sample API(s)
 
-Simple REST API(s) demonstrating swagger gen with an increasingly complex range of methods (eventually multiple apps to covert the different levels)
+Simple REST API(s) demonstrating swagger gen with an increasingly complex range of methods (eventually multiple apps to covert the different levels).  A .NET Framework equivalent of [Issue Tracker .NET6](https://github.com/tsmoreland/issue-tracker-testapp)
 
 ## Tech used
 
-The API is emulating a ticket management like system mostly because I couldn't think of anything better to model.  It's written using .NET6 ASP.NET Core with Entity Framework Core using SQLite database
+The API is emulating a ticket management like system mostly because I couldn't think of anything better to model.  It's written using .NET Framework ASP.NET using WebApi 2 and Webservices (SOAP) using Dapper ORM with a SQLite database
 
 ## Database
 
@@ -12,7 +12,7 @@ The database is migrated (created) on first run so no additional work required t
 
 ## OpenAPI
 
-The API is documented using Swashbuckle to produce OpenAPI v3 documents for the v1 and v2 of the API.
+The API is documented using Swashbuckle to produce OpenAPI documents for the v1 and v2 of the API, v2 is still in its early stages and the exact version of OpenAPI document has not been checked (simple enough to do I just haven't done it yet)
 
 ## Code structure
 
@@ -32,9 +32,3 @@ The service layer is intended to co-ordinate between the domain and infrastructu
 ## App 
 The application itself which for the most part should just translate inputs and send to the service layer to execute
 
-As there are multiple Applications they are prepending by the type, currently this consists of RestApi - A RESTful service and GrcpApi, the beginnings of an equivalent GRPC API
-
-### GRPC Notes
-
-The GRPC app requires a valid certifacate, as a way around this for development purposes the HTTP port should be used
->>>>>>> 01582de161fe66af5060cdf7485690609d6ac762

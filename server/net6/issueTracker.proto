@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+option csharp_namespace = "IssueTracker.GrpcApi.Grpc.Services";
+
+service IssueTrackerService {
+    rpc AddIssue(AddIssueMessage) returns (StatusMessage);
+    rpc EditIssue(EditIssueMessage) returns (StatusMessage);
+    rpc GetIssueById(IssueByIdQueryMessage) returns (IssueMessage);
+    rpc GetIssues(PagedIssueRequestMessage) returns (IssueSummariesMessage);
+    rpc GetAllIssues(SortedIssueRequestMessage) returns (stream IssueSummaryMessage);
+}
+
+enum ResultCode {
+    Unknown = 0;
+    Success = 1;
+    Failure = 2;
+    NotFound = 3;
+    InvalidArgument = 4;
+}
+
+enum IssueSortBy {
+    Title = 0;
+    Priority = 1;
+}
+
+enum SortOrder {
+    Ascending = 0;
+    Descending = 1;
+}
+
+
+message PagedIssueRequestMessage {
+    int32 PageNumber = 1;
+    int32 PageSize = 2;
+    IssueSortBy SortBy = 3;
+    SortOrder Direction = 4;
+}
+
+message SortedIssueRequestMessage {
+    IssueSortBy SortBy = 1;
+    SortOrder Direction = 2;
+}
+
+message StatusMessage {
+    ResultCode Status = 1;
+    string Message = 2;
+}
+
+message IssueSummaryMessage {
+    string Id = 1;
+    string Title = 2;
+}
+
+message IssueSummariesMessage {
+    repeated IssueSummaryMessage Summaries = 1;
+    ResultCode Status = 2;
+}
+
+message IssueByIdQueryMessage {
+    string Id = 1;
+}
+
+message IssueMessage {
+    string Id = 1;
+    string Title = 2;
+    string Description = 3;
+    int32 Priority = 4;
+    ResultCode Status = 5;
+}
+
+message AddIssueMessage {
+    string Title = 1;
+    string Description = 2;
+    string Priority = 3;
+}
+
+message EditIssueMessage {
+    string Id = 1;
+    string Title = 2;
+    string Description = 3;
+    string Priority = 4;
+}
+
