@@ -53,6 +53,12 @@ static void ConfigureServices(IServiceCollection services, IHostEnvironment envi
         {
             tokenProviderOptions.TokenLifespan = TimeSpan.FromHours(1);
         })
+        .AddCors(options =>
+            options.AddPolicy("AllowAll", builder =>
+                builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()))
         .AddControllers();
 
     if (environment.IsDevelopment())
