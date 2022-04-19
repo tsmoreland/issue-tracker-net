@@ -6,6 +6,7 @@ using IssueTracker.Middelware.SecurityHeaders;
 using IssueTracker.ServiceDiscovery;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Serilog;
 
 HostingStartupDiscovery
@@ -15,13 +16,7 @@ HostingStartupDiscovery
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Host
     .UseSerilog((context, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(context.Configuration));
-builder.WebHost
-    .ConfigureKestrel(kestrelServerOptions =>
-    {
-        kestrelServerOptions.AddServerHeader = false;
-        kestrelServerOptions.ConfigureEndpointDefaults(endpointDefaults =>
-            endpointDefaults.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2);
-    });
+builder.WebHost.ConfigureKestrel(ConfigureKestrel);
 ConfigureServices(builder.Services, builder.Environment, builder.Configuration);
 
 WebApplication app = builder.Build();
@@ -35,6 +30,16 @@ using (IServiceScope scope = app.Services.CreateScope())
 ConfigurePipeline(app);
 
 app.Run();
+
+static void ConfigureKestrel(WebHostBuilderContext context, KestrelServerOptions options)
+{
+    options.Configure(context.Configuration.GetSection("Kestrel")); // maybe null check this ?
+    options.AddServerHeader = false;
+    options.ConfigureEndpointDefaults(endpointDefaults =>
+        endpointDefaults.Protocols = HttpProtocols.Http2);
+    options.ConfigureHttpsDefaults(httpsDefaults =>
+        httpsDefaults.ClientCertificateMode = Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode.AllowCertificate);
+}
 
 static void ConfigureServices(IServiceCollection services, IHostEnvironment environment, IConfiguration configuration)
 {
