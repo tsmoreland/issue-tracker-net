@@ -51,7 +51,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.GrpcApi.Servic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.RestApi.DataTransferObjects.Version1", "src\IssueTracker.RestApi.DataTransferObjects.Version1\IssueTracker.RestApi.DataTransferObjects.Version1.csproj", "{8359A8DF-8E00-4D8A-B098-6F00166B9FBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.RestApi.DataTransferObjects.Version2", "src\IssueTracker.RestApi.DataTransferObjects.Version2\IssueTracker.RestApi.DataTransferObjects.Version2.csproj", "{82849D31-F076-434C-858A-6421141E69A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.RestApi.DataTransferObjects.Version2", "src\IssueTracker.RestApi.DataTransferObjects.Version2\IssueTracker.RestApi.DataTransferObjects.Version2.csproj", "{82849D31-F076-434C-858A-6421141E69A3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GraphQL", "GraphQL", "{7C5926E5-7CE8-4BE4-8FEB-CC55F3D5BB08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.GraphQl.App", "src\IssueTracker.GraphQl.App\IssueTracker.GraphQl.App.csproj", "{5559C5E9-7591-4AE0-828D-323D52EB3FDB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -119,6 +123,10 @@ Global
 		{82849D31-F076-434C-858A-6421141E69A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82849D31-F076-434C-858A-6421141E69A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82849D31-F076-434C-858A-6421141E69A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5559C5E9-7591-4AE0-828D-323D52EB3FDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5559C5E9-7591-4AE0-828D-323D52EB3FDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5559C5E9-7591-4AE0-828D-323D52EB3FDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5559C5E9-7591-4AE0-828D-323D52EB3FDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -141,6 +149,8 @@ Global
 		{8BD4EB97-C5AC-4197-A842-F67635A48CD1} = {AF6DF8B6-CA34-4F45-8296-3CDD9429E289}
 		{8359A8DF-8E00-4D8A-B098-6F00166B9FBD} = {390046E2-814B-4466-B941-9B0684750103}
 		{82849D31-F076-434C-858A-6421141E69A3} = {390046E2-814B-4466-B941-9B0684750103}
+		{7C5926E5-7CE8-4BE4-8FEB-CC55F3D5BB08} = {13D0B969-90F7-4214-BC8C-5432426C746A}
+		{5559C5E9-7591-4AE0-828D-323D52EB3FDB} = {7C5926E5-7CE8-4BE4-8FEB-CC55F3D5BB08}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8421BB6A-BA23-402F-AC65-8492F4641EA7}
