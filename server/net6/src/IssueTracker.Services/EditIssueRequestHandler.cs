@@ -30,7 +30,7 @@ public sealed class EditIssueRequestHandler : IRequestHandler<EditIssueRequest, 
     /// <inheritdoc />
     public Task<Issue?> Handle(EditIssueRequest request, CancellationToken cancellationToken)
     {
-        (Guid id, Issue model) = request;
+        (Guid id, Action<Issue> visitor) = request;
         return _repository.GetIssueById(id, cancellationToken)
             .ContinueWith(t =>
             {
@@ -41,9 +41,18 @@ public sealed class EditIssueRequestHandler : IRequestHandler<EditIssueRequest, 
                     return null;
                 }
 
-                issue.CopyTopLevelFrom(model);
+                visitor(issue);
                 return issue;
 
-            }, TaskContinuationOptions.OnlyOnRanToCompletion);
+            }, TaskContinuationOptions.OnlyOnRanToCompletion)
+            .ContinueWith(t =>
+            {
+                Issue? issue = t.Result;
+
+                return _repository
+                    .CommitAsync(cancellationToken)
+                    .ContinueWith(_ => issue, TaskContinuationOptions.OnlyOnRanToCompletion);
+            }, TaskContinuationOptions.OnlyOnRanToCompletion)
+            .Unwrap();
     }
 }
