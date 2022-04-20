@@ -29,6 +29,16 @@ public interface IIssueRepository
     IAsyncEnumerable<IssueSummaryProjection> GetIssueSummaries(int pageNumber, int pageSize, Issue.SortBy sortBy, SortDirection direction, CancellationToken cancellationToken);
 
     /// <summary>
+    /// Returns all issues without paging 
+    /// </summary>
+    /// <param name="cancellationToken">a cancellation token.</param>
+    /// <returns>all issues</returns>
+    /// <remarks>
+    /// temporary method which will eventuall support paging, even if it uses default values
+    /// </remarks>
+    IAsyncEnumerable<Issue> GetAllIssues(CancellationToken cancellationToken);  
+
+    /// <summary>
     /// Returns all parent issues of an issue given by <paramref name="id"/>
     /// </summary>
     /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
@@ -51,6 +61,7 @@ public interface IIssueRepository
     Task<Issue?> GetUntrackedIssueById(Guid id, CancellationToken cancellationToken);
     Task<Issue?> GetIssueById(Guid id, CancellationToken cancellationToken);
     Task<Issue> AddIssue(Issue issue, CancellationToken cancellationToken);
+    Task<Issue?> UpdateIssue(Guid id, Action<Issue> visitor, CancellationToken cancellationToken);
 
     /// <summary>
     /// Persists changes to the database

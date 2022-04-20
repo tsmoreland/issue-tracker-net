@@ -11,7 +11,6 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
@@ -43,6 +42,14 @@ public sealed class IssueRepository : IIssueRepository
         {
             yield return issue;
         }
+    }
+
+    /// <inheritdoc />
+    public IAsyncEnumerable<Issue> GetAllIssues(CancellationToken cancellationToken)
+    {
+        return _dbContext.Issues
+            .AsNoTracking()
+            .AsAsyncEnumerable();
     }
 
     /// <inheritdoc />
@@ -99,6 +106,19 @@ public sealed class IssueRepository : IIssueRepository
     {
         _dbContext.Issues.Add(issue);
         return Task.FromResult(issue);
+    }
+
+    /// <inheritdoc />
+    public async Task<Issue?> UpdateIssue(Guid id, Action<Issue> visitor, CancellationToken cancellationToken)
+    {
+        Issue? issue = await _dbContext.Issues.FindAsync(new object[] { id }, cancellationToken);
+        if (issue == null)
+        {
+            return null;
+        }
+
+        visitor(issue);
+        return issue;
     }
 
 
