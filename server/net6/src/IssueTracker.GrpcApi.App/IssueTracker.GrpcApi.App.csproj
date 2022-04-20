@@ -4,6 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -23,8 +24,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.AspNetCore" Version="2.44.0" />
-    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.44.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.45.0" />
+    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.45.0" />
     <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="6.4.1" />
     <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0" />
 
