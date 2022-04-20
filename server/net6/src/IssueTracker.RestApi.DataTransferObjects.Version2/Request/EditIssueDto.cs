@@ -63,11 +63,14 @@ public sealed class EditIssueDto
     public IssueType Type { get; init; }
 
     /// <summary>
-    /// Converts DTO to Model
+    /// Update exisitng issue with provided values
     /// </summary>
-    /// <returns>Model</returns>
-    public Issue ToModel()
+    /// <param name="issue">The issue to update</param>
+    public void Update(Issue issue)
     {
-        return new Issue(Title, Description ?? string.Empty, Priority, Type);
+        issue.SetTitle(Title);
+        issue.SetDescription(Description);
+        issue.SetPriority(Priority);
+        issue.SetIssueType(Type);
     }
 }

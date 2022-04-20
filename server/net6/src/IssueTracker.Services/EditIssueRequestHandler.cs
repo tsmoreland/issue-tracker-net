@@ -28,31 +28,18 @@ public sealed class EditIssueRequestHandler : IRequestHandler<EditIssueRequest, 
     }
 
     /// <inheritdoc />
-    public Task<Issue?> Handle(EditIssueRequest request, CancellationToken cancellationToken)
+    public async Task<Issue?> Handle(EditIssueRequest request, CancellationToken cancellationToken)
     {
         (Guid id, Action<Issue> visitor) = request;
-        return _repository.GetIssueById(id, cancellationToken)
-            .ContinueWith(t =>
-            {
-                Issue? issue = t.Result;
-                t.Dispose();
-                if (issue == null)
-                {
-                    return null;
-                }
 
-                visitor(issue);
-                return issue;
+        // polly would likely need to around this entire attempt if we wanted retry
+        Issue? issue = await _repository.UpdateIssue(id, visitor, cancellationToken);
+        if (issue == null)
+        {
+            return null;
+        }
 
-            }, TaskContinuationOptions.OnlyOnRanToCompletion)
-            .ContinueWith(t =>
-            {
-                Issue? issue = t.Result;
-
-                return _repository
-                    .CommitAsync(cancellationToken)
-                    .ContinueWith(_ => issue, TaskContinuationOptions.OnlyOnRanToCompletion);
-            }, TaskContinuationOptions.OnlyOnRanToCompletion)
-            .Unwrap();
+        await _repository.CommitAsync(cancellationToken);
+        return issue;
     }
 }

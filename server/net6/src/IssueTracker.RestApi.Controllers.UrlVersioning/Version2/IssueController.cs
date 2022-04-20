@@ -213,7 +213,7 @@ public sealed class IssueController : ControllerBase
             return BadRequest(new ValidationProblemDetails(ModelState));
         }
 
-        IssueDto? issue = IssueDto.From(await _mediator.Send(new EditIssueRequest(id, model.ToModel()), cancellationToken));
+        IssueDto? issue = IssueDto.From(await _mediator.Send(new EditIssueRequest(id, model.Update), cancellationToken));
         return issue is not null
             ? Ok(issue)
             : NotFound();

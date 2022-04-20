@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using static IssueTracker.RestApi.Controllers.Shared.Validation.PagingValidation;
+using SortDirection = IssueTracker.RestApi.DataTransferObjects.Version1.QueryParameters.SortDirection;
 
 namespace IssueTracker.RestApi.Controllers.UrlVersioning.Version1;
 
@@ -137,7 +138,7 @@ public class IssuesController : ControllerBase
             return BadRequest(new ValidationProblemDetails(ModelState));
         }
 
-        IssueDto? issue = IssueDto.From(await _mediator.Send(new EditIssueRequest(id, model.ToModel()), cancellationToken));
+        IssueDto? issue = IssueDto.From(await _mediator.Send(new EditIssueRequest(id, model.Update), cancellationToken));
         return issue is not null
             ? Ok(issue)
             : NotFound();
