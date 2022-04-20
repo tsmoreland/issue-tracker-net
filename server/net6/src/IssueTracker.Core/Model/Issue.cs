@@ -162,6 +162,24 @@ public sealed record class Issue(Guid Id)
     }
 
     /// <summary>
+    /// Update issue priority
+    /// </summary>
+    public void SetPriority(Priority priority)
+    {
+        Priority = priority;
+        LastUpdated = DateTime.UtcNow;
+    }
+
+    /// <summary>
+    /// Update issue type
+    /// </summary>
+    public void SetIssueType(IssueType type)
+    {
+        Type = type;
+        LastUpdated = DateTime.UtcNow;
+    }
+
+    /// <summary>
     /// Upates top level properties with values from <paramref name="source"/>.
     /// Does not affect linked issues
     /// </summary>
