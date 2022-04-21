@@ -28,8 +28,6 @@ public class IssueTrackerSchema : Schema
     public IssueTrackerSchema(IServiceProvider provider)
         : base(provider)
     {
-        IIssueRepository? repository = provider.GetService<IIssueRepository>();
-
         Query = provider.GetRequiredService<IssueGraphQuery>();
     }
 }

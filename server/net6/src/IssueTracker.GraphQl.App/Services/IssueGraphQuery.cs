@@ -12,6 +12,7 @@
 //
 
 using GraphQL.Types;
+using IssueTracker.Core.Model;
 using IssueTracker.Data.Abstractions;
 using IssueTracker.GraphQl.App.Services.Types;
 
@@ -25,9 +26,22 @@ public class IssueGraphQuery : ObjectGraphType
     /// <summary>
     /// Instantiates a new instance of the <see cref="IssueGraphQuery"/> class.
     /// </summary>
-    public IssueGraphQuery(IIssueRepository repository)
+    public IssueGraphQuery()
     {
-        Field<ListGraphType<IssueGraphType>>("issues",
-            resolve: context => repository.GetAllIssues(context.CancellationToken));
+        FieldAsync<ListGraphType<IssueGraphType>>("issues",
+            resolve: context =>
+                GetAllIssues(context.RequestServices?.GetService<IIssueRepository>(), context.CancellationToken));
+    }
+
+    private static async Task<object?> GetAllIssues(IIssueRepository? repository, CancellationToken cancellationToken)
+    {
+        if (repository is null)
+        {
+            return new List<Issue>();
+        }
+
+        return await repository
+            .GetAllIssues(cancellationToken)
+            .ToListAsync(cancellationToken);
     }
 }

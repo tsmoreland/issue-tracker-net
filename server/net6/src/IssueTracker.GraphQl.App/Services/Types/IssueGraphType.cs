@@ -27,11 +27,11 @@ public sealed class IssueGraphType : ObjectGraphType<Issue>
     /// </summary>
     public IssueGraphType()
     {
-        Field(type => type.Id);
-        Field(type => type.Title);
-        Field(type => type.Description);
-        Field(type => type.Priority);
-        Field(type => type.Type);
+        Field(type => type.Id, nullable: false).Description("Unique Id");
+        Field(type => type.Title, nullable: false).Description("Title");
+        Field(type => type.Description).Description("description of the issue");
+        Field(type => type.Priority, nullable: false).Description("Resolution Priority");
+        Field(type => type.Type, nullable: false).Description("issue category or type");
 
     }
 }
