@@ -22,6 +22,7 @@ using IssueTracker.Core.Projections;
 using IssueTracker.Data.Abstractions;
 using Microsoft.Data.Sqlite;
 using Dapper;
+using Dapper.Contrib.Extensions;
 
 namespace IssueTracker.Data;
 
@@ -31,7 +32,6 @@ public sealed class SimpleDapperIssueRepository
     , IAsyncDisposable
 {
     private const int Disposed = 1;
-    private readonly SqliteConnection _dbConnection;
     private int _disposed;
 
 
@@ -42,7 +42,13 @@ public sealed class SimpleDapperIssueRepository
             throw new ArgumentNullException(nameof(dbOptions));
         }
 
-        _dbConnection = new SqliteConnection(dbOptions.ConnectionString);
+        LazyDbConnection = new Lazy<SqliteConnection>(
+            () =>
+            {
+                SqliteConnection dbConnection = new (dbOptions.ConnectionString);
+                dbConnection.Open();
+                return dbConnection;
+            });
     }
 
     /// <inheritdoc />
@@ -56,7 +62,7 @@ Issues
 ORDER BY Title
 LIMIT {pageSize} OFFSET {GetOffSet(pageNumber, pageSize)}";
 
-        IEnumerable<IssueSummaryProjection> projections = await _dbConnection.QueryAsync<IssueSummaryProjection>(query);
+        IEnumerable<IssueSummaryProjection> projections = await DbConnection.QueryAsync<IssueSummaryProjection>(query);
         foreach (IssueSummaryProjection projection in projections)
         {
             if (cancellationToken.IsCancellationRequested)
@@ -92,11 +98,7 @@ LIMIT {pageSize} OFFSET {GetOffSet(pageNumber, pageSize)}";
     {
         ThrowIfDisposed();
 
-        Issue issue = (await _dbConnection.QueryAsync<Issue>(
-            @"SELECT Id, Title, Description, Priority, LastUpdated, ConcurrencyToken, Type
-FROM Issue
-Where Id = @id", new { id })).SingleOrDefault();
-        return issue;
+        return await DbConnection.GetAsync<Issue>(id);
     }
 
     /// <inheritdoc />
@@ -105,11 +107,22 @@ Where Id = @id", new { id })).SingleOrDefault();
         ThrowIfDisposed();
         ThrowIfArgumentNull(issue, nameof(issue));
 
-        await _dbConnection.ExecuteAsync(@"INSERT INTO Issues
-(""Id"", ""Title"", ""Description"", ""Priority"", ""LastUpdated"", ""ConcurrencyToken"", ""Type"")
-VALUES
-(@Id, @Title, @Description, @Priority, @LastUpdated, @ConcurrencyToken, @Type)", issue);
+        await DbConnection.InsertAsync(issue);
+        return issue;
+    }
 
+    /// <inheritdoc />
+    public async Task<Issue> UpdateIssue(Guid id, Action<Issue> visitor, CancellationToken cancellationToken)
+    {
+        Issue issue = await DbConnection.GetAsync<Issue>(id);
+        if (issue is null)
+        {
+            return null;
+        }
+
+        visitor(issue);
+
+        await DbConnection.UpdateAsync(issue);
         return issue;
     }
 
@@ -121,23 +134,33 @@ VALUES
     }
 
     /// <inheritdoc />
-    public Task<bool> DeleteIssueById(Guid id, CancellationToken cancellationToken)
+    public async Task<bool> DeleteIssueById(Guid id, CancellationToken cancellationToken)
     {
         ThrowIfDisposed();
-        throw new NotImplementedException();
+        Issue issue = await DbConnection.GetAsync<Issue>(id);
+        if (issue is null)
+        {
+            return false;
+        }
+
+        return await DbConnection.DeleteAsync(issue);
     }
 
     /// <inheritdoc />
-    public Task<bool> IssueExists(Guid id, CancellationToken cancellationToken)
+    public async Task<bool> IssueExists(Guid id, CancellationToken cancellationToken)
     {
         ThrowIfDisposed();
-        throw new NotImplementedException();
+
+        return (await DbConnection.QueryAsync<int>("SELECT count(*) FROM Issue WHERE Id = @Id", id)).FirstOrDefault() > 0;
     }
+
+    private Lazy<SqliteConnection> LazyDbConnection { get; }
+    private SqliteConnection DbConnection => LazyDbConnection.Value;
+
     private static int GetOffSet(int pageNumber, int pageSize)
     {
         return (pageNumber - 1) * pageSize;
     }
-
 
     private static void ThrowIfArgumentNull(object value, string parameterName)
     {
@@ -174,11 +197,16 @@ VALUES
             return;
         }
 
-        if (disposing)
+        if (!disposing)
         {
+            return;
         }
 
-        _dbConnection.Dispose();
+        if (LazyDbConnection.IsValueCreated)
+        {
+            LazyDbConnection.Value.Dispose();
+        }
+
     }
 
     /// <inheritdoc />

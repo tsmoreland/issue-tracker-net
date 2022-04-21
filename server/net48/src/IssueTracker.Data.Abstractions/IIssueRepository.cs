@@ -54,6 +54,7 @@ namespace IssueTracker.Data.Abstractions
         Task<Issue> GetUntrackedIssueById(Guid id, CancellationToken cancellationToken);
         Task<Issue> GetIssueById(Guid id, CancellationToken cancellationToken);
         Task<Issue> AddIssue(Issue issue, CancellationToken cancellationToken);
+        Task<Issue> UpdateIssue(Guid id, Action<Issue> visitor, CancellationToken cancellationToken);
 
         /// <summary>
         /// Persists changes to the database
