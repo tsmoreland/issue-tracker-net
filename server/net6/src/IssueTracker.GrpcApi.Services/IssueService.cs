@@ -11,17 +11,24 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Linq;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.Core.Requests;
 using IssueTracker.GrpcApi.Grpc.Services;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
+#if USING_AUTH
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+#endif
 using static IssueTracker.GrpcApi.Grpc.Services.IssueTrackerService;
 
-namespace IssueTracker.GrpcApi.Services;
 
+namespace IssueTracker.GrpcApi.Services;
+#if USING_AUTH
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+#endif
 public sealed class IssueService : IssueTrackerServiceBase
 {
     private readonly IMediator _mediator;
@@ -49,6 +56,13 @@ public sealed class IssueService : IssueTrackerServiceBase
         return issue is not null
             ? IssueMessageFactory.FromIssue(issue)
             : IssueMessageFactory.NotFound(); 
+    }
+
+    /// <inheritdoc/>
+    [AllowAnonymous]
+    public override Task<LoginResponse> Login(LoginRequest request, ServerCallContext context)
+    {
+        return Task.FromResult(new LoginResponse {Token = "hello", Status = ResultCode.Success, Expiration = Timestamp.FromDateTime(DateTime.UtcNow)});
     }
 
     /// <inheritdoc/>

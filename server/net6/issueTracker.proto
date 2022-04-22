@@ -2,13 +2,30 @@ syntax = "proto3";
 
 option csharp_namespace = "IssueTracker.GrpcApi.Grpc.Services";
 
+import "google/protobuf/timestamp.proto";
+
 service IssueTrackerService {
     rpc AddIssue(AddIssueMessage) returns (StatusMessage);
     rpc EditIssue(EditIssueMessage) returns (StatusMessage);
     rpc GetIssueById(IssueByIdQueryMessage) returns (IssueMessage);
     rpc GetIssues(PagedIssueRequestMessage) returns (IssueSummariesMessage);
     rpc GetAllIssues(SortedIssueRequestMessage) returns (stream IssueSummaryMessage);
+
+    // ideally we'd have a separate service to provide a single auth endpoint for various services
+    rpc Login(LoginRequest) returns (LoginResponse);
 }
+
+message LoginRequest {
+    string Username = 1;
+    string Pasword = 2;
+}
+
+message LoginResponse {
+    ResultCode Status = 1;
+    string Token = 2;
+    google.protobuf.Timestamp Expiration = 3;
+}
+
 
 enum ResultCode {
     Unknown = 0;
