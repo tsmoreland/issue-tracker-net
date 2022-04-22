@@ -1,9 +1,12 @@
 using System.IO.Compression;
+using System.Security.Cryptography.X509Certificates;
 using Hellang.Middleware.ProblemDetails;
 using IssueTracker.Data.Abstractions;
+using IssueTracker.GrpcApi.App;
 using IssueTracker.GrpcApi.Services;
 using IssueTracker.Middelware.SecurityHeaders;
 using IssueTracker.ServiceDiscovery;
+using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -66,6 +69,27 @@ static void ConfigureServices(IServiceCollection services, IHostEnvironment envi
                     .AllowAnyHeader()))
         .AddControllers();
 
+    services
+        .AddAuthentication()
+        .AddJwtBearer(options => options.TokenValidationParameters = new AnonymousTokenValidationParameters(configuration))
+        .AddCertificate(options =>
+        {
+            options.AllowedCertificateTypes = CertificateTypes.All;
+            options.RevocationMode = X509RevocationMode.NoCheck; // allow self-signed, not ideal for production but *maybe* if we're limiting by address and have a precise enough check on the cert
+
+            options
+                .Events = new CertificateAuthenticationEvents
+                {
+                    OnCertificateValidated = context =>
+                    {
+                        // insert certificate checks here
+                        //if (context.ClientCertificate... if same-host then we can probably verify the private key matches
+                        context.Success();
+                        return Task.CompletedTask;
+                    }
+                };
+        });
+
     if (environment.IsDevelopment())
     {
         services.AddGrpc(options => options.EnableDetailedErrors = true);
@@ -102,4 +126,3 @@ static void ConfigurePipeline(WebApplication app)
 
     app.MapGet("/", () => new { error = "REST not supported, use GRPC client" });
 }
-

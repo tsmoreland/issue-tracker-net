@@ -16,6 +16,7 @@
     <PackageReference Include="Grpc.Core" Version="2.45.0" />
     <PackageReference Include="MediatR" Version="10.0.1" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.4" />
   </ItemGroup>
 
   <ItemGroup>
