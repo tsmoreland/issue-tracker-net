@@ -11,6 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Core.Views;
+
 namespace IssueTracker.Core.Model;
 
 /// <summary>
@@ -118,13 +120,13 @@ public sealed record class Issue(Guid Id)
     /// Issues that are linked to this one, this also serves as the ones that may be
     /// blocking this issue
     /// </summary>
-    public IEnumerable<Issue> ParentIssues => ParentIssueEntities.Select(i => i.ParentIssue);
+    public IEnumerable<LinkedIssueView> ParentIssues => ParentIssueEntities.Select(i => new LinkedIssueView(i.LinkType, i.ParentIssue));
 
     /// <summary>
     /// issues which this one links to, this also serves as issues that may be blocked by
     /// this issue
     /// </summary>
-    public IEnumerable<Issue> ChildIssues => ChildIssueEntities.Select(i => i.ChildIssue);
+    public IEnumerable<LinkedIssueView> ChildIssues => ChildIssueEntities.Select(i => new LinkedIssueView(i.LinkType, i.ChildIssue));
 
     /// <summary>
     /// adds link to child issue 

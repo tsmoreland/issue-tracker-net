@@ -11,25 +11,27 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace IssueTracker.Core.Model;
+using IssueTracker.Core.Model;
 
-/// <summary>
-/// Issue Priorities
-/// </summary>
-public enum Priority : int
+namespace IssueTracker.Core.Views;
+
+public sealed class LinkedIssueView
 {
-    /// <summary>
-    ///  Low Priority
-    /// </summary>
-    Low = 0,
+    private readonly Issue _issue;
 
-    /// <summary>
-    /// Medium Priority
-    /// </summary>
-    Medium,
+    public LinkedIssueView(LinkType linkType, Issue issue)
+    {
+        _issue = issue;
+        LinkType = linkType;
+    }
 
-    /// <summary>
-    /// High Priority
-    /// </summary>
-    High,
+    public Guid Id => _issue.Id;
+    public string Title => _issue.Title;
+    public string? Description => _issue.Description;
+    public Priority Priority => _issue.Priority;
+    public IssueType Type => _issue.Type;
+    public LinkType LinkType { get; init; }
+    public DateTime LastUpdated => _issue.LastUpdated;
+    public IEnumerable<LinkedIssueView> Parents => _issue.ParentIssues;
+    public IEnumerable<LinkedIssueView> Children => _issue.ChildIssues;
 }
