@@ -19,28 +19,28 @@ using MediatR;
 
 namespace IssueTracker.Services;
 
-public sealed class GetChildIssuesRequestHandler : IRequestHandler<GetChildIssuesRequest, IAsyncEnumerable<LinkedIssueSummaryProjection>> 
+public sealed class GetChildIssueSummariesRequestHandler : IRequestHandler<GetChildIssueSummariesRequest, IAsyncEnumerable<LinkedIssueSummaryProjection>> 
 {
     private readonly IIssueRepository _repository;
 
-    public GetChildIssuesRequestHandler(IIssueRepository repository)
+    public GetChildIssueSummariesRequestHandler(IIssueRepository repository)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
     /// <inheritdoc />
-    public Task<IAsyncEnumerable<LinkedIssueSummaryProjection>> Handle(GetChildIssuesRequest request, CancellationToken cancellationToken)
+    public Task<IAsyncEnumerable<LinkedIssueSummaryProjection>> Handle(GetChildIssueSummariesRequest request, CancellationToken cancellationToken)
     {
         return Task.FromResult(HandleWithEnumerable(request, cancellationToken));
     }
 
-    private async IAsyncEnumerable<LinkedIssueSummaryProjection> HandleWithEnumerable(GetChildIssuesRequest request,
+    private async IAsyncEnumerable<LinkedIssueSummaryProjection> HandleWithEnumerable(GetChildIssueSummariesRequest request,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         (Guid id, int pageNumber, int pageSize, _, _) = request;
 
         ConfiguredCancelableAsyncEnumerable<LinkedIssueSummaryProjection> issues = _repository
-            .GetChildIssues(id, pageNumber, pageSize, cancellationToken)
+            .GetChildIssueSummaries(id, pageNumber, pageSize, cancellationToken)
             .WithCancellation(cancellationToken);
 
         await foreach (LinkedIssueSummaryProjection projection in issues)

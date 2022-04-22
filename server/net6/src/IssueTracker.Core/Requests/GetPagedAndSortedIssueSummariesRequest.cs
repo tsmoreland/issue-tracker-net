@@ -17,9 +17,8 @@ using MediatR;
 
 namespace IssueTracker.Core.Requests;
 
-public sealed record GetParentIssuesRequest(
-    Guid IssueId,
+public sealed record GetPagedAndSortedIssueSummariesRequest(
     int PageNumber,
     int PageSize,
     Issue.SortBy SortBy,
-    SortDirection Direction) : IRequest<IAsyncEnumerable<LinkedIssueSummaryProjection>>;
+    SortDirection Direction) : IRequest<IAsyncEnumerable<IssueSummaryProjection>>;
