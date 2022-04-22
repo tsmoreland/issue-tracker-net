@@ -14,26 +14,27 @@
 using GraphQL.Types;
 using IssueTracker.Core.Model;
 using IssueTracker.Data.Abstractions;
-using IssueTracker.GraphQl.App.Services.Types;
+using IssueModelType = IssueTracker.GraphQl.App.Services.Types.IssueModelType;
 
 namespace IssueTracker.GraphQl.App.Services;
 
 /// <summary>
-/// Issue Query 
+/// Issue Query
 /// </summary>
-public class IssueGraphQuery : ObjectGraphType
+public sealed class IssueQuery : ObjectGraphType<object>
 {
     /// <summary>
-    /// Instantiates a new instance of the <see cref="IssueGraphQuery"/> class.
+    /// Instantiates a new instance of the <see cref="IssueQuery"/> class.
     /// </summary>
-    public IssueGraphQuery()
+    public IssueQuery()
     {
-        FieldAsync<ListGraphType<IssueGraphType>>("issues",
-            resolve: context =>
-                GetAllIssues(context.RequestServices?.GetService<IIssueRepository>(), context.CancellationToken));
+        Name = "IssueQuery";
+        FieldAsync<ListGraphType<IssueModelType>>("issues",
+            resolve: context => ResolveIssues(context.RequestServices?.GetService<IIssueRepository>(), context.CancellationToken));
     }
 
-    private static async Task<object?> GetAllIssues(IIssueRepository? repository, CancellationToken cancellationToken)
+    private static async Task<object?> ResolveIssues(IIssueRepository? repository,
+        CancellationToken cancellationToken)
     {
         if (repository is null)
         {
@@ -41,7 +42,7 @@ public class IssueGraphQuery : ObjectGraphType
         }
 
         return await repository
-            .GetAllIssues(cancellationToken)
+            .GetIssues(cancellationToken)
             .ToListAsync(cancellationToken);
     }
 }

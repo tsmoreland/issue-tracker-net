@@ -12,7 +12,6 @@
 //
 
 using GraphQL.Types;
-using IssueTracker.Data.Abstractions;
 
 namespace IssueTracker.GraphQl.App.Services;
 
@@ -25,9 +24,9 @@ public class IssueTrackerSchema : Schema
     /// <summary>
     /// Instantiates a new instance of the <see cref="IssueTrackerSchema"/> class.
     /// </summary>
-    public IssueTrackerSchema(IServiceProvider provider)
+    public IssueTrackerSchema(IssueQuery query, IServiceProvider provider)
         : base(provider)
     {
-        Query = provider.GetRequiredService<IssueGraphQuery>();
+        Query = query;
     }
 }

@@ -114,7 +114,7 @@ static void ConfigurePipeline(WebApplication app)
     app.UseCors();
     app.UseAuthorization();
 
-    // Debugging note - current failure is due to not finding scoped service IIssueRepository when building IssueGraphQuery
+    // Debugging note - current failure is due to not finding scoped service IIssueRepository when building IssuesType
 
 #if USE_WEBSOCKETS
     app.UseWebSockets();
