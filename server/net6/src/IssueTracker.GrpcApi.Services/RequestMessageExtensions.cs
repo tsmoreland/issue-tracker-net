@@ -19,18 +19,18 @@ namespace IssueTracker.GrpcApi.Services;
 
 internal static class RequestMessageExtensions
 {
-    public static GetPagedAndSortedIssuesRequest ToMediatorRequest(this PagedIssueRequestMessage request)
+    public static GetPagedAndSortedIssueSummariesRequest ToMediatorRequest(this PagedIssueRequestMessage request)
     {
-        return new GetPagedAndSortedIssuesRequest(
+        return new GetPagedAndSortedIssueSummariesRequest(
             request.PageNumber,
             request.PageSize,
             request.SortBy.ToIssueSortBy(),
             request.Direction.ToSortDirection());
     }
 
-    public static GetPagedAndSortedIssuesRequest ToMediatorRequest(this SortedIssueRequestMessage request)
+    public static GetPagedAndSortedIssueSummariesRequest ToMediatorRequest(this SortedIssueRequestMessage request)
     {
-        return new GetPagedAndSortedIssuesRequest(
+        return new GetPagedAndSortedIssueSummariesRequest(
             1,
             int.MaxValue,
             request.SortBy.ToIssueSortBy(),
