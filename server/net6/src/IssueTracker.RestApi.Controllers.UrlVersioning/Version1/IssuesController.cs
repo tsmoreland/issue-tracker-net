@@ -66,7 +66,7 @@ public class IssuesController : ControllerBase
         [FromQuery] SortDirection direction = SortDirection.Ascending,
         CancellationToken cancellationToken = default)
     {
-        GetPagedAndSortedIssuesRequest request = new (pageNumber, pageSize, orderBy.ToModel(), direction.ToModel());
+        GetPagedAndSortedIssueSummariesRequest request = new (pageNumber, pageSize, orderBy.ToModel(), direction.ToModel());
         List<IssueSummaryDto> summary = await IssueSummaryDto
             .MapFrom(await _mediator.Send(request, cancellationToken), cancellationToken)
             .ToListAsync(cancellationToken);

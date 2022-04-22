@@ -65,7 +65,7 @@ public sealed class IssueController : ControllerBase
         [FromQuery] SortDirection direction = SortDirection.Ascending,
         CancellationToken cancellationToken = default)
     {
-        GetPagedAndSortedIssuesRequest request = new(pageNumber, pageSize, orderBy.ToModel(), direction.ToModel());
+        GetPagedAndSortedIssueSummariesRequest request = new(pageNumber, pageSize, orderBy.ToModel(), direction.ToModel());
 
         List<IssueSummaryDto> summary = await IssueSummaryDto
             .MapFrom(await _mediator.Send(request, cancellationToken), cancellationToken)
@@ -125,7 +125,7 @@ public sealed class IssueController : ControllerBase
         {
             return Ok(LinkedIssueSummaryDto
                 .MapFrom(await _mediator
-                    .Send(new GetParentIssuesRequest(id, pageNumber, pageSize, Core.Model.Issue.SortBy.Title, Core.Model.SortDirection.Ascending)
+                    .Send(new GetParentIssueSummariesRequest(id, pageNumber, pageSize, Core.Model.Issue.SortBy.Title, Core.Model.SortDirection.Ascending)
                         , cancellationToken)
                     , cancellationToken));
         }
@@ -163,7 +163,7 @@ public sealed class IssueController : ControllerBase
         {
             return Ok(LinkedIssueSummaryDto
                 .MapFrom(await _mediator
-                    .Send(new GetChildIssuesRequest(id, pageNumber, pageSize, Core.Model.Issue.SortBy.Title, Core.Model.SortDirection.Ascending)
+                    .Send(new GetChildIssueSummariesRequest(id, pageNumber, pageSize, Core.Model.Issue.SortBy.Title, Core.Model.SortDirection.Ascending)
                         , cancellationToken)
                     , cancellationToken));
         }
