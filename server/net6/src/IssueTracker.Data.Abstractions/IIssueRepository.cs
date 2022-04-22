@@ -12,6 +12,7 @@
 
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
+using IssueTracker.Core.Views;
 
 namespace IssueTracker.Data.Abstractions;
 
@@ -36,7 +37,7 @@ public interface IIssueRepository
     /// <remarks>
     /// temporary method which will eventuall support paging, even if it uses default values
     /// </remarks>
-    IAsyncEnumerable<Issue> GetAllIssues(CancellationToken cancellationToken);  
+    IAsyncEnumerable<Issue> GetIssues(CancellationToken cancellationToken);  
 
     /// <summary>
     /// Returns all parent issues of an issue given by <paramref name="id"/>
@@ -46,7 +47,7 @@ public interface IIssueRepository
     /// <param name="pageSize" example="10">maximum number of items to return</param>
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all parent issues of an issue given by <paramref name="id"/></returns>
-    IAsyncEnumerable<LinkedIssueSummaryProjection> GetParentIssues(Guid id, int pageNumber, int pageSize, CancellationToken cancellationToken);
+    IAsyncEnumerable<LinkedIssueSummaryProjection> GetParentIssueSummaries(Guid id, int pageNumber, int pageSize, CancellationToken cancellationToken);
 
     /// <summary>
     /// Returns all child issues of an issue given by <paramref name="id"/>
@@ -56,7 +57,23 @@ public interface IIssueRepository
     /// <param name="pageSize" example="10">maximum number of items to return</param>
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all child issues of an issue given by <paramref name="id"/></returns>
-    IAsyncEnumerable<LinkedIssueSummaryProjection> GetChildIssues(Guid id, int pageNumber, int pageSize, CancellationToken cancellationToken);
+    IAsyncEnumerable<LinkedIssueSummaryProjection> GetChildIssueSummaries(Guid id, int pageNumber, int pageSize, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Returns all parent issues of an issue given by <paramref name="id"/>
+    /// </summary>
+    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
+    /// <param name="cancellationToken">a cancellation token.</param>
+    /// <returns>all parent issues of an issue given by <paramref name="id"/></returns>
+    IAsyncEnumerable<LinkedIssueView> GetParentIssues(Guid id, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Returns all child issues of an issue given by <paramref name="id"/>
+    /// </summary>
+    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
+    /// <param name="cancellationToken">a cancellation token.</param>
+    /// <returns>all child issues of an issue given by <paramref name="id"/></returns>
+    IAsyncEnumerable<LinkedIssueView> GetChildIssues(Guid id, CancellationToken cancellationToken);
 
     Task<Issue?> GetUntrackedIssueById(Guid id, CancellationToken cancellationToken);
     Task<Issue?> GetIssueById(Guid id, CancellationToken cancellationToken);

@@ -14,6 +14,7 @@
 using System.Runtime.CompilerServices;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
+using IssueTracker.Core.Views;
 using IssueTracker.Data.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,7 +46,7 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
-    public IAsyncEnumerable<Issue> GetAllIssues(CancellationToken cancellationToken)
+    public IAsyncEnumerable<Issue> GetIssues(CancellationToken cancellationToken)
     {
         return _dbContext.Issues
             .AsNoTracking()
@@ -53,35 +54,64 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
-    public async IAsyncEnumerable<LinkedIssueSummaryProjection> GetParentIssues(Guid id, int pageNumber, int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<LinkedIssueSummaryProjection> GetParentIssueSummaries(Guid id, int pageNumber, int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        IAsyncEnumerable<LinkedIssueSummaryProjection> summaries = _dbContext.LinkedIssues
+        var summaries = _dbContext.LinkedIssues
             .AsNoTracking()
-            .Where(link => link.ParentIssueId == id)
-            .Select(li => new LinkedIssueSummaryProjection(li.ChildIssue.Id, li.ChildIssue.Title, li.ChildIssue.Priority, li.ChildIssue.Type, li.LinkType))
+            .Where(link => link.ChildIssueId == id)
+            .Select(li => new {li.ParentIssue.Id, li.ParentIssue.Title, li.ParentIssue.Priority, li.ParentIssue.Type, li.LinkType })
             .OrderBy(i => i.Title)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .AsAsyncEnumerable();
-        await foreach (LinkedIssueSummaryProjection summary in summaries.WithCancellation(cancellationToken))
+        await foreach (var summary in summaries.WithCancellation(cancellationToken))
         {
-            yield return summary;
+            yield return new LinkedIssueSummaryProjection(summary.Id, summary.Title, summary.Priority, summary.Type, summary.LinkType);
         }
     }
 
     /// <inheritdoc />
-    public async IAsyncEnumerable<LinkedIssueSummaryProjection> GetChildIssues(Guid id, int pageNumber, int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<LinkedIssueSummaryProjection> GetChildIssueSummaries(Guid id, int pageNumber, int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        IAsyncEnumerable<LinkedIssueSummaryProjection> summaries = _dbContext.LinkedIssues
+        var summaries = _dbContext.LinkedIssues
             .AsNoTracking()
-            .Where(link => link.ChildIssueId == id)
-            .Select(li => new LinkedIssueSummaryProjection(li.ParentIssue.Id, li.ParentIssue.Title, li.ParentIssue.Priority, li.ParentIssue.Type, li.LinkType))
+            .Where(link => link.ParentIssueId == id)
+            .Select(li => new { li.ChildIssue.Id, li.ChildIssue.Title, li.ChildIssue.Priority, li.ChildIssue.Type, li.LinkType })
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .AsAsyncEnumerable();
-        await foreach (LinkedIssueSummaryProjection summary in summaries.WithCancellation(cancellationToken))
+        await foreach (var summary in summaries.WithCancellation(cancellationToken))
         {
-            yield return summary;
+            yield return new LinkedIssueSummaryProjection(summary.Id, summary.Title, summary.Priority, summary.Type, summary.LinkType);
+        }
+    }
+
+    /// <inheritdoc />
+    public async IAsyncEnumerable<LinkedIssueView> GetParentIssues(Guid id, [EnumeratorCancellation] CancellationToken cancellationToken)
+    {
+        var issues = _dbContext.LinkedIssues
+            .AsNoTracking()
+            .Where(link => link.ChildIssueId == id)
+            .OrderBy(i => i.ChildIssue.Title)
+            .Select(li => new { Link = li.LinkType, Issue = li.ParentIssue })
+            .AsAsyncEnumerable();
+        await foreach (var pair in issues.WithCancellation(cancellationToken))
+        {
+            yield return new LinkedIssueView(pair.Link, pair.Issue);
+        }
+    }
+
+    /// <inheritdoc />
+    public async IAsyncEnumerable<LinkedIssueView> GetChildIssues(Guid id, [EnumeratorCancellation] CancellationToken cancellationToken)
+    {
+        var issues = _dbContext.LinkedIssues
+            .AsNoTracking()
+            .Where(link => link.ParentIssueId == id)
+            .Select(li => new { Link = li.LinkType, Issue = li.ChildIssue })
+            .AsAsyncEnumerable();
+        await foreach (var pair in issues.WithCancellation(cancellationToken))
+        {
+            yield return new LinkedIssueView(pair.Link, pair.Issue);
         }
     }
 
