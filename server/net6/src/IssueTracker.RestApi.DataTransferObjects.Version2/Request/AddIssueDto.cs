@@ -13,6 +13,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using IssueTracker.Core.Model;
+using IssueTracker.Core.ValueObjects;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
 namespace IssueTracker.RestApi.DataTransferObjects.Version2.Request;
@@ -35,32 +36,40 @@ public sealed class AddIssueDto
     }
 
     /// <summary>
+    /// instantiates a new instance of the <see cref="AddIssueDto"/> class.
+    /// </summary>
+    public AddIssueDto()
+    {
+        // required for serialization
+    }
+
+    /// <summary>
     /// Issue Title
     /// </summary>
     /// <example>Example Title</example>
     [Required]
     [MaxLength(200)]
-    public string Title { get; init; } 
+    public string Title { get; init; } = string.Empty;
 
     /// <summary>
     /// Issue Description
     /// </summary>
     /// <example>Example description</example>
     [MaxLength(500)]
-    public string? Description { get; init; } 
+    public string? Description { get; init; }
 
     /// <summary>
     /// Issue Priority
     /// </summary>
     /// <example>High</example>
     [Required]
-    public Priority Priority { get; init; }
+    public Priority Priority { get; init; } = Priority.Low;
 
     /// <summary>
     /// Issue Type
     /// </summary>
     [Required]
-    public IssueType Type { get; init; }
+    public IssueType Type { get; init; } = IssueType.Defect;
 
     /// <summary>
     /// Converts DTO to Model
@@ -68,6 +77,6 @@ public sealed class AddIssueDto
     /// <returns>Model</returns>
     public Issue ToModel()
     {
-        return new Issue(Title, Description ?? string.Empty, Priority, Type);
+        return new Issue(Title, Description ?? string.Empty, Priority, Type, User.Unassigned, User.Unassigned);
     }
 }

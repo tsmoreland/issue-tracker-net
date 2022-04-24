@@ -34,32 +34,40 @@ public sealed class EditIssueDto
     }
 
     /// <summary>
+    /// Instantiates a new instance of the <see cref="EditIssueDto"/> class.
+    /// </summary>
+    public EditIssueDto()
+    {
+        
+    }
+
+    /// <summary>
     /// Issue Title
     /// </summary>
     /// <example>Example Title</example>
     [Required]
     [MaxLength(200)]
-    public string Title { get; init; } 
+    public string Title { get; init; } = string.Empty;
 
     /// <summary>
     /// Issue Description
     /// </summary>
     /// <example>Example description</example>
     [MaxLength(500)]
-    public string? Description { get; init; } 
+    public string? Description { get; init; }
 
     /// <summary>
     /// Issue Priority
     /// </summary>
     /// <example>High</example>
     [Required]
-    public Priority Priority { get; init; } 
+    public Priority Priority { get; init; } = Priority.Low;
 
     /// <summary>
     /// Update exisitng issue with provided values
     /// </summary>
     /// <param name="issue">The issue to update</param>
-    public void Update(Issue issue)
+    public void Update(Issue issue) 
     {
         issue.SetTitle(Title);
         issue.SetDescription(Description);
