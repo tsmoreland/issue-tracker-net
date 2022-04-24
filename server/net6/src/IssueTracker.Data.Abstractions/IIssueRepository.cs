@@ -80,12 +80,6 @@ public interface IIssueRepository
     Task<Issue> AddIssue(Issue issue, CancellationToken cancellationToken);
     Task<Issue?> UpdateIssue(Guid id, Action<Issue> visitor, CancellationToken cancellationToken);
 
-    /// <summary>
-    /// Persists changes to the database
-    /// </summary>
-    /// <param name="cancellationToken">a cancellation token.</param>
-    Task CommitAsync(CancellationToken cancellationToken);
-
     Task<bool> DeleteIssueById(Guid id, CancellationToken cancellationToken);
 
     /// <summary>
@@ -98,4 +92,10 @@ public interface IIssueRepository
     /// if the issue exists.
     /// </returns>
     Task<bool> IssueExists(Guid id, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Persists changes to the database
+    /// </summary>
+    /// <param name="cancellationToken">a cancellation token.</param>
+    Task CommitAsync(CancellationToken cancellationToken);
 }
