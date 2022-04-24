@@ -17,4 +17,6 @@ public interface IIssueDataMigration
 {
     ValueTask MigrateAsync(CancellationToken cancellationToken);
     void Migrate();
+
+    ValueTask SeedAync(IIssueRepository repository, CancellationToken cancellationToken);
 }
