@@ -17,7 +17,7 @@ using MediatR;
 
 namespace IssueTracker.Core.Requests;
 
-public sealed record GetPagedAndSortedIssueSummariesRequest(
+public sealed record class GetPagedAndSortedIssueSummariesRequest(
     int PageNumber,
     int PageSize,
     Issue.SortBy SortBy,

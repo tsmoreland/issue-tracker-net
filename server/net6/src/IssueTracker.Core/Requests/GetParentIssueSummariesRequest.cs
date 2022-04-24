@@ -17,7 +17,7 @@ using MediatR;
 
 namespace IssueTracker.Core.Requests;
 
-public sealed record GetParentIssueSummariesRequest(
+public sealed record class GetParentIssueSummariesRequest(
     Guid IssueId,
     int PageNumber,
     int PageSize,
