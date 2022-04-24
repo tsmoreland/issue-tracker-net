@@ -77,7 +77,7 @@ public sealed class IssuesDbContext : DbContext
         issueEntity.Property(e => e.Priority).IsRequired();
         issueEntity.Property(e => e.ConcurrencyToken).IsConcurrencyToken();
 
-        EntityTypeBuilder<Issue> assigneeOwnedEntity = issueEntity.OwnsOne(e => e.Assignee,
+        issueEntity.OwnsOne(e => e.Assignee,
             (owned) =>
             {
                 owned
@@ -154,18 +154,6 @@ public sealed class IssuesDbContext : DbContext
             throw new InvalidOperationException("Unable to access private setter");
         }
 
-        // we're unable to set owned types in a normal fashion, the only way for this to work is to set them null here and then
-        // use something like:
-        /*
-        issueEntity.OwnsOne(e => e.Reporter)
-            .HasData(new
-            {
-                UserId = "id of the issue entity", // this is the shadow property created by EF to link the objects, User matches the class name
-                Id = "id property of the user object",
-                FullName = "fullname property from user table"
-            });
-        */
-
         assigneeSet.SetValue(first, null);
         assigneeSet.SetValue(second, null);
         assigneeSet.SetValue(third, null);
@@ -175,6 +163,19 @@ public sealed class IssuesDbContext : DbContext
         reporterSet.SetValue(third, null);
 
         issueEntity.HasData(first, second, third);
+
+        // adding owned types would use something like:
+        /*
+        issueEntity.OwnsOne(e => e.Reporter)
+            .HasData(new
+            {
+                UserId = "id of the issue entity", // this is the shadow property created by EF to link the objects, User matches the class name
+                Id = "id property of the user object",
+                FullName = "fullname property from user table"
+            });
+        */
+        // or so some internal documentation hinted, when we do it it expects a User object which doesn't leave room for the shadow property UserId
+
 
         EntityTypeBuilder<LinkedIssue> linkedIssuesEntity = modelBuilder.Entity<LinkedIssue>();
         linkedIssuesEntity.ToTable("LinkedIssue")
