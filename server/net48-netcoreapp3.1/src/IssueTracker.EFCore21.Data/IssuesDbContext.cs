@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Reflection;
 using IssueTracker.Core.Model;
+using IssueTracker.Core.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +31,15 @@ public sealed class IssuesDbContext : DbContext
     /// </summary>
     public DbSet<LinkedIssue> LinkedIssues { get; private set; } = null!;
 
+    public static void Configure(DbContextOptionsBuilder optionsBuilder, IConfiguration configuration)
+    {
+        string connectionString = configuration.GetConnectionString("ApplicationConnection");
+        optionsBuilder
+            .UseSqlite(
+                connectionString,
+                options => options.MigrationsAssembly(typeof(IssuesDbContext).Assembly.FullName));
+    }
+
     /// <inheritdoc />
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -37,12 +48,7 @@ public sealed class IssuesDbContext : DbContext
             return;
         }
 
-        string connectionString = _configuration.GetConnectionString("ApplicationConnection");
-        optionsBuilder
-            .UseSqlite(
-                connectionString,
-                options => options.MigrationsAssembly(typeof(IssuesDbContext).Assembly.FullName));
-
+        Configure(optionsBuilder, _configuration);
         base.OnConfiguring(optionsBuilder);
     }
 
@@ -58,13 +64,25 @@ public sealed class IssuesDbContext : DbContext
         issueEntity.Property(e => e.Title).IsRequired().IsUnicode().HasMaxLength(200);
         issueEntity.Property(e => e.Description).IsUnicode().HasMaxLength(500);
         issueEntity.Property(e => e.Priority).IsRequired();
+        issueEntity.HasMany(typeof(LinkedIssue), "ChildIssueEntities").WithOne("ChildIssue");
+        issueEntity.HasMany(typeof(LinkedIssue), "ParentIssueEntities").WithOne("ParentIssue");
         issueEntity.Property(e => e.ConcurrencyToken).IsConcurrencyToken();
-        issueEntity.HasMany("ChildIssueEntities").WithOne();
-        issueEntity.HasMany("ParentIssueEntities").WithOne();
+        issueEntity.Property(e => e.LastUpdated)
+            .HasConversion(dateTime => dateTime.Ticks, ticks => new DateTime(ticks))
+            .ValueGeneratedOnAddOrUpdate()
+            .HasValueGenerator<DateTimeValueGenerator>();
 
         // without these we'd get foregin key warnings becuase we're using ParentIssueEntities and ChildIssueEntites as the data backing (private properties)
         issueEntity.Ignore(e => e.ParentIssues);
         issueEntity.Ignore(e => e.ChildIssues);
+
+        EntityTypeBuilder<LinkedIssue> linkedIssueEntity = modelBuilder.Entity<LinkedIssue>();
+        linkedIssueEntity.ToTable("LinkedIssues").HasKey(e => e.Id);
+        linkedIssueEntity.Property(e => e.Id).ValueGeneratedOnAdd().IsRequired();
+        linkedIssueEntity.HasOne(e => e.ParentIssue).WithMany("ParentIssueEntities").HasForeignKey(e => e.ParentIssueId);
+        linkedIssueEntity.HasOne(e => e.ChildIssue).WithMany("ChildIssueEntities").HasForeignKey(e => e.ChildIssueId);
+        linkedIssueEntity.HasIndex(e => e.ParentIssueId);
+        linkedIssueEntity.HasIndex(e => e.ChildIssueId);
 
         Seed(modelBuilder);
     }
@@ -75,16 +93,38 @@ public sealed class IssuesDbContext : DbContext
 
         Issue first = new(1, "First", "First issue",
             Priority.Medium, IssueType.Epic,
-            new DateTime(2022, 01, 01, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString(),
-            Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>());
-        Issue second = new (2, "Second", "Second issue",
+            User.Unassigned, User.Unassigned,
+            Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(),
+            new DateTime(2022, 01, 01, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString());
+        Issue second = new(2, "Second", "Second issue",
             Priority.Low, IssueType.Story,
-            new DateTime(2022, 01, 020, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString(),
-            Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>());
+            User.Unassigned, User.Unassigned,
+            Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(),
+            new DateTime(2022, 01, 020, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString());
         Issue third = new (3, "Third", "Third issue",
             Priority.Medium, IssueType.Story,
-            new DateTime(2022, 01, 020, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString(),
-            Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>());
+            User.Unassigned, User.Unassigned,
+            Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(),
+            new DateTime(2022, 01, 020, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString());
+
+        PropertyInfo assigneeProperty = typeof(Issue).GetProperty(nameof(Issue.Assignee));
+        if (assigneeProperty is null)
+        {
+            throw new InvalidOperationException("Unable to locate Assignee property");
+        }
+        assigneeProperty.SetValue(first, null);
+        assigneeProperty.SetValue(second, null);
+        assigneeProperty.SetValue(third, null);
+
+        PropertyInfo reporterProperty = typeof(Issue).GetProperty(nameof(Issue.Reporter));
+        if (reporterProperty is null)
+        {
+            throw new InvalidOperationException("Unable to locate Reporter property");
+        }
+        reporterProperty.SetValue(first, null);
+        reporterProperty.SetValue(second, null);
+        reporterProperty.SetValue(third, null);
+
         issueEntity.HasData(first, second, third);
 
         EntityTypeBuilder<LinkedIssue> linkedIssuesEntity = modelBuilder.Entity<LinkedIssue>();
@@ -103,7 +143,7 @@ public sealed class IssuesDbContext : DbContext
             .HasForeignKey(e => e.ChildIssueId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        LinkedIssue secondToThird = new(LinkType.Related, 2, 3);
+        LinkedIssue secondToThird = new(1, LinkType.Related, 2, 3);
         linkedIssuesEntity.HasData(secondToThird);
     }
 
