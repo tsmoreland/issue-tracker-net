@@ -13,7 +13,7 @@
 
 namespace IssueTracker.Core.ValueObjects;
 
-public sealed record class User(Guid Id, string FullName)
+public sealed record class User(Guid Id, string FullName) 
 {
     public static User Unassigned { get; } = new (Guid.Empty, "Unassigned");
 }

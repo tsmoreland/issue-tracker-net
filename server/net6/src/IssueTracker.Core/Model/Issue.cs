@@ -121,7 +121,7 @@ public sealed record class Issue(Guid Id)
     /// <summary>
     /// User that reported the issue
     /// </summary>
-    public User Reporter { get; init; } = User.Unassigned;
+    public User Reporter { get; private set; } = User.Unassigned;
 
     /// <summary>
     /// Issues that are linked to this one, this also serves as the ones that may be
@@ -167,7 +167,6 @@ public sealed record class Issue(Guid Id)
             throw new ArgumentException("Title cannot be empty");
         }
         Title = value;
-        LastUpdated = DateTime.UtcNow;
     }
     /// <summary>
     /// Update issue description
@@ -177,7 +176,6 @@ public sealed record class Issue(Guid Id)
         Description = value is { Length: > 0 }
             ? value.Trim()
             : string.Empty;
-        LastUpdated = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -186,7 +184,6 @@ public sealed record class Issue(Guid Id)
     public void SetPriority(Priority priority)
     {
         Priority = priority;
-        LastUpdated = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -195,20 +192,6 @@ public sealed record class Issue(Guid Id)
     public void SetIssueType(IssueType type)
     {
         Type = type;
-        LastUpdated = DateTime.UtcNow;
-    }
-
-    /// <summary>
-    /// Upates top level properties with values from <paramref name="source"/>.
-    /// Does not affect linked issues
-    /// </summary>
-    public void CopyTopLevelFrom(Issue source)
-    {
-        Title = source.Title;
-        Description = source.Description;
-        Priority = source.Priority;
-
-        LastUpdated = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -217,7 +200,24 @@ public sealed record class Issue(Guid Id)
     public void ChangePriority(Priority priority)
     {
         Priority = priority;
-        LastUpdated = DateTime.UtcNow;
     }
 
+    /// <summary>
+    /// Update Assignee value to <paramref name="assignee"/>
+    /// </summary>
+    public void SetAssignee(User assignee)
+    {
+        ArgumentNullException.ThrowIfNull(assignee, nameof(assignee));
+
+        Assignee = assignee;
+    }
+
+    /// <summary>
+    /// Update Reporter value to <paramref name="reporter"/>
+    /// </summary>
+    public void SetReporter(User reporter)
+    {
+        ArgumentNullException.ThrowIfNull(reporter, nameof(reporter));
+        Reporter = reporter;
+    }
 }
