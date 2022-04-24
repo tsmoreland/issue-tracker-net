@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Core.ValueObjects;
 using IssueTracker.Core.Views;
 
 namespace IssueTracker.Core.Model;
@@ -35,13 +36,15 @@ public sealed record class Issue(Guid Id)
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>
     /// </summary>
-    public Issue(string title, string description, Priority priority, IssueType type)
+    public Issue(string title, string description, Priority priority, IssueType type, User assignee, User reporter)
         : this(Guid.NewGuid())
     {
         Title = title;
         Description = description;
         Priority = priority;
         Type = type;
+        Assignee = assignee;
+        Reporter = reporter;
         LastUpdated = DateTime.UtcNow;
     }
     /// <summary>
@@ -56,7 +59,9 @@ public sealed record class Issue(Guid Id)
         DateTime lastUpdated,
         string? concurrencyToken,
         IEnumerable<LinkedIssue> parentIssueEntities,
-        IEnumerable<LinkedIssue> childIssueEntities)
+        IEnumerable<LinkedIssue> childIssueEntities,
+        User assignee,
+        User reporter)
         : this(id)
     {
         Title = title;
@@ -67,6 +72,8 @@ public sealed record class Issue(Guid Id)
         ConcurrencyToken = concurrencyToken;
         ParentIssueEntities = parentIssueEntities.ToList();
         ChildIssueEntities = childIssueEntities.ToList();
+        Assignee = assignee;
+        Reporter = reporter;
     }
 
     /// <summary>
@@ -107,14 +114,14 @@ public sealed record class Issue(Guid Id)
     public IssueType Type { get; private set; } = IssueType.Defect;
 
     /// <summary>
-    /// Last Updated field used for auditing
+    /// User assigned to address the issue
     /// </summary>
-    public DateTime LastUpdated { get; private set; } = DateTime.UtcNow;
+    public User Assignee { get; private set; } = User.Unassigned;
 
     /// <summary>
-    /// Concurrency token used to detected threading issues when persisting to the database
+    /// User that reported the issue
     /// </summary>
-    public string? ConcurrencyToken { get; private set; } = Guid.NewGuid().ToString();
+    public User Reporter { get; init; } = User.Unassigned;
 
     /// <summary>
     /// Issues that are linked to this one, this also serves as the ones that may be
@@ -127,6 +134,16 @@ public sealed record class Issue(Guid Id)
     /// this issue
     /// </summary>
     public IEnumerable<LinkedIssueView> ChildIssues => ChildIssueEntities.Select(i => new LinkedIssueView(i.LinkType, i.ChildIssue));
+
+    /// <summary>
+    /// Last Updated field used for auditing
+    /// </summary>
+    public DateTime LastUpdated { get; private set; } = DateTime.UtcNow;
+
+    /// <summary>
+    /// Concurrency token used to detected threading issues when persisting to the database
+    /// </summary>
+    public string? ConcurrencyToken { get; private set; } = Guid.NewGuid().ToString();
 
     /// <summary>
     /// adds link to child issue 
