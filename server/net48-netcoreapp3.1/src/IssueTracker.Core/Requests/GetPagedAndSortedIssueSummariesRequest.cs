@@ -33,4 +33,12 @@ public sealed class GetPagedAndSortedIssueSummariesRequest : IRequest<IReadOnlyL
     public int PageSize { get; }
     public Issue.SortBy SortBy { get; }
     public SortDirection Direction { get; }
+
+    public void Deconstruct(out int pageNumber, out int pageSize, out Issue.SortBy sortBy, out SortDirection direction)
+    {
+        pageNumber = PageNumber;
+        pageSize = PageSize;
+        sortBy = SortBy;
+        direction = Direction;
+    }
 }

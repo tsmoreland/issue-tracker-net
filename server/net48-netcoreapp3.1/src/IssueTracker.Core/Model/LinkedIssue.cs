@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.ComponentModel;
 
 namespace IssueTracker.Core.Model;
@@ -21,11 +22,20 @@ public sealed class LinkedIssue
     /// intended for use in seeding data
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public LinkedIssue(LinkType linkType, int parentIssueId, int childIssueId)
+    public LinkedIssue(int id, LinkType linkType, int parentIssueId, int childIssueId)
     {
+        Id = id;
         LinkType = linkType;
         ParentIssueId = parentIssueId;
         ChildIssueId = childIssueId;
+    }
+    /// <summary>
+    /// intended for use in seeding data
+    /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public LinkedIssue(LinkType linkType, int parentIssueId, int childIssueId)
+        : this(0, linkType, parentIssueId, childIssueId)
+    {
     }
 
     public LinkedIssue(LinkType linkType, Issue parentIssue, Issue childIssue)
@@ -45,10 +55,11 @@ public sealed class LinkedIssue
         // required by entity framework
     }
 
+    public int Id { get; private set; }
     public LinkType LinkType { get; private set; } = LinkType.Related;
 
     public int ParentIssueId { get; private set; } 
-    public Issue ParentIssue { get; private set; } = null;
+    public Issue ParentIssue { get; private set; } 
 
     public int ChildIssueId { get; private set; } 
     public Issue ChildIssue { get; private set; } 

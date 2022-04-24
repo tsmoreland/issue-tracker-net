@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using IssueTracker.Core.ValueObjects;
 using IssueTracker.Core.Views;
 
 namespace IssueTracker.Core.Model;
@@ -34,13 +35,15 @@ public sealed class Issue
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>
     /// </summary>
-    public Issue(string title, string description, Priority priority, IssueType type)
+    public Issue(string title, string description, Priority priority, IssueType type, User assignee, User reporter)
         : this(0)
     {
         Title = title;
         Description = description;
         Priority = priority;
         Type = type;
+        Assignee = assignee;
+        Reporter = reporter;
         LastUpdated = DateTime.UtcNow;
     }
 
@@ -53,20 +56,25 @@ public sealed class Issue
         string description,
         Priority priority,
         IssueType type,
-        DateTime lastUpdated,
-        string concurrencyToken,
+        User assignee,
+        User reporter,
         IEnumerable<LinkedIssue> parentIssueEntities,
-        IEnumerable<LinkedIssue> childIssueEntities)
+        IEnumerable<LinkedIssue> childIssueEntities,
+        DateTime lastUpdated,
+        string concurrencyToken)
         : this(id)
     {
         Title = title;
         Description = description;
         Priority = priority;
         Type = type;
-        LastUpdated = lastUpdated;
-        ConcurrencyToken = concurrencyToken;
+        Assignee = assignee;
+        Reporter = reporter;
         ParentIssueEntities = parentIssueEntities.ToList();
         ChildIssueEntities = childIssueEntities.ToList();
+
+        LastUpdated = lastUpdated;
+        ConcurrencyToken = concurrencyToken;
     }
 
     private Issue(int id)
@@ -121,6 +129,16 @@ public sealed class Issue
     public IssueType Type { get; private set; } = IssueType.Defect;
 
     /// <summary>
+    /// Assignee 
+    /// </summary>
+    public User Assignee { get; private set; } = User.Unassigned;
+
+    /// <summary>
+    /// Reporter
+    /// </summary>
+    public User Reporter { get; private set; } = User.Unassigned;
+
+    /// <summary>
     /// Last Updated field used for auditing
     /// </summary>
     public DateTime LastUpdated { get; private set; } = DateTime.UtcNow;
@@ -144,8 +162,8 @@ public sealed class Issue
     public IEnumerable<LinkedIssueView> ChildIssues =>
         ChildIssueEntities.Select(i => new LinkedIssueView(i.LinkType, i.ChildIssue));
 
-    private IList<LinkedIssue> ParentIssueEntities { get; set; } = new List<LinkedIssue>();
-    private IList<LinkedIssue> ChildIssueEntities { get; set; } = new List<LinkedIssue>();
+    public List<LinkedIssue> ParentIssueEntities { get; set; } = new List<LinkedIssue>();
+    public List<LinkedIssue> ChildIssueEntities { get; set; } = new List<LinkedIssue>();
 
     /// <summary>
     /// adds link to child issue 
@@ -211,6 +229,9 @@ public sealed class Issue
         Title = source.Title;
         Description = source.Description;
         Priority = source.Priority;
+
+        Assignee = (User)source.Assignee.Clone();
+        Reporter = (User)source.Reporter.Clone();
 
         LastUpdated = DateTime.UtcNow;
     }
