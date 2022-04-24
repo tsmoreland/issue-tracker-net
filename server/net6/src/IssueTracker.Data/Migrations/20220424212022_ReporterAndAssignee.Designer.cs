@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IssueTracker.Data.Migrations
 {
     [DbContext(typeof(IssuesDbContext))]
-    [Migration("20220424183249_ReporterAndAssignee")]
+    [Migration("20220424212022_ReporterAndAssignee")]
     partial class ReporterAndAssignee
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,8 +35,9 @@ namespace IssueTracker.Data.Migrations
                         .IsUnicode(true)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("TEXT");
+                    b.Property<long>("LastUpdated")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Priority")
                         .HasColumnType("INTEGER");
@@ -62,9 +63,9 @@ namespace IssueTracker.Data.Migrations
                         new
                         {
                             Id = new Guid("1385056e-8afa-4e09-96df-ae12efdf1a29"),
-                            ConcurrencyToken = "53007193-8132-4573-bf1f-141c607b3321",
+                            ConcurrencyToken = "8f803cad-eb71-4912-95c3-ae73f63882ad",
                             Description = "First issue",
-                            LastUpdated = new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdated = 637765920000000000L,
                             Priority = 1,
                             Title = "First",
                             Type = 0
@@ -72,9 +73,9 @@ namespace IssueTracker.Data.Migrations
                         new
                         {
                             Id = new Guid("a28b8c45-6668-4169-940c-c16d71eb69de"),
-                            ConcurrencyToken = "f0c89753-83ef-4feb-8f2f-4529688ab9ba",
+                            ConcurrencyToken = "27b8bb20-b3f0-4998-a06f-da2aa874c643",
                             Description = "Second issue",
-                            LastUpdated = new DateTime(2022, 1, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdated = 637782336000000000L,
                             Priority = 0,
                             Title = "Second",
                             Type = 1
@@ -82,9 +83,9 @@ namespace IssueTracker.Data.Migrations
                         new
                         {
                             Id = new Guid("502ad68e-7b37-4426-b422-23b6a9b1b7ca"),
-                            ConcurrencyToken = "99ba05ff-b97d-4854-a472-9d6bf33e3160",
+                            ConcurrencyToken = "e020c8d1-20dd-451f-b560-a4b3347cd10a",
                             Description = "Third issue",
-                            LastUpdated = new DateTime(2022, 1, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdated = 637782336000000000L,
                             Priority = 1,
                             Title = "Third",
                             Type = 1
@@ -122,8 +123,8 @@ namespace IssueTracker.Data.Migrations
                         {
                             ParentIssueId = new Guid("a28b8c45-6668-4169-940c-c16d71eb69de"),
                             ChildIssueId = new Guid("502ad68e-7b37-4426-b422-23b6a9b1b7ca"),
-                            ConcurrencyToken = "f9de1f1c-84f9-46f3-9dad-e5372d40b829",
-                            Id = new Guid("b5a14a5c-c894-4d1c-9c8c-66a93a4eece5"),
+                            ConcurrencyToken = "f919c6a8-b038-4613-8a51-4f0522bc4c08",
+                            Id = new Guid("270b0c6f-d622-495f-b85b-99238da73735"),
                             LinkType = 0
                         });
                 });

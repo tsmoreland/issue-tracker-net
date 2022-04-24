@@ -76,6 +76,10 @@ public sealed class IssuesDbContext : DbContext
         issueEntity.Property(e => e.Description).IsUnicode().HasMaxLength(500);
         issueEntity.Property(e => e.Priority).IsRequired();
         issueEntity.Property(e => e.ConcurrencyToken).IsConcurrencyToken();
+        issueEntity.Property(e => e.LastUpdated)
+            .HasConversion(dateTime => dateTime.ToUniversalTime().Ticks, ticks => new DateTime(ticks, DateTimeKind.Utc))
+            .ValueGeneratedOnAddOrUpdate()
+            .HasValueGenerator<DateTimeGenerater>();
 
         issueEntity.OwnsOne(e => e.Assignee,
             (owned) =>
@@ -169,7 +173,7 @@ public sealed class IssuesDbContext : DbContext
         issueEntity.OwnsOne(e => e.Reporter)
             .HasData(new
             {
-                UserId = "id of the issue entity", // this is the shadow property created by EF to link the objects, User matches the class name
+                IssueId = "id of the issue entity", // this is the shadow property created by EF to link the objects, Issue matches the class name of the owning entity
                 Id = "id property of the user object",
                 FullName = "fullname property from user table"
             });
