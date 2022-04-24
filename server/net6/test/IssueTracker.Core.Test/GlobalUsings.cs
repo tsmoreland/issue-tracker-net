@@ -11,12 +11,5 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace IssueTracker.Data.Abstractions;
-
-public interface IIssueDataMigration
-{
-    ValueTask MigrateAsync(CancellationToken cancellationToken);
-    void Migrate();
-
-    ValueTask SeedAync(IIssueRepository repository, CancellationToken cancellationToken);
-}
+global using IssueTracker.Core.Model;
+global using NUnit.Framework;

@@ -3,6 +3,7 @@ using System;
 using IssueTracker.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IssueTracker.Data.Migrations
 {
     [DbContext(typeof(IssuesDbContext))]
-    partial class IssuesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220424123047_ReporterAndAssignee")]
+    partial class ReporterAndAssignee
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.4");
@@ -55,38 +57,6 @@ namespace IssueTracker.Data.Migrations
                     b.HasIndex("Title");
 
                     b.ToTable("Issues", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("1385056e-8afa-4e09-96df-ae12efdf1a29"),
-                            ConcurrencyToken = "bcc736d3-3bfe-4d17-b78b-28f6607609b9",
-                            Description = "First issue",
-                            LastUpdated = new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Priority = 1,
-                            Title = "First",
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("a28b8c45-6668-4169-940c-c16d71eb69de"),
-                            ConcurrencyToken = "25b0b4c8-101c-445b-8242-05b61759ba00",
-                            Description = "Second issue",
-                            LastUpdated = new DateTime(2022, 1, 20, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Priority = 0,
-                            Title = "Second",
-                            Type = 1
-                        },
-                        new
-                        {
-                            Id = new Guid("502ad68e-7b37-4426-b422-23b6a9b1b7ca"),
-                            ConcurrencyToken = "2727e28c-bd95-4366-8a96-821fcc63ef9d",
-                            Description = "Third issue",
-                            LastUpdated = new DateTime(2022, 1, 20, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Priority = 1,
-                            Title = "Third",
-                            Type = 1
-                        });
                 });
 
             modelBuilder.Entity("IssueTracker.Core.Model.LinkedIssue", b =>
@@ -101,10 +71,6 @@ namespace IssueTracker.Data.Migrations
                     b.Property<string>("ConcurrencyToken")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("LinkType")
                         .HasColumnType("INTEGER");
 
@@ -117,24 +83,7 @@ namespace IssueTracker.Data.Migrations
 
                     b.HasIndex("ParentIssueId");
 
-                    b.ToTable("LinkedIssue", (string)null);
-
-                            b1.HasKey("IssueId");
-
-                            b1.ToTable("Issues");
-
-                            b1.WithOwner()
-                                .HasForeignKey("IssueId");
-                        });
-
-                    b.OwnsOne("IssueTracker.Core.ValueObjects.User", "Reporter", b1 =>
-                        {
-                            ParentIssueId = new Guid("a28b8c45-6668-4169-940c-c16d71eb69de"),
-                            ChildIssueId = new Guid("502ad68e-7b37-4426-b422-23b6a9b1b7ca"),
-                            ConcurrencyToken = "8b72b6ef-d05b-4a5b-8ee2-91821c08d0e0",
-                            Id = new Guid("2bb51033-476e-4ca0-bfd7-d1aaeafd9b1c"),
-                            LinkType = 0
-                        });
+                    b.ToTable("LinkedIssues", (string)null);
                 });
 
             modelBuilder.Entity("IssueTracker.Core.Model.Issue", b =>

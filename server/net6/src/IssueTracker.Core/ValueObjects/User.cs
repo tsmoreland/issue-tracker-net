@@ -11,12 +11,9 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace IssueTracker.Data.Abstractions;
+namespace IssueTracker.Core.ValueObjects;
 
-public interface IIssueDataMigration
+public sealed record class User(Guid Id, string FullName)
 {
-    ValueTask MigrateAsync(CancellationToken cancellationToken);
-    void Migrate();
-
-    ValueTask SeedAync(IIssueRepository repository, CancellationToken cancellationToken);
+    public static User Unassigned { get; } = new (Guid.Empty, "Unassigned");
 }

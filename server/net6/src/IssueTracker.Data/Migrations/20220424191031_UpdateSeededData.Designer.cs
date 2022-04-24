@@ -3,6 +3,7 @@ using System;
 using IssueTracker.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IssueTracker.Data.Migrations
 {
     [DbContext(typeof(IssuesDbContext))]
-    partial class IssuesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220424191031_UpdateSeededData")]
+    partial class UpdateSeededData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.4");
@@ -91,8 +93,7 @@ namespace IssueTracker.Data.Migrations
 
             modelBuilder.Entity("IssueTracker.Core.Model.LinkedIssue", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("ParentIssueId")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("ChildIssueId")
@@ -108,10 +109,7 @@ namespace IssueTracker.Data.Migrations
                     b.Property<int>("LinkType")
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("ParentIssueId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
+                    b.HasKey("ParentIssueId", "ChildIssueId");
 
                     b.HasIndex("ChildIssueId");
 
@@ -119,15 +117,8 @@ namespace IssueTracker.Data.Migrations
 
                     b.ToTable("LinkedIssue", (string)null);
 
-                            b1.HasKey("IssueId");
-
-                            b1.ToTable("Issues");
-
-                            b1.WithOwner()
-                                .HasForeignKey("IssueId");
-                        });
-
-                    b.OwnsOne("IssueTracker.Core.ValueObjects.User", "Reporter", b1 =>
+                    b.HasData(
+                        new
                         {
                             ParentIssueId = new Guid("a28b8c45-6668-4169-940c-c16d71eb69de"),
                             ChildIssueId = new Guid("502ad68e-7b37-4426-b422-23b6a9b1b7ca"),
@@ -207,13 +198,13 @@ namespace IssueTracker.Data.Migrations
                     b.HasOne("IssueTracker.Core.Model.Issue", "ChildIssue")
                         .WithMany("ChildIssueEntities")
                         .HasForeignKey("ChildIssueId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("IssueTracker.Core.Model.Issue", "ParentIssue")
                         .WithMany("ParentIssueEntities")
                         .HasForeignKey("ParentIssueId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("ChildIssue");

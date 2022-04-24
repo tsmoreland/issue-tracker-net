@@ -11,12 +11,37 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace IssueTracker.Data.Abstractions;
+using System.Reflection;
 
-public interface IIssueDataMigration
+namespace IssueTracker.Core.Test;
+
+public sealed class IssueTest
 {
-    ValueTask MigrateAsync(CancellationToken cancellationToken);
-    void Migrate();
 
-    ValueTask SeedAync(IIssueRepository repository, CancellationToken cancellationToken);
+    [TestCase(null)]
+    [TestCase("")]
+    public void SetDescription_StoresEmptyString_WhenValueIsNullOrEmpt(string value)
+    {
+        Issue issue = new ();
+        issue.SetDescription(value);
+        Assert.That(issue.Description, Is.Empty);
+    }
+
+    [Test]
+    public void Assignee_ReturnsNull_WhenPrivateSetterUsedViaReflection()
+    {
+        Issue issue = new ();
+        PropertyInfo? property = issue.GetType().GetProperty(nameof(Issue.Assignee));
+        property?.SetValue(issue, null);
+        Assert.That(issue.Assignee, Is.Null);
+    }
+
+    [Test]
+    public void Reporter_ReturnsNull_WhenPrivateSetterUsedViaReflection()
+    {
+        Issue issue = new ();
+        PropertyInfo? property = issue.GetType().GetProperty(nameof(Issue.Reporter));
+        property?.SetValue(issue, null);
+        Assert.That(issue.Reporter, Is.Null);
+    }
 }
