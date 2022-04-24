@@ -21,18 +21,28 @@ public sealed class LinkedIssue
     /// intended for use in seeding data
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public LinkedIssue(LinkType linkType, Guid parentIssueId, Guid childIssueId)
+    public LinkedIssue(Guid id, LinkType linkType, Guid parentIssueId, Guid childIssueId, string? concurrencyToken)
     {
+        Id = id;
         LinkType = linkType;
         ParentIssueId = parentIssueId;
         ChildIssueId = childIssueId;
+        ConcurrencyToken = concurrencyToken;
     }
 
     public LinkedIssue(LinkType linkType, Issue parentIssue, Issue childIssue)
+        : this(Guid.NewGuid(), linkType, parentIssue, childIssue)
+    {
+        ArgumentNullException.ThrowIfNull(parentIssue, nameof(parentIssue));
+        ArgumentNullException.ThrowIfNull(childIssue, nameof(childIssue));
+    }
+
+    public LinkedIssue(Guid id, LinkType linkType, Issue parentIssue, Issue childIssue)
     {
         ArgumentNullException.ThrowIfNull(parentIssue, nameof(parentIssue));
         ArgumentNullException.ThrowIfNull(childIssue, nameof(childIssue));
 
+        Id = id;
         LinkType = linkType;
         ParentIssue = parentIssue;
         ParentIssueId = ParentIssue.Id;
@@ -45,6 +55,8 @@ public sealed class LinkedIssue
         // required by entity framework
     }
 
+    public Guid Id { get; private set; } = Guid.NewGuid();
+
     public LinkType LinkType { get; init; } = LinkType.Related;
 
     public Guid ParentIssueId { get; init; } = Guid.Empty;
@@ -53,4 +65,8 @@ public sealed class LinkedIssue
     public Guid ChildIssueId { get; init; } = Guid.Empty;
     public Issue ChildIssue { get; init; } = null!;
 
+    /// <summary>
+    /// Concurrency token used to detected threading issues when persisting to the database
+    /// </summary>
+    public string? ConcurrencyToken { get; private set; } = Guid.NewGuid().ToString();
 }
