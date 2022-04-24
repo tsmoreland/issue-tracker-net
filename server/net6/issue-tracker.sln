@@ -55,7 +55,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.RestApi.DataTr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GraphQL", "GraphQL", "{7C5926E5-7CE8-4BE4-8FEB-CC55F3D5BB08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.GraphQl.App", "src\IssueTracker.GraphQl.App\IssueTracker.GraphQl.App.csproj", "{5559C5E9-7591-4AE0-828D-323D52EB3FDB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.GraphQl.App", "src\IssueTracker.GraphQl.App\IssueTracker.GraphQl.App.csproj", "{5559C5E9-7591-4AE0-828D-323D52EB3FDB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Core.Test", "test\IssueTracker.Core.Test\IssueTracker.Core.Test.csproj", "{ECF60E3D-D8F0-4A21-84FE-BAB8D0CD8E2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -127,6 +129,10 @@ Global
 		{5559C5E9-7591-4AE0-828D-323D52EB3FDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5559C5E9-7591-4AE0-828D-323D52EB3FDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5559C5E9-7591-4AE0-828D-323D52EB3FDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECF60E3D-D8F0-4A21-84FE-BAB8D0CD8E2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECF60E3D-D8F0-4A21-84FE-BAB8D0CD8E2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECF60E3D-D8F0-4A21-84FE-BAB8D0CD8E2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECF60E3D-D8F0-4A21-84FE-BAB8D0CD8E2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -151,6 +157,7 @@ Global
 		{82849D31-F076-434C-858A-6421141E69A3} = {390046E2-814B-4466-B941-9B0684750103}
 		{7C5926E5-7CE8-4BE4-8FEB-CC55F3D5BB08} = {13D0B969-90F7-4214-BC8C-5432426C746A}
 		{5559C5E9-7591-4AE0-828D-323D52EB3FDB} = {7C5926E5-7CE8-4BE4-8FEB-CC55F3D5BB08}
+		{ECF60E3D-D8F0-4A21-84FE-BAB8D0CD8E2C} = {67872BB0-951C-413D-8EA7-98E7D2D38189}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8421BB6A-BA23-402F-AC65-8492F4641EA7}

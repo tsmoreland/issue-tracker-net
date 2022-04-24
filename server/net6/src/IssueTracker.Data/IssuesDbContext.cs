@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Reflection;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.ValueObjects;
 using Microsoft.EntityFrameworkCore;
@@ -76,7 +77,7 @@ public sealed class IssuesDbContext : DbContext
         issueEntity.Property(e => e.Priority).IsRequired();
         issueEntity.Property(e => e.ConcurrencyToken).IsConcurrencyToken();
 
-        issueEntity.OwnsOne(e => e.Assignee,
+        EntityTypeBuilder<Issue> assigneeOwnedEntity = issueEntity.OwnsOne(e => e.Assignee,
             (owned) =>
             {
                 owned
@@ -109,7 +110,6 @@ public sealed class IssuesDbContext : DbContext
                     .HasColumnName("ReporterFullName");
             });
 
-
         issueEntity.HasMany("ChildIssueEntities").WithOne();
         issueEntity.HasMany("ParentIssueEntities").WithOne();
 
@@ -128,6 +128,35 @@ public sealed class IssuesDbContext : DbContext
         // HasData to seed is not done here due to complexities of handling Owned Types (at time of writing Assignee and Reporter)
         // in order to use HasData to see these values it would need to be done as part of the OwnsOne:
         /*
+        */
+
+        Issue first = new(new Guid("1385056E-8AFA-4E09-96DF-AE12EFDF1A29"), "First", "First issue",
+            Priority.Medium, IssueType.Epic,
+            new DateTime(2022, 01, 01, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString(),
+            Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(), 
+            User.Unassigned, User.Unassigned);
+        Issue second = new (new Guid("A28B8C45-6668-4169-940C-C16D71EB69DE"), "Second", "Second issue",
+            Priority.Low, IssueType.Story,
+            new DateTime(2022, 01, 020, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString(),
+            Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(), 
+            User.Unassigned, User.Unassigned);
+        Issue third = new (new Guid("502AD68E-7B37-4426-B422-23B6A9B1B7CA"), "Third", "Third issue",
+            Priority.Medium, IssueType.Story,
+            new DateTime(2022, 01, 020, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString(),
+            Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(), 
+            User.Unassigned, User.Unassigned);
+
+        PropertyInfo? assigneeSet = typeof(Issue).GetProperty(nameof(Issue.Assignee));
+        PropertyInfo? reporterSet = typeof(Issue).GetProperty(nameof(Issue.Reporter));
+
+        if (assigneeSet is null || reporterSet is null)
+        {
+            throw new InvalidOperationException("Unable to access private setter");
+        }
+
+        // we're unable to set owned types in a normal fashion, the only way for this to work is to set them null here and then
+        // use something like:
+        /*
         issueEntity.OwnsOne(e => e.Reporter)
             .HasData(new
             {
@@ -136,5 +165,34 @@ public sealed class IssuesDbContext : DbContext
                 FullName = "fullname property from user table"
             });
         */
+
+        assigneeSet.SetValue(first, null);
+        assigneeSet.SetValue(second, null);
+        assigneeSet.SetValue(third, null);
+
+        reporterSet.SetValue(first, null);
+        reporterSet.SetValue(second, null);
+        reporterSet.SetValue(third, null);
+
+        issueEntity.HasData(first, second, third);
+
+        EntityTypeBuilder<LinkedIssue> linkedIssuesEntity = modelBuilder.Entity<LinkedIssue>();
+        linkedIssuesEntity.ToTable("LinkedIssue")
+            .HasKey(e => new { e.ParentIssueId, e.ChildIssueId });
+        linkedIssuesEntity
+            .HasOne(e => e.ParentIssue)
+            .WithMany("ParentIssueEntities")
+            .HasPrincipalKey(e => e.Id)
+            .HasForeignKey(e => e.ParentIssueId)
+            .OnDelete(DeleteBehavior.Restrict);
+        linkedIssuesEntity
+            .HasOne(e => e.ChildIssue)
+            .WithMany("ChildIssueEntities")
+            .HasPrincipalKey(e => e.Id)
+            .HasForeignKey(e => e.ChildIssueId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        LinkedIssue secondToThird = new(Guid.NewGuid(), LinkType.Related, new Guid("A28B8C45-6668-4169-940C-C16D71EB69DE"), new Guid("502AD68E-7B37-4426-B422-23B6A9B1B7CA"));
+        linkedIssuesEntity.HasData(secondToThird);
     }
 }

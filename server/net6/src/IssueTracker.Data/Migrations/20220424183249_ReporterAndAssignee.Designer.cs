@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IssueTracker.Data.Migrations
 {
     [DbContext(typeof(IssuesDbContext))]
-    [Migration("20220424123047_ReporterAndAssignee")]
+    [Migration("20220424183249_ReporterAndAssignee")]
     partial class ReporterAndAssignee
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,12 +57,43 @@ namespace IssueTracker.Data.Migrations
                     b.HasIndex("Title");
 
                     b.ToTable("Issues", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("1385056e-8afa-4e09-96df-ae12efdf1a29"),
+                            ConcurrencyToken = "53007193-8132-4573-bf1f-141c607b3321",
+                            Description = "First issue",
+                            LastUpdated = new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Priority = 1,
+                            Title = "First",
+                            Type = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("a28b8c45-6668-4169-940c-c16d71eb69de"),
+                            ConcurrencyToken = "f0c89753-83ef-4feb-8f2f-4529688ab9ba",
+                            Description = "Second issue",
+                            LastUpdated = new DateTime(2022, 1, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Priority = 0,
+                            Title = "Second",
+                            Type = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("502ad68e-7b37-4426-b422-23b6a9b1b7ca"),
+                            ConcurrencyToken = "99ba05ff-b97d-4854-a472-9d6bf33e3160",
+                            Description = "Third issue",
+                            LastUpdated = new DateTime(2022, 1, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Priority = 1,
+                            Title = "Third",
+                            Type = 1
+                        });
                 });
 
             modelBuilder.Entity("IssueTracker.Core.Model.LinkedIssue", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("ParentIssueId")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("ChildIssueId")
@@ -71,19 +102,30 @@ namespace IssueTracker.Data.Migrations
                     b.Property<string>("ConcurrencyToken")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("LinkType")
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("ParentIssueId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
+                    b.HasKey("ParentIssueId", "ChildIssueId");
 
                     b.HasIndex("ChildIssueId");
 
                     b.HasIndex("ParentIssueId");
 
-                    b.ToTable("LinkedIssues", (string)null);
+                    b.ToTable("LinkedIssue", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            ParentIssueId = new Guid("a28b8c45-6668-4169-940c-c16d71eb69de"),
+                            ChildIssueId = new Guid("502ad68e-7b37-4426-b422-23b6a9b1b7ca"),
+                            ConcurrencyToken = "f9de1f1c-84f9-46f3-9dad-e5372d40b829",
+                            Id = new Guid("b5a14a5c-c894-4d1c-9c8c-66a93a4eece5"),
+                            LinkType = 0
+                        });
                 });
 
             modelBuilder.Entity("IssueTracker.Core.Model.Issue", b =>
@@ -156,13 +198,13 @@ namespace IssueTracker.Data.Migrations
                     b.HasOne("IssueTracker.Core.Model.Issue", "ChildIssue")
                         .WithMany("ChildIssueEntities")
                         .HasForeignKey("ChildIssueId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("IssueTracker.Core.Model.Issue", "ParentIssue")
                         .WithMany("ParentIssueEntities")
                         .HasForeignKey("ParentIssueId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("ChildIssue");

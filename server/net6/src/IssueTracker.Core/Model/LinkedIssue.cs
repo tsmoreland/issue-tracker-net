@@ -30,6 +30,15 @@ public sealed class LinkedIssue
         ConcurrencyToken = concurrencyToken;
     }
 
+    /// <summary>
+    /// intended for use in seeding data
+    /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public LinkedIssue(Guid id, LinkType linkType, Guid parentIssueId, Guid childIssueId)
+        : this(id, linkType, parentIssueId, childIssueId, Guid.NewGuid().ToString())
+    {
+    }
+
     public LinkedIssue(LinkType linkType, Issue parentIssue, Issue childIssue)
         : this(Guid.NewGuid(), linkType, parentIssue, childIssue)
     {
