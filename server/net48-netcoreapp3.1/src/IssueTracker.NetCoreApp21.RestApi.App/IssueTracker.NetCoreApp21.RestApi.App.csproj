@@ -24,7 +24,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\IssueTracker.Core\IssueTracker.Core.csproj" />
+    <ProjectReference Include="..\IssueTracker.EFCore21.Data\IssueTracker.EFCore21.Data.csproj" />
+    <ProjectReference Include="..\IssueTracker.EFCore21.Services\IssueTracker.EFCore21.Services.csproj" />
   </ItemGroup>
 
 </Project>

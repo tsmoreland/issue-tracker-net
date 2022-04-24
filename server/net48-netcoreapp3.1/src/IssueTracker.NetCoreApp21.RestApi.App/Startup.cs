@@ -1,3 +1,5 @@
+using IssueTracker.EFCore21.Data;
+using IssueTracker.EFCore21.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -26,8 +28,12 @@ public class Startup
             options.MinimumSameSitePolicy = SameSiteMode.None;
         });
 
+        services.AddData(Configuration);
+        services.AddRequestHandlers();
 
-        services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+        services
+            .AddMvc()
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
