@@ -32,4 +32,12 @@ public sealed class IssueSummaryProjection
     public string Title { get; }
     public Priority Priority { get; }
     public IssueType Type { get; }
+
+    public void Deconstruct(out int id, out string title, out Priority priority, out IssueType issueType)
+    {
+        id = Id;
+        title = Title;
+        priority = Priority;
+        issueType = Type;
+    }
 }
