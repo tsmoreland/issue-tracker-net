@@ -54,7 +54,7 @@ public interface IIssueRepository
     Task<IReadOnlyList<LinkedIssueSummaryProjection>> GetChildIssueSummaries(int id, int pageNumber, int pageSize, CancellationToken cancellationToken);
 
     Task<Issue> GetUntrackedIssueById(int id, CancellationToken cancellationToken);
-    Task<Issue?> GetIssueById(int id, CancellationToken cancellationToken);
+    Task<Issue> GetIssueById(int id, CancellationToken cancellationToken);
     Task<Issue> AddIssue(Issue issue, CancellationToken cancellationToken);
     Task<Issue> UpdateIssue(int id, Action<Issue> visitor, CancellationToken cancellationToken);
 
