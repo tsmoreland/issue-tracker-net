@@ -93,19 +93,22 @@ public sealed class IssueRepository : IIssueRepository
     /// <inheritdoc />
     public Task<Issue> GetUntrackedIssueById(int id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return _dbContext.Issues
+            .AsNoTracking()
+            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
     }
 
     /// <inheritdoc />
     public Task<Issue> GetIssueById(int id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return _dbContext.Issues
+            .FindAsync(new object[] { id }, cancellationToken);
     }
 
     /// <inheritdoc />
-    public Task<Issue> AddIssue(Issue issue, CancellationToken cancellationToken)
+    public async Task<Issue> AddIssue(Issue issue, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return (await _dbContext.Issues.AddAsync(issue, cancellationToken)).Entity;
     }
 
     /// <inheritdoc />
@@ -115,20 +118,26 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
-    public Task<bool> DeleteIssueById(int id, CancellationToken cancellationToken)
+    public async Task<bool> DeleteIssueById(int id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        Issue issue = await _dbContext.Issues.FindAsync(id, cancellationToken);
+        if (issue is null)
+        {
+            return false;
+        }
+        _dbContext.Issues.Remove(issue);
+        return true;
     }
 
     /// <inheritdoc />
     public Task<bool> IssueExists(int id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return _dbContext.Issues.AnyAsync(i => i.Id == id, cancellationToken);
     }
 
     /// <inheritdoc />
     public Task CommitAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return _dbContext.SaveChangesAsync(cancellationToken);
     }
 }
