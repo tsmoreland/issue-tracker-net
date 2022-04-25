@@ -1,9 +1,12 @@
+using System;
 using IssueTracker.EFCore21.Data;
 using IssueTracker.EFCore21.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,8 +35,35 @@ public class Startup
         services.AddRequestHandlers();
 
         services
-            .AddMvc()
+            .AddMvc(options =>
+            {
+
+            })
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+        services
+            .Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            })
+            .AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'V")
+            .AddApiVersioning(options =>
+            {
+                options.ReportApiVersions = true;
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+            })
+            .AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<GzipCompressionProvider>();
+            })
+            .AddHttpContextAccessor()
+            .Configure<DataProtectionTokenProviderOptions>(tokenProviderOptions =>
+            {
+                tokenProviderOptions.TokenLifespan = TimeSpan.FromHours(1);
+            });
+
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
