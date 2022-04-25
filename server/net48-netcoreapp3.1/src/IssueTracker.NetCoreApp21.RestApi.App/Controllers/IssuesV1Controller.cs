@@ -13,39 +13,43 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.Core.Requests;
+using IssueTracker.NetCoreApp21.RestApi.App.Model.Request;
+using IssueTracker.NetCoreApp21.RestApi.App.Model.Response;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IssueTracker.NetCoreApp21.RestApi.App.Controllers;
 
-[Route("api/issues")]
+[ApiVersion("1")]
+[Route("api/v{version:apiVersion}/issues")]
 [ApiController]
-public class IssuesController : ControllerBase
+public class IssuesV1Controller : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public IssuesController(IMediator mediator)
+    public IssuesV1Controller(IMediator mediator)
     {
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }
 
-    // TODO: replace Model with DTOs - we shouldn't be using Core objects directly
     [HttpGet]
-    public async Task<IReadOnlyList<IssueSummaryProjection>> GetIssueSummaries(
+    public async Task<IReadOnlyList<IssueSummaryV1>> GetIssueSummaries(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
-        [FromQuery] Issue.SortBy sortBy = Issue.SortBy.Title,
-        [FromQuery] SortDirection direction = SortDirection.Ascending,
+        [FromQuery] IssueSortBy sortBy = IssueSortBy.Title,
+        [FromQuery] SortDir direction = SortDir.Ascending,
         CancellationToken cancellationToken = default)
     {
 
-        IReadOnlyList<IssueSummaryProjection> summaries = await _mediator.Send(new GetPagedAndSortedIssueSummariesRequest(pageNumber, pageSize, sortBy, direction),
+        IReadOnlyList<IssueSummaryProjection> summaries = await _mediator
+            .Send(new GetPagedAndSortedIssueSummariesRequest(pageNumber, pageSize, sortBy.ToSortBy(), direction.ToSortDirection()),
             cancellationToken);
 
         if (summaries.Count <= 0)
@@ -57,7 +61,33 @@ public class IssuesController : ControllerBase
             Response.StatusCode = StatusCodes.Status200OK;
         }
 
-        return summaries;
+        return summaries.Select(IssueSummaryV1.FromProjection).ToList();
     }
 
+    /// <summary>
+    /// Get issue by id
+    /// </summary>
+    /// <param name="id">id of issue to get</param>
+    /// <returns>the matching issue or <see langword="null"/> if not found</returns>
+    /// <remarks>
+    /// intentionally misuing the <see langword="async"/>/<see langword="await"/> pattern
+    /// to expocse return type without Task
+    /// </remarks>
+    [HttpGet("{id}")]
+    public IssueV1 GetIssueById([FromRoute] int id)
+    {
+        Issue issue = _mediator.Send(new FindIssueByIdRequest(id), CancellationToken.None).Result;
+        if (issue is null)
+        {
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return null;
+        }
+        else
+        {
+            Response.StatusCode = StatusCodes.Status200OK;
+        }
+
+
+        return IssueV1.From(issue);
+    }
 }
