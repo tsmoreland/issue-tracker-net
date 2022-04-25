@@ -95,6 +95,22 @@ public sealed class InMemoryIssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
+    public Task<Issue> UpdateIssue(Guid id, Action<Issue> visitor, CancellationToken cancellationToken)
+    {
+        lock (_lock)
+        {
+            if (!_issuesById.ContainsKey(id))
+            {
+                return Task.FromResult<Issue>(null);
+            }
+
+            Issue issue = _issuesById[id];
+            visitor(issue);
+            return Task.FromResult(issue);
+        }
+    }
+
+    /// <inheritdoc />
     public Task CommitAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
