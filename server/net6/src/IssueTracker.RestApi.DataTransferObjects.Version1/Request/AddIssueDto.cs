@@ -70,6 +70,6 @@ public sealed class AddIssueDto
     /// <returns>Model</returns>
     public Issue ToModel()
     {
-        return new Issue(Title, Description ?? string.Empty, Priority, IssueType.Defect, User.Unassigned, User.Unassigned);
+        return new Issue(Title, Description ?? string.Empty, Priority);
     }
 }

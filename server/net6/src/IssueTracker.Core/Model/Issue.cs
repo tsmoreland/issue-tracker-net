@@ -36,6 +36,14 @@ public sealed record class Issue(Guid Id)
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>
     /// </summary>
+    public Issue(string title, string description, Priority priority)
+        : this(title, description, priority, IssueType.Defect, User.Unassigned, User.Unassigned)
+    {
+    }
+
+    /// <summary>
+    /// Instanties a new instance of <see cref="Issue"/>
+    /// </summary>
     public Issue(string title, string description, Priority priority, IssueType type, User assignee, User reporter)
         : this(Guid.NewGuid())
     {
