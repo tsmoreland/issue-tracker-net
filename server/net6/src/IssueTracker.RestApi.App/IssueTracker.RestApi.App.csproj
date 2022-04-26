@@ -63,7 +63,8 @@
     <ProjectReference Include="..\IssueTracker.Data.Abstractions\IssueTracker.Data.Abstractions.csproj" />
     <ProjectReference Include="..\IssueTracker.Middelware.SecurityHeaders\IssueTracker.Middelware.SecurityHeaders.csproj" />
     <ProjectReference Include="..\IssueTracker.RestApi.Controllers.Shared\IssueTracker.RestApi.Controllers.Shared.csproj" />
-    <ProjectReference Include="..\IssueTracker.RestApi.Controllers.UrlVersioning\IssueTracker.RestApi.Controllers.UrlVersioning.csproj" />
+    <ProjectReference Include="..\IssueTracker.RestApi.Controllers.Version1\IssueTracker.RestApi.Controllers.Version1.csproj" />
+    <ProjectReference Include="..\IssueTracker.RestApi.Controllers.Version2\IssueTracker.RestApi.Controllers.Version2.csproj" />
     <ProjectReference Include="..\IssueTracker.ServiceDiscovery\IssueTracker.ServiceDiscovery.csproj" />
     <ProjectReference Include="..\IssueTracker.SwashbuckleExtensions.Abstractions\IssueTracker.SwashbuckleExtensions.Abstractions.csproj" />
 

@@ -12,10 +12,10 @@
 //
 
 using System.Net.Mime;
-using IssueTracker.RestApi.DataTransferObjects.Version2.Request;
-using IssueTracker.RestApi.DataTransferObjects.Version2.Response;
 using IssueTracker.Core.Requests;
 using IssueTracker.RestApi.DataTransferObjects.Version2.QueryParameters;
+using IssueTracker.RestApi.DataTransferObjects.Version2.Request;
+using IssueTracker.RestApi.DataTransferObjects.Version2.Response;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -23,7 +23,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using static IssueTracker.RestApi.Controllers.Shared.Validation.PagingValidation;
 
-namespace IssueTracker.RestApi.Controllers.UrlVersioning.Version2;
+namespace IssueTracker.RestApi.Controllers.Version2;
 
 /// <summary>
 /// Issues Controller (v2)
