@@ -11,35 +11,34 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Core.Model;
-
-namespace IssueTracker.RestApi.DataTransferObjects.Version1.QueryParameters;
+namespace IssueTracker.RestApi.DataTransferObjects.Version2.QueryParameters;
 
 /// <summary>
-/// Issue Sort Column
+/// Sort Direction
 /// </summary>
-public enum IssueSortBy
+public enum SortDirection
 {
     /// <summary>
-    /// Order by title alphabetically
+    /// Ascending Order
     /// </summary>
-    Title = 0,
+    Ascending = 0,
+
     /// <summary>
-    /// Order by <see cref="Core.Model.Priority"/>
+    /// Descending Order
     /// </summary>
-    Priority = 1,
+    Descending = 1,
 }
 
 /// <summary>
-/// <see cref="IssueSortBy"/> extension methods
+/// <see cref="SortDirection"/> extension methods
 /// </summary>
-public static class IssueSortByExtensions
+public static class SortDirectionExtensions
 {
     /// <summary>
-    /// convert <paramref name="value"/> to <see cref="Issue.SortBy"/>
+    /// Convert <paramref name="value"/> to <see cref="Core.Model.SortDirection"/>
     /// </summary>
-    public static Issue.SortBy ToModel(this IssueSortBy value)
+    public static Core.Model.SortDirection ToModel(this SortDirection value)
     {
-        return (Issue.SortBy)(int)value;
+        return (Core.Model.SortDirection)(int)value;
     }
 }

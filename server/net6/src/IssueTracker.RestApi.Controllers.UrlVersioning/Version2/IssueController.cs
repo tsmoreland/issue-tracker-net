@@ -15,7 +15,7 @@ using System.Net.Mime;
 using IssueTracker.RestApi.DataTransferObjects.Version2.Request;
 using IssueTracker.RestApi.DataTransferObjects.Version2.Response;
 using IssueTracker.Core.Requests;
-using IssueTracker.RestApi.DataTransferObjects.Version1.QueryParameters;
+using IssueTracker.RestApi.DataTransferObjects.Version2.QueryParameters;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
