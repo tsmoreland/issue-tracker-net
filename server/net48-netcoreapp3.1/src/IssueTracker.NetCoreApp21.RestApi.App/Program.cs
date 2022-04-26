@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Tcell.Agent.AspNetCore;
 
 namespace IssueTracker.NetCoreApp21.RestApi.App;
 
@@ -22,6 +23,7 @@ public class Program
 
     public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
         WebHost.CreateDefaultBuilder(args)
+            .UseTcellAgent(env => true) // usually !env.IsDevelopment(), but we want it for testing
             .UseKestrel(options => options.AddServerHeader = false)
             .UseStartup<Startup>();
 }

@@ -24,6 +24,7 @@
     <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Text.Encodings.Web" Version="4.7.2" />
+    <PackageReference Include="Tcell.Agent" Version="3.1.0" />
     
   </ItemGroup>
 
@@ -31,6 +32,7 @@
     <ProjectReference Include="..\IssueTracker.Core\IssueTracker.Core.csproj" />
     <ProjectReference Include="..\IssueTracker.EFCore21.Data\IssueTracker.EFCore21.Data.csproj" />
     <ProjectReference Include="..\IssueTracker.EFCore21.Services\IssueTracker.EFCore21.Services.csproj" />
+    <ProjectReference Include="..\IssueTracker.RestApi.Shared\IssueTracker.RestApi.Shared.csproj" />
   </ItemGroup>
 
 </Project>

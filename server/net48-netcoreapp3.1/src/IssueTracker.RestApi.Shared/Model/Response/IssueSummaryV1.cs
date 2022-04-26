@@ -12,81 +12,63 @@
 //
 
 using System.ComponentModel.DataAnnotations;
-using IssueTracker.Core.Model;
+using IssueTracker.Core.Projections;
 
-namespace IssueTracker.NetCoreApp21.RestApi.App.Model.Response;
+namespace IssueTracker.RestApi.Shared.Model.Response;
 
-public sealed class IssueV2 
+public class IssueSummaryV1
 {
-
-    public IssueV2(int id, string title, string description, Priority priority,  IssueType type)
+    /// <summary>
+    /// Instantiates a new instance of he IssueSummaryDto Class
+    /// </summary>
+    public IssueSummaryV1(int id, string title)
     {
         Id = id;
         Title = title;
-        Description = description;
-        Priority = priority;
-        Type = type;
     }
 
     /// <summary>
-    /// Instantiates a new instance of the <see cref="IssueDto"/> class.
+    /// Instantiates a new instance of he IssueSummaryDto Class
     /// </summary>
-    /// <remarks>
-    /// required for XML serialization, along with public setters
-    /// </remarks>
-    public IssueV2()
+    public IssueSummaryV1()
     {
         Id = 0;
         Title = string.Empty;
-        Description = string.Empty;
-        Priority = Priority.Low;
-        Type = IssueType.Defect;
+
     }
 
     /// <summary>
     /// Issue Id
     /// </summary>
-    /// <example>48</example>
+    /// <example>3C1152EC-DC0C-4AB0-8AF9-10DE5A9705D5</example>
     [Required]
-    public int Id { get; set; }
+    public int Id { get; set; } 
 
     /// <summary>
     /// Issue Title
     /// </summary>
     /// <example>Example Title</example>
     [Required]
-    public string Title { get; set; } 
+    public string Title { get; set; }
 
     /// <summary>
-    /// Issue Description
+    /// Converts service DTO to versioned API DTO, for latest version of API the class is expected to be equivalent
     /// </summary>
-    /// <example>Example Description</example>
-    [Required]
-    public string Description { get; set; }
-
-    /// <summary>
-    /// Issue Priority
-    /// </summary>
-    /// <example>Medium</example>
-    [Required]
-    public Priority Priority { get; set; }
-
-    /// <summary>
-    /// Issue Type
-    /// </summary>
-    [Required]
-    public IssueType Type { get; }
-
-
-    /// <summary>
-    /// Converts <see cref="Issue"/> to <see cref="IssueV1"/>
-    /// </summary>
-    /// <param name="model"></param>
-    /// <returns></returns>
-    public static IssueV2 From(Issue model)
+    public static IssueSummaryV1 FromProjection(IssueSummaryProjection model)
     {
-        return model is null
-            ? null
-            : new IssueV2(model.Id, model.Title, model.Description, model.Priority, model.Type);
+        (int id, string title, _, _) = model;
+        return new IssueSummaryV1(id, title);
+    }
+
+    /// <summary>
+    /// Converts an asynchronous collection of <see cref="IssueSummaryProjection"/> to
+    /// an asynchronous colleciton of <see cref="IssueSummaryDto"/>
+    /// </summary>
+    public static async Task<IReadOnlyList<IssueSummaryV1>> MapFrom(
+        Task<IReadOnlyList<IssueSummaryProjection>> sourceTask, CancellationToken cancellationToken)
+    {
+        IReadOnlyList<IssueSummaryProjection> source = await sourceTask;
+        cancellationToken.ThrowIfCancellationRequested();
+        return source.Select(FromProjection).ToList();
     }
 }

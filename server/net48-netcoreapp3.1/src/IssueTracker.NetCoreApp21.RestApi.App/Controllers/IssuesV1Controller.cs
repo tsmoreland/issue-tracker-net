@@ -19,8 +19,8 @@ using System.Threading.Tasks;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.Core.Requests;
-using IssueTracker.NetCoreApp21.RestApi.App.Model.Request;
-using IssueTracker.NetCoreApp21.RestApi.App.Model.Response;
+using IssueTracker.RestApi.Shared.Model.Request;
+using IssueTracker.RestApi.Shared.Model.Response;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -89,5 +89,26 @@ public class IssuesV1Controller : ControllerBase
 
 
         return IssueV1.From(issue);
+    }
+
+    /// <remarks>
+    /// continuing bad practice to demonstrate older style APIs (non-async/await)
+    /// while still using mediation to handle the request
+    /// </remarks>
+    [HttpPost]
+    public IssueV1 AddIssue([FromBody] AddIssueV1 model)
+    {
+        Issue issue = _mediator.Send(new CreateIssueRequest(model.ToModel()), CancellationToken.None).Result;
+
+        if (issue is not null)
+        {
+            Response.StatusCode = StatusCodes.Status201Created;
+            return IssueV1.From(issue);
+        }
+        else
+        {
+            Response.StatusCode = StatusCodes.Status400BadRequest;
+            return null;
+        }
     }
 }

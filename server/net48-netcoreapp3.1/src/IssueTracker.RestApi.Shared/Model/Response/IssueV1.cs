@@ -11,68 +11,75 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using IssueTracker.Core.Projections;
+using IssueTracker.Core.Model;
 
-namespace IssueTracker.NetCoreApp21.RestApi.App.Model.Response;
+namespace IssueTracker.RestApi.Shared.Model.Response;
 
-public class IssueSummaryV1
+public class IssueV1
 {
     /// <summary>
-    /// Instantiates a new instance of he IssueSummaryDto Class
+    /// Instantiates a new instance of the <see cref="IssueV1"/> class.
     /// </summary>
-    public IssueSummaryV1(int id, string title)
+    public IssueV1(int id, string title, string description, Priority priority)
     {
         Id = id;
         Title = title;
+        Description = description;
+        Priority = priority;
     }
 
     /// <summary>
-    /// Instantiates a new instance of he IssueSummaryDto Class
+    /// Instantiates a new instance of the <see cref="IssueDto"/> class.
     /// </summary>
-    public IssueSummaryV1()
+    /// <remarks>
+    /// required for XML serialization, along with public setters
+    /// </remarks>
+    public IssueV1()
     {
         Id = 0;
         Title = string.Empty;
-
+        Description = string.Empty;
+        Priority = Priority.Low;
     }
 
     /// <summary>
     /// Issue Id
     /// </summary>
-    /// <example>3C1152EC-DC0C-4AB0-8AF9-10DE5A9705D5</example>
+    /// <example>48</example>
     [Required]
-    public int Id { get; set; } 
+    public int Id { get; set; }
 
     /// <summary>
     /// Issue Title
     /// </summary>
     /// <example>Example Title</example>
     [Required]
-    public string Title { get; set; }
+    public string Title { get; set; } 
 
     /// <summary>
-    /// Converts service DTO to versioned API DTO, for latest version of API the class is expected to be equivalent
+    /// Issue Description
     /// </summary>
-    public static IssueSummaryV1 FromProjection(IssueSummaryProjection model)
-    {
-        (int id, string title, _, _) = model;
-        return new IssueSummaryV1(id, title);
-    }
+    /// <example>Example Description</example>
+    [Required]
+    public string Description { get; set; }
 
     /// <summary>
-    /// Converts an asynchronous collection of <see cref="IssueSummaryProjection"/> to
-    /// an asynchronous colleciton of <see cref="IssueSummaryDto"/>
+    /// Issue Priority
     /// </summary>
-    public static async Task<IReadOnlyList<IssueSummaryV1>> MapFrom(
-        Task<IReadOnlyList<IssueSummaryProjection>> sourceTask, CancellationToken cancellationToken)
+    /// <example>Medium</example>
+    [Required]
+    public Priority Priority { get; set; }
+
+    /// <summary>
+    /// Converts <see cref="Issue"/> to <see cref="IssueV1"/>
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    public static IssueV1 From(Issue model)
     {
-        IReadOnlyList<IssueSummaryProjection> source = await sourceTask;
-        cancellationToken.ThrowIfCancellationRequested();
-        return source.Select(FromProjection).ToList();
+        return model is null
+            ? null
+            : new IssueV1(model.Id, model.Title, model.Description, model.Priority);
     }
 }

@@ -11,30 +11,59 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace IssueTracker.NetCoreApp21.RestApi.App.Model.Request;
+using System.ComponentModel.DataAnnotations;
+using IssueTracker.Core.Model;
 
-public enum IssueSortBy
+namespace IssueTracker.RestApi.Shared.Model.Request;
+
+public sealed class AddIssueV1
 {
     /// <summary>
-    /// Order by title alphabetically
+    /// instantiates a new instance of the <see cref="AddIssueV1"/> class.
     /// </summary>
-    Title = 0,
-
-    /// <summary>
-    /// Order by <see cref="Core.Model.Priority"/>
-    /// </summary>
-    Priority = 1,
-
-    /// <summary>
-    /// Order by <see cref="Core.Model.IssueType"/>
-    /// </summary>
-    Type = 2,
-}
-
-public static class IssueSortByExtensions
-{
-    public static Core.Model.Issue.SortBy ToSortBy(this IssueSortBy sortBy)
+    public AddIssueV1(string title, string? description, Priority priority)
     {
-        return (Core.Model.Issue.SortBy)sortBy;
+        Title = title;
+        Description = description;
+        Priority = priority;
+    }
+
+    /// <summary>
+    /// instantiates a new instance of the <see cref="AddIssueV1"/> class.
+    /// </summary>
+    public AddIssueV1()
+    {
+        
+    }
+
+    /// <summary>
+    /// Issue Title
+    /// </summary>
+    /// <example>Example Title</example>
+    [Required]
+    [MaxLength(200)]
+    public string Title { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Issue Description
+    /// </summary>
+    /// <example>Example description</example>
+    [MaxLength(500)]
+    public string? Description { get; set; }
+
+    /// <summary>
+    /// Issue Priority
+    /// </summary>
+    /// <example>High</example>
+    [Required]
+    public Priority Priority { get; set; } = Priority.Low;
+
+    /// <summary>
+    /// Converts DTO to Model
+    /// </summary>
+    /// <returns>Model</returns>
+    public Issue ToModel()
+    {
+        return new Issue(Title, Description ?? string.Empty, Priority);
     }
 }

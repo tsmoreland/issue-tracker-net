@@ -13,7 +13,7 @@
 
 using IssueTracker.Core.Model;
 
-namespace IssueTracker.NetCoreApp21.RestApi.App.Model.Request;
+namespace IssueTracker.RestApi.Shared.Model.Request;
 
 public enum SortDir
 {

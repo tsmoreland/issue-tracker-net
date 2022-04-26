@@ -14,19 +14,18 @@
 using System.ComponentModel.DataAnnotations;
 using IssueTracker.Core.Model;
 
-namespace IssueTracker.NetCoreApp21.RestApi.App.Model.Response;
+namespace IssueTracker.RestApi.Shared.Model.Response;
 
-public class IssueV1
+public sealed class IssueV2 
 {
-    /// <summary>
-    /// Instantiates a new instance of the <see cref="IssueV1"/> class.
-    /// </summary>
-    public IssueV1(int id, string title, string description, Priority priority)
+
+    public IssueV2(int id, string title, string description, Priority priority,  IssueType type)
     {
         Id = id;
         Title = title;
         Description = description;
         Priority = priority;
+        Type = type;
     }
 
     /// <summary>
@@ -35,12 +34,13 @@ public class IssueV1
     /// <remarks>
     /// required for XML serialization, along with public setters
     /// </remarks>
-    public IssueV1()
+    public IssueV2()
     {
         Id = 0;
         Title = string.Empty;
         Description = string.Empty;
         Priority = Priority.Low;
+        Type = IssueType.Defect;
     }
 
     /// <summary>
@@ -72,14 +72,21 @@ public class IssueV1
     public Priority Priority { get; set; }
 
     /// <summary>
+    /// Issue Type
+    /// </summary>
+    [Required]
+    public IssueType Type { get; }
+
+
+    /// <summary>
     /// Converts <see cref="Issue"/> to <see cref="IssueV1"/>
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
-    public static IssueV1 From(Issue model)
+    public static IssueV2 From(Issue model)
     {
         return model is null
             ? null
-            : new IssueV1(model.Id, model.Title, model.Description, model.Priority);
+            : new IssueV2(model.Id, model.Title, model.Description, model.Priority, model.Type);
     }
 }
