@@ -12,10 +12,10 @@
 //
 
 using System.Net.Mime;
-using IssueTracker.RestApi.DataTransferObjects.Version1.Request;
-using IssueTracker.RestApi.DataTransferObjects.Version1.Response;
 using IssueTracker.Core.Requests;
 using IssueTracker.RestApi.DataTransferObjects.Version1.QueryParameters;
+using IssueTracker.RestApi.DataTransferObjects.Version1.Request;
+using IssueTracker.RestApi.DataTransferObjects.Version1.Response;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -24,7 +24,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using static IssueTracker.RestApi.Controllers.Shared.Validation.PagingValidation;
 using SortDirection = IssueTracker.RestApi.DataTransferObjects.Version1.QueryParameters.SortDirection;
 
-namespace IssueTracker.RestApi.Controllers.UrlVersioning.Version1;
+namespace IssueTracker.RestApi.Controllers.Version1;
 
 /// <summary>
 /// Issue Controller
