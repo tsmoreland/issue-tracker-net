@@ -57,7 +57,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GraphQL", "GraphQL", "{7C59
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.GraphQl.App", "src\IssueTracker.GraphQl.App\IssueTracker.GraphQl.App.csproj", "{5559C5E9-7591-4AE0-828D-323D52EB3FDB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Core.Test", "test\IssueTracker.Core.Test\IssueTracker.Core.Test.csproj", "{ECF60E3D-D8F0-4A21-84FE-BAB8D0CD8E2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Core.Test", "test\IssueTracker.Core.Test\IssueTracker.Core.Test.csproj", "{ECF60E3D-D8F0-4A21-84FE-BAB8D0CD8E2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

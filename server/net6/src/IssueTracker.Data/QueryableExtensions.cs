@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Linq.Expressions;
 using IssueTracker.Core.Model;
 
 namespace IssueTracker.Data;
@@ -24,19 +25,19 @@ internal static class QueryableExtensions
     {
         return direction switch
         {
-            SortDirection.Descending => sortBy switch
-            {
-                Issue.SortBy.Title => query.OrderByDescending(i => i.Title),
-                Issue.SortBy.Priority => query.OrderByDescending(i => i.Priority),
-                Issue.SortBy.Type => query.OrderByDescending(i => i.Type),
-                _ => query.OrderByDescending(i => i.Title)
-            },
-            /* Ascending */ _ => sortBy switch
-            {
-                Issue.SortBy.Priority => query.OrderBy(i => i.Priority),
-                Issue.SortBy.Type => query.OrderBy(i => i.Type),
-                /* Title */_ => query.OrderBy(i => i.Title)
-            }
+            SortDirection.Descending => query.OrderBy(GetFilter(sortBy)),
+            _ => query.OrderByDescending(GetFilter(sortBy)),
+        };
+    }
+
+    private static Expression<Func<Issue, object?>> GetFilter(Issue.SortBy sortBy)
+    {
+        return sortBy switch
+        {
+            Issue.SortBy.Title => issue => (object?) issue.Title,
+            Issue.SortBy.Priority => issue => (object?) issue.Priority,
+            Issue.SortBy.Type => issue => (object?) issue.Type,
+            _ => issue => (object?) issue.Title,
         };
     }
 }
