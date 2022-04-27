@@ -12,6 +12,7 @@
 //
 
 using IssueTracker.Core;
+using IssueTracker.Data.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

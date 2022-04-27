@@ -17,6 +17,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
+using IssueTracker.Data.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace IssueTracker.EFCore21.Data;

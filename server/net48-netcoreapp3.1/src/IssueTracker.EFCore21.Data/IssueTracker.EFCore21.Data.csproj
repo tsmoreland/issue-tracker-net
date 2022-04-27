@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\IssueTracker.Core\IssueTracker.Core.csproj" />
+    <ProjectReference Include="..\IssueTracker.Data.Abstractions\IssueTracker.Data.Abstractions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

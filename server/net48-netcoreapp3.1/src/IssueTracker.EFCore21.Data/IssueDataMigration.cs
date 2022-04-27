@@ -13,6 +13,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using IssueTracker.Data.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace IssueTracker.EFCore21.Data;
