@@ -14,25 +14,31 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using IssueTracker.Core.Model;
 using IssueTracker.Core.Requests;
-using IssueTracker.EFCore21.Data;
+using IssueTracker.Data.Abstractions;
 using MediatR;
 
-namespace IssueTracker.EFCore21.Services;
+namespace IssueTracker.Services.Handlers;
 
-public sealed class FindIssueByIdRequestHandler : IRequestHandler<FindIssueByIdRequest, Issue>
+public sealed class DeleteIssueRequestHandler : IRequestHandler<DeleteIssueRequest, bool>
 {
     private readonly IIssueRepository _repository;
 
-    public FindIssueByIdRequestHandler(IIssueRepository repository)
+    public DeleteIssueRequestHandler(IIssueRepository repository)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
     /// <inheritdoc />
-    public Task<Issue> Handle(FindIssueByIdRequest request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(DeleteIssueRequest request, CancellationToken cancellationToken)
     {
-        return _repository.GetIssueById(request.Id, cancellationToken);
+        int id = request.Id;
+        if (!await _repository.DeleteIssueById(id, cancellationToken))
+        {
+            return false;
+        }
+
+        await _repository.CommitAsync(cancellationToken);
+        return true;
     }
 }

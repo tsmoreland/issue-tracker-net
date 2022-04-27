@@ -18,10 +18,10 @@ using System.Threading.Tasks;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.Core.Requests;
-using IssueTracker.EFCore21.Data;
+using IssueTracker.Data.Abstractions;
 using MediatR;
 
-namespace IssueTracker.EFCore21.Services;
+namespace IssueTracker.Services.Handlers;
 
 public sealed class GetPagedAndSortedIssueSummariesRequestHandler : IRequestHandler<GetPagedAndSortedIssueSummariesRequest, IReadOnlyList<IssueSummaryProjection>> 
 {

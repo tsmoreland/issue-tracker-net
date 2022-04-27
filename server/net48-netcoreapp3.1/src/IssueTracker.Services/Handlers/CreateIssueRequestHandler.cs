@@ -11,20 +11,33 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Core;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using IssueTracker.Core.Model;
+using IssueTracker.Core.Requests;
+using IssueTracker.Data.Abstractions;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace IssueTracker.EFCore21.Services;
+namespace IssueTracker.Services.Handlers;
 
-public static class ServiceCollectionExtensions
+public sealed class CreateIssueRequestHandler : IRequestHandler<CreateIssueRequest, Issue>
 {
-    public static IServiceCollection AddRequestHandlers(this IServiceCollection services)
+    private readonly IIssueRepository _repository;
+
+    public CreateIssueRequestHandler(IIssueRepository repository)
     {
-        ArgumentGuard.ThrowIfNull(services, nameof(services));
+        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+    }
 
-        services.AddMediatR(typeof(GetPagedAndSortedIssueSummariesRequestHandler).Assembly);
+    /// <inheritdoc />
+    public async Task<Issue> Handle(CreateIssueRequest request, CancellationToken cancellationToken)
+    {
+        Issue model = request.Model;
+        Issue updatedModel = await _repository.AddIssue(model, cancellationToken);
 
-        return services;
+        await _repository.CommitAsync(cancellationToken);
+
+        return updatedModel;
     }
 }
