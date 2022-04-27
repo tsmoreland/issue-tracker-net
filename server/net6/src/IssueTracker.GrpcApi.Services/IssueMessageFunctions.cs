@@ -12,50 +12,99 @@
 //
 
 using IssueTracker.Core.Model;
+using IssueTracker.Core.ValueObjects;
 using IssueTracker.GrpcApi.Grpc.Services;
 
 namespace IssueTracker.GrpcApi.Services;
 
-internal static class IssueMessageFactory
+internal static class IssueMessageFunctions
 {
+    private static readonly UserMessage s_userFlyweight = new()
+    {
+        Id = User.Unassigned.Id.ToString(),
+        FullName = User.Unassigned.FullName,
+    };
 
     private static readonly IssueMessage s_flyweight = new ()
     {
-        Id = Guid.Empty.ToString(), Title = string.Empty, Description = string.Empty, Priority = (int)Priority.Low,
+        Id = Guid.Empty.ToString(),
+        Title = string.Empty,
+        Description = string.Empty,
+        Priority = (int)Priority.Low,
+        Type = (int)IssueType.Defect,
+        Assignee = s_userFlyweight,
+        Reporter = s_userFlyweight,
     };
 
     public static IssueMessage InvalidArgument()
     {
         return new IssueMessage
         {
+            Status = ResultCode.InvalidArgument,
             Id = s_flyweight.Id,
             Title = s_flyweight.Title,
             Description = s_flyweight.Description,
             Priority = s_flyweight.Priority,
-            Status = ResultCode.InvalidArgument,
+            Type = s_flyweight.Type,
         };
     }
     public static IssueMessage NotFound()
     {
         return new IssueMessage
         {
+            Status = ResultCode.NotFound,
             Id = s_flyweight.Id,
             Title = s_flyweight.Title,
             Description = s_flyweight.Description,
             Priority = s_flyweight.Priority,
-            Status = ResultCode.NotFound,
+            Type = s_flyweight.Type,
+            Assignee = s_userFlyweight,
+            Reporter = s_userFlyweight,
         };
     }
 
-    public static IssueMessage FromIssue(Issue issue)
+    public static UserMessage ToMessage(this User user)
+    {
+        return new UserMessage { Id = user.Id.ToString(), FullName = user.FullName };
+    }
+
+    public static IssueMessage ToMessage(this Issue issue)
     {
         return new IssueMessage
         {
+            Status = ResultCode.Success,
             Id = issue.Id.ToString(),
             Title = issue.Title,
             Description = issue.Description,
             Priority = (int)issue.Priority,
-            Status = ResultCode.Success
+            Type = (int)issue.Type,
+            Assignee = issue.Assignee.ToMessage(),
+            Reporter = issue.Reporter.ToMessage(),
         };
+    }
+
+    public static User ToUser(this UserMessage message)
+    {
+        return new User(Guid.Parse(message.Id), message.FullName);
+    }
+
+    public static Issue ToIssue(this AddIssueMessage message)
+    {
+        return new Issue(
+            message.Title,
+            message.Description,
+            (Priority)message.Priority,
+            (IssueType)message.Type,
+            message.Assignee.ToUser(),
+            message.Reporter.ToUser());
+    }
+    public static void UpdateIssue(this EditIssueMessage message, Issue issue)
+    {
+        issue.SetTitle(message.Title);
+        issue.SetDescription(message.Description);
+        issue.SetPriority((Priority)message.Priority);
+        issue.SetIssueType((IssueType)message.Type);
+        issue.SetAssignee(message.Assignee.ToUser());
+        issue.SetReporter(message.Reporter.ToUser());
     }
 }

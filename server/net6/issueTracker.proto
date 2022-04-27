@@ -52,32 +52,46 @@ message IssueSummaryMessage {
 }
 
 message IssueSummariesMessage {
-    repeated IssueSummaryMessage Summaries = 1;
-    ResultCode Status = 2;
+    ResultCode Status = 1;
+    repeated IssueSummaryMessage Summaries = 2;
 }
 
 message IssueByIdQueryMessage {
     string Id = 1;
 }
 
+message UserMessage {
+    string Id = 1;   
+    string FullName = 2;
+}
+
 message IssueMessage {
-    string Id = 1;
-    string Title = 2;
-    string Description = 3;
-    int32 Priority = 4;
-    ResultCode Status = 5;
+    ResultCode Status = 1;
+    string Id = 2;
+    string Title = 3;
+    string Description = 4;
+    int32 Priority = 5;
+    int32 Type = 6;
+    UserMessage Assignee = 7;
+    UserMessage Reporter = 8;
 }
 
 message AddIssueMessage {
     string Title = 1;
     string Description = 2;
-    string Priority = 3;
+    int32 Priority = 3;
+    int32 Type = 4;
+    UserMessage Assignee = 5;
+    UserMessage Reporter = 6;
 }
 
 message EditIssueMessage {
     string Id = 1;
     string Title = 2;
     string Description = 3;
-    string Priority = 4;
+    int32 Priority = 4;
+    int32 Type = 5;
+    UserMessage Assignee = 6;
+    UserMessage Reporter = 7;
 }
 

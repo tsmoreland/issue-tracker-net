@@ -11,7 +11,6 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Linq;
 using Grpc.Core;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
@@ -42,13 +41,13 @@ public sealed class IssueService : IssueTrackerServiceBase
     {
         if (!Guid.TryParse(request.Id, out Guid id))
         {
-            return IssueMessageFactory.InvalidArgument();
+            return IssueMessageFunctions.InvalidArgument();
         }
 
         Issue? issue = await _mediator.Send(new FindIssueByIdRequest(id), context.CancellationToken);
         return issue is not null
-            ? IssueMessageFactory.FromIssue(issue)
-            : IssueMessageFactory.NotFound(); 
+            ? issue.ToMessage()
+            : IssueMessageFunctions.NotFound(); 
     }
 
     /// <inheritdoc/>
