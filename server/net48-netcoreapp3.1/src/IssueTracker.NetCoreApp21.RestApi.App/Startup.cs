@@ -1,6 +1,6 @@
 using System;
 using IssueTracker.EFCore21.Data;
-using IssueTracker.EFCore21.Services;
+using IssueTracker.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

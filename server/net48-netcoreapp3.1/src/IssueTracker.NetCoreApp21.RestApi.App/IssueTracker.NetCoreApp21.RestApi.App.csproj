@@ -25,7 +25,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.1" />
     <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="4.7.0" />
     <PackageReference Include="System.Text.Encodings.Web" Version="4.7.2" />
     <PackageReference Include="Tcell.Agent" Version="3.1.0" />
     
@@ -35,13 +34,14 @@
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel.Core" Version="2.1.25" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel.Transport.Abstractions" Version="2.1.3" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel.Transport.Libuv" Version="2.1.3" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\IssueTracker.Core\IssueTracker.Core.csproj" />
     <ProjectReference Include="..\IssueTracker.EFCore21.Data\IssueTracker.EFCore21.Data.csproj" />
-    <ProjectReference Include="..\IssueTracker.EFCore21.Services\IssueTracker.EFCore21.Services.csproj" />
     <ProjectReference Include="..\IssueTracker.RestApi.Shared\IssueTracker.RestApi.Shared.csproj" />
+    <ProjectReference Include="..\IssueTracker.Services\IssueTracker.Services.csproj" />
   </ItemGroup>
 
 </Project>

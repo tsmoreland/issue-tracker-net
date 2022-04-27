@@ -1,4 +1,4 @@
-﻿using IssueTracker.EFCore21.Data;
+﻿using IssueTracker.Data.Abstractions;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
