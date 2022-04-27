@@ -27,4 +27,10 @@ public sealed class EditIssueRequest : IRequest<Issue>
 
     public int Id { get; }
     public Action<Issue> Visitor { get; }
+
+    public void Deconstruct(out int id, out Action<Issue> visitor)
+    {
+        id = Id;
+        visitor = Visitor;
+    }
 }
