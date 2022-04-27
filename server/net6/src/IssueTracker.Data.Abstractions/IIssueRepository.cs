@@ -13,6 +13,7 @@
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.Core.Views;
+using IssueTracker.Data.Abstractions.Specifications;
 
 namespace IssueTracker.Data.Abstractions;
 
@@ -28,6 +29,18 @@ public interface IIssueRepository
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all issues</returns>
     IAsyncEnumerable<IssueSummaryProjection> GetIssueSummaries(int pageNumber, int pageSize, Issue.SortBy sortBy, SortDirection direction, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Returns all issues 
+    /// </summary>
+    /// <param name="pageNumber" example="1" >current page number to return</param>
+    /// <param name="pageSize" example="10">maximum number of items to return</param>
+    /// <param name="sortBy">property to sort on</param>
+    /// <param name="direction">sort direction</param>
+    /// <param name="filters"><see cref="IEnumerable{WhereClauseSpecification}"/> used to filter results </param>
+    /// <param name="cancellationToken">a cancellation token.</param>
+    /// <returns>filtered issues</returns>
+    IAsyncEnumerable<IssueSummaryProjection> GetFilteredIssueSummaries(IEnumerable<WhereClauseSpecification> filters, int pageNumber, int pageSize, Issue.SortBy sortBy, SortDirection direction,  CancellationToken cancellationToken);
 
     /// <summary>
     /// Returns all issues without paging 

@@ -16,6 +16,7 @@ using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.Core.Views;
 using IssueTracker.Data.Abstractions;
+using IssueTracker.Data.Abstractions.Specifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace IssueTracker.Data;
@@ -39,6 +40,31 @@ public sealed class IssueRepository : IIssueRepository
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .AsAsyncEnumerable();
+        await foreach (IssueSummaryProjection issue in issues.WithCancellation(cancellationToken))
+        {
+            yield return issue;
+        }
+    }
+
+    /// <inheritdoc />
+    public async IAsyncEnumerable<IssueSummaryProjection> GetFilteredIssueSummaries(
+        IEnumerable<WhereClauseSpecification> filters,
+        int pageNumber, int pageSize,
+        Issue.SortBy sortBy,
+        SortDirection direction,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
+    {
+        IQueryable<Issue> query = _dbContext.Issues
+            .AsNoTracking();
+
+        IAsyncEnumerable<IssueSummaryProjection> issues = filters
+            .Aggregate(query, (current, specification) => current.Where(specification.Filter))
+            .Sort(sortBy, direction)
+            .Select(i => new IssueSummaryProjection(i.Id, i.Title, i.Priority, i.Type))
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .AsAsyncEnumerable();
+
         await foreach (IssueSummaryProjection issue in issues.WithCancellation(cancellationToken))
         {
             yield return issue;
