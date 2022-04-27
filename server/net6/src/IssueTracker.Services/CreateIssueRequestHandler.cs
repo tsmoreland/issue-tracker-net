@@ -31,13 +31,13 @@ public sealed class CreateIssueRequestHandler : IRequestHandler<CreateIssueReque
     public Task<Issue> Handle(CreateIssueRequest request, CancellationToken cancellationToken)
     {
         return _repository.AddIssue(request.Model, cancellationToken)
-            .ContinueWith(t =>
+            .ContinueWith(addTask =>
             {
-                Issue issue = t.Result;
+                Issue issue = addTask.Result;
                 return _repository
                     .CommitAsync(cancellationToken)
-                    .ContinueWith(_ => issue, TaskContinuationOptions.OnlyOnRanToCompletion);
-            }, TaskContinuationOptions.OnlyOnRanToCompletion)
+                    .ContinueWith(_ => issue, cancellationToken, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
+            }, cancellationToken, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default)
             .Unwrap();
     }
 }

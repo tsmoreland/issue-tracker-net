@@ -29,6 +29,19 @@ public sealed class DeleteIssueRequestHandler : IRequestHandler<DeleteIssueReque
     /// <inheritdoc />
     public Task<bool> Handle(DeleteIssueRequest request, CancellationToken cancellationToken)
     {
-        return _repository.DeleteIssueById(request.Id, cancellationToken);
+        return _repository.DeleteIssueById(request.Id, cancellationToken)
+            .ContinueWith(deleteTask =>
+            {
+                if (!deleteTask.Result)
+                {
+                    return Task.FromResult(false);
+                }
+
+                return _repository
+                    .CommitAsync(cancellationToken)
+                    .ContinueWith(_ => true, cancellationToken, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
+
+            }, cancellationToken, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default)
+            .Unwrap();
     }
 }
