@@ -14,9 +14,9 @@
 using System.Runtime.CompilerServices;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
+using IssueTracker.Core.Specifications;
 using IssueTracker.Core.Views;
 using IssueTracker.Data.Abstractions;
-using IssueTracker.Data.Abstractions.Specifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace IssueTracker.Data;

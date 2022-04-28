@@ -12,8 +12,8 @@
 
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
+using IssueTracker.Core.Specifications;
 using IssueTracker.Core.Views;
-using IssueTracker.Data.Abstractions.Specifications;
 
 namespace IssueTracker.Data.Abstractions;
 
