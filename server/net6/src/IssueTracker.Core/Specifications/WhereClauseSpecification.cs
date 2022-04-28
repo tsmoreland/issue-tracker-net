@@ -14,7 +14,7 @@
 using System.Linq.Expressions;
 using IssueTracker.Core.Model;
 
-namespace IssueTracker.Data.Abstractions.Specifications;
+namespace IssueTracker.Core.Specifications;
 
 public abstract class WhereClauseSpecification
 {
