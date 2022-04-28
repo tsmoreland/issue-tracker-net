@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using static IssueTracker.RestApi.Controllers.Shared.Validation.PagingValidation;
+using SortDirection = IssueTracker.RestApi.DataTransferObjects.Version2.QueryParameters.SortDirection;
 
 namespace IssueTracker.RestApi.Controllers.Version2;
 
