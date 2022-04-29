@@ -43,6 +43,6 @@ public sealed class IssueQuery : ObjectGraphType<object>
 
         return await repository
             .GetIssues(cancellationToken)
-            .ToListAsync(cancellationToken);
+            .ToHashSetAsync(cancellationToken);
     }
 }

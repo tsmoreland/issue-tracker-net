@@ -43,9 +43,9 @@ internal static class ControllerBaseExtensions
             orderBy.ToModel(),
             direction.ToModel());
 
-        List<IssueSummaryDto> summary = await IssueSummaryDto
+        HashSet<IssueSummaryDto> summary = await IssueSummaryDto
             .MapFrom(await mediator.Send(request, cancellationToken), cancellationToken)
-            .ToListAsync(cancellationToken);
+            .ToHashSetAsync(cancellationToken);
 
         return ValidatePaging(controller.ModelState, pageNumber, pageSize)
             ? controller.Ok(summary)

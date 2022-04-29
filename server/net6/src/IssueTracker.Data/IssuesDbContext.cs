@@ -17,6 +17,8 @@ using IssueTracker.Core.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace IssueTracker.Data;
 
@@ -26,14 +28,24 @@ namespace IssueTracker.Data;
 public sealed class IssuesDbContext : DbContext
 {
     private readonly IConfiguration _configuration;
+    private readonly IHostEnvironment _environment;
+    private readonly ILogger<IssuesDbContext> _logger;
 
     /// <summary>
     /// Instantiates a new instance of the <see cref="IssuesDbContext"/> class.
     /// </summary>
-    public IssuesDbContext(DbContextOptions<IssuesDbContext> dbContextOptions, IConfiguration configuration)
+    public IssuesDbContext(
+        DbContextOptions<IssuesDbContext> dbContextOptions,
+        IConfiguration configuration,
+        IHostEnvironment environment,
+        ILoggerFactory loggerFactory)
         : base(dbContextOptions)
     {
-        _configuration = configuration;
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        _environment = environment ?? throw new ArgumentNullException(nameof(environment));
+
+        ArgumentNullException.ThrowIfNull(loggerFactory, nameof(loggerFactory));
+        _logger = loggerFactory.CreateLogger<IssuesDbContext>();
     }
 
     /// <summary>
@@ -58,7 +70,9 @@ public sealed class IssuesDbContext : DbContext
         optionsBuilder
             .UseSqlite(
                 connectionString,
-                options => options.MigrationsAssembly(typeof(IssuesDbContext).Assembly.FullName));
+                options => options.MigrationsAssembly(typeof(IssuesDbContext).Assembly.FullName))
+            .LogTo(message => _logger.LogInformation("{SQL}", message))
+            .EnableSensitiveDataLogging(_environment.IsDevelopment());
 
         base.OnConfiguring(optionsBuilder);
     }

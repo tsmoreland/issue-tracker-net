@@ -22,8 +22,8 @@ namespace IssueTracker.Core.Model;
 /// <param name="Id"></param>
 public sealed record class Issue(Guid Id)
 {
-    private IList<LinkedIssue> ParentIssueEntities { get; init; } = new List<LinkedIssue>();
-    private IList<LinkedIssue> ChildIssueEntities { get; init; } = new List<LinkedIssue>();
+    private ICollection<LinkedIssue> ParentIssueEntities { get; init; } = new HashSet<LinkedIssue>();
+    private ICollection<LinkedIssue> ChildIssueEntities { get; init; } = new HashSet<LinkedIssue>();
 
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>
@@ -78,8 +78,8 @@ public sealed record class Issue(Guid Id)
         Type = type;
         LastUpdated = lastUpdated;
         ConcurrencyToken = concurrencyToken;
-        ParentIssueEntities = parentIssueEntities.ToList();
-        ChildIssueEntities = childIssueEntities.ToList();
+        ParentIssueEntities = parentIssueEntities.ToHashSet();
+        ChildIssueEntities = childIssueEntities.ToHashSet();
         Assignee = assignee;
         Reporter = reporter;
     }

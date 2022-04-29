@@ -50,15 +50,15 @@ public sealed class IssueModelType : ObjectGraphType<Issue>
         CancellationToken cancellationToken)
     {
         return repository is not null
-            ? await repository.GetParentIssues(id, cancellationToken).ToListAsync(cancellationToken)
-            : new List<LinkedIssueView>();
+            ? await repository.GetParentIssues(id, cancellationToken).ToHashSetAsync(cancellationToken)
+            : new HashSet<LinkedIssueView>();
     }
 
     internal static async Task<object?> ResolveIssueChildren(Guid id, IIssueRepository? repository,
         CancellationToken cancellationToken)
     {
         return repository is not null
-            ? await repository.GetChildIssues(id, cancellationToken).ToListAsync(cancellationToken)
-            : new List<LinkedIssueView>();
+            ? await repository.GetChildIssues(id, cancellationToken).ToHashSetAsync(cancellationToken)
+            : new HashSet<LinkedIssueView>();
     }
 }

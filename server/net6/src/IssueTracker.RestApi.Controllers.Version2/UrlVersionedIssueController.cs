@@ -68,9 +68,9 @@ public sealed class UrlVersionedIssueController : ControllerBase
     {
         GetPagedAndSortedIssueSummariesRequest request = new(pageNumber, pageSize, orderBy.ToModel(), direction.ToModel());
 
-        List<IssueSummaryDto> summary = await IssueSummaryDto
+        HashSet<IssueSummaryDto> summary = await IssueSummaryDto
             .MapFrom(await _mediator.Send(request, cancellationToken), cancellationToken)
-            .ToListAsync(cancellationToken);
+            .ToHashSetAsync(cancellationToken);
 
         return ValidatePaging(ModelState, pageNumber, pageSize)
             ? Ok(summary)

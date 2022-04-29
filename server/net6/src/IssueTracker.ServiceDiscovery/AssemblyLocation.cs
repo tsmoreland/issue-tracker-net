@@ -38,14 +38,14 @@ internal record struct AssemblyLocation(Assembly Assembly, string Folder, string
             .Union(new [] { Assembly.GetName() })
             .ToImmutableArray();
 
-        List<AssemblyName> assemblyNames = GetRelatedAssemblyFilenames(rootNamespace)
+        HashSet<Assembly> assemblies = GetRelatedAssemblyFilenames(rootNamespace)
             .Select(AssemblyName.GetAssemblyName)
             .Where(asm => referencedAssemblyNames.DoesNotContain(asm))
-            .ToList();
-        assemblyNames.ForEach(asm => Assembly.Load(asm));
-
-        return assemblyNames
             .Select(Assembly.Load)
+            .ToHashSet();
+
+
+        return assemblies
             .Where(ContainsType<T>);
     }
 

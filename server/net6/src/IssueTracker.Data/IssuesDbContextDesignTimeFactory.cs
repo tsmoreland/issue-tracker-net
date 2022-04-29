@@ -14,6 +14,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace IssueTracker.Data;
 
@@ -33,6 +36,23 @@ public sealed class IssuesDbContextDesignTimeFactory : IDesignTimeDbContextFacto
 
         return new IssuesDbContext(
             optionsBuilder.Options,
-            new ConfigurationBuilder().Build());
+            new ConfigurationBuilder().Build(),
+            new DesignTimeEnvironment(),
+            new LoggerFactory());
+    }
+
+    private sealed class DesignTimeEnvironment : IHostEnvironment
+    {
+        /// <inheritdoc />
+        public string ApplicationName { get; set; } = string.Empty;
+
+        /// <inheritdoc />
+        public IFileProvider ContentRootFileProvider { get; set; } = null!;
+
+        /// <inheritdoc />
+        public string ContentRootPath { get; set; } = string.Empty;
+
+        /// <inheritdoc />
+        public string EnvironmentName { get; set; } = "DesignTime";
     }
 }
