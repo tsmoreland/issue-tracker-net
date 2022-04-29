@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using InstallerTracker.Swashbuckle.Extensions;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.Core.Requests;
@@ -27,9 +28,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IssueTracker.NetCoreApp21.RestApi.App.Controllers;
 
-[ApiVersion("2")]
 [Route("api/v{version:apiVersion}/issues")]
 [ApiController]
+[TrimVersionFromSwagger]
+[ApiVersion("2")]
 public sealed class IssuesV2Controller : ControllerBase
 {
     private readonly IMediator _mediator;

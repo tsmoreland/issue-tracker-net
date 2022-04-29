@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using InstallerTracker.Swashbuckle.Extensions;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.Core.Requests;
@@ -27,9 +28,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IssueTracker.NetCoreApp21.RestApi.App.Controllers;
 
-[ApiVersion("1")]
-[Route("api/v{version:apiVersion}/issues")]
+[Route("api/v{version:apiVersion}/issuesV1")] // temporarily change endpoint due to swashbuckle problem - can't handle 2 routes with same path
 [ApiController]
+[TrimVersionFromSwagger]
+[ApiVersion("1")]
 public class IssuesV1Controller : ControllerBase
 {
     private readonly IMediator _mediator;

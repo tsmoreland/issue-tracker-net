@@ -38,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\InstallerTracker.Swashbuckle.Extensions\InstallerTracker.Swashbuckle.Extensions.csproj" />
     <ProjectReference Include="..\IssueTracker.Core\IssueTracker.Core.csproj" />
     <ProjectReference Include="..\IssueTracker.EFCore21.Data\IssueTracker.EFCore21.Data.csproj" />
     <ProjectReference Include="..\IssueTracker.RestApi.Shared\IssueTracker.RestApi.Shared.csproj" />
