@@ -24,35 +24,36 @@ using SortDirection = IssueTracker.RestApi.DataTransferObjects.Version2.QueryPar
 
 namespace IssueTracker.RestApi.Controllers.Version2;
 
+
 /// <summary>
-/// Defects controller (v2)
+/// Stories controller (v2)
 /// </summary>
 [ApiController]
-[Route("api/v{version:apiVersion}/defects")]
+[Route("api/v{version:apiVersion}/stories")]
 [TrimVersionFromSwagger]
-[Tags("Defects")]
+[Tags("Stories")]
 [ApiVersion("2")]
-public sealed class UrlVersionedDefectsController : ControllerBase
+public sealed class UrlVersionedStoriesController : ControllerBase
 {
     private readonly IMediator _mediator;
 
     /// <summary>
-    /// Instantiates a new instance of the <see cref="UrlVersionedDefectsController"/> class.
+    /// Instantiates a new instance of the <see cref="UrlVersionedStoriesController"/> class.
     /// </summary>
-    public UrlVersionedDefectsController(IMediator mediator)
+    public UrlVersionedStoriesController(IMediator mediator)
     {
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }
 
     /// <summary>
-    /// returns a summary of all issues with type Defect
+    /// returns a summary of all issues with type Story
     /// </summary>
     /// <param name="pageNumber" example="1" >current page number to return</param>
     /// <param name="pageSize" example="10">maximum number of items to return</param>
     /// <param name="orderBy">property to order results by</param>
     /// <param name="direction">direction to order results by</param>
     /// <param name="cancellationToken">a cancellation token.</param>
-    /// <returns>all issues with type <see cref="IssueType.Defect"/></returns>
+    /// <returns>all issues with type <see cref="IssueType.Epic"/></returns>
     [HttpGet]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
@@ -60,7 +61,7 @@ public sealed class UrlVersionedDefectsController : ControllerBase
         MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails),
         "application/problem+json", "application/problem+xml")]
-    public Task<IActionResult> GetAllDefects(
+    public Task<IActionResult> GetAllStories(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] IssueSortBy orderBy = IssueSortBy.Title,
@@ -70,7 +71,7 @@ public sealed class UrlVersionedDefectsController : ControllerBase
         // extension method so 'this' is required
         return this.GetAllWithIssueType(
             _mediator,
-            IssueType.Defect,
+            IssueType.Story,
             pageNumber,
             pageSize,
             orderBy,
