@@ -27,8 +27,9 @@ public sealed class AddIssueDto
     /// <summary>
     /// instantiates a new instance of the <see cref="AddIssueDto"/> class.
     /// </summary>
-    public AddIssueDto(string title, string? description, Priority priority, IssueType type)
+    public AddIssueDto(string project, string title, string? description, Priority priority, IssueType type)
     {
+        Project = project;
         Title = title;
         Description = description;
         Priority = priority;
@@ -42,6 +43,12 @@ public sealed class AddIssueDto
     {
         // required for serialization
     }
+
+    /// <summary>
+    /// Project Identifier
+    /// </summary>
+    /// <example>APP</example>
+    public string Project { get; init; } = string.Empty;
 
     /// <summary>
     /// Issue Title
@@ -77,6 +84,6 @@ public sealed class AddIssueDto
     /// <returns>Model</returns>
     public Issue ToModel()
     {
-        return new Issue(Title, Description ?? string.Empty, Priority, Type, User.Unassigned, User.Unassigned);
+        return new Issue(Project, Title, Description ?? string.Empty, Priority, Type, User.Unassigned, User.Unassigned);
     }
 }

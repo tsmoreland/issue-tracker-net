@@ -15,6 +15,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
+using IssueTracker.Core.ValueObjects;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
 namespace IssueTracker.RestApi.DataTransferObjects.Version2.Response;
@@ -28,7 +29,7 @@ public sealed class LinkedIssueSummaryDto
     /// <summary>
     /// Instantiates a new instance of he IssueSummaryDto Class
     /// </summary>
-    public LinkedIssueSummaryDto(Guid id, string title, Priority priority, IssueType issueType, LinkType linkType)
+    public LinkedIssueSummaryDto(string id, string title, Priority priority, IssueType issueType, LinkType linkType)
     {
         Id = id;
         Title = title;
@@ -42,7 +43,7 @@ public sealed class LinkedIssueSummaryDto
     /// </summary>
     public LinkedIssueSummaryDto()
     {
-        Id = Guid.Empty;
+        Id = string.Empty;
         Title = string.Empty;
         Priority = Priority.Low;
         IssueType = IssueType.Defect;
@@ -51,9 +52,9 @@ public sealed class LinkedIssueSummaryDto
     /// <summary>
     /// Issue Id
     /// </summary>
-    /// <example>3C1152EC-DC0C-4AB0-8AF9-10DE5A9705D5</example>
+    /// <example>APP-1234</example>
     [Required]
-    public Guid Id { get; init; } 
+    public string Id { get; init; } 
 
     /// <summary>
     /// Issue Title
@@ -70,16 +71,16 @@ public sealed class LinkedIssueSummaryDto
     public Priority Priority { get; init; }
 
     /// <summary>
-    /// Issue <see cref="Core.Model.IssueType">Type</see>
+    /// Issue <see cref="Core.ValueObjects.IssueType">Type</see>
     /// </summary>
     /// <value example="Defect">Issue <see cref="IssueType">Type</see></value>
     [Required]
     public IssueType IssueType { get; init; }
 
     /// <summary>
-    /// Issue <see cref="Core.Model.LinkType">Type</see>
+    /// Issue <see cref="Core.ValueObjects.LinkType">Type</see>
     /// </summary>
-    /// <value example="Defect">Issue <see cref="Core.Model.LinkType">Type</see></value>
+    /// <value example="Defect">Issue <see cref="Core.ValueObjects.LinkType">Type</see></value>
     [Required]
     public LinkType LinkType { get; init; }
 
@@ -88,13 +89,13 @@ public sealed class LinkedIssueSummaryDto
     /// </summary>
     public static LinkedIssueSummaryDto FromProjection(LinkedIssueSummaryProjection model)
     {
-        (Guid id, string? title, Priority priority, IssueType issueType, LinkType linkType) = model;
-        return new LinkedIssueSummaryDto(id, title, priority, issueType, linkType);
+        (IssueIdentifier id, string? title, Priority priority, IssueType issueType, LinkType linkType) = model;
+        return new LinkedIssueSummaryDto(id.ToString(), title, priority, issueType, linkType);
     }
 
     /// <summary>
     /// Converts an asynchronous collection of <see cref="IssueSummaryProjection"/> to
-    /// an asynchronous colleciton of <see cref="RestApi.Controllers.UrlVersioning.Version1.Response.IssueSummaryDto"/>
+    /// an asynchronous colleciton of <see cref="IssueSummaryDto"/>
     /// </summary>
     public static async IAsyncEnumerable<LinkedIssueSummaryDto> MapFrom(
         IAsyncEnumerable<LinkedIssueSummaryProjection> source, [EnumeratorCancellation] CancellationToken cancellationToken)
