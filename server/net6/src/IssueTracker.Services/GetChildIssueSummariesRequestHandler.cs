@@ -14,6 +14,7 @@
 using System.Runtime.CompilerServices;
 using IssueTracker.Core.Projections;
 using IssueTracker.Core.Requests;
+using IssueTracker.Core.ValueObjects;
 using IssueTracker.Data.Abstractions;
 using MediatR;
 
@@ -37,7 +38,7 @@ public sealed class GetChildIssueSummariesRequestHandler : IRequestHandler<GetCh
     private async IAsyncEnumerable<LinkedIssueSummaryProjection> HandleWithEnumerable(GetChildIssueSummariesRequest request,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        (Guid id, int pageNumber, int pageSize, _, _) = request;
+        (IssueIdentifier id, int pageNumber, int pageSize, _, _) = request;
 
         ConfiguredCancelableAsyncEnumerable<LinkedIssueSummaryProjection> issues = _repository
             .GetChildIssueSummaries(id, pageNumber, pageSize, cancellationToken)

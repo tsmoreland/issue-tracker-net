@@ -14,6 +14,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using IssueTracker.Core.Model;
+using IssueTracker.Core.ValueObjects;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
 namespace IssueTracker.RestApi.DataTransferObjects.Version2.Response;
@@ -27,7 +28,7 @@ public sealed class IssueDto
     /// <summary>
     /// Instantiates a new instance of the <see cref="IssueDto"/> class.
     /// </summary>
-    public IssueDto(Guid id, string title, string? description, Priority priority, IssueType type)
+    public IssueDto(string id, string title, string? description, Priority priority, IssueType type)
     {
         Id = id;
         Title = title;
@@ -44,7 +45,7 @@ public sealed class IssueDto
     /// </remarks>
     public IssueDto()
     {
-        Id = Guid.Empty;
+        Id = string.Empty;
         Title = string.Empty;
         Description = string.Empty;
         Priority = Priority.Low;
@@ -53,9 +54,9 @@ public sealed class IssueDto
     /// <summary>
     /// Issue Id
     /// </summary>
-    /// <example>48EE3BF9-C81D-4FE4-AB02-220C0122AFE4</example>
+    /// <example>APP-1234</example>
     [Required]
-    public Guid Id { get; init; }
+    public string Id { get; init; }
 
     /// <summary>
     /// Issue Title
@@ -94,6 +95,6 @@ public sealed class IssueDto
     {
         return model is null
             ? null
-            : new IssueDto(model.Id, model.Title, model.Description, model.Priority, model.Type);
+            : new IssueDto(model.Id.ToString(), model.Title, model.Description, model.Priority, model.Type);
     }
 }

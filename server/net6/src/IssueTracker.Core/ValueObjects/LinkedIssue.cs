@@ -12,8 +12,9 @@
 //
 
 using System.ComponentModel;
+using IssueTracker.Core.Model;
 
-namespace IssueTracker.Core.Model;
+namespace IssueTracker.Core.ValueObjects;
 
 public sealed class LinkedIssue
 {
@@ -21,9 +22,8 @@ public sealed class LinkedIssue
     /// intended for use in seeding data
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public LinkedIssue(Guid id, LinkType linkType, Guid parentIssueId, Guid childIssueId, string? concurrencyToken)
+    public LinkedIssue(LinkType linkType, IssueIdentifier parentIssueId, IssueIdentifier childIssueId, string? concurrencyToken)
     {
-        Id = id;
         LinkType = linkType;
         ParentIssueId = parentIssueId;
         ChildIssueId = childIssueId;
@@ -34,27 +34,19 @@ public sealed class LinkedIssue
     /// intended for use in seeding data
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public LinkedIssue(Guid id, LinkType linkType, Guid parentIssueId, Guid childIssueId)
-        : this(id, linkType, parentIssueId, childIssueId, Guid.NewGuid().ToString())
+    public LinkedIssue(LinkType linkType, IssueIdentifier parentIssueId, IssueIdentifier childIssueId)
+        : this(linkType, parentIssueId, childIssueId, Guid.NewGuid().ToString())
     {
     }
 
     public LinkedIssue(LinkType linkType, Issue parentIssue, Issue childIssue)
-        : this(Guid.NewGuid(), linkType, parentIssue, childIssue)
-    {
-        ArgumentNullException.ThrowIfNull(parentIssue, nameof(parentIssue));
-        ArgumentNullException.ThrowIfNull(childIssue, nameof(childIssue));
-    }
-
-    public LinkedIssue(Guid id, LinkType linkType, Issue parentIssue, Issue childIssue)
     {
         ArgumentNullException.ThrowIfNull(parentIssue, nameof(parentIssue));
         ArgumentNullException.ThrowIfNull(childIssue, nameof(childIssue));
 
-        Id = id;
         LinkType = linkType;
         ParentIssue = parentIssue;
-        ParentIssueId = ParentIssue.Id;
+        ParentIssueId = parentIssue.Id;
         ChildIssue = childIssue;
         ChildIssueId = ChildIssue.Id;
     }
@@ -64,14 +56,12 @@ public sealed class LinkedIssue
         // required by entity framework
     }
 
-    public Guid Id { get; private set; } = Guid.NewGuid();
-
     public LinkType LinkType { get; init; } = LinkType.Related;
 
-    public Guid ParentIssueId { get; init; } = Guid.Empty;
+    public IssueIdentifier ParentIssueId { get; init; } 
     public Issue ParentIssue { get; init; } = null!;
 
-    public Guid ChildIssueId { get; init; } = Guid.Empty;
+    public IssueIdentifier ChildIssueId { get; init; } 
     public Issue ChildIssue { get; init; } = null!;
 
     /// <summary>

@@ -12,6 +12,7 @@
 //
 
 using IssueTracker.Core.Model;
+using IssueTracker.Core.ValueObjects;
 
 namespace IssueTracker.Core.Projections;
 
@@ -19,7 +20,7 @@ namespace IssueTracker.Core.Projections;
 /// projection of Issue and Link Type providing summary details for bulk retrieval
 /// </summary>
 public sealed record class LinkedIssueSummaryProjection(
-    Guid Id,
+    IssueIdentifier Id,
     string Title,
     Priority Priority,
     IssueType IssueType,

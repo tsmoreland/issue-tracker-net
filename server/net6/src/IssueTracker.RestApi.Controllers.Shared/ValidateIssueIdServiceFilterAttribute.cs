@@ -10,20 +10,14 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.ValueGeneration;
+using Microsoft.AspNetCore.Mvc;
 
-namespace IssueTracker.Data;
+namespace IssueTracker.RestApi.Controllers.Shared;
 
-public sealed class DateTimeGenerater : ValueGenerator<DateTime>
+public sealed class ValidateIssueIdServiceFilterAttribute : ServiceFilterAttribute
 {
-    /// <inheritdoc />
-    public override DateTime Next(EntityEntry entry)
+    public ValidateIssueIdServiceFilterAttribute()
+        : base(typeof(ValidateIssueIdActionFilterAttribute))
     {
-        ArgumentNullException.ThrowIfNull(entry, nameof(entry));
-        return DateTime.UtcNow;
     }
-
-    /// <inheritdoc />
-    public override bool GeneratesTemporaryValues => false;
 }

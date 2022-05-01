@@ -12,6 +12,7 @@
 //
 
 using IssueTracker.Core.Model;
+using IssueTracker.Core.ValueObjects;
 
 namespace IssueTracker.RestApi.DataTransferObjects.Version1.QueryParameters;
 
@@ -25,7 +26,7 @@ public enum IssueSortBy
     /// </summary>
     Title = 0,
     /// <summary>
-    /// Order by <see cref="Core.Model.Priority"/>
+    /// Order by <see cref="Core.ValueObjects.Priority"/>
     /// </summary>
     Priority = 1,
 }

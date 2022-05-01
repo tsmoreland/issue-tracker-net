@@ -13,6 +13,8 @@
 
 using System.Net.Mime;
 using IssueTracker.Core.Requests;
+using IssueTracker.Core.ValueObjects;
+using IssueTracker.RestApi.Controllers.Shared;
 using IssueTracker.RestApi.DataTransferObjects.Version2.QueryParameters;
 using IssueTracker.RestApi.DataTransferObjects.Version2.Request;
 using IssueTracker.RestApi.DataTransferObjects.Version2.Response;
@@ -90,9 +92,10 @@ public sealed class UrlVersionedIssueController : ControllerBase
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+    [ValidateIssueIdServiceFilter]
+    public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
     {
-        IssueDto? issue = IssueDto.From(await _mediator.Send(new FindIssueByIdRequest(id), cancellationToken));
+        IssueDto? issue = IssueDto.From(await _mediator.Send(new FindIssueByIdRequest(IssueIdentifier.FromString(id)), cancellationToken));
         return issue is not null
             ? Ok(issue)
             : NotFound();
@@ -112,8 +115,9 @@ public sealed class UrlVersionedIssueController : ControllerBase
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IAsyncEnumerable<LinkedIssueSummaryDto>), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [ValidateIssueIdServiceFilter]
     public async Task<IActionResult> GetParentIssues(
-        [FromRoute] Guid id,
+        [FromRoute] string id,
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
         CancellationToken cancellationToken = default)
@@ -123,11 +127,12 @@ public sealed class UrlVersionedIssueController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        if (await _mediator.Send(new IssueExistsRequest(id), cancellationToken))
+        IssueIdentifier issueId = IssueIdentifier.FromString(id);
+        if (await _mediator.Send(new IssueExistsRequest(issueId), cancellationToken))
         {
             return Ok(LinkedIssueSummaryDto
                 .MapFrom(await _mediator
-                    .Send(new GetParentIssueSummariesRequest(id, pageNumber, pageSize, Core.Model.Issue.SortBy.Title, Core.Model.SortDirection.Ascending)
+                    .Send(new GetParentIssueSummariesRequest(issueId, pageNumber, pageSize, Core.Model.Issue.SortBy.Title, Core.ValueObjects.SortDirection.Ascending)
                         , cancellationToken)
                     , cancellationToken));
         }
@@ -150,8 +155,9 @@ public sealed class UrlVersionedIssueController : ControllerBase
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IAsyncEnumerable<LinkedIssueSummaryDto>), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [ValidateIssueIdServiceFilter]
     public async Task<IActionResult> GetChildIssues(
-        [FromRoute] Guid id,
+        [FromRoute] string id,
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
         CancellationToken cancellationToken = default)
@@ -161,11 +167,12 @@ public sealed class UrlVersionedIssueController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        if (await _mediator.Send(new IssueExistsRequest(id), cancellationToken))
+        IssueIdentifier issueId = IssueIdentifier.FromString(id);
+        if (await _mediator.Send(new IssueExistsRequest(issueId), cancellationToken))
         {
             return Ok(LinkedIssueSummaryDto
                 .MapFrom(await _mediator
-                    .Send(new GetChildIssueSummariesRequest(id, pageNumber, pageSize, Core.Model.Issue.SortBy.Title, Core.Model.SortDirection.Ascending)
+                    .Send(new GetChildIssueSummariesRequest(issueId, pageNumber, pageSize, Core.Model.Issue.SortBy.Title, Core.ValueObjects.SortDirection.Ascending)
                         , cancellationToken)
                     , cancellationToken));
         }
@@ -208,14 +215,15 @@ public sealed class UrlVersionedIssueController : ControllerBase
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    public async Task<IActionResult> Put(Guid id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
+    [ValidateIssueIdServiceFilter]
+    public async Task<IActionResult> Put(string id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(new ValidationProblemDetails(ModelState));
         }
 
-        IssueDto? issue = IssueDto.From(await _mediator.Send(new EditIssueRequest(id, model.Update), cancellationToken));
+        IssueDto? issue = IssueDto.From(await _mediator.Send(new EditIssueRequest(IssueIdentifier.FromString(id), model.Update), cancellationToken));
         return issue is not null
             ? Ok(issue)
             : NotFound();
@@ -232,9 +240,10 @@ public sealed class UrlVersionedIssueController : ControllerBase
     [SwaggerResponse(StatusCodes.Status204NoContent, "Successful Response", ContentTypes = new [] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    [ValidateIssueIdServiceFilter]
+    public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
     {
-        return await _mediator.Send(new DeleteIssueRequest(id), cancellationToken)
+        return await _mediator.Send(new DeleteIssueRequest(IssueIdentifier.FromString(id)), cancellationToken)
             ? new StatusCodeResult(StatusCodes.Status204NoContent)
             : NotFound();
     }

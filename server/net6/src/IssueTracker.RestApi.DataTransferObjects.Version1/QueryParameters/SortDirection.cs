@@ -11,6 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Core.ValueObjects;
+
 namespace IssueTracker.RestApi.DataTransferObjects.Version1.QueryParameters;
 
 /// <summary>
@@ -35,10 +37,10 @@ public enum SortDirection
 public static class SortDirectionExtensions
 {
     /// <summary>
-    /// Convert <paramref name="value"/> to <see cref="Core.Model.SortDirection"/>
+    /// Convert <paramref name="value"/> to <see cref="Core.ValueObjects.SortDirection"/>
     /// </summary>
-    public static Core.Model.SortDirection ToModel(this SortDirection value)
+    public static Core.ValueObjects.SortDirection ToModel(this SortDirection value)
     {
-        return (Core.Model.SortDirection)(int)value;
+        return (Core.ValueObjects.SortDirection)(int)value;
     }
 }

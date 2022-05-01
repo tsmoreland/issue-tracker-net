@@ -13,6 +13,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using IssueTracker.Core.Model;
+using IssueTracker.Core.ValueObjects;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
 namespace IssueTracker.RestApi.DataTransferObjects.Version1.Request;

@@ -13,6 +13,8 @@
 
 using System.Net.Mime;
 using IssueTracker.Core.Requests;
+using IssueTracker.Core.ValueObjects;
+using IssueTracker.RestApi.Controllers.Shared;
 using IssueTracker.RestApi.DataTransferObjects.Version1.QueryParameters;
 using IssueTracker.RestApi.DataTransferObjects.Version1.Request;
 using IssueTracker.RestApi.DataTransferObjects.Version1.Response;
@@ -89,9 +91,10 @@ public class UrlVersionedIssuesController : ControllerBase
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+    [ValidateIssueIdServiceFilter]
+    public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
     {
-        IssueDto? issue = IssueDto.From(await _mediator.Send(new FindIssueByIdRequest(id), cancellationToken));
+        IssueDto? issue = IssueDto.From(await _mediator.Send(new FindIssueByIdRequest(IssueIdentifier.FromString(id)), cancellationToken));
         return issue is not null
             ? Ok(issue)
             : NotFound();
@@ -122,7 +125,7 @@ public class UrlVersionedIssuesController : ControllerBase
     /// <summary>
     /// Updates existing issue given by <paramref name="id"/>
     /// </summary>
-    /// <param name="id">unique id of the issue to update</param>
+    /// <param name="id" example="APP-1234">unique id of the issue to update</param>
     /// <param name="model">new values for the issue</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>updated <see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
@@ -132,14 +135,15 @@ public class UrlVersionedIssuesController : ControllerBase
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    public async Task<IActionResult> Put(Guid id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
+    [ValidateIssueIdServiceFilter]
+    public async Task<IActionResult> Put(string id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(new ValidationProblemDetails(ModelState));
         }
 
-        IssueDto? issue = IssueDto.From(await _mediator.Send(new EditIssueRequest(id, model.Update), cancellationToken));
+        IssueDto? issue = IssueDto.From(await _mediator.Send(new EditIssueRequest(IssueIdentifier.FromString(id), model.Update), cancellationToken));
         return issue is not null
             ? Ok(issue)
             : NotFound();
@@ -148,7 +152,7 @@ public class UrlVersionedIssuesController : ControllerBase
     /// <summary>
     /// Deletes the issue given by <paramref name="id"/> 
     /// </summary>
-    /// <param name="id">unique id of the issue to delete</param>
+    /// <param name="id" example="APP-1234">unique id of the issue to delete</param>
     /// <param name="cancellationToken">A cancellation token</param>
     [HttpDelete("{id}")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
@@ -156,9 +160,10 @@ public class UrlVersionedIssuesController : ControllerBase
     [SwaggerResponse(StatusCodes.Status204NoContent, "Successful Response", ContentTypes = new [] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    [ValidateIssueIdServiceFilter]
+    public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
     {
-        return await _mediator.Send(new DeleteIssueRequest(id), cancellationToken)
+        return await _mediator.Send(new DeleteIssueRequest(IssueIdentifier.FromString(id)), cancellationToken)
             ? new StatusCodeResult(StatusCodes.Status204NoContent)
             : NotFound();
     }

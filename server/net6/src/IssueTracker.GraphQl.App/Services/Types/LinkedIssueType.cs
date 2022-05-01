@@ -36,13 +36,13 @@ public sealed class LinkedIssueType : ObjectGraphType<LinkedIssueView>
         FieldAsync<ListGraphType<LinkedIssueType>>("parents",
             resolve: context =>
                 IssueModelType.ResolveIssueParents(
-                    context.Source.Id,
+                    context.Source.Id.ToString(),
                     context.RequestServices?.GetService<IIssueRepository>(),
                     context.CancellationToken));
         FieldAsync<ListGraphType<LinkedIssueType>>("children",
             resolve: context =>
                 IssueModelType.ResolveIssueChildren(
-                    context.Source.Id,
+                    context.Source.Id.ToString(),
                     context.RequestServices?.GetService<IIssueRepository>(),
                     context.CancellationToken));
     }

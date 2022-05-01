@@ -15,6 +15,7 @@ using System.Runtime.CompilerServices;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.Core.Requests;
+using IssueTracker.Core.ValueObjects;
 using IssueTracker.Data.Abstractions;
 using MediatR;
 

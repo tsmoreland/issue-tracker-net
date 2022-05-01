@@ -11,37 +11,30 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Reflection;
+using IssueTracker.Core.ValueObjects;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace IssueTracker.Core.Test;
+namespace IssueTracker.RestApi.Controllers.Shared;
 
-public sealed class IssueTest
+public sealed class ValidateIssueIdActionFilterAttribute : ActionFilterAttribute
 {
-
-    [TestCase(null)]
-    [TestCase("")]
-    public void SetDescription_StoresEmptyString_WhenValueIsNullOrEmpt(string value)
+    /// <inheritdoc />
+    public override void OnActionExecuting(ActionExecutingContext context)
     {
-        Issue issue = new ();
-        issue.SetDescription(value);
-        Assert.That(issue.Description, Is.Empty);
-    }
+        if (!context.ActionArguments.ContainsKey("id"))
+        {
+            return;
+        }
 
-    [Test]
-    public void Assignee_ReturnsNull_WhenPrivateSetterUsedViaReflection()
-    {
-        Issue issue = new ();
-        PropertyInfo? property = issue.GetType().GetProperty(nameof(Issue.Assignee));
-        property?.SetValue(issue, null);
-        Assert.That(issue.Assignee, Is.Null);
-    }
+        string id = context.ActionArguments["id"]?.ToString() ?? string.Empty;
 
-    [Test]
-    public void Reporter_ReturnsNull_WhenPrivateSetterUsedViaReflection()
-    {
-        Issue issue = new ();
-        PropertyInfo? property = issue.GetType().GetProperty(nameof(Issue.Reporter));
-        property?.SetValue(issue, null);
-        Assert.That(issue.Reporter, Is.Null);
+        if (IssueIdentifier.TryConvert(id, out _))
+        {
+            return;
+        }
+
+        context.ModelState.AddModelError("id", "invalid project id");
+        context.Result = new BadRequestObjectResult(context.ModelState);
     }
 }

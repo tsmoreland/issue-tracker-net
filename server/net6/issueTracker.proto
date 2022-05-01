@@ -77,12 +77,13 @@ message IssueMessage {
 }
 
 message AddIssueMessage {
-    string Title = 1;
-    string Description = 2;
-    int32 Priority = 3;
-    int32 Type = 4;
-    UserMessage Assignee = 5;
-    UserMessage Reporter = 6;
+    string Project = 1;
+    string Title = 2;
+    string Description = 3;
+    int32 Priority = 4;
+    int32 Type = 5;
+    UserMessage Assignee = 6;
+    UserMessage Reporter = 7;
 }
 
 message EditIssueMessage {

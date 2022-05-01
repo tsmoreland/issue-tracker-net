@@ -15,6 +15,7 @@ using Grpc.Core;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.Core.Requests;
+using IssueTracker.Core.ValueObjects;
 using IssueTracker.GrpcApi.Grpc.Services;
 using MediatR;
 using static IssueTracker.GrpcApi.Grpc.Services.IssueTrackerService;
@@ -39,12 +40,7 @@ public sealed class IssueService : IssueTrackerServiceBase
     /// <inheritdoc/>
     public override async Task<IssueMessage> GetIssueById(IssueByIdQueryMessage request, ServerCallContext context)
     {
-        if (!Guid.TryParse(request.Id, out Guid id))
-        {
-            return IssueMessageFunctions.InvalidArgument();
-        }
-
-        Issue? issue = await _mediator.Send(new FindIssueByIdRequest(id), context.CancellationToken);
+        Issue? issue = await _mediator.Send(new FindIssueByIdRequest(IssueIdentifier.FromString(request.Id)), context.CancellationToken);
         return issue is not null
             ? issue.ToMessage()
             : IssueMessageFunctions.NotFound(); 

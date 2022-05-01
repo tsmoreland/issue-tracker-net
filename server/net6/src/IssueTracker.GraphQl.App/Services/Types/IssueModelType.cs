@@ -12,6 +12,7 @@
 
 using GraphQL.Types;
 using IssueTracker.Core.Model;
+using IssueTracker.Core.ValueObjects;
 using IssueTracker.Core.Views;
 using IssueTracker.Data.Abstractions;
 
@@ -35,30 +36,30 @@ public sealed class IssueModelType : ObjectGraphType<Issue>
         FieldAsync<ListGraphType<LinkedIssueType>>("parents",
             resolve: context =>
                 ResolveIssueParents(
-                    context.Source.Id,
+                    context.Source.Id.ToString(),
                     context.RequestServices?.GetService<IIssueRepository>(),
                     context.CancellationToken));
         FieldAsync<ListGraphType<LinkedIssueType>>("children",
             resolve: context =>
                 ResolveIssueChildren(
-                    context.Source.Id,
+                    context.Source.Id.ToString(),
                     context.RequestServices?.GetService<IIssueRepository>(),
                     context.CancellationToken));
     }
 
-    internal static async Task<object?> ResolveIssueParents(Guid id, IIssueRepository? repository,
+    internal static async Task<object?> ResolveIssueParents(string id, IIssueRepository? repository,
         CancellationToken cancellationToken)
     {
         return repository is not null
-            ? await repository.GetParentIssues(id, cancellationToken).ToHashSetAsync(cancellationToken)
+            ? await repository.GetParentIssues(IssueIdentifier.FromString(id), cancellationToken).ToHashSetAsync(cancellationToken)
             : new HashSet<LinkedIssueView>();
     }
 
-    internal static async Task<object?> ResolveIssueChildren(Guid id, IIssueRepository? repository,
+    internal static async Task<object?> ResolveIssueChildren(string id, IIssueRepository? repository,
         CancellationToken cancellationToken)
     {
         return repository is not null
-            ? await repository.GetChildIssues(id, cancellationToken).ToHashSetAsync(cancellationToken)
+            ? await repository.GetChildIssues(IssueIdentifier.FromString(id), cancellationToken).ToHashSetAsync(cancellationToken)
             : new HashSet<LinkedIssueView>();
     }
 }

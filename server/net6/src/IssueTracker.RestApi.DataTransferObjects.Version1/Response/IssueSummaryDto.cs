@@ -15,6 +15,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
+using IssueTracker.Core.ValueObjects;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
 namespace IssueTracker.RestApi.DataTransferObjects.Version1.Response;
@@ -28,7 +29,7 @@ public sealed class IssueSummaryDto
     /// <summary>
     /// Instantiates a new instance of he IssueSummaryDto Class
     /// </summary>
-    public IssueSummaryDto(Guid id, string title)
+    public IssueSummaryDto(string id, string title)
     {
         Id = id;
         Title = title;
@@ -39,7 +40,7 @@ public sealed class IssueSummaryDto
     /// </summary>
     public IssueSummaryDto()
     {
-        Id = Guid.Empty;
+        Id = string.Empty;
         Title = string.Empty;
 
     }
@@ -47,9 +48,9 @@ public sealed class IssueSummaryDto
     /// <summary>
     /// Issue Id
     /// </summary>
-    /// <example>3C1152EC-DC0C-4AB0-8AF9-10DE5A9705D5</example>
+    /// <example>APP-1234</example>
     [Required]
-    public Guid Id { get; init; } 
+    public string Id { get; init; } 
 
     /// <summary>
     /// Issue Title
@@ -63,8 +64,8 @@ public sealed class IssueSummaryDto
     /// </summary>
     public static IssueSummaryDto FromProjection(IssueSummaryProjection model)
     {
-        (Guid id, string? title, _, _) = model;
-        return new IssueSummaryDto(id, title);
+        (IssueIdentifier id, string? title, _, _) = model;
+        return new IssueSummaryDto(id.ToString(), title);
     }
 
     /// <summary>

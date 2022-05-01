@@ -11,12 +11,12 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace IssueTracker.Core.Model;
+namespace IssueTracker.Core.ValueObjects;
 
 /// <summary>
 /// Issue Priorities
 /// </summary>
-public enum Priority : int
+public enum Priority 
 {
     /// <summary>
     ///  Low Priority

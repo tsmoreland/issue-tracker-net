@@ -13,6 +13,7 @@
 
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Requests;
+using IssueTracker.Core.ValueObjects;
 using IssueTracker.Data.Abstractions.Specifications;
 using IssueTracker.RestApi.DataTransferObjects.Version2.QueryParameters;
 using IssueTracker.RestApi.DataTransferObjects.Version2.Response;

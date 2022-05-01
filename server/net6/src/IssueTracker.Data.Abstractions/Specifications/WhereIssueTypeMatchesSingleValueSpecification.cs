@@ -14,6 +14,7 @@
 using System.Linq.Expressions;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Specifications;
+using IssueTracker.Core.ValueObjects;
 
 namespace IssueTracker.Data.Abstractions.Specifications;
 

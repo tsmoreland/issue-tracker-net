@@ -12,10 +12,11 @@
 //
 
 using IssueTracker.Core.Model;
+using IssueTracker.Core.ValueObjects;
 
 namespace IssueTracker.Core.Projections;
 
 /// <summary>
 /// projection of Issue providing summary details for bulk retrieval
 /// </summary>
-public sealed record class IssueSummaryProjection(Guid Id, string Title, Priority Priority, IssueType Type);
+public sealed record class IssueSummaryProjection(IssueIdentifier Id, string Title, Priority Priority, IssueType Type);

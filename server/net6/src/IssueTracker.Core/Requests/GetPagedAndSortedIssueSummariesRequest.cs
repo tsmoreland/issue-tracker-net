@@ -13,6 +13,7 @@
 
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
+using IssueTracker.Core.ValueObjects;
 using MediatR;
 
 namespace IssueTracker.Core.Requests;

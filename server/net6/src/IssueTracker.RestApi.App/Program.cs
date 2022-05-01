@@ -16,6 +16,7 @@ using System.Text.Json.Serialization;
 using Hellang.Middleware.ProblemDetails;
 using IssueTracker.Data.Abstractions;
 using IssueTracker.Middelware.SecurityHeaders;
+using IssueTracker.RestApi.Controllers.Shared;
 using IssueTracker.RestApi.Controllers.Shared.Infrastructure;
 using IssueTracker.ServiceDiscovery;
 using Microsoft.AspNetCore.Identity;
@@ -79,6 +80,10 @@ builder.Services
     {
         tokenProviderOptions.TokenLifespan = TimeSpan.FromHours(1);
     });
+
+builder.Services
+    .AddScoped<ValidateIssueIdActionFilterAttribute>();
+
 
 WebApplication app = builder.Build();
 using (IServiceScope scope = app.Services.CreateScope())

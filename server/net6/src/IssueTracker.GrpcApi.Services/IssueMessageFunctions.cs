@@ -91,6 +91,7 @@ internal static class IssueMessageFunctions
     public static Issue ToIssue(this AddIssueMessage message)
     {
         return new Issue(
+            message.Project,
             message.Title,
             message.Description,
             (Priority)message.Priority,
