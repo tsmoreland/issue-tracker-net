@@ -11,7 +11,6 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Reflection;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.ValueObjects;
 using Microsoft.EntityFrameworkCore;
@@ -85,7 +84,9 @@ public sealed class IssuesDbContext : DbContext
         issueEntity.HasIndex(e => e.Title);
         issueEntity.HasIndex(e => e.Priority);
 
-        issueEntity.Property(e => e.Id).IsRequired();
+        issueEntity.Property(e => e.Id)
+            .HasConversion(e => e.ToString(), @string => IssueIdentifier.FromString(@string))
+            .IsRequired();
         issueEntity.Property(e => e.Title).IsRequired().IsUnicode().HasMaxLength(200);
         issueEntity.Property(e => e.Description).IsUnicode().HasMaxLength(500);
         issueEntity.Property(e => e.Priority).IsRequired();
@@ -136,82 +137,31 @@ public sealed class IssuesDbContext : DbContext
         issueEntity.Ignore(e => e.ChildIssues);
 
         EntityTypeBuilder<LinkedIssue> linkedIssueEntity = modelBuilder.Entity<LinkedIssue>();
-        linkedIssueEntity.ToTable("LinkedIssues").HasKey(e => e.Id);
-        linkedIssueEntity.Property(e => e.Id).ValueGeneratedOnAdd().IsRequired();
-        linkedIssueEntity.HasIndex(e => e.ParentIssueId);
-        linkedIssueEntity.HasIndex(e => e.ChildIssueId);
-        linkedIssueEntity.HasOne(e => e.ParentIssue).WithMany("ParentIssueEntities").HasForeignKey(e => e.ParentIssueId);
-        linkedIssueEntity.HasOne(e => e.ChildIssue).WithMany("ChildIssueEntities").HasForeignKey(e => e.ChildIssueId);
-
-        // HasData to seed is not done here due to complexities of handling Owned Types (at time of writing Assignee and Reporter)
-        // in order to use HasData to see these values it would need to be done as part of the OwnsOne:
-        /*
-        */
-
-        Issue first = new(new Guid("1385056E-8AFA-4E09-96DF-AE12EFDF1A29"), "First", "First issue",
-            Priority.Medium, IssueType.Epic,
-            new DateTime(2022, 01, 01, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString(),
-            Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(), 
-            User.Unassigned, User.Unassigned);
-        Issue second = new (new Guid("A28B8C45-6668-4169-940C-C16D71EB69DE"), "Second", "Second issue",
-            Priority.Low, IssueType.Story,
-            new DateTime(2022, 01, 020, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString(),
-            Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(), 
-            User.Unassigned, User.Unassigned);
-        Issue third = new (new Guid("502AD68E-7B37-4426-B422-23B6A9B1B7CA"), "Third", "Third issue",
-            Priority.Medium, IssueType.Story,
-            new DateTime(2022, 01, 020, 0, 0, 0, DateTimeKind.Utc), Guid.NewGuid().ToString(),
-            Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(), 
-            User.Unassigned, User.Unassigned);
-
-        PropertyInfo? assigneeSet = typeof(Issue).GetProperty(nameof(Issue.Assignee));
-        PropertyInfo? reporterSet = typeof(Issue).GetProperty(nameof(Issue.Reporter));
-
-        if (assigneeSet is null || reporterSet is null)
-        {
-            throw new InvalidOperationException("Unable to access private setter");
-        }
-
-        assigneeSet.SetValue(first, null);
-        assigneeSet.SetValue(second, null);
-        assigneeSet.SetValue(third, null);
-
-        reporterSet.SetValue(first, null);
-        reporterSet.SetValue(second, null);
-        reporterSet.SetValue(third, null);
-
-        issueEntity.HasData(first, second, third);
-
-        // adding owned types would use something like:
-        /*
-        issueEntity.OwnsOne(e => e.Reporter)
-            .HasData(new
-            {
-                IssueId = "id of the issue entity", // this is the shadow property created by EF to link the objects, Issue matches the class name of the owning entity
-                Id = "id property of the user object",
-                FullName = "fullname property from user table"
-            });
-        */
-        // or so some internal documentation hinted, when we do it it expects a User object which doesn't leave room for the shadow property UserId
-
-
-        EntityTypeBuilder<LinkedIssue> linkedIssuesEntity = modelBuilder.Entity<LinkedIssue>();
-        linkedIssuesEntity.ToTable("LinkedIssue")
+        linkedIssueEntity
+            .ToTable("LinkedIssues")
             .HasKey(e => new { e.ParentIssueId, e.ChildIssueId });
-        linkedIssuesEntity
+        linkedIssueEntity
             .HasOne(e => e.ParentIssue)
             .WithMany("ParentIssueEntities")
             .HasPrincipalKey(e => e.Id)
             .HasForeignKey(e => e.ParentIssueId)
             .OnDelete(DeleteBehavior.Restrict);
-        linkedIssuesEntity
+        linkedIssueEntity
+            .Property(e => e.ParentIssueId)
+            .HasConversion(e => e.ToString(), @string => IssueIdentifier.FromString(@string))
+            .IsRequired();
+        linkedIssueEntity
             .HasOne(e => e.ChildIssue)
             .WithMany("ChildIssueEntities")
             .HasPrincipalKey(e => e.Id)
             .HasForeignKey(e => e.ChildIssueId)
             .OnDelete(DeleteBehavior.Restrict);
+        linkedIssueEntity
+            .Property(e => e.ChildIssueId)
+            .HasConversion(e => e.ToString(), @string => IssueIdentifier.FromString(@string))
+            .IsRequired();
+        linkedIssueEntity.Property(e => e.ConcurrencyToken).IsConcurrencyToken();
 
-        LinkedIssue secondToThird = new(Guid.NewGuid(), LinkType.Related, new Guid("A28B8C45-6668-4169-940C-C16D71EB69DE"), new Guid("502AD68E-7B37-4426-B422-23B6A9B1B7CA"));
-        linkedIssuesEntity.HasData(secondToThird);
+        SeedData.HasData(issueEntity, linkedIssueEntity);
     }
 }

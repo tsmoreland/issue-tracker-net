@@ -13,6 +13,7 @@
 
 using System.Linq.Expressions;
 using IssueTracker.Core.Model;
+using IssueTracker.Core.ValueObjects;
 
 namespace IssueTracker.Data;
 

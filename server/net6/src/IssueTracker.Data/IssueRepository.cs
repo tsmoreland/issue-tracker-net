@@ -15,6 +15,7 @@ using System.Runtime.CompilerServices;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.Core.Specifications;
+using IssueTracker.Core.ValueObjects;
 using IssueTracker.Core.Views;
 using IssueTracker.Data.Abstractions;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +32,10 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
-    public async IAsyncEnumerable<IssueSummaryProjection> GetIssueSummaries(int pageNumber, int pageSize, Issue.SortBy sortBy, SortDirection direction, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<IssueSummaryProjection> GetIssueSummaries(
+        int pageNumber, int pageSize,
+        Issue.SortBy sortBy, SortDirection direction,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         IAsyncEnumerable<IssueSummaryProjection> issues = _dbContext.Issues
             .AsNoTracking()
@@ -50,8 +54,7 @@ public sealed class IssueRepository : IIssueRepository
     public async IAsyncEnumerable<IssueSummaryProjection> GetFilteredIssueSummaries(
         IEnumerable<WhereClauseSpecification> filters,
         int pageNumber, int pageSize,
-        Issue.SortBy sortBy,
-        SortDirection direction,
+        Issue.SortBy sortBy, SortDirection direction,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         IQueryable<Issue> query = _dbContext.Issues
@@ -80,7 +83,9 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
-    public async IAsyncEnumerable<LinkedIssueSummaryProjection> GetParentIssueSummaries(Guid id, int pageNumber, int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<LinkedIssueSummaryProjection> GetParentIssueSummaries(IssueIdentifier id,
+        int pageNumber, int pageSize,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         var summaries = _dbContext.LinkedIssues
             .AsNoTracking()
@@ -97,7 +102,9 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
-    public async IAsyncEnumerable<LinkedIssueSummaryProjection> GetChildIssueSummaries(Guid id, int pageNumber, int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<LinkedIssueSummaryProjection> GetChildIssueSummaries(IssueIdentifier id,
+        int pageNumber, int pageSize,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         var summaries = _dbContext.LinkedIssues
             .AsNoTracking()
@@ -113,7 +120,7 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
-    public async IAsyncEnumerable<LinkedIssueView> GetParentIssues(Guid id, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<LinkedIssueView> GetParentIssues(IssueIdentifier id, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         var issues = _dbContext.LinkedIssues
             .AsNoTracking()
@@ -128,7 +135,7 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
-    public async IAsyncEnumerable<LinkedIssueView> GetChildIssues(Guid id, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<LinkedIssueView> GetChildIssues(IssueIdentifier id, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         var issues = _dbContext.LinkedIssues
             .AsNoTracking()
@@ -142,7 +149,7 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
-    public Task<Issue?> GetUntrackedIssueById(Guid id, CancellationToken cancellationToken)
+    public Task<Issue?> GetUntrackedIssueById(IssueIdentifier id, CancellationToken cancellationToken)
     {
         return _dbContext.Issues
             .AsNoTracking()
@@ -150,7 +157,7 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
-    public Task<Issue?> GetIssueById(Guid id, CancellationToken cancellationToken)
+    public Task<Issue?> GetIssueById(IssueIdentifier id, CancellationToken cancellationToken)
     {
         return _dbContext.Issues
             .FindAsync(new object[] { id }, cancellationToken)
@@ -165,7 +172,7 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
-    public async Task<Issue?> UpdateIssue(Guid id, Action<Issue> visitor, CancellationToken cancellationToken)
+    public async Task<Issue?> UpdateIssue(IssueIdentifier id, Action<Issue> visitor, CancellationToken cancellationToken)
     {
         Issue? issue = await _dbContext.Issues.FindAsync(new object[] { id }, cancellationToken);
         if (issue == null)
@@ -185,7 +192,7 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
-    public async Task<bool> DeleteIssueById(Guid id, CancellationToken cancellationToken)
+    public async Task<bool> DeleteIssueById(IssueIdentifier id, CancellationToken cancellationToken)
     {
         Issue? issue = await _dbContext.Issues.FindAsync(new object[] { id }, cancellationToken);
         if (issue is null)
@@ -199,7 +206,7 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
-    public Task<bool> IssueExists(Guid id, CancellationToken cancellationToken)
+    public Task<bool> IssueExists(IssueIdentifier id, CancellationToken cancellationToken)
     {
         return _dbContext.Issues
             .AsNoTracking()

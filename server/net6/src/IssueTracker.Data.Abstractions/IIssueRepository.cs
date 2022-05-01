@@ -94,7 +94,7 @@ public interface IIssueRepository
     Task<Issue> AddIssue(Issue issue, CancellationToken cancellationToken);
     Task<Issue?> UpdateIssue(IssueIdentifier id, Action<Issue> visitor, CancellationToken cancellationToken);
 
-    Task<bool> DeleteIssueById(Guid id, CancellationToken cancellationToken);
+    Task<bool> DeleteIssueById(IssueIdentifier id, CancellationToken cancellationToken);
 
     /// <summary>
     /// Returns <see langword="true"/> if issue matching <paramref name="id"/> exists

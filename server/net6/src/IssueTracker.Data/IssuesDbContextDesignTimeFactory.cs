@@ -30,6 +30,8 @@ public sealed class IssuesDbContextDesignTimeFactory : IDesignTimeDbContextFacto
     {
         var optionsBuilder = new DbContextOptionsBuilder<IssuesDbContext>();
         optionsBuilder
+            .EnableSensitiveDataLogging(true)
+            .LogTo(Console.WriteLine)
             .UseSqlite(
                 "Data Source=designTime.db",
                 options => options.MigrationsAssembly(typeof(IssuesDbContext).Assembly.FullName));
