@@ -23,6 +23,7 @@ public sealed class Issue  : IEquatable<Issue>
 {
     private ICollection<LinkedIssue> ParentIssueEntities { get; init; } = new HashSet<LinkedIssue>();
     private ICollection<LinkedIssue> ChildIssueEntities { get; init; } = new HashSet<LinkedIssue>();
+    private readonly Lazy<IssueIdentifier> _lazyId;
 
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>
@@ -70,6 +71,8 @@ public sealed class Issue  : IEquatable<Issue>
         ChildIssueEntities = childIssueEntities.ToHashSet();
         Assignee = assignee;
         Reporter = reporter;
+
+        _lazyId = new Lazy<IssueIdentifier>(() => new IssueIdentifier(ProjectId, IssueNumber));
     }
 
     /// <summary>
@@ -102,6 +105,7 @@ public sealed class Issue  : IEquatable<Issue>
     {
         ProjectId = string.Empty;
         IssueNumber = 0;
+        _lazyId = new Lazy<IssueIdentifier>(() => new IssueIdentifier(ProjectId, IssueNumber));
     }
 
 
@@ -137,7 +141,7 @@ public sealed class Issue  : IEquatable<Issue>
     /// <summary>
     /// Friendly Identified used in queries and display
     /// </summary>
-    public string Id => $"{ProjectId}-{IssueNumber}";
+    public IssueIdentifier Id { get; }
 
     /// <summary>
     /// Issue Title
@@ -197,23 +201,6 @@ public sealed class Issue  : IEquatable<Issue>
     public void LinkToIssue(LinkType linkType, Issue issue)
     {
         ChildIssueEntities.Add(new LinkedIssue(linkType, this, issue));
-    }
-
-    public static (string ProjectId, int Id) DeconstructId(string friendlyId)
-    {
-        int dashIndex = friendlyId.IndexOf('-');
-        if (dashIndex == -1)
-        {
-            throw new ArgumentException("Malformed friendly id");
-        }
-
-        if (!int.TryParse(friendlyId[(dashIndex + 1)..], out int id))
-        {
-            throw new ArgumentException("Malformed friendly id, invalid id component");
-        }
-
-        return (friendlyId[..dashIndex], id);
-
     }
 
     /// <summary>

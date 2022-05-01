@@ -12,6 +12,7 @@
 //
 
 using IssueTracker.Core.Model;
+using IssueTracker.Core.ValueObjects;
 
 namespace IssueTracker.Core.Views;
 
@@ -27,7 +28,7 @@ public sealed class LinkedIssueView : IEquatable<LinkedIssueView>
 
     public string ProjectId => _issue.ProjectId;
     public int IssueNumber => _issue.IssueNumber;
-    public string Id => _issue.Id;
+    public IssueIdentifier Id => _issue.Id;
     public string Title => _issue.Title;
     public string Description => _issue.Description;
     public Priority Priority => _issue.Priority;

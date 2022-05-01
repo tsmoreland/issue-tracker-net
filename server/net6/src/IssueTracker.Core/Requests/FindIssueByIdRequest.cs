@@ -12,8 +12,9 @@
 //
 
 using IssueTracker.Core.Model;
+using IssueTracker.Core.ValueObjects;
 using MediatR;
 
 namespace IssueTracker.Core.Requests;
 
-public sealed record class FindIssueByIdRequest(string Id) : IRequest<Issue?>;
+public sealed record class FindIssueByIdRequest(IssueIdentifier Id) : IRequest<Issue?>;
