@@ -11,17 +11,13 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace IssueTracker.Core.ValueObjects;
 
 public readonly record struct IssueIdentifier(string ProjectId, int IssueNumber) : IEquatable<IssueIdentifier>
 {
     public static IssueIdentifier Empty { get; } = new ();
-
-    public static IssueIdentifier FromString(string id)
-    {
-        (string projectId, int issueNumber) = DeconstructId(id);
-        return new IssueIdentifier(projectId, issueNumber);
-    }
 
     public string ProjectId { get; init; } = (ProjectId is { Length: > 0 } and { Length: <= 3 })
         ? ProjectId
@@ -56,4 +52,25 @@ public readonly record struct IssueIdentifier(string ProjectId, int IssueNumber)
     /// <inheritdoc />
     public override string ToString() =>
         $"{ProjectId}-{IssueNumber}";
+
+    public static IssueIdentifier FromString(string id)
+    {
+        (string projectId, int issueNumber) = DeconstructId(id);
+        return new IssueIdentifier(projectId, issueNumber);
+    }
+
+    public static bool TryConvert(string id, [NotNullWhen(true)] out IssueIdentifier? issueId)
+    {
+        try
+        {
+            issueId = FromString(id);
+            return true;
+        }
+        catch (ArgumentException)
+        {
+            issueId = null;
+            return false;
+        }
+
+    }
 }

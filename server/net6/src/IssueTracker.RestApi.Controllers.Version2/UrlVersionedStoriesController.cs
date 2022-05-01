@@ -13,6 +13,7 @@
 
 using System.Net.Mime;
 using IssueTracker.Core.Model;
+using IssueTracker.Core.ValueObjects;
 using IssueTracker.RestApi.DataTransferObjects.Version2.QueryParameters;
 using IssueTracker.RestApi.DataTransferObjects.Version2.Response;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
