@@ -19,7 +19,7 @@ namespace IssueTracker.Core.Model;
 /// <summary>
 /// Issue Entity
 /// </summary>
-public sealed record class Issue(IssueIdentifier Id)  
+public sealed record class Issue(IssueIdentifier Id)
 {
     private ICollection<LinkedIssue> ParentIssueEntities { get; init; } = new HashSet<LinkedIssue>();
     private ICollection<LinkedIssue> ChildIssueEntities { get; init; } = new HashSet<LinkedIssue>();
@@ -35,8 +35,10 @@ public sealed record class Issue(IssueIdentifier Id)
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>
     /// </summary>
-    public Issue(string projectId, string title, string description, Priority priority, IssueType type, User assignee, User reporter)
-        : this(projectId, title, description, priority, type, Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(), assignee, reporter)
+    public Issue(string projectId, string title, string description, Priority priority, IssueType type, User assignee,
+        User reporter)
+        : this(projectId, title, description, priority, type, Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(),
+            assignee, reporter)
     {
         Title = title;
         Description = description;
@@ -90,7 +92,8 @@ public sealed record class Issue(IssueIdentifier Id)
         IEnumerable<LinkedIssue> childIssueEntities,
         User assignee,
         User reporter)
-        : this(projectId, title, description, priority, type, parentIssueEntities, childIssueEntities, assignee, reporter)
+        : this(projectId, title, description, priority, type, parentIssueEntities, childIssueEntities, assignee,
+            reporter)
     {
         Id = new IssueIdentifier(projectId, issueNumber);
         IssueNumber = issueNumber;
@@ -119,10 +122,12 @@ public sealed record class Issue(IssueIdentifier Id)
         /// Order by title alphabetically
         /// </summary>
         Title = 0,
+
         /// <summary>
         /// Order by <see cref="ValueObjects.Priority"/>
         /// </summary>
         Priority = 1,
+
         /// <summary>
         /// Order by <see cref="IssueType"/>
         /// </summary>
@@ -143,10 +148,12 @@ public sealed record class Issue(IssueIdentifier Id)
     /// Issue Title
     /// </summary>
     public string Title { get; private set; } = string.Empty;
+
     /// <summary>
     /// Issue Description
     /// </summary>
     public string Description { get; private set; } = string.Empty;
+
     /// <summary>
     /// Issue Priority
     /// </summary>
@@ -171,13 +178,15 @@ public sealed record class Issue(IssueIdentifier Id)
     /// Issues that are linked to this one, this also serves as the ones that may be
     /// blocking this issue
     /// </summary>
-    public IEnumerable<LinkedIssueView> ParentIssues => ParentIssueEntities.Select(i => new LinkedIssueView(i.LinkType, i.ParentIssue));
+    public IEnumerable<LinkedIssueView> ParentIssues =>
+        ParentIssueEntities.Select(i => new LinkedIssueView(i.LinkType, i.ParentIssue));
 
     /// <summary>
     /// issues which this one links to, this also serves as issues that may be blocked by
     /// this issue
     /// </summary>
-    public IEnumerable<LinkedIssueView> ChildIssues => ChildIssueEntities.Select(i => new LinkedIssueView(i.LinkType, i.ChildIssue));
+    public IEnumerable<LinkedIssueView> ChildIssues =>
+        ChildIssueEntities.Select(i => new LinkedIssueView(i.LinkType, i.ChildIssue));
 
     /// <summary>
     /// Last Updated field used for auditing
@@ -210,8 +219,10 @@ public sealed record class Issue(IssueIdentifier Id)
         {
             throw new ArgumentException("Title cannot be empty");
         }
+
         Title = value;
     }
+
     /// <summary>
     /// Update issue description
     /// </summary>
@@ -263,5 +274,10 @@ public sealed record class Issue(IssueIdentifier Id)
     {
         ArgumentNullException.ThrowIfNull(reporter, nameof(reporter));
         Reporter = reporter;
+    }
+
+    public void RefreshLastUpdated()
+    {
+        LastUpdated = DateTime.UtcNow;
     }
 }

@@ -14,6 +14,7 @@
 using IssueTracker.Core.Model;
 using IssueTracker.Core.ValueObjects;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -45,6 +46,9 @@ public sealed class IssuesDbContext : DbContext
 
         ArgumentNullException.ThrowIfNull(loggerFactory, nameof(loggerFactory));
         _logger = loggerFactory.CreateLogger<IssuesDbContext>();
+
+        ChangeTracker.StateChanged += ChangeTracker_StateChanged;
+        ChangeTracker.Tracked += ChangeTracker_Tracked; 
     }
 
     /// <summary>
@@ -83,18 +87,20 @@ public sealed class IssuesDbContext : DbContext
         issueEntity.ToTable("Issues").HasKey(e => e.Id);
         issueEntity.HasIndex(e => e.Title);
         issueEntity.HasIndex(e => e.Priority);
+        issueEntity.HasIndex(e => e.ProjectId);
+        issueEntity.HasIndex(e => e.IssueNumber);
 
         issueEntity.Property(e => e.Id)
             .HasConversion(e => e.ToString(), @string => IssueIdentifier.FromString(@string))
             .IsRequired();
+        issueEntity.Property(e => e.ProjectId).HasMaxLength(3).IsUnicode(false).IsRequired();
+        issueEntity.Property(e => e.IssueNumber).IsRequired();
         issueEntity.Property(e => e.Title).IsRequired().IsUnicode().HasMaxLength(200);
         issueEntity.Property(e => e.Description).IsUnicode().HasMaxLength(500);
         issueEntity.Property(e => e.Priority).IsRequired();
         issueEntity.Property(e => e.ConcurrencyToken).IsConcurrencyToken();
         issueEntity.Property(e => e.LastUpdated)
-            .HasConversion(dateTime => dateTime.ToUniversalTime().Ticks, ticks => new DateTime(ticks, DateTimeKind.Utc))
-            .ValueGeneratedOnAddOrUpdate()
-            .HasValueGenerator<DateTimeGenerater>();
+            .HasConversion(dateTime => dateTime.ToUniversalTime().Ticks, ticks => new DateTime(ticks, DateTimeKind.Utc));
 
         issueEntity.OwnsOne(e => e.Assignee,
             (owned) =>
@@ -163,5 +169,45 @@ public sealed class IssuesDbContext : DbContext
         linkedIssueEntity.Property(e => e.ConcurrencyToken).IsConcurrencyToken();
 
         SeedData.HasData(issueEntity, linkedIssueEntity);
+    }
+
+    private static void ChangeTracker_Tracked(object? sender, EntityTrackedEventArgs e)
+    {
+        if (e.Entry.Entity is Issue issue)
+        {
+            RefreshIssueTimestamp(issue, e);
+        }
+    }
+
+    private static void ChangeTracker_StateChanged(object? sender, EntityStateChangedEventArgs e)
+    {
+        if (e.Entry.Entity is Issue issue)
+        {
+            RefreshIssueTimestamp(issue, e);
+        }
+    }
+
+    private static void RefreshIssueTimestamp(Issue issue, EntityEntryEventArgs e)
+    {
+        if (e.Entry.State is EntityState.Added or EntityState.Modified)
+        {
+            issue.RefreshLastUpdated();
+        }
+    }
+
+    /// <inheritdoc />
+    public override void Dispose()
+    {
+        ChangeTracker.StateChanged -= ChangeTracker_StateChanged;
+        ChangeTracker.Tracked -= ChangeTracker_Tracked; 
+        base.Dispose();
+    }
+
+    /// <inheritdoc />
+    public override ValueTask DisposeAsync()
+    {
+        ChangeTracker.StateChanged -= ChangeTracker_StateChanged;
+        ChangeTracker.Tracked -= ChangeTracker_Tracked; 
+        return base.DisposeAsync();
     }
 }
