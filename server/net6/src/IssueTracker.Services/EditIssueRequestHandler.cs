@@ -13,6 +13,7 @@
 
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Requests;
+using IssueTracker.Core.ValueObjects;
 using IssueTracker.Data.Abstractions;
 using MediatR;
 
@@ -30,7 +31,7 @@ public sealed class EditIssueRequestHandler : IRequestHandler<EditIssueRequest, 
     /// <inheritdoc />
     public async Task<Issue?> Handle(EditIssueRequest request, CancellationToken cancellationToken)
     {
-        (Guid id, Action<Issue> visitor) = request;
+        (IssueIdentifier id, Action<Issue> visitor) = request;
 
         // polly would likely need to around this entire attempt if we wanted retry
         Issue? issue = await _repository.UpdateIssue(id, visitor, cancellationToken);
