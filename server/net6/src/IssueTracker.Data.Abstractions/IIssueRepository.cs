@@ -13,6 +13,7 @@
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Projections;
 using IssueTracker.Core.Specifications;
+using IssueTracker.Core.ValueObjects;
 using IssueTracker.Core.Views;
 
 namespace IssueTracker.Data.Abstractions;
@@ -55,43 +56,43 @@ public interface IIssueRepository
     /// <summary>
     /// Returns all parent issues of an issue given by <paramref name="id"/>
     /// </summary>
-    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
+    /// <param name="id">unique id of issue</param>
     /// <param name="pageNumber" example="1" >current page number to return</param>
     /// <param name="pageSize" example="10">maximum number of items to return</param>
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all parent issues of an issue given by <paramref name="id"/></returns>
-    IAsyncEnumerable<LinkedIssueSummaryProjection> GetParentIssueSummaries(Guid id, int pageNumber, int pageSize, CancellationToken cancellationToken);
+    IAsyncEnumerable<LinkedIssueSummaryProjection> GetParentIssueSummaries(IssueIdentifier id, int pageNumber, int pageSize, CancellationToken cancellationToken);
 
     /// <summary>
     /// Returns all child issues of an issue given by <paramref name="id"/>
     /// </summary>
-    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
+    /// <param name="id">unique id of issue</param>
     /// <param name="pageNumber" example="1" >current page number to return</param>
     /// <param name="pageSize" example="10">maximum number of items to return</param>
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all child issues of an issue given by <paramref name="id"/></returns>
-    IAsyncEnumerable<LinkedIssueSummaryProjection> GetChildIssueSummaries(Guid id, int pageNumber, int pageSize, CancellationToken cancellationToken);
+    IAsyncEnumerable<LinkedIssueSummaryProjection> GetChildIssueSummaries(IssueIdentifier id, int pageNumber, int pageSize, CancellationToken cancellationToken);
 
     /// <summary>
     /// Returns all parent issues of an issue given by <paramref name="id"/>
     /// </summary>
-    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
+    /// <param name="id">unique id of issue</param>
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all parent issues of an issue given by <paramref name="id"/></returns>
-    IAsyncEnumerable<LinkedIssueView> GetParentIssues(Guid id, CancellationToken cancellationToken);
+    IAsyncEnumerable<LinkedIssueView> GetParentIssues(IssueIdentifier id, CancellationToken cancellationToken);
 
     /// <summary>
     /// Returns all child issues of an issue given by <paramref name="id"/>
     /// </summary>
-    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
+    /// <param name="id">unique id of issue</param>
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all child issues of an issue given by <paramref name="id"/></returns>
-    IAsyncEnumerable<LinkedIssueView> GetChildIssues(Guid id, CancellationToken cancellationToken);
+    IAsyncEnumerable<LinkedIssueView> GetChildIssues(IssueIdentifier id, CancellationToken cancellationToken);
 
-    Task<Issue?> GetUntrackedIssueById(Guid id, CancellationToken cancellationToken);
-    Task<Issue?> GetIssueById(Guid id, CancellationToken cancellationToken);
+    Task<Issue?> GetUntrackedIssueById(IssueIdentifier id, CancellationToken cancellationToken);
+    Task<Issue?> GetIssueById(IssueIdentifier id, CancellationToken cancellationToken);
     Task<Issue> AddIssue(Issue issue, CancellationToken cancellationToken);
-    Task<Issue?> UpdateIssue(Guid id, Action<Issue> visitor, CancellationToken cancellationToken);
+    Task<Issue?> UpdateIssue(IssueIdentifier id, Action<Issue> visitor, CancellationToken cancellationToken);
 
     Task<bool> DeleteIssueById(Guid id, CancellationToken cancellationToken);
 
@@ -104,7 +105,7 @@ public interface IIssueRepository
     /// an asynchronous task which upon completion contains <see langword="true"/>
     /// if the issue exists.
     /// </returns>
-    Task<bool> IssueExists(Guid id, CancellationToken cancellationToken);
+    Task<bool> IssueExists(IssueIdentifier id, CancellationToken cancellationToken);
 
     /// <summary>
     /// Persists changes to the database
