@@ -43,6 +43,12 @@ public sealed class AddIssueDto
     }
 
     /// <summary>
+    /// Project Identifier
+    /// </summary>
+    /// <example>APP</example>
+    public string Project { get; init; } = string.Empty;
+
+    /// <summary>
     /// Issue Title
     /// </summary>
     /// <example>Example Title</example>
@@ -70,6 +76,6 @@ public sealed class AddIssueDto
     /// <returns>Model</returns>
     public Issue ToModel()
     {
-        return new Issue(Title, Description ?? string.Empty, Priority);
+        return new Issue(Project, Title, Description ?? string.Empty, Priority);
     }
 }
