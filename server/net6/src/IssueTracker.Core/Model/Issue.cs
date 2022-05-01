@@ -92,6 +92,7 @@ public sealed record class Issue(IssueIdentifier Id)
         User reporter)
         : this(projectId, title, description, priority, type, parentIssueEntities, childIssueEntities, assignee, reporter)
     {
+        Id = new IssueIdentifier(projectId, issueNumber);
         IssueNumber = issueNumber;
         LastUpdated = lastUpdated;
         ConcurrencyToken = concurrencyToken;
@@ -119,11 +120,11 @@ public sealed record class Issue(IssueIdentifier Id)
         /// </summary>
         Title = 0,
         /// <summary>
-        /// Order by <see cref="Model.Priority"/>
+        /// Order by <see cref="ValueObjects.Priority"/>
         /// </summary>
         Priority = 1,
         /// <summary>
-        /// Order by <see cref="Model.IssueType"/>
+        /// Order by <see cref="IssueType"/>
         /// </summary>
         Type = 2,
     }

@@ -15,7 +15,7 @@ namespace IssueTracker.Core.ValueObjects;
 
 public readonly record struct IssueIdentifier(string ProjectId, int IssueNumber) : IEquatable<IssueIdentifier>
 {
-    public static IssueIdentifier Empty { get; } = new ("UNK", 0);
+    public static IssueIdentifier Empty { get; } = new ();
 
     public static IssueIdentifier FromString(string id)
     {

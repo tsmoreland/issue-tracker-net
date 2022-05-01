@@ -12,8 +12,9 @@
 //
 
 using System.ComponentModel;
+using IssueTracker.Core.Model;
 
-namespace IssueTracker.Core.Model;
+namespace IssueTracker.Core.ValueObjects;
 
 public sealed class LinkedIssue
 {
@@ -21,13 +22,11 @@ public sealed class LinkedIssue
     /// intended for use in seeding data
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public LinkedIssue(LinkType linkType, string parentProjectId, int parentIssueNumber, string childProjectId, int childIssueNumber, string? concurrencyToken)
+    public LinkedIssue(LinkType linkType, IssueIdentifier parentIssueId, IssueIdentifier childIssueId, string? concurrencyToken)
     {
         LinkType = linkType;
-        ParentProjectId = parentProjectId;
-        ParentIssueNumber = parentIssueNumber;
-        ChildProjectId = childProjectId;
-        ChildIssueNumber = childIssueNumber;
+        ParentIssueId = parentIssueId;
+        ChildIssueId = childIssueId;
         ConcurrencyToken = concurrencyToken;
     }
 
@@ -35,8 +34,8 @@ public sealed class LinkedIssue
     /// intended for use in seeding data
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public LinkedIssue(LinkType linkType, string parentProjectId, int parentIssueNumber, string childProjectId, int childIssueNumber)
-        : this(linkType, parentProjectId, parentIssueNumber, childProjectId, childIssueNumber, Guid.NewGuid().ToString())
+    public LinkedIssue(LinkType linkType, IssueIdentifier parentIssueId, IssueIdentifier childIssueId)
+        : this(linkType, parentIssueId, childIssueId, Guid.NewGuid().ToString())
     {
     }
 
@@ -47,11 +46,9 @@ public sealed class LinkedIssue
 
         LinkType = linkType;
         ParentIssue = parentIssue;
-        ParentProjectId = parentIssue.ProjectId;
-        ParentIssueNumber = ParentIssue.IssueNumber;
+        ParentIssueId = parentIssue.Id;
         ChildIssue = childIssue;
-        ChildProjectId = childIssue.ProjectId;
-        ChildIssueNumber = ChildIssue.IssueNumber;
+        ChildIssueId = ChildIssue.Id;
     }
 
     private LinkedIssue()
@@ -61,12 +58,10 @@ public sealed class LinkedIssue
 
     public LinkType LinkType { get; init; } = LinkType.Related;
 
-    public string ParentProjectId { get; init; } = string.Empty;
-    public int ParentIssueNumber { get; init; } = 0;
+    public IssueIdentifier ParentIssueId { get; init; } 
     public Issue ParentIssue { get; init; } = null!;
 
-    public string ChildProjectId { get; init; } = string.Empty;
-    public int ChildIssueNumber { get; init; } = 0;
+    public IssueIdentifier ChildIssueId { get; init; } 
     public Issue ChildIssue { get; init; } = null!;
 
     /// <summary>

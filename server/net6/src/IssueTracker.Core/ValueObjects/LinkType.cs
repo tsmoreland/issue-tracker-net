@@ -11,7 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace IssueTracker.Core.Model;
+namespace IssueTracker.Core.ValueObjects;
 
 /// <summary>
 /// Link type associating two issues, the left side of the joined is the parent entry which
