@@ -13,6 +13,7 @@
 
 using IssueTracker.Core.Model;
 using IssueTracker.Core.Requests;
+using IssueTracker.Core.ValueObjects;
 using IssueTracker.GrpcApi.Grpc.Services;
 
 namespace IssueTracker.GrpcApi.Services;
