@@ -19,11 +19,10 @@ namespace IssueTracker.Core.Model;
 /// <summary>
 /// Issue Entity
 /// </summary>
-public sealed class Issue  : IEquatable<Issue>
+public sealed record class Issue(IssueIdentifier Id)  
 {
     private ICollection<LinkedIssue> ParentIssueEntities { get; init; } = new HashSet<LinkedIssue>();
     private ICollection<LinkedIssue> ChildIssueEntities { get; init; } = new HashSet<LinkedIssue>();
-    private readonly Lazy<IssueIdentifier> _lazyId;
 
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>
@@ -61,6 +60,7 @@ public sealed class Issue  : IEquatable<Issue>
         IEnumerable<LinkedIssue> childIssueEntities,
         User assignee,
         User reporter)
+        : this(new IssueIdentifier(projectId, 0))
     {
         ProjectId = projectId;
         Title = title;
@@ -72,7 +72,6 @@ public sealed class Issue  : IEquatable<Issue>
         Assignee = assignee;
         Reporter = reporter;
 
-        _lazyId = new Lazy<IssueIdentifier>(() => new IssueIdentifier(ProjectId, IssueNumber));
     }
 
     /// <summary>
@@ -102,10 +101,11 @@ public sealed class Issue  : IEquatable<Issue>
     /// Instanties a new instance of <see cref="Issue"/>
     /// </summary>
     private Issue()
+        : this(IssueIdentifier.Empty)
     {
-        ProjectId = string.Empty;
-        IssueNumber = 0;
-        _lazyId = new Lazy<IssueIdentifier>(() => new IssueIdentifier(ProjectId, IssueNumber));
+        // Used by entity framework
+        ProjectId = Id.ProjectId;
+        IssueNumber = Id.IssueNumber;
     }
 
 
@@ -131,17 +131,12 @@ public sealed class Issue  : IEquatable<Issue>
     /// <summary>
     /// unique identifier of the owning project
     /// </summary>
-    public string ProjectId { get; init; }
+    public string ProjectId { get; init; } = string.Empty;
 
     /// <summary>
     /// Unique identifier within the owning project
     /// </summary>
     public int IssueNumber { get; init; } = 0;
-
-    /// <summary>
-    /// Friendly Identified used in queries and display
-    /// </summary>
-    public IssueIdentifier Id { get; }
 
     /// <summary>
     /// Issue Title
@@ -268,18 +263,4 @@ public sealed class Issue  : IEquatable<Issue>
         ArgumentNullException.ThrowIfNull(reporter, nameof(reporter));
         Reporter = reporter;
     }
-
-    /// <inheritdoc />
-    public bool Equals(Issue? other)
-    {
-        return ReferenceEquals(other, this) || (other is not null && IssueNumber == other.IssueNumber && ProjectId == other.ProjectId);
-    }
-
-    /// <inheritdoc />
-    public override bool Equals(object? obj) =>
-        ReferenceEquals(this, obj) || obj is Issue other && Equals(other);
-
-    /// <inheritdoc />
-    public override int GetHashCode() =>
-        HashCode.Combine(ProjectId, IssueNumber);
 }

@@ -13,31 +13,23 @@
 
 namespace IssueTracker.Core.ValueObjects;
 
-public readonly struct IssueIdentifier : IEquatable<IssueIdentifier>
+public readonly record struct IssueIdentifier(string ProjectId, int IssueNumber) : IEquatable<IssueIdentifier>
 {
-    public IssueIdentifier(string id)
+    public static IssueIdentifier Empty { get; } = new ("UNK", 0);
+
+    public static IssueIdentifier FromString(string id)
     {
-        (ProjectId, IssueNumber) = DeconstructId(id);
+        (string projectId, int issueNumber) = DeconstructId(id);
+        return new IssueIdentifier(projectId, issueNumber);
     }
 
-    public IssueIdentifier(string projectId, int issueNumber)
-    {
-        if (projectId is not { Length: > 0 } and { Length: <= 3 })
-        {
-            throw new ArgumentException("Invalid project id");
-        }
+    public string ProjectId { get; init; } = (ProjectId is { Length: > 0 } and { Length: <= 3 })
+        ? ProjectId
+        : throw new ArgumentException("Invalid project id");
 
-        if (issueNumber <= 0)
-        {
-            throw new ArgumentException("issue number must be a positive integer");
-        }
-
-        ProjectId = projectId;
-        IssueNumber = issueNumber;
-    }
-
-    public string ProjectId { get; }
-    public int IssueNumber { get; }
+    public int IssueNumber { get; init; } = (IssueNumber >= 0)
+        ? IssueNumber
+        : throw new ArgumentException("issue number must be a positive integer");
 
     public void Deconstruct(out string projectId, out int issueNumber)
     {
@@ -64,16 +56,4 @@ public readonly struct IssueIdentifier : IEquatable<IssueIdentifier>
     /// <inheritdoc />
     public override string ToString() =>
         $"{ProjectId}-{IssueNumber}";
-
-    /// <inheritdoc />
-    public bool Equals(IssueIdentifier other) =>
-        ProjectId == other.ProjectId && IssueNumber == other.IssueNumber;
-
-    /// <inheritdoc />
-    public override bool Equals(object? obj) =>
-        obj is IssueIdentifier other && Equals(other);
-
-    /// <inheritdoc />
-    public override int GetHashCode() =>
-        HashCode.Combine(ProjectId, IssueNumber);
 }

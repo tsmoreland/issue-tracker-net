@@ -21,9 +21,8 @@ public sealed class LinkedIssue
     /// intended for use in seeding data
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public LinkedIssue(Guid id, LinkType linkType, string parentProjectId, int parentIssueNumber, string childProjectId, int childIssueNumber, string? concurrencyToken)
+    public LinkedIssue(LinkType linkType, string parentProjectId, int parentIssueNumber, string childProjectId, int childIssueNumber, string? concurrencyToken)
     {
-        Id = id;
         LinkType = linkType;
         ParentProjectId = parentProjectId;
         ParentIssueNumber = parentIssueNumber;
@@ -36,24 +35,16 @@ public sealed class LinkedIssue
     /// intended for use in seeding data
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public LinkedIssue(Guid id, LinkType linkType, string parentProjectId, int parentIssueNumber, string childProjectId, int childIssueNumber)
-        : this(id, linkType, parentProjectId, parentIssueNumber, childProjectId, childIssueNumber, Guid.NewGuid().ToString())
+    public LinkedIssue(LinkType linkType, string parentProjectId, int parentIssueNumber, string childProjectId, int childIssueNumber)
+        : this(linkType, parentProjectId, parentIssueNumber, childProjectId, childIssueNumber, Guid.NewGuid().ToString())
     {
     }
 
     public LinkedIssue(LinkType linkType, Issue parentIssue, Issue childIssue)
-        : this(Guid.NewGuid(), linkType, parentIssue, childIssue)
-    {
-        ArgumentNullException.ThrowIfNull(parentIssue, nameof(parentIssue));
-        ArgumentNullException.ThrowIfNull(childIssue, nameof(childIssue));
-    }
-
-    public LinkedIssue(Guid id, LinkType linkType, Issue parentIssue, Issue childIssue)
     {
         ArgumentNullException.ThrowIfNull(parentIssue, nameof(parentIssue));
         ArgumentNullException.ThrowIfNull(childIssue, nameof(childIssue));
 
-        Id = id;
         LinkType = linkType;
         ParentIssue = parentIssue;
         ParentProjectId = parentIssue.ProjectId;
@@ -67,8 +58,6 @@ public sealed class LinkedIssue
     {
         // required by entity framework
     }
-
-    public Guid Id { get; private set; } = Guid.NewGuid();
 
     public LinkType LinkType { get; init; } = LinkType.Related;
 
