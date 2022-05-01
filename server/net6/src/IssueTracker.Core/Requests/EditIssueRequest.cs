@@ -16,4 +16,4 @@ using MediatR;
 
 namespace IssueTracker.Core.Requests;
 
-public sealed record class EditIssueRequest(Guid Id, Action<Issue> Visitor) : IRequest<Issue?>;
+public sealed record class EditIssueRequest(string Id, Action<Issue> Visitor) : IRequest<Issue?>;

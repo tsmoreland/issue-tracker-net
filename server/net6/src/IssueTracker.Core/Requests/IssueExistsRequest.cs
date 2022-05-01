@@ -15,4 +15,4 @@ using MediatR;
 
 namespace IssueTracker.Core.Requests;
 
-public sealed record class IssueExistsRequest(Guid Id) : IRequest<bool>;
+public sealed record class IssueExistsRequest(string Id) : IRequest<bool>;

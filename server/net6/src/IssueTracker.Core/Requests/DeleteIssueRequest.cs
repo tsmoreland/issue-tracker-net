@@ -15,4 +15,4 @@ using MediatR;
 
 namespace IssueTracker.Core.Requests;
 
-public sealed record class DeleteIssueRequest(Guid Id) : IRequest<bool>;
+public sealed record class DeleteIssueRequest(string Id) : IRequest<bool>;

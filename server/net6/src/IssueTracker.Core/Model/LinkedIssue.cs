@@ -21,12 +21,14 @@ public sealed class LinkedIssue
     /// intended for use in seeding data
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public LinkedIssue(Guid id, LinkType linkType, Guid parentIssueId, Guid childIssueId, string? concurrencyToken)
+    public LinkedIssue(Guid id, LinkType linkType, string parentProjectId, int parentIssueNumber, string childProjectId, int childIssueNumber, string? concurrencyToken)
     {
         Id = id;
         LinkType = linkType;
-        ParentIssueId = parentIssueId;
-        ChildIssueId = childIssueId;
+        ParentProjectId = parentProjectId;
+        ParentIssueNumber = parentIssueNumber;
+        ChildProjectId = childProjectId;
+        ChildIssueNumber = childIssueNumber;
         ConcurrencyToken = concurrencyToken;
     }
 
@@ -34,8 +36,8 @@ public sealed class LinkedIssue
     /// intended for use in seeding data
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public LinkedIssue(Guid id, LinkType linkType, Guid parentIssueId, Guid childIssueId)
-        : this(id, linkType, parentIssueId, childIssueId, Guid.NewGuid().ToString())
+    public LinkedIssue(Guid id, LinkType linkType, string parentProjectId, int parentIssueNumber, string childProjectId, int childIssueNumber)
+        : this(id, linkType, parentProjectId, parentIssueNumber, childProjectId, childIssueNumber, Guid.NewGuid().ToString())
     {
     }
 
@@ -54,9 +56,11 @@ public sealed class LinkedIssue
         Id = id;
         LinkType = linkType;
         ParentIssue = parentIssue;
-        ParentIssueId = ParentIssue.Id;
+        ParentProjectId = parentIssue.ProjectId;
+        ParentIssueNumber = ParentIssue.IssueNumber;
         ChildIssue = childIssue;
-        ChildIssueId = ChildIssue.Id;
+        ChildProjectId = childIssue.ProjectId;
+        ChildIssueNumber = ChildIssue.IssueNumber;
     }
 
     private LinkedIssue()
@@ -68,10 +72,12 @@ public sealed class LinkedIssue
 
     public LinkType LinkType { get; init; } = LinkType.Related;
 
-    public Guid ParentIssueId { get; init; } = Guid.Empty;
+    public string ParentProjectId { get; init; } = string.Empty;
+    public int ParentIssueNumber { get; init; } = 0;
     public Issue ParentIssue { get; init; } = null!;
 
-    public Guid ChildIssueId { get; init; } = Guid.Empty;
+    public string ChildProjectId { get; init; } = string.Empty;
+    public int ChildIssueNumber { get; init; } = 0;
     public Issue ChildIssue { get; init; } = null!;
 
     /// <summary>

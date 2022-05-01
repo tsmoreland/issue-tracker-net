@@ -25,7 +25,9 @@ public sealed class LinkedIssueView : IEquatable<LinkedIssueView>
         LinkType = linkType;
     }
 
-    public Guid Id => _issue.Id;
+    public string ProjectId => _issue.ProjectId;
+    public int IssueNumber => _issue.IssueNumber;
+    public string Id => _issue.Id;
     public string Title => _issue.Title;
     public string Description => _issue.Description;
     public Priority Priority => _issue.Priority;
@@ -37,7 +39,8 @@ public sealed class LinkedIssueView : IEquatable<LinkedIssueView>
 
 
     public void Deconstruct(out LinkType linkType,
-        out Guid id,
+        out string projectId,
+        out int issueNumber,
         out string title,
         out string? description,
         out Priority priority,
@@ -47,7 +50,8 @@ public sealed class LinkedIssueView : IEquatable<LinkedIssueView>
         out IEnumerable<LinkedIssueView> children)
     {
         linkType = LinkType;
-        id = Id;
+        projectId = ProjectId;
+        issueNumber = IssueNumber;
         title = Title;
         description = Description;
         priority = Priority;

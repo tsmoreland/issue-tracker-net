@@ -19,8 +19,7 @@ namespace IssueTracker.Core.Model;
 /// <summary>
 /// Issue Entity
 /// </summary>
-/// <param name="Id"></param>
-public sealed record class Issue(Guid Id)
+public sealed class Issue  : IEquatable<Issue>
 {
     private ICollection<LinkedIssue> ParentIssueEntities { get; init; } = new HashSet<LinkedIssue>();
     private ICollection<LinkedIssue> ChildIssueEntities { get; init; } = new HashSet<LinkedIssue>();
@@ -28,24 +27,16 @@ public sealed record class Issue(Guid Id)
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>
     /// </summary>
-    public Issue()
-        : this(Guid.NewGuid())
+    public Issue(string projectId, string title, string description, Priority priority)
+        : this(projectId, title, description, priority, IssueType.Defect, User.Unassigned, User.Unassigned)
     {
     }
 
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>
     /// </summary>
-    public Issue(string title, string description, Priority priority)
-        : this(title, description, priority, IssueType.Defect, User.Unassigned, User.Unassigned)
-    {
-    }
-
-    /// <summary>
-    /// Instanties a new instance of <see cref="Issue"/>
-    /// </summary>
-    public Issue(string title, string description, Priority priority, IssueType type, User assignee, User reporter)
-        : this(Guid.NewGuid())
+    public Issue(string projectId, string title, string description, Priority priority, IssueType type, User assignee, User reporter)
+        : this(projectId, title, description, priority, type, Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(), assignee, reporter)
     {
         Title = title;
         Description = description;
@@ -55,11 +46,38 @@ public sealed record class Issue(Guid Id)
         Reporter = reporter;
         LastUpdated = DateTime.UtcNow;
     }
+
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>, constructor provided primarily for use with entity framework
     /// </summary>
     public Issue(
-        Guid id,
+        string projectId,
+        string title,
+        string description,
+        Priority priority,
+        IssueType type,
+        IEnumerable<LinkedIssue> parentIssueEntities,
+        IEnumerable<LinkedIssue> childIssueEntities,
+        User assignee,
+        User reporter)
+    {
+        ProjectId = projectId;
+        Title = title;
+        Description = description;
+        Priority = priority;
+        Type = type;
+        ParentIssueEntities = parentIssueEntities.ToHashSet();
+        ChildIssueEntities = childIssueEntities.ToHashSet();
+        Assignee = assignee;
+        Reporter = reporter;
+    }
+
+    /// <summary>
+    /// Instanties a new instance of <see cref="Issue"/>, constructor provided primarily for use with entity framework
+    /// </summary>
+    public Issue(
+        string projectId,
+        int issueNumber,
         string title,
         string description,
         Priority priority,
@@ -70,19 +88,22 @@ public sealed record class Issue(Guid Id)
         IEnumerable<LinkedIssue> childIssueEntities,
         User assignee,
         User reporter)
-        : this(id)
+        : this(projectId, title, description, priority, type, parentIssueEntities, childIssueEntities, assignee, reporter)
     {
-        Title = title;
-        Description = description;
-        Priority = priority;
-        Type = type;
+        IssueNumber = issueNumber;
         LastUpdated = lastUpdated;
         ConcurrencyToken = concurrencyToken;
-        ParentIssueEntities = parentIssueEntities.ToHashSet();
-        ChildIssueEntities = childIssueEntities.ToHashSet();
-        Assignee = assignee;
-        Reporter = reporter;
     }
+
+    /// <summary>
+    /// Instanties a new instance of <see cref="Issue"/>
+    /// </summary>
+    private Issue()
+    {
+        ProjectId = string.Empty;
+        IssueNumber = 0;
+    }
+
 
     /// <summary>
     /// Issue Sort Column
@@ -102,6 +123,21 @@ public sealed record class Issue(Guid Id)
         /// </summary>
         Type = 2,
     }
+
+    /// <summary>
+    /// unique identifier of the owning project
+    /// </summary>
+    public string ProjectId { get; init; }
+
+    /// <summary>
+    /// Unique identifier within the owning project
+    /// </summary>
+    public int IssueNumber { get; init; } = 0;
+
+    /// <summary>
+    /// Friendly Identified used in queries and display
+    /// </summary>
+    public string Id => $"{ProjectId}-{IssueNumber}";
 
     /// <summary>
     /// Issue Title
@@ -161,6 +197,23 @@ public sealed record class Issue(Guid Id)
     public void LinkToIssue(LinkType linkType, Issue issue)
     {
         ChildIssueEntities.Add(new LinkedIssue(linkType, this, issue));
+    }
+
+    public static (string ProjectId, int Id) DeconstructId(string friendlyId)
+    {
+        int dashIndex = friendlyId.IndexOf('-');
+        if (dashIndex == -1)
+        {
+            throw new ArgumentException("Malformed friendly id");
+        }
+
+        if (!int.TryParse(friendlyId[(dashIndex + 1)..], out int id))
+        {
+            throw new ArgumentException("Malformed friendly id, invalid id component");
+        }
+
+        return (friendlyId[..dashIndex], id);
+
     }
 
     /// <summary>
@@ -228,4 +281,18 @@ public sealed record class Issue(Guid Id)
         ArgumentNullException.ThrowIfNull(reporter, nameof(reporter));
         Reporter = reporter;
     }
+
+    /// <inheritdoc />
+    public bool Equals(Issue? other)
+    {
+        return ReferenceEquals(other, this) || (other is not null && IssueNumber == other.IssueNumber && ProjectId == other.ProjectId);
+    }
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj) =>
+        ReferenceEquals(this, obj) || obj is Issue other && Equals(other);
+
+    /// <inheritdoc />
+    public override int GetHashCode() =>
+        HashCode.Combine(ProjectId, IssueNumber);
 }

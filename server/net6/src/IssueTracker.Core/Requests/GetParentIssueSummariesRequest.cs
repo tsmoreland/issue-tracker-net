@@ -18,7 +18,7 @@ using MediatR;
 namespace IssueTracker.Core.Requests;
 
 public sealed record class GetParentIssueSummariesRequest(
-    Guid IssueId,
+    string FriendlyId,
     int PageNumber,
     int PageSize,
     Issue.SortBy SortBy,
