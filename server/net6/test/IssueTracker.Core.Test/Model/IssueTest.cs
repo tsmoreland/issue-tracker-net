@@ -12,17 +12,23 @@
 //
 
 using System.Reflection;
+using IssueTracker.Core.ValueObjects;
 
-namespace IssueTracker.Core.Test;
+namespace IssueTracker.Core.Test.Model;
 
 public sealed class IssueTest
 {
+    private const string ProjectId = "APP";
+    private const string Title = "Issue";
+    private const string Description = "empty";
+    private static readonly Priority s_priority = Priority.Low;
+
 
     [TestCase(null)]
     [TestCase("")]
     public void SetDescription_StoresEmptyString_WhenValueIsNullOrEmpt(string value)
     {
-        Issue issue = new ();
+        Issue issue = new(ProjectId, Title, Description, s_priority);
         issue.SetDescription(value);
         Assert.That(issue.Description, Is.Empty);
     }
@@ -30,7 +36,7 @@ public sealed class IssueTest
     [Test]
     public void Assignee_ReturnsNull_WhenPrivateSetterUsedViaReflection()
     {
-        Issue issue = new ();
+        Issue issue = new(ProjectId, Title, Description, s_priority);
         PropertyInfo? property = issue.GetType().GetProperty(nameof(Issue.Assignee));
         property?.SetValue(issue, null);
         Assert.That(issue.Assignee, Is.Null);
@@ -39,7 +45,7 @@ public sealed class IssueTest
     [Test]
     public void Reporter_ReturnsNull_WhenPrivateSetterUsedViaReflection()
     {
-        Issue issue = new ();
+        Issue issue = new(ProjectId, Title, Description, s_priority);
         PropertyInfo? property = issue.GetType().GetProperty(nameof(Issue.Reporter));
         property?.SetValue(issue, null);
         Assert.That(issue.Reporter, Is.Null);
