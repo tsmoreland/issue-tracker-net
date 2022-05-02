@@ -45,7 +45,7 @@ internal static class RequestMessageExtensions
         {
             IssueSortBy.Title => Issue.SortBy.Title,
             IssueSortBy.Priority => Issue.SortBy.Priority,
-            //IssueSortBy.Type => Issue.SortBy.Type,  // not yet added to proto
+            IssueSortBy.Type => Issue.SortBy.Type,  
             _ => Issue.SortBy.Title,
         };
     }

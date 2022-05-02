@@ -21,6 +21,7 @@ enum ResultCode {
 enum IssueSortBy {
     Title = 0;
     Priority = 1;
+    Type = 2;
 }
 
 enum SortOrder {
