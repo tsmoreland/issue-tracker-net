@@ -89,7 +89,7 @@ public sealed class IssueRepository : IIssueRepository
     {
         var summaries = _dbContext.LinkedIssues
             .AsNoTracking()
-            .Where(link => link.ChildIssueId == id)
+            .Where(link => link.ChildId == id)
             .Select(li => new {li.ParentIssue.Id, li.ParentIssue.Title, li.ParentIssue.Priority, li.ParentIssue.Type, li.LinkType })
             .OrderBy(i => i.Title)
             .Skip((pageNumber - 1) * pageSize)
@@ -108,7 +108,7 @@ public sealed class IssueRepository : IIssueRepository
     {
         var summaries = _dbContext.LinkedIssues
             .AsNoTracking()
-            .Where(link => link.ParentIssueId == id)
+            .Where(link => link.ParentId == id)
             .Select(li => new { li.ChildIssue.Id, li.ChildIssue.Title, li.ChildIssue.Priority, li.ChildIssue.Type, li.LinkType })
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
@@ -124,7 +124,7 @@ public sealed class IssueRepository : IIssueRepository
     {
         var issues = _dbContext.LinkedIssues
             .AsNoTracking()
-            .Where(link => link.ChildIssueId == id)
+            .Where(link => link.ChildId == id)
             .OrderBy(i => i.ChildIssue.Title)
             .Select(li => new { Link = li.LinkType, Issue = li.ParentIssue })
             .AsAsyncEnumerable();
@@ -139,7 +139,7 @@ public sealed class IssueRepository : IIssueRepository
     {
         var issues = _dbContext.LinkedIssues
             .AsNoTracking()
-            .Where(link => link.ParentIssueId == id)
+            .Where(link => link.ParentId == id)
             .Select(li => new { Link = li.LinkType, Issue = li.ChildIssue })
             .AsAsyncEnumerable();
         await foreach (var pair in issues.WithCancellation(cancellationToken))
@@ -165,10 +165,14 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
-    public Task<Issue> AddIssue(Issue issue, CancellationToken cancellationToken)
+    public async Task<Issue> AddIssue(Issue issue, CancellationToken cancellationToken)
     {
+        int issueNumber = await _dbContext.GetMaxIssueNumberForProject(issue.Project, cancellationToken) + 1;
+
+        issue = issue with { IssueNumber = issueNumber };
+
         _dbContext.Issues.Add(issue);
-        return Task.FromResult(issue);
+        return issue;
     }
 
     /// <inheritdoc />
@@ -194,7 +198,8 @@ public sealed class IssueRepository : IIssueRepository
     /// <inheritdoc />
     public async Task<bool> DeleteIssueById(IssueIdentifier id, CancellationToken cancellationToken)
     {
-        Issue? issue = await _dbContext.Issues.FindAsync(new object[] { id }, cancellationToken);
+        Issue? issue = await _dbContext.Issues
+            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
         if (issue is null)
         {
             return false;

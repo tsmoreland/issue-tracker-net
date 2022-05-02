@@ -36,7 +36,7 @@ internal static class SeedData
             .HasData(new
             {
                 IssueIdentifier = "id of the issue entity", // this is the shadow property created by EF to link the objects, Issue matches the class name of the owning entity
-                Id = "id property of the user object",
+                UserId = "id property of the user object",
                 FullName = "fullname property from user table"
             });
         #endif
@@ -46,11 +46,11 @@ internal static class SeedData
             "APP", 1,
             "Add Project support", "add projects and use project id as link between issue and project",
             Priority.High, IssueType.Epic,
-            new DateTime(2022, 01, 01, 12, 30, 0, DateTimeKind.Utc),
-            Guid.NewGuid().ToString(),
             Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(),
-            User.Unassigned,
-            User.Unassigned);
+            TriageUser.Unassigned,
+            Maintainer.Unassigned,
+            new DateTime(2022, 01, 01, 12, 30, 0, DateTimeKind.Utc),
+            Guid.NewGuid().ToString());
         assigneeSet.SetValue(epic, null);
         reporterSet.SetValue(epic, null);
 
@@ -58,11 +58,11 @@ internal static class SeedData
             "APP", 2,
             "The database should story issues with links to projects", "",
             Priority.Medium, IssueType.Story,
-            new DateTime(2022, 01, 01, 12, 40, 0, DateTimeKind.Utc),
-            Guid.NewGuid().ToString(),
             Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(),
-            User.Unassigned,
-            User.Unassigned);
+            TriageUser.Unassigned,
+            Maintainer.Unassigned,
+            new DateTime(2022, 01, 01, 12, 40, 0, DateTimeKind.Utc),
+            Guid.NewGuid().ToString());
         assigneeSet.SetValue(dataStory, null);
         reporterSet.SetValue(dataStory, null);
 
@@ -70,11 +70,11 @@ internal static class SeedData
             "APP", 3,
             "The api should be able to retrieve projects", "As a user I want to be able to retreive all projects",
             Priority.Low, IssueType.Story,
-            new DateTime(2022, 01, 01, 12, 45, 0, DateTimeKind.Utc),
-            Guid.NewGuid().ToString(),
             Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(),
-            User.Unassigned,
-            User.Unassigned);
+            TriageUser.Unassigned,
+            Maintainer.Unassigned,
+            new DateTime(2022, 01, 01, 12, 45, 0, DateTimeKind.Utc),
+            Guid.NewGuid().ToString());
         assigneeSet.SetValue(queryStory, null);
         reporterSet.SetValue(queryStory, null);
 
@@ -82,11 +82,11 @@ internal static class SeedData
             "APP", 4,
             "add project core models", "add the model(s) for project type ensuring it's id matches the expectations of issue",
             Priority.Medium, IssueType.Task,
-            new DateTime(2022, 01, 02, 12, 0, 0, DateTimeKind.Utc),
-            Guid.NewGuid().ToString(),
             Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(),
-            User.Unassigned,
-            User.Unassigned);
+            TriageUser.Unassigned,
+            Maintainer.Unassigned,
+            new DateTime(2022, 01, 02, 12, 0, 0, DateTimeKind.Utc),
+            Guid.NewGuid().ToString());
         assigneeSet.SetValue(dataTask, null);
         reporterSet.SetValue(dataTask, null);
 
@@ -94,18 +94,18 @@ internal static class SeedData
             "APP", 5,
             "add mediator request/handlers for project query", "add the request handlers to get projects by id and a summary",
             Priority.Low, IssueType.Task,
-            new DateTime(2022, 01, 03, 13, 45, 0, DateTimeKind.Utc),
-            Guid.NewGuid().ToString(),
             Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(),
-            User.Unassigned,
-            User.Unassigned);
+            TriageUser.Unassigned,
+            Maintainer.Unassigned,
+            new DateTime(2022, 01, 03, 13, 45, 0, DateTimeKind.Utc),
+            Guid.NewGuid().ToString());
         assigneeSet.SetValue(queryTask, null);
         reporterSet.SetValue(queryTask, null);
 
         issueEntity.HasData(epic, dataStory, queryStory, dataTask, queryTask);
 
-        LinkedIssue taskLink = new(LinkType.Blocking, dataTask.Id, queryTask.Id, Guid.NewGuid().ToString());
-        LinkedIssue storyLink = new(LinkType.Related, dataStory.Id, queryStory.Id, Guid.NewGuid().ToString());
+        LinkedIssue taskLink = new(LinkType.Blocking, dataTask.IssueId, dataTask.Id, queryTask.IssueId, queryTask.Id, Guid.NewGuid().ToString());
+        LinkedIssue storyLink = new(LinkType.Related, dataStory.IssueId, dataStory.Id, queryStory.IssueId, queryStory.Id, Guid.NewGuid().ToString());
         linkedIssueEntity.HasData(taskLink, storyLink);
     }
 }

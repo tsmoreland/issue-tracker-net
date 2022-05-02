@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IssueTracker.Data.Migrations
 {
     [DbContext(typeof(IssuesDbContext))]
-    [Migration("20220501135411_Initial")]
+    [Migration("20220502132040_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,7 +21,8 @@ namespace IssueTracker.Data.Migrations
 
             modelBuilder.Entity("IssueTracker.Core.Model.Issue", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<Guid>("IssueId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ConcurrencyToken")
@@ -34,6 +35,10 @@ namespace IssueTracker.Data.Migrations
                         .IsUnicode(true)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Id")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("IssueNumber")
                         .HasColumnType("INTEGER");
 
@@ -43,7 +48,7 @@ namespace IssueTracker.Data.Migrations
                     b.Property<int>("Priority")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ProjectId")
+                    b.Property<string>("Project")
                         .IsRequired()
                         .HasMaxLength(3)
                         .IsUnicode(false)
@@ -58,13 +63,15 @@ namespace IssueTracker.Data.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("Id");
+                    b.HasKey("IssueId");
+
+                    b.HasIndex("Id");
 
                     b.HasIndex("IssueNumber");
 
                     b.HasIndex("Priority");
 
-                    b.HasIndex("ProjectId");
+                    b.HasIndex("Project");
 
                     b.HasIndex("Title");
 
@@ -73,61 +80,66 @@ namespace IssueTracker.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "APP-1",
-                            ConcurrencyToken = "e653141e-0cf0-4da2-97be-b54e3de00cb3",
+                            IssueId = new Guid("fb648532-026f-447c-a9c7-996fac6a8b2e"),
+                            ConcurrencyToken = "bad845f6-cdb9-4148-b24c-051d783796ff",
                             Description = "add projects and use project id as link between issue and project",
+                            Id = "APP-1",
                             IssueNumber = 1,
                             LastUpdated = 637766370000000000L,
                             Priority = 2,
-                            ProjectId = "APP",
+                            Project = "APP",
                             Title = "Add Project support",
                             Type = 0
                         },
                         new
                         {
-                            Id = "APP-2",
-                            ConcurrencyToken = "a69efa66-c58e-4330-b37d-9796aa76a37d",
+                            IssueId = new Guid("9776c88f-d2cc-4e01-8d34-56710cbd2be4"),
+                            ConcurrencyToken = "4446f14e-71e1-415a-aab4-78bdae749755",
                             Description = "",
+                            Id = "APP-2",
                             IssueNumber = 2,
                             LastUpdated = 637766376000000000L,
                             Priority = 1,
-                            ProjectId = "APP",
+                            Project = "APP",
                             Title = "The database should story issues with links to projects",
                             Type = 1
                         },
                         new
                         {
-                            Id = "APP-3",
-                            ConcurrencyToken = "14730f8b-c599-44d0-8a6f-b4d7e9088fa1",
+                            IssueId = new Guid("1642a18b-96a1-46f0-a834-5fcb72e14aaa"),
+                            ConcurrencyToken = "e86ac0ac-80ba-4108-8aa3-7265c8240a68",
                             Description = "As a user I want to be able to retreive all projects",
+                            Id = "APP-3",
                             IssueNumber = 3,
                             LastUpdated = 637766379000000000L,
                             Priority = 0,
-                            ProjectId = "APP",
+                            Project = "APP",
                             Title = "The api should be able to retrieve projects",
                             Type = 1
                         },
                         new
                         {
-                            Id = "APP-4",
-                            ConcurrencyToken = "4323ddf2-77b5-4cef-b430-7590a05c933c",
+                            IssueId = new Guid("ef0b233b-bed3-4027-9ed9-010fe00ecf2f"),
+                            ConcurrencyToken = "474effa9-b4a4-4a0b-ad02-2d2c5490aad1",
                             Description = "add the model(s) for project type ensuring it's id matches the expectations of issue",
+                            Id = "APP-4",
                             IssueNumber = 4,
                             LastUpdated = 637767216000000000L,
                             Priority = 1,
-                            ProjectId = "APP",
+                            Project = "APP",
                             Title = "add project core models",
                             Type = 2
                         },
                         new
                         {
-                            Id = "APP-5",
-                            ConcurrencyToken = "7d55b877-aafb-4a06-ab98-50d7e300d48a",
+                            IssueId = new Guid("b3941d54-f1f9-4b90-9e84-c7f33cee6d97"),
+                            ConcurrencyToken = "b32115cc-d27b-4aeb-b9fc-5a50f6b4ae33",
                             Description = "add the request handlers to get projects by id and a summary",
+                            Id = "APP-5",
                             IssueNumber = 5,
                             LastUpdated = 637768143000000000L,
                             Priority = 0,
-                            ProjectId = "APP",
+                            Project = "APP",
                             Title = "add mediator request/handlers for project query",
                             Type = 2
                         });
@@ -135,10 +147,14 @@ namespace IssueTracker.Data.Migrations
 
             modelBuilder.Entity("IssueTracker.Core.ValueObjects.LinkedIssue", b =>
                 {
-                    b.Property<string>("ParentIssueId")
+                    b.Property<Guid>("ParentIssueId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ChildIssueId")
+                    b.Property<Guid>("ChildIssueId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ChildId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ConcurrencyToken")
@@ -148,34 +164,46 @@ namespace IssueTracker.Data.Migrations
                     b.Property<int>("LinkType")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ParentId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("ParentIssueId", "ChildIssueId");
 
+                    b.HasIndex("ChildId");
+
                     b.HasIndex("ChildIssueId");
+
+                    b.HasIndex("ParentId");
 
                     b.ToTable("LinkedIssues", (string)null);
 
                     b.HasData(
                         new
                         {
-                            ParentIssueId = "APP-4",
-                            ChildIssueId = "APP-5",
-                            ConcurrencyToken = "2b988dd1-2002-4a25-b5a0-dbbefff57af1",
-                            LinkType = 2
+                            ParentIssueId = new Guid("ef0b233b-bed3-4027-9ed9-010fe00ecf2f"),
+                            ChildIssueId = new Guid("b3941d54-f1f9-4b90-9e84-c7f33cee6d97"),
+                            ChildId = "APP-5",
+                            ConcurrencyToken = "198375d6-fc95-4d80-92e1-96f7c1438d58",
+                            LinkType = 2,
+                            ParentId = "APP-4"
                         },
                         new
                         {
-                            ParentIssueId = "APP-2",
-                            ChildIssueId = "APP-3",
-                            ConcurrencyToken = "b2b4646e-4512-4567-8195-23e08821e2df",
-                            LinkType = 0
+                            ParentIssueId = new Guid("9776c88f-d2cc-4e01-8d34-56710cbd2be4"),
+                            ChildIssueId = new Guid("1642a18b-96a1-46f0-a834-5fcb72e14aaa"),
+                            ChildId = "APP-3",
+                            ConcurrencyToken = "95904269-574f-4135-9ed2-3abd801e15e9",
+                            LinkType = 0,
+                            ParentId = "APP-2"
                         });
                 });
 
             modelBuilder.Entity("IssueTracker.Core.Model.Issue", b =>
                 {
-                    b.OwnsOne("IssueTracker.Core.ValueObjects.User", "Assignee", b1 =>
+                    b.OwnsOne("IssueTracker.Core.ValueObjects.Maintainer", "Assignee", b1 =>
                         {
-                            b1.Property<string>("IssueId")
+                            b1.Property<Guid>("IssueId")
                                 .HasColumnType("TEXT");
 
                             b1.Property<string>("FullName")
@@ -184,14 +212,12 @@ namespace IssueTracker.Data.Migrations
                                 .HasMaxLength(200)
                                 .IsUnicode(true)
                                 .HasColumnType("TEXT")
-                                .HasDefaultValue("Unassigned")
-                                .HasColumnName("AssigneeFullName");
+                                .HasDefaultValue("Unassigned");
 
-                            b1.Property<Guid>("Id")
+                            b1.Property<Guid>("UserId")
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("TEXT")
-                                .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"))
-                                .HasColumnName("AssigneeId");
+                                .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
 
                             b1.HasKey("IssueId");
 
@@ -201,9 +227,9 @@ namespace IssueTracker.Data.Migrations
                                 .HasForeignKey("IssueId");
                         });
 
-                    b.OwnsOne("IssueTracker.Core.ValueObjects.User", "Reporter", b1 =>
+                    b.OwnsOne("IssueTracker.Core.ValueObjects.TriageUser", "Reporter", b1 =>
                         {
-                            b1.Property<string>("IssueId")
+                            b1.Property<Guid>("IssueId")
                                 .HasColumnType("TEXT");
 
                             b1.Property<string>("FullName")
@@ -212,14 +238,12 @@ namespace IssueTracker.Data.Migrations
                                 .HasMaxLength(200)
                                 .IsUnicode(true)
                                 .HasColumnType("TEXT")
-                                .HasDefaultValue("Unassigned")
-                                .HasColumnName("ReporterFullName");
+                                .HasDefaultValue("Unassigned");
 
-                            b1.Property<Guid>("Id")
+                            b1.Property<Guid>("UserId")
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("TEXT")
-                                .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"))
-                                .HasColumnName("ReporterId");
+                                .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
 
                             b1.HasKey("IssueId");
 

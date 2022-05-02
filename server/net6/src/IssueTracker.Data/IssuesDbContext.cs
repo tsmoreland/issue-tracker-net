@@ -80,21 +80,40 @@ public sealed class IssuesDbContext : DbContext
         base.OnConfiguring(optionsBuilder);
     }
 
+    /// <summary>
+    /// Not efficient, we could make this Lazy and remember per call; this is just a first pass
+    /// </summary>
+    internal async Task<int> GetMaxIssueNumberForProject(string projectId, CancellationToken cancellationToken)
+    {
+        int maxValue = await Issues.AsNoTracking()
+            .Where(i => i.Project == projectId)
+            .Select(i => i.IssueNumber)
+            .MaxAsync(cancellationToken);
+        return maxValue;
+    }
+
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         EntityTypeBuilder<Issue> issueEntity = modelBuilder.Entity<Issue>();
-        issueEntity.ToTable("Issues").HasKey(e => e.Id);
+        issueEntity.ToTable("Issues") .HasKey(e => e.IssueId);
+        issueEntity.HasIndex(e => e.Id);
         issueEntity.HasIndex(e => e.Title);
         issueEntity.HasIndex(e => e.Priority);
-        issueEntity.HasIndex(e => e.ProjectId);
+        issueEntity.HasIndex(e => e.Project);
         issueEntity.HasIndex(e => e.IssueNumber);
 
         issueEntity.Property(e => e.Id)
             .HasConversion(e => e.ToString(), @string => IssueIdentifier.FromString(@string))
             .IsRequired();
-        issueEntity.Property(e => e.ProjectId).HasMaxLength(3).IsUnicode(false).IsRequired();
-        issueEntity.Property(e => e.IssueNumber).IsRequired();
+        issueEntity.Property(e => e.Project)
+            .HasField("_project")
+            .HasMaxLength(3)
+            .IsUnicode(false)
+            .IsRequired();
+        issueEntity.Property(e => e.IssueNumber)
+            .HasField("_issueNumber")
+            .IsRequired();
         issueEntity.Property(e => e.Title).IsRequired().IsUnicode().HasMaxLength(200);
         issueEntity.Property(e => e.Description).IsUnicode().HasMaxLength(500);
         issueEntity.Property(e => e.Priority).IsRequired();
@@ -106,33 +125,29 @@ public sealed class IssuesDbContext : DbContext
             (owned) =>
             {
                 owned
-                    .Property(e => e.Id)
+                    .Property(e => e.UserId)
                     .IsRequired()
-                    .HasDefaultValue(User.Unassigned.Id)
-                    .HasColumnName("AssigneeId");
+                    .HasDefaultValue(TriageUser.Unassigned.UserId);
                 owned
                     .Property(e => e.FullName)
                     .IsRequired()
                     .HasMaxLength(200)
                     .IsUnicode(true)
-                    .HasDefaultValue(User.Unassigned.FullName)
-                    .HasColumnName("AssigneeFullName");
+                    .HasDefaultValue(TriageUser.Unassigned.FullName);
             });
         issueEntity.OwnsOne(e => e.Reporter,
             (owned) =>
             {
                 owned
-                    .Property(e => e.Id)
+                    .Property(e => e.UserId)
                     .IsRequired()
-                    .HasDefaultValue(User.Unassigned.Id)
-                    .HasColumnName("ReporterId");
+                    .HasDefaultValue(Maintainer.Unassigned.UserId);
                 owned
                     .Property(e => e.FullName)
                     .IsRequired()
                     .HasMaxLength(200)
                     .IsUnicode(true)
-                    .HasDefaultValue(User.Unassigned.FullName)
-                    .HasColumnName("ReporterFullName");
+                    .HasDefaultValue(Maintainer.Unassigned.FullName);
             });
 
         issueEntity.HasMany("ChildIssueEntities").WithOne();
@@ -143,27 +158,29 @@ public sealed class IssuesDbContext : DbContext
         issueEntity.Ignore(e => e.ChildIssues);
 
         EntityTypeBuilder<LinkedIssue> linkedIssueEntity = modelBuilder.Entity<LinkedIssue>();
+        linkedIssueEntity.HasIndex(e => e.ParentId);
+        linkedIssueEntity.HasIndex(e => e.ChildId);
         linkedIssueEntity
             .ToTable("LinkedIssues")
             .HasKey(e => new { e.ParentIssueId, e.ChildIssueId });
         linkedIssueEntity
             .HasOne(e => e.ParentIssue)
             .WithMany("ParentIssueEntities")
-            .HasPrincipalKey(e => e.Id)
+            .HasPrincipalKey(e => e.IssueId)
             .HasForeignKey(e => e.ParentIssueId)
             .OnDelete(DeleteBehavior.Restrict);
         linkedIssueEntity
-            .Property(e => e.ParentIssueId)
+            .Property(e => e.ParentId)
             .HasConversion(e => e.ToString(), @string => IssueIdentifier.FromString(@string))
             .IsRequired();
         linkedIssueEntity
             .HasOne(e => e.ChildIssue)
             .WithMany("ChildIssueEntities")
-            .HasPrincipalKey(e => e.Id)
+            .HasPrincipalKey(e => e.IssueId)
             .HasForeignKey(e => e.ChildIssueId)
             .OnDelete(DeleteBehavior.Restrict);
         linkedIssueEntity
-            .Property(e => e.ChildIssueId)
+            .Property(e => e.ChildId)
             .HasConversion(e => e.ToString(), @string => IssueIdentifier.FromString(@string))
             .IsRequired();
         linkedIssueEntity.Property(e => e.ConcurrencyToken).IsConcurrencyToken();
