@@ -83,7 +83,7 @@ public sealed class UrlVersionedIssueController : ControllerBase
     /// <summary>
     /// Returns issue matching <paramref name="id"/> if found
     /// </summary>
-    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
+    /// <param name="id" example="APP-1234">unique id of issue</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
     [HttpGet("{id}")]
@@ -104,7 +104,7 @@ public sealed class UrlVersionedIssueController : ControllerBase
     /// <summary>
     /// Returns all parent issues 
     /// </summary>
-    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
+    /// <param name="id" example="APP-1234">unique id of issue</param>
     /// <param name="pageNumber" example="1" >current page number to return</param>
     /// <param name="pageSize" example="10">maximum number of items to return</param>
     /// <param name="cancellationToken">a cancellation token.</param>
@@ -144,7 +144,7 @@ public sealed class UrlVersionedIssueController : ControllerBase
     /// <summary>
     /// Returns all child issues 
     /// </summary>
-    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
+    /// <param name="id" example="APP-1234">unique id of issue</param>
     /// <param name="pageNumber" example="1" >current page number to return</param>
     /// <param name="pageSize" example="10">maximum number of items to return</param>
     /// <param name="cancellationToken">a cancellation token.</param>
@@ -232,7 +232,7 @@ public sealed class UrlVersionedIssueController : ControllerBase
     /// <summary>
     /// Deletes the issue given by <paramref name="id"/> 
     /// </summary>
-    /// <param name="id">unique id of the issue to delete</param>
+    /// <param name="id" example="APP-1234">unique id of the issue to delete</param>
     /// <param name="cancellationToken">A cancellation token</param>
     [HttpDelete("{id}")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
