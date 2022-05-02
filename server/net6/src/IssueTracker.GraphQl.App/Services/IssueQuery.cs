@@ -11,9 +11,10 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using AutoMapper;
 using GraphQL.Types;
-using IssueTracker.Core.Model;
 using IssueTracker.Data.Abstractions;
+using IssueTracker.GraphQl.App.Model.Response;
 using IssueModelType = IssueTracker.GraphQl.App.Services.Types.IssueModelType;
 
 namespace IssueTracker.GraphQl.App.Services;
@@ -30,19 +31,23 @@ public sealed class IssueQuery : ObjectGraphType<object>
     {
         Name = "IssueQuery";
         FieldAsync<ListGraphType<IssueModelType>>("issues",
-            resolve: context => ResolveIssues(context.RequestServices?.GetService<IIssueRepository>(), context.CancellationToken));
+            resolve: context => ResolveIssues(
+                context.RequestServices?.GetService<IIssueRepository>(),
+                context.RequestServices?.GetService<IMapper>(),
+                context.CancellationToken));
     }
 
-    private static async Task<object?> ResolveIssues(IIssueRepository? repository,
+    private static async Task<object?> ResolveIssues(IIssueRepository? repository, IMapper? mapper,
         CancellationToken cancellationToken)
     {
-        if (repository is null)
+        if (repository is null || mapper is null)
         {
-            return new List<Issue>();
+            return new List<IssueDto>();
         }
 
         return await repository
             .GetIssues(cancellationToken)
+            .Select(mapper.Map<IssueDto>)
             .ToHashSetAsync(cancellationToken);
     }
 }

@@ -10,25 +10,26 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using AutoMapper;
 using GraphQL.Types;
-using IssueTracker.Core.Model;
 using IssueTracker.Core.ValueObjects;
 using IssueTracker.Core.Views;
 using IssueTracker.Data.Abstractions;
+using IssueTracker.GraphQl.App.Model.Response;
 
 namespace IssueTracker.GraphQl.App.Services.Types;
 
 /// <summary>
 /// Issue Type
 /// </summary>
-public sealed class IssueModelType : ObjectGraphType<Issue>
+public sealed class IssueModelType : ObjectGraphType<IssueDto>
 {
     /// <summary>
     /// Instantiates a new instance of the <see cref="IssueModelType"/> class.
     /// </summary>
     public IssueModelType()
     {
-        Field(f => f.Id, nullable: false).Description("Identifier");
+        Field(f => f.IssueId, nullable: false).Description("Id");
         Field(f => f.Title, nullable: false).Description("Title");
         Field(f => f.Description).Description("Description");
         Field(f => f.Priority, nullable: false).Description("Priority");
@@ -36,30 +37,38 @@ public sealed class IssueModelType : ObjectGraphType<Issue>
         FieldAsync<ListGraphType<LinkedIssueType>>("parents",
             resolve: context =>
                 ResolveIssueParents(
-                    context.Source.Id.ToString(),
+                    context.Source.IssueId.ToString(),
                     context.RequestServices?.GetService<IIssueRepository>(),
+                    context.RequestServices?.GetService<IMapper>(),
                     context.CancellationToken));
         FieldAsync<ListGraphType<LinkedIssueType>>("children",
             resolve: context =>
                 ResolveIssueChildren(
-                    context.Source.Id.ToString(),
+                    context.Source.IssueId.ToString(),
                     context.RequestServices?.GetService<IIssueRepository>(),
+                    context.RequestServices?.GetService<IMapper>(),
                     context.CancellationToken));
+        Field(f => f.Assignee, nullable: false).Description("Assigned user");
+        Field(f => f.Reporter, nullable: false).Description("Assigned user");
     }
 
-    internal static async Task<object?> ResolveIssueParents(string id, IIssueRepository? repository,
+    internal static async Task<object?> ResolveIssueParents(string id, IIssueRepository? repository, IMapper? mapper,
         CancellationToken cancellationToken)
     {
-        return repository is not null
-            ? await repository.GetParentIssues(IssueIdentifier.FromString(id), cancellationToken).ToHashSetAsync(cancellationToken)
+        return repository is not null && mapper is not null
+            ? await repository.GetParentIssues(IssueIdentifier.FromString(id), cancellationToken)
+                .Select(mapper.Map<LinkedIssueViewDto>)
+                .ToHashSetAsync(cancellationToken)
             : new HashSet<LinkedIssueView>();
     }
 
-    internal static async Task<object?> ResolveIssueChildren(string id, IIssueRepository? repository,
+    internal static async Task<object?> ResolveIssueChildren(string id, IIssueRepository? repository, IMapper? mapper,
         CancellationToken cancellationToken)
     {
-        return repository is not null
-            ? await repository.GetChildIssues(IssueIdentifier.FromString(id), cancellationToken).ToHashSetAsync(cancellationToken)
+        return repository is not null && mapper is not null
+            ? await repository.GetChildIssues(IssueIdentifier.FromString(id), cancellationToken)
+                .Select(mapper.Map<LinkedIssueViewDto>)
+                .ToHashSetAsync(cancellationToken)
             : new HashSet<LinkedIssueView>();
     }
 }

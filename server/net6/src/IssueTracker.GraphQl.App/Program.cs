@@ -13,6 +13,7 @@ using GraphQL.Server.Ui.Playground;
 using GraphQL.Server.Ui.Voyager;
 using GraphQL.SystemTextJson;
 using IssueTracker.Data.Abstractions;
+using IssueTracker.GraphQl.App.Profiles;
 using IssueTracker.GraphQl.App.Services;
 using IssueTracker.Middelware.SecurityHeaders;
 using IssueTracker.ServiceDiscovery;
@@ -55,6 +56,7 @@ static void ConfigureKestrel(WebHostBuilderContext context, KestrelServerOptions
 static void ConfigureServices(IServiceCollection services, IHostEnvironment environment, IConfiguration configuration)
 {
     services
+        .AddAutoMapper(typeof(MappingProfile).Assembly)
         .AddSecurityHeaders(configuration)
         .AddResponseCompression(options =>
         {

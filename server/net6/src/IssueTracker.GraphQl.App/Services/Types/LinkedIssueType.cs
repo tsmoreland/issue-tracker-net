@@ -11,23 +11,24 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using AutoMapper;
 using GraphQL.Types;
-using IssueTracker.Core.Views;
 using IssueTracker.Data.Abstractions;
+using IssueTracker.GraphQl.App.Model.Response;
 
 namespace IssueTracker.GraphQl.App.Services.Types;
 
 /// <summary>
 /// Linked Issue Type
 /// </summary>
-public sealed class LinkedIssueType : ObjectGraphType<LinkedIssueView>
+public sealed class LinkedIssueType : ObjectGraphType<LinkedIssueViewDto>
 {
     /// <summary>
     /// Instantiates a new instance of the <see cref="LinkedIssueType"/> class.
     /// </summary>
     public LinkedIssueType()
     {
-        Field(f => f.Id, nullable: false).Description("Identifier");
+        Field(f => f.IssueId, nullable: false).Description("Identifier");
         Field(f => f.Title, nullable: false).Description("Title");
         Field(f => f.Description).Description("Description");
         Field(f => f.Priority, nullable: false).Description("Priority");
@@ -36,15 +37,19 @@ public sealed class LinkedIssueType : ObjectGraphType<LinkedIssueView>
         FieldAsync<ListGraphType<LinkedIssueType>>("parents",
             resolve: context =>
                 IssueModelType.ResolveIssueParents(
-                    context.Source.Id.ToString(),
+                    context.Source.IssueId.ToString(),
                     context.RequestServices?.GetService<IIssueRepository>(),
+                    context.RequestServices?.GetService<IMapper>(),
                     context.CancellationToken));
         FieldAsync<ListGraphType<LinkedIssueType>>("children",
             resolve: context =>
                 IssueModelType.ResolveIssueChildren(
-                    context.Source.Id.ToString(),
+                    context.Source.IssueId.ToString(),
                     context.RequestServices?.GetService<IIssueRepository>(),
+                    context.RequestServices?.GetService<IMapper>(),
                     context.CancellationToken));
+        Field(f => f.Assignee, nullable: false).Description("Assigned user");
+        Field(f => f.Reporter, nullable: false).Description("Assigned user");
     }
 
 }
