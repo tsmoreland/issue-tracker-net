@@ -13,9 +13,7 @@
 
 namespace IssueTracker.Core.ValueObjects;
 
-public abstract record class User(Guid UserId, string FullName)
+public sealed record class Maintainer(Guid UserId, string FullName) : User(UserId, FullName)
 {
-    protected static readonly string UnasignedFullname = "Unassigned";
-    protected static readonly Guid UnassignedId = Guid.Empty;
-
+    public static Maintainer Unassigned { get; } = new(UnassignedId, UnasignedFullname);
 }

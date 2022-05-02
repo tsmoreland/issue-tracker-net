@@ -22,10 +22,12 @@ public sealed class LinkedIssue
     /// intended for use in seeding data
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public LinkedIssue(LinkType linkType, IssueIdentifier parentIssueId, IssueIdentifier childIssueId, string? concurrencyToken)
+    public LinkedIssue(LinkType linkType, Guid parentIssueId, IssueIdentifier parentId, Guid childIssueId, IssueIdentifier childId, string? concurrencyToken)
     {
         LinkType = linkType;
+        ParentId = parentId;
         ParentIssueId = parentIssueId;
+        ChildId = childId;
         ChildIssueId = childIssueId;
         ConcurrencyToken = concurrencyToken;
     }
@@ -34,8 +36,8 @@ public sealed class LinkedIssue
     /// intended for use in seeding data
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public LinkedIssue(LinkType linkType, IssueIdentifier parentIssueId, IssueIdentifier childIssueId)
-        : this(linkType, parentIssueId, childIssueId, Guid.NewGuid().ToString())
+    public LinkedIssue(LinkType linkType, Guid parentIssueId, IssueIdentifier parentId, Guid childIssueId, IssueIdentifier childId)
+        : this(linkType, parentIssueId, parentId, childIssueId, childId, Guid.NewGuid().ToString())
     {
     }
 
@@ -46,9 +48,11 @@ public sealed class LinkedIssue
 
         LinkType = linkType;
         ParentIssue = parentIssue;
-        ParentIssueId = parentIssue.Id;
+        ParentId = parentIssue.Id;
+        ParentIssueId = parentIssue.IssueId;
         ChildIssue = childIssue;
-        ChildIssueId = ChildIssue.Id;
+        ChildId = childIssue.Id;
+        ChildIssueId = ChildIssue.IssueId;
     }
 
     private LinkedIssue()
@@ -58,10 +62,12 @@ public sealed class LinkedIssue
 
     public LinkType LinkType { get; init; } = LinkType.Related;
 
-    public IssueIdentifier ParentIssueId { get; init; } 
+    public IssueIdentifier ParentId { get; init; } 
+    public Guid ParentIssueId { get; init; } 
     public Issue ParentIssue { get; init; } = null!;
 
-    public IssueIdentifier ChildIssueId { get; init; } 
+    public IssueIdentifier ChildId { get; init; } 
+    public Guid ChildIssueId { get; init; } 
     public Issue ChildIssue { get; init; } = null!;
 
     /// <summary>

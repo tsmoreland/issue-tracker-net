@@ -20,7 +20,7 @@ namespace IssueTracker.Core.Projections;
 /// projection of Issue and Link Type providing summary details for bulk retrieval
 /// </summary>
 public sealed record class LinkedIssueSummaryProjection(
-    IssueIdentifier Id,
+    IssueIdentifier IssueId,
     string Title,
     Priority Priority,
     IssueType IssueType,

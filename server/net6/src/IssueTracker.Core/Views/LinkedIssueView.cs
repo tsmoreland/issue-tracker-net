@@ -26,7 +26,8 @@ public sealed class LinkedIssueView : IEquatable<LinkedIssueView>
         LinkType = linkType;
     }
 
-    public string ProjectId => _issue.ProjectId;
+    public Guid IssueId => _issue.IssueId;
+    public string ProjectId => _issue.Project;
     public int IssueNumber => _issue.IssueNumber;
     public IssueIdentifier Id => _issue.Id;
     public string Title => _issue.Title;
@@ -34,9 +35,11 @@ public sealed class LinkedIssueView : IEquatable<LinkedIssueView>
     public Priority Priority => _issue.Priority;
     public IssueType Type => _issue.Type;
     public LinkType LinkType { get; init; }
+    public IEnumerable<LinkedIssueView> ParentIssues => _issue.ParentIssues;
+    public IEnumerable<LinkedIssueView> ChildIssues => _issue.ChildIssues;
+    public TriageUser Reporter => _issue.Reporter;
+    public Maintainer Assignee => _issue.Assignee;
     public DateTime LastUpdated => _issue.LastUpdated;
-    public IEnumerable<LinkedIssueView> Parents => _issue.ParentIssues;
-    public IEnumerable<LinkedIssueView> Children => _issue.ChildIssues;
 
 
     public void Deconstruct(out LinkType linkType,
@@ -46,9 +49,11 @@ public sealed class LinkedIssueView : IEquatable<LinkedIssueView>
         out string? description,
         out Priority priority,
         out IssueType type,
-        out DateTime? lastUpdated,
         out IEnumerable<LinkedIssueView> parents,
-        out IEnumerable<LinkedIssueView> children)
+        out IEnumerable<LinkedIssueView> children,
+        out TriageUser reporter,
+        out Maintainer assignee,
+        out DateTime? lastUpdated)
     {
         linkType = LinkType;
         projectId = ProjectId;
@@ -58,8 +63,10 @@ public sealed class LinkedIssueView : IEquatable<LinkedIssueView>
         priority = Priority;
         type = Type;
         lastUpdated = LastUpdated;
-        parents = Parents;
-        children = Children;
+        parents = ParentIssues;
+        children = ChildIssues;
+        assignee = Assignee;
+        reporter = Reporter;
     }
 
     /// <inheritdoc />

@@ -18,7 +18,7 @@ namespace IssueTracker.Core.Specifications;
 
 public abstract class WhereClauseSpecification
 {
-    protected internal WhereClauseSpecification()
+    protected WhereClauseSpecification()
     {
         
     }

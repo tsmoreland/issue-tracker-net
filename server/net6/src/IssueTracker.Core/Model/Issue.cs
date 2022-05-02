@@ -19,60 +19,54 @@ namespace IssueTracker.Core.Model;
 /// <summary>
 /// Issue Entity
 /// </summary>
-public sealed record class Issue(IssueIdentifier Id)
+public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
 {
     private ICollection<LinkedIssue> ParentIssueEntities { get; init; } = new HashSet<LinkedIssue>();
     private ICollection<LinkedIssue> ChildIssueEntities { get; init; } = new HashSet<LinkedIssue>();
+    private readonly string _project = string.Empty;
+    private readonly int _issueNumber;
 
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>
     /// </summary>
-    public Issue(string projectId, string title, string description, Priority priority)
-        : this(projectId, title, description, priority, IssueType.Defect, User.Unassigned, User.Unassigned)
+    public Issue(string project, string title, string description, Priority priority)
+        : this(project, title, description, priority, IssueType.Defect, TriageUser.Unassigned, Maintainer.Unassigned)
     {
     }
 
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>
     /// </summary>
-    public Issue(string projectId, string title, string description, Priority priority, IssueType type, User assignee,
-        User reporter)
-        : this(projectId, title, description, priority, type, Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(),
-            assignee, reporter)
+    public Issue(string project, string title, string description, Priority priority, IssueType type, TriageUser reporter, Maintainer assignee)
+        : this(project, title, description, priority, type, Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(),
+            reporter, assignee)
     {
-        Title = title;
-        Description = description;
-        Priority = priority;
-        Type = type;
-        Assignee = assignee;
-        Reporter = reporter;
-        LastUpdated = DateTime.UtcNow;
     }
 
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>, constructor provided primarily for use with entity framework
     /// </summary>
     public Issue(
-        string projectId,
+        string project,
         string title,
         string description,
         Priority priority,
         IssueType type,
         IEnumerable<LinkedIssue> parentIssueEntities,
         IEnumerable<LinkedIssue> childIssueEntities,
-        User assignee,
-        User reporter)
-        : this(new IssueIdentifier(projectId, 0))
+        TriageUser reporter,
+        Maintainer assignee)
+        : this(Guid.NewGuid(), new IssueIdentifier(project, 0))
     {
-        ProjectId = projectId;
+        _project = project;
         Title = title;
         Description = description;
         Priority = priority;
         Type = type;
         ParentIssueEntities = parentIssueEntities.ToHashSet();
         ChildIssueEntities = childIssueEntities.ToHashSet();
-        Assignee = assignee;
         Reporter = reporter;
+        Assignee = assignee;
 
     }
 
@@ -80,23 +74,23 @@ public sealed record class Issue(IssueIdentifier Id)
     /// Instanties a new instance of <see cref="Issue"/>, constructor provided primarily for use with entity framework
     /// </summary>
     public Issue(
-        string projectId,
+        string project,
         int issueNumber,
         string title,
         string description,
         Priority priority,
         IssueType type,
-        DateTime lastUpdated,
-        string? concurrencyToken,
         IEnumerable<LinkedIssue> parentIssueEntities,
         IEnumerable<LinkedIssue> childIssueEntities,
-        User assignee,
-        User reporter)
-        : this(projectId, title, description, priority, type, parentIssueEntities, childIssueEntities, assignee,
-            reporter)
+        TriageUser reporter,
+        Maintainer assignee,
+        DateTime lastUpdated,
+        string? concurrencyToken)
+        : this(project, title, description, priority, type, parentIssueEntities, childIssueEntities, reporter,
+            assignee)
     {
-        Id = new IssueIdentifier(projectId, issueNumber);
-        IssueNumber = issueNumber;
+        Id = new IssueIdentifier(project, issueNumber);
+        _issueNumber = issueNumber;
         LastUpdated = lastUpdated;
         ConcurrencyToken = concurrencyToken;
     }
@@ -105,11 +99,11 @@ public sealed record class Issue(IssueIdentifier Id)
     /// Instanties a new instance of <see cref="Issue"/>
     /// </summary>
     private Issue()
-        : this(IssueIdentifier.Empty)
+        : this(Guid.NewGuid(), IssueIdentifier.Empty)
     {
         // Used by entity framework
-        ProjectId = Id.ProjectId;
-        IssueNumber = Id.IssueNumber;
+        _project = Id.Project;
+        _issueNumber = Id.IssueNumber;
     }
 
 
@@ -135,14 +129,50 @@ public sealed record class Issue(IssueIdentifier Id)
     }
 
     /// <summary>
+    /// Database Id
+    /// </summary>
+    public Guid IssueId { get; init; } = IssueId;
+
+    /// <summary>
+    /// Issue Identifier
+    /// </summary>
+    public IssueIdentifier Id { get; init; } = Id;
+
+
+    /// <summary>
     /// unique identifier of the owning project
     /// </summary>
-    public string ProjectId { get; init; } = string.Empty;
+    public string Project
+    {
+        get => _project;
+        init
+        {
+            if (value is not { Length: > 0 } and { Length: <= 3 })
+            {
+                throw new ArgumentException("project id must be between 1 and 3 characters long");
+            }
+            _project = value;
+            Id = new IssueIdentifier(value, IssueNumber);
+        }
+    } 
 
     /// <summary>
     /// Unique identifier within the owning project
     /// </summary>
-    public int IssueNumber { get; init; } = 0;
+    public int IssueNumber
+    {
+        get => _issueNumber;
+        init
+        {
+            if (value < 0)
+            {
+                throw new ArgumentException("Issue number cannot be negative");
+            }
+
+            _issueNumber = value;
+            Id = new IssueIdentifier(Project, value);
+        }
+    } 
 
     /// <summary>
     /// Issue Title
@@ -167,12 +197,12 @@ public sealed record class Issue(IssueIdentifier Id)
     /// <summary>
     /// User assigned to address the issue
     /// </summary>
-    public User Assignee { get; private set; } = User.Unassigned;
+    public Maintainer Assignee { get; private set; } = Maintainer.Unassigned;
 
     /// <summary>
     /// User that reported the issue
     /// </summary>
-    public User Reporter { get; private set; } = User.Unassigned;
+    public TriageUser Reporter { get; private set; } = TriageUser.Unassigned;
 
     /// <summary>
     /// Issues that are linked to this one, this also serves as the ones that may be
@@ -260,7 +290,7 @@ public sealed record class Issue(IssueIdentifier Id)
     /// <summary>
     /// Update Assignee value to <paramref name="assignee"/>
     /// </summary>
-    public void SetAssignee(User assignee)
+    public void SetAssignee(Maintainer assignee)
     {
         ArgumentNullException.ThrowIfNull(assignee, nameof(assignee));
 
@@ -270,7 +300,7 @@ public sealed record class Issue(IssueIdentifier Id)
     /// <summary>
     /// Update Reporter value to <paramref name="reporter"/>
     /// </summary>
-    public void SetReporter(User reporter)
+    public void SetReporter(TriageUser reporter)
     {
         ArgumentNullException.ThrowIfNull(reporter, nameof(reporter));
         Reporter = reporter;

@@ -15,12 +15,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace IssueTracker.Core.ValueObjects;
 
-public readonly record struct IssueIdentifier(string ProjectId, int IssueNumber) : IEquatable<IssueIdentifier>
+public readonly record struct IssueIdentifier(string Project, int IssueNumber) : IEquatable<IssueIdentifier>
 {
     public static IssueIdentifier Empty { get; } = new ();
 
-    public string ProjectId { get; init; } = (ProjectId is { Length: > 0 } and { Length: <= 3 })
-        ? ProjectId
+    public string Project { get; init; } = (Project is { Length: > 0 } and { Length: <= 3 })
+        ? Project
         : throw new ArgumentException("Invalid project id");
 
     public int IssueNumber { get; init; } = (IssueNumber >= 0)
@@ -29,7 +29,7 @@ public readonly record struct IssueIdentifier(string ProjectId, int IssueNumber)
 
     public void Deconstruct(out string projectId, out int issueNumber)
     {
-        projectId = ProjectId;
+        projectId = Project;
         issueNumber = IssueNumber;
     }
 
@@ -51,7 +51,7 @@ public readonly record struct IssueIdentifier(string ProjectId, int IssueNumber)
 
     /// <inheritdoc />
     public override string ToString() =>
-        $"{ProjectId}-{IssueNumber}";
+        $"{Project}-{IssueNumber}";
 
     public static IssueIdentifier FromString(string id)
     {
