@@ -34,7 +34,7 @@ builder.Host
     .UseSerilog((context, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(context.Configuration));
 builder.WebHost
     .ConfigureKestrel(kestrelServerOptions => kestrelServerOptions.AddServerHeader = false)
-    .UseTcellAgent(environemnt => environemnt.IsProduction() || environemnt.IsDevelopment());
+    .UseTcellAgent(environemnt => (environemnt.IsProduction() || environemnt.IsDevelopment()) && File.Exists(Path.Combine(environemnt.ContentRootPath, "TcellAgent.config")));
 
 // Add services to the container.
 
