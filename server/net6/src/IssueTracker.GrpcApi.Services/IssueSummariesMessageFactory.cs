@@ -51,6 +51,7 @@ internal static class IssueSummariesMessageFactory
         {
             Id = projection.Id.ToString(),
             Title = projection.Title,
+            Type = (int)projection.Type,
         };
     }
 }

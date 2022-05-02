@@ -49,6 +49,7 @@ message StatusMessage {
 message IssueSummaryMessage {
     string Id = 1;
     string Title = 2;
+    int32 Type = 3;
 }
 
 message IssueSummariesMessage {
