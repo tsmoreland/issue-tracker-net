@@ -49,7 +49,7 @@ internal static class IssueSummariesMessageFactory
     {
         return new IssueSummaryMessage
         {
-            Id = projection.Id.ToString(),
+            Id = projection.IssueId.ToString(),
             Title = projection.Title,
         };
     }

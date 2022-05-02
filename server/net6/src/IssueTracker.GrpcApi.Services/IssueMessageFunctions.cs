@@ -19,10 +19,15 @@ namespace IssueTracker.GrpcApi.Services;
 
 internal static class IssueMessageFunctions
 {
-    private static readonly UserMessage s_userFlyweight = new()
+    private static readonly TriageUserMessage s_triageUserFlyweight = new()
     {
-        Id = User.Unassigned.Id.ToString(),
-        FullName = User.Unassigned.FullName,
+        UserId = TriageUser.Unassigned.UserId.ToString(),
+        FullName = TriageUser.Unassigned.FullName,
+    };
+    private static readonly MaintainerMessage s_maintainerFlyweight = new()
+    {
+        UserId = TriageUser.Unassigned.UserId.ToString(),
+        FullName = TriageUser.Unassigned.FullName,
     };
 
     private static readonly IssueMessage s_flyweight = new ()
@@ -32,8 +37,8 @@ internal static class IssueMessageFunctions
         Description = string.Empty,
         Priority = (int)Priority.Low,
         Type = (int)IssueType.Defect,
-        Assignee = s_userFlyweight,
-        Reporter = s_userFlyweight,
+        Assignee = s_maintainerFlyweight,
+        Reporter = s_triageUserFlyweight,
     };
 
     public static IssueMessage InvalidArgument()
@@ -58,14 +63,18 @@ internal static class IssueMessageFunctions
             Description = s_flyweight.Description,
             Priority = s_flyweight.Priority,
             Type = s_flyweight.Type,
-            Assignee = s_userFlyweight,
-            Reporter = s_userFlyweight,
+            Assignee = s_maintainerFlyweight,
+            Reporter = s_triageUserFlyweight,
         };
     }
 
-    public static UserMessage ToMessage(this User user)
+    public static TriageUserMessage ToMessage(this TriageUser user)
     {
-        return new UserMessage { Id = user.Id.ToString(), FullName = user.FullName };
+        return new TriageUserMessage { UserId = user.UserId.ToString(), FullName = user.FullName };
+    }
+    public static MaintainerMessage ToMessage(this Maintainer user)
+    {
+        return new MaintainerMessage { UserId = user.UserId.ToString(), FullName = user.FullName };
     }
 
     public static IssueMessage ToMessage(this Issue issue)
@@ -83,9 +92,13 @@ internal static class IssueMessageFunctions
         };
     }
 
-    public static User ToUser(this UserMessage message)
+    public static TriageUser ToTriageUser(this TriageUserMessage message)
     {
-        return new User(Guid.Parse(message.Id), message.FullName);
+        return new TriageUser(Guid.Parse(message.UserId), message.FullName);
+    }
+    public static Maintainer ToMaintainer(this MaintainerMessage message)
+    {
+        return new Maintainer(Guid.Parse(message.UserId), message.FullName);
     }
 
     public static Issue ToIssue(this AddIssueMessage message)
@@ -96,8 +109,8 @@ internal static class IssueMessageFunctions
             message.Description,
             (Priority)message.Priority,
             (IssueType)message.Type,
-            message.Assignee.ToUser(),
-            message.Reporter.ToUser());
+            message.Reporter.ToTriageUser(),
+            message.Assignee.ToMaintainer());
     }
     public static void UpdateIssue(this EditIssueMessage message, Issue issue)
     {
@@ -105,7 +118,7 @@ internal static class IssueMessageFunctions
         issue.SetDescription(message.Description);
         issue.SetPriority((Priority)message.Priority);
         issue.SetIssueType((IssueType)message.Type);
-        issue.SetAssignee(message.Assignee.ToUser());
-        issue.SetReporter(message.Reporter.ToUser());
+        issue.SetReporter(message.Reporter.ToTriageUser());
+        issue.SetAssignee(message.Assignee.ToMaintainer());
     }
 }

@@ -60,8 +60,12 @@ message IssueByIdQueryMessage {
     string Id = 1;
 }
 
-message UserMessage {
-    string Id = 1;   
+message TriageUserMessage {
+    string UserId = 1;   
+    string FullName = 2;
+}
+message MaintainerMessage {
+    string UserId = 1;   
     string FullName = 2;
 }
 
@@ -72,8 +76,8 @@ message IssueMessage {
     string Description = 4;
     int32 Priority = 5;
     int32 Type = 6;
-    UserMessage Assignee = 7;
-    UserMessage Reporter = 8;
+    MaintainerMessage Assignee = 7;
+    TriageUserMessage Reporter = 8;
 }
 
 message AddIssueMessage {
@@ -82,8 +86,8 @@ message AddIssueMessage {
     string Description = 3;
     int32 Priority = 4;
     int32 Type = 5;
-    UserMessage Assignee = 6;
-    UserMessage Reporter = 7;
+    MaintainerMessage Assignee = 6;
+    TriageUserMessage Reporter = 7;
 }
 
 message EditIssueMessage {
@@ -92,7 +96,7 @@ message EditIssueMessage {
     string Description = 3;
     int32 Priority = 4;
     int32 Type = 5;
-    UserMessage Assignee = 6;
-    UserMessage Reporter = 7;
+    MaintainerMessage Assignee = 6;
+    TriageUserMessage Reporter = 7;
 }
 
