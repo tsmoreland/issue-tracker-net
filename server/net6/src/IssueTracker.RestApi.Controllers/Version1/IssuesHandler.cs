@@ -12,15 +12,15 @@
 //
 
 using IssueTracker.Core.Requests;
-using IssueTracker.RestApi.DataTransferObjects.Version2.QueryParameters;
-using IssueTracker.RestApi.DataTransferObjects.Version2.Response;
+using IssueTracker.RestApi.DataTransferObjects.Version1.QueryParameters;
+using IssueTracker.RestApi.DataTransferObjects.Version1.Response;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using static IssueTracker.RestApi.Controllers.Shared.Validation.PagingValidation;
-using SortDirection = IssueTracker.RestApi.DataTransferObjects.Version2.QueryParameters.SortDirection;
+using SortDirection = IssueTracker.RestApi.DataTransferObjects.Version1.QueryParameters.SortDirection;
 
-namespace IssueTracker.RestApi.Controllers.HeaderVersioned.Version2;
+namespace IssueTracker.RestApi.Controllers.Version1;
 
 internal sealed class IssuesHandler
 {
