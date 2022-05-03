@@ -12,7 +12,6 @@
 //
 
 using System.Net.Mime;
-using IssueTracker.Core.Model;
 using IssueTracker.Core.ValueObjects;
 using IssueTracker.RestApi.DataTransferObjects.Version2.QueryParameters;
 using IssueTracker.RestApi.DataTransferObjects.Version2.Response;
@@ -23,7 +22,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using SortDirection = IssueTracker.RestApi.DataTransferObjects.Version2.QueryParameters.SortDirection;
 
-namespace IssueTracker.RestApi.Controllers.Version2;
+namespace IssueTracker.RestApi.Controllers.Version2.UrlVersioned;
 
 /// <summary>
 /// Defects controller (v2)
@@ -31,16 +30,16 @@ namespace IssueTracker.RestApi.Controllers.Version2;
 [ApiController]
 [Route("api/v{version:apiVersion}/defects")]
 [TrimVersionFromSwagger]
-[Tags("Defects")]
+[Tags("Defects (URL versioning)")]
 [ApiVersion("2")]
-public sealed class UrlVersionedDefectsController : ControllerBase
+public sealed class DefectsController : ControllerBase
 {
     private readonly IMediator _mediator;
 
     /// <summary>
-    /// Instantiates a new instance of the <see cref="UrlVersionedDefectsController"/> class.
+    /// Instantiates a new instance of the <see cref="DefectsController"/> class.
     /// </summary>
-    public UrlVersionedDefectsController(IMediator mediator)
+    public DefectsController(IMediator mediator)
     {
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }

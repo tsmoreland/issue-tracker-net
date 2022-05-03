@@ -34,16 +34,16 @@ namespace IssueTracker.RestApi.Controllers.Version2;
 [ApiController]
 [Route("api/v{version:apiVersion}/issues")]
 [TrimVersionFromSwagger]
-[Tags("Issues")]
+[Tags("Issues (URL versioning)")]
 [ApiVersion("2")]
-public sealed class UrlVersionedIssueController : ControllerBase
+public sealed class IssueController : ControllerBase
 {
     private readonly IMediator _mediator;
 
     /// <summary>
-    /// Instantiates a new instance of the <see cref="UrlVersionedIssueController"/> class.
+    /// Instantiates a new instance of the <see cref="IssueController"/> class.
     /// </summary>
-    public UrlVersionedIssueController(IMediator mediator)
+    public IssueController(IMediator mediator)
     {
         _mediator = mediator;
     }

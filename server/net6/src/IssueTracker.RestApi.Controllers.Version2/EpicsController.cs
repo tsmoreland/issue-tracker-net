@@ -30,16 +30,16 @@ namespace IssueTracker.RestApi.Controllers.Version2;
 [ApiController]
 [Route("api/v{version:apiVersion=2}/epics")]
 [TrimVersionFromSwagger]
-[Tags("Epics")]
+[Tags("Epics (URL versioning)")]
 [ApiVersion("2")]
-public sealed class UrlVersionedEpicsController : ControllerBase
+public sealed class EpicsController : ControllerBase
 {
     private readonly IMediator _mediator;
 
     /// <summary>
-    /// Instantiates a new instance of the <see cref="UrlVersionedEpicsController"/> class.
+    /// Instantiates a new instance of the <see cref="EpicsController"/> class.
     /// </summary>
-    public UrlVersionedEpicsController(IMediator mediator)
+    public EpicsController(IMediator mediator)
     {
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }

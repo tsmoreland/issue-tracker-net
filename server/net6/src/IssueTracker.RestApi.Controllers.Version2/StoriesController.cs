@@ -24,35 +24,36 @@ using SortDirection = IssueTracker.RestApi.DataTransferObjects.Version2.QueryPar
 
 namespace IssueTracker.RestApi.Controllers.Version2;
 
+
 /// <summary>
-/// Tasks controller (v2)
+/// Stories controller (v2)
 /// </summary>
 [ApiController]
-[Route("api/v{version:apiVersion=2}/tasks")]
+[Route("api/v{version:apiVersion}/stories")]
 [TrimVersionFromSwagger]
-[Tags("Tasks")]
+[Tags("Stories (URL versioning)")]
 [ApiVersion("2")]
-public sealed class UrlVersionedTasksController : ControllerBase
+public sealed class StoriesController : ControllerBase
 {
     private readonly IMediator _mediator;
 
     /// <summary>
-    /// Instantiates a new instance of the <see cref="UrlVersionedTasksController"/> class.
+    /// Instantiates a new instance of the <see cref="StoriesController"/> class.
     /// </summary>
-    public UrlVersionedTasksController(IMediator mediator)
+    public StoriesController(IMediator mediator)
     {
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }
 
     /// <summary>
-    /// returns a summary of all issues with type of Task
+    /// returns a summary of all issues with type Story
     /// </summary>
     /// <param name="pageNumber" example="1" >current page number to return</param>
     /// <param name="pageSize" example="10">maximum number of items to return</param>
     /// <param name="orderBy">property to order results by</param>
     /// <param name="direction">direction to order results by</param>
     /// <param name="cancellationToken">a cancellation token.</param>
-    /// <returns>all issues with type <see cref="IssueType.Task"/></returns>
+    /// <returns>all issues with type <see cref="IssueType.Epic"/></returns>
     [HttpGet]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
@@ -60,7 +61,7 @@ public sealed class UrlVersionedTasksController : ControllerBase
         MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails),
         "application/problem+json", "application/problem+xml")]
-    public Task<IActionResult> GetAllTasks(
+    public Task<IActionResult> GetAllStories(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] IssueSortBy orderBy = IssueSortBy.Title,
@@ -70,7 +71,7 @@ public sealed class UrlVersionedTasksController : ControllerBase
         // extension method so 'this' is required
         return this.GetAllWithIssueType(
             _mediator,
-            IssueType.Task,
+            IssueType.Story,
             pageNumber,
             pageSize,
             orderBy,
