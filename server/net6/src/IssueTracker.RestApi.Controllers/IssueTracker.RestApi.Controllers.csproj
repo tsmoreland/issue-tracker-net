@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IssueTracker.Core\IssueTracker.Core.csproj" />
+    <ProjectReference Include="..\IssueTracker.RestApi.Controllers.Shared\IssueTracker.RestApi.Controllers.Shared.csproj" />
+    <ProjectReference Include="..\IssueTracker.RestApi.DataTransferObjects.Version1\IssueTracker.RestApi.DataTransferObjects.Version1.csproj" />
+    <ProjectReference Include="..\IssueTracker.RestApi.DataTransferObjects.Version2\IssueTracker.RestApi.DataTransferObjects.Version2.csproj" />
+    <ProjectReference Include="..\IssueTracker.SwashbuckleExtensions.Abstractions\IssueTracker.SwashbuckleExtensions.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="10.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.0" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+  </ItemGroup>
+</Project>

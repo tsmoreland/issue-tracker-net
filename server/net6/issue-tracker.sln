@@ -57,13 +57,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.GraphQl.App", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Core.Test", "test\IssueTracker.Core.Test\IssueTracker.Core.Test.csproj", "{ECF60E3D-D8F0-4A21-84FE-BAB8D0CD8E2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.RestApi.Controllers.Version1", "src\IssueTracker.RestApi.Controllers.Version1\IssueTracker.RestApi.Controllers.Version1.csproj", "{0959FC9A-6137-48CC-8AF6-3A63D8BA4A11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.RestApi.Controllers.Version1", "src\IssueTracker.RestApi.Controllers.Version1\IssueTracker.RestApi.Controllers.Version1.csproj", "{0959FC9A-6137-48CC-8AF6-3A63D8BA4A11}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.RestApi.Controllers.Version2", "src\IssueTracker.RestApi.Controllers.Version2\IssueTracker.RestApi.Controllers.Version2.csproj", "{55E183D5-9C5B-43BB-82B1-3E6BD2EF9FE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.RestApi.Controllers.Version2", "src\IssueTracker.RestApi.Controllers.Version2\IssueTracker.RestApi.Controllers.Version2.csproj", "{55E183D5-9C5B-43BB-82B1-3E6BD2EF9FE4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Version1", "Version1", "{46C30AA6-1243-45DD-B493-A33836FB83AC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Version2", "Version2", "{D01DB114-40FA-48FC-A74B-9357E53E9246}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.RestApi.Controllers", "src\IssueTracker.RestApi.Controllers\IssueTracker.RestApi.Controllers.csproj", "{8079E32A-5235-48A2-B87C-0C2B555192EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -143,6 +145,10 @@ Global
 		{55E183D5-9C5B-43BB-82B1-3E6BD2EF9FE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55E183D5-9C5B-43BB-82B1-3E6BD2EF9FE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55E183D5-9C5B-43BB-82B1-3E6BD2EF9FE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8079E32A-5235-48A2-B87C-0C2B555192EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8079E32A-5235-48A2-B87C-0C2B555192EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8079E32A-5235-48A2-B87C-0C2B555192EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8079E32A-5235-48A2-B87C-0C2B555192EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -171,6 +177,7 @@ Global
 		{55E183D5-9C5B-43BB-82B1-3E6BD2EF9FE4} = {D01DB114-40FA-48FC-A74B-9357E53E9246}
 		{46C30AA6-1243-45DD-B493-A33836FB83AC} = {390046E2-814B-4466-B941-9B0684750103}
 		{D01DB114-40FA-48FC-A74B-9357E53E9246} = {390046E2-814B-4466-B941-9B0684750103}
+		{8079E32A-5235-48A2-B87C-0C2B555192EC} = {390046E2-814B-4466-B941-9B0684750103}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8421BB6A-BA23-402F-AC65-8492F4641EA7}
