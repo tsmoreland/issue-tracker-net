@@ -12,6 +12,7 @@
 //
 
 using System.ComponentModel.DataAnnotations;
+using IssueTracker.Core.Builders;
 using IssueTracker.Core.Model;
 using IssueTracker.Core.ValueObjects;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
@@ -84,7 +85,12 @@ public sealed class AddIssueDto
     /// <returns>Model</returns>
     public Issue ToModel()
     {
-        // TODO: would be nice to have this handled in Core
-        return new Issue(Project, Title, Description ?? string.Empty, Priority, Type, TriageUser.Unassigned, Maintainer.Unassigned, null);
+        return new IssueBuilder()
+            .WithProject(Project)
+            .WithTitle(Title)
+            .WithDescription(Description)
+            .WithPriority(Priority)
+            .WithType(Type)
+            .Build();
     }
 }

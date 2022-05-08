@@ -78,6 +78,7 @@ message IssueMessage {
     int32 Type = 6;
     MaintainerMessage Assignee = 7;
     TriageUserMessage Reporter = 8;
+    IssueMessage Epic = 9;
 }
 
 message AddIssueMessage {
@@ -88,6 +89,7 @@ message AddIssueMessage {
     int32 Type = 5;
     MaintainerMessage Assignee = 6;
     TriageUserMessage Reporter = 7;
+    string EpicIssueId = 8;
 }
 
 message EditIssueMessage {
@@ -98,5 +100,6 @@ message EditIssueMessage {
     int32 Type = 5;
     MaintainerMessage Assignee = 6;
     TriageUserMessage Reporter = 7;
+    string EpicIssueId = 8;
 }
 
