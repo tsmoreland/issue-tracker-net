@@ -117,6 +117,7 @@ public sealed class IssuesDbContext : DbContext
         issueEntity.Property(e => e.Title).IsRequired().IsUnicode().HasMaxLength(200);
         issueEntity.Property(e => e.Description).IsUnicode().HasMaxLength(500);
         issueEntity.Property(e => e.Priority).IsRequired();
+        issueEntity.HasOne(e => e.Epic);
         issueEntity.Property(e => e.ConcurrencyToken).IsConcurrencyToken();
         issueEntity.Property(e => e.LastUpdated)
             .HasConversion(dateTime => dateTime.ToUniversalTime().Ticks, ticks => new DateTime(ticks, DateTimeKind.Utc));

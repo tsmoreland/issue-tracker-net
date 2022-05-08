@@ -49,6 +49,8 @@ internal static class SeedData
             Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(),
             TriageUser.Unassigned,
             Maintainer.Unassigned,
+            null,
+            null,
             new DateTime(2022, 01, 01, 12, 30, 0, DateTimeKind.Utc),
             Guid.NewGuid().ToString());
         assigneeSet.SetValue(epic, null);
@@ -61,6 +63,8 @@ internal static class SeedData
             Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(),
             TriageUser.Unassigned,
             Maintainer.Unassigned,
+            null,
+            null,
             new DateTime(2022, 01, 01, 12, 40, 0, DateTimeKind.Utc),
             Guid.NewGuid().ToString());
         assigneeSet.SetValue(dataStory, null);
@@ -73,6 +77,8 @@ internal static class SeedData
             Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(),
             TriageUser.Unassigned,
             Maintainer.Unassigned,
+            null,
+            null,
             new DateTime(2022, 01, 01, 12, 45, 0, DateTimeKind.Utc),
             Guid.NewGuid().ToString());
         assigneeSet.SetValue(queryStory, null);
@@ -85,6 +91,8 @@ internal static class SeedData
             Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(),
             TriageUser.Unassigned,
             Maintainer.Unassigned,
+            null,
+            null,
             new DateTime(2022, 01, 02, 12, 0, 0, DateTimeKind.Utc),
             Guid.NewGuid().ToString());
         assigneeSet.SetValue(dataTask, null);
@@ -97,6 +105,8 @@ internal static class SeedData
             Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(),
             TriageUser.Unassigned,
             Maintainer.Unassigned,
+            null,
+            null,
             new DateTime(2022, 01, 03, 13, 45, 0, DateTimeKind.Utc),
             Guid.NewGuid().ToString());
         assigneeSet.SetValue(queryTask, null);
