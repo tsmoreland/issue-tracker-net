@@ -286,7 +286,7 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
     {
         if (type is IssueType.Epic)
         {
-            Epic = null;
+            RemoveEpic();
         }
         Type = type;
     }
