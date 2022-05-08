@@ -30,16 +30,16 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
     /// Instanties a new instance of <see cref="Issue"/>
     /// </summary>
     public Issue(string project, string title, string description, Priority priority)
-        : this(project, title, description, priority, IssueType.Defect, TriageUser.Unassigned, Maintainer.Unassigned)
+        : this(project, title, description, priority, IssueType.Defect, TriageUser.Unassigned, Maintainer.Unassigned, null)
     {
     }
 
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>
     /// </summary>
-    public Issue(string project, string title, string description, Priority priority, IssueType type, TriageUser reporter, Maintainer assignee)
+    public Issue(string project, string title, string description, Priority priority, IssueType type, TriageUser reporter, Maintainer assignee, Issue? epic)
         : this(project, title, description, priority, type, Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(),
-            reporter, assignee)
+            reporter, assignee, epic)
     {
     }
 
@@ -55,7 +55,8 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
         IEnumerable<LinkedIssue> parentIssueEntities,
         IEnumerable<LinkedIssue> childIssueEntities,
         TriageUser reporter,
-        Maintainer assignee)
+        Maintainer assignee,
+        Issue? epic)
         : this(Guid.NewGuid(), new IssueIdentifier(project, 0))
     {
         _project = project;
@@ -67,7 +68,7 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
         ChildIssueEntities = childIssueEntities.ToHashSet();
         Reporter = reporter;
         Assignee = assignee;
-
+        Epic = epic;
     }
 
     /// <summary>
@@ -84,10 +85,12 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
         IEnumerable<LinkedIssue> childIssueEntities,
         TriageUser reporter,
         Maintainer assignee,
+        Issue? epic,
         DateTime lastUpdated,
         string? concurrencyToken)
-        : this(project, title, description, priority, type, parentIssueEntities, childIssueEntities, reporter,
-            assignee)
+        : this(project, title, description, priority, type,
+            parentIssueEntities, childIssueEntities,
+            reporter, assignee, epic)
     {
         Id = new IssueIdentifier(project, issueNumber);
         _issueNumber = issueNumber;
@@ -205,6 +208,11 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
     public TriageUser Reporter { get; private set; } = TriageUser.Unassigned;
 
     /// <summary>
+    /// Associated Epic; only valid if the issue type is not <see cref="IssueType.Epic"/>
+    /// </summary>
+    public Issue? Epic { get; private set; } = null;
+
+    /// <summary>
     /// Issues that are linked to this one, this also serves as the ones that may be
     /// blocking this issue
     /// </summary>
@@ -276,6 +284,10 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
     /// </summary>
     public void SetIssueType(IssueType type)
     {
+        if (type is IssueType.Epic)
+        {
+            Epic = null;
+        }
         Type = type;
     }
 
@@ -285,6 +297,32 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
     public void ChangePriority(Priority priority)
     {
         Priority = priority;
+    }
+
+    /// <summary>
+    /// Sets the epic issue to <paramref name="epic"/> 
+    /// </summary>
+    /// <param name="epic">the epic to be used by this instance</param>
+    /// <exception cref="InvalidOperationException">
+    /// if <see cref="Type"/> is <see cref="IssueType.Epic"/>; because
+    /// an epic cannot have an epic
+    /// </exception>
+    public void SetEpic(Issue epic)
+    {
+        if (Type is IssueType.Epic)
+        {
+            throw new InvalidOperationException("Cannot set epic on an issue with type Epic");
+        }
+
+        Epic = epic;
+    }
+
+    /// <summary>
+    /// Removes the associated Epic 
+    /// </summary>
+    public void RemoveEpic()
+    {
+        Epic = null;
     }
 
     /// <summary>
