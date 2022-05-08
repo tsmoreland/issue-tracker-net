@@ -110,7 +110,8 @@ internal static class IssueMessageFunctions
             (Priority)message.Priority,
             (IssueType)message.Type,
             message.Reporter.ToTriageUser(),
-            message.Assignee.ToMaintainer());
+            message.Assignee.ToMaintainer(),
+            null); // TODO
     }
     public static void UpdateIssue(this EditIssueMessage message, Issue issue)
     {
