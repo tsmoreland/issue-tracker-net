@@ -85,6 +85,6 @@ public sealed class AddIssueDto
     public Issue ToModel()
     {
         // TODO: would be nice to have this handled in Core
-        return new Issue(Project, Title, Description ?? string.Empty, Priority, Type, TriageUser.Unassigned, Maintainer.Unassigned);
+        return new Issue(Project, Title, Description ?? string.Empty, Priority, Type, TriageUser.Unassigned, Maintainer.Unassigned, null);
     }
 }
