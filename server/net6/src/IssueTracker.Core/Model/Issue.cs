@@ -85,6 +85,7 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
         IEnumerable<LinkedIssue> childIssueEntities,
         TriageUser reporter,
         Maintainer assignee,
+        Guid? epicIssueId,
         Issue? epic,
         DateTime lastUpdated,
         string? concurrencyToken)
@@ -93,6 +94,7 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
             reporter, assignee, epic)
     {
         Id = new IssueIdentifier(project, issueNumber);
+        EpicIssueId = epicIssueId;
         _issueNumber = issueNumber;
         LastUpdated = lastUpdated;
         ConcurrencyToken = concurrencyToken;
@@ -208,9 +210,14 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
     public TriageUser Reporter { get; private set; } = TriageUser.Unassigned;
 
     /// <summary>
+    /// Foreign Key for <see cref="Epic"/>
+    /// </summary>
+    public Guid? EpicIssueId { get; private set; } 
+
+    /// <summary>
     /// Associated Epic; only valid if the issue type is not <see cref="IssueType.Epic"/>
     /// </summary>
-    public Issue? Epic { get; private set; } = null;
+    public Issue? Epic { get; private set; }
 
     /// <summary>
     /// Issues that are linked to this one, this also serves as the ones that may be
@@ -314,6 +321,7 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
             throw new InvalidOperationException("Cannot set epic on an issue with type Epic");
         }
 
+        EpicIssueId = epic.IssueId;
         Epic = epic;
     }
 
@@ -323,6 +331,7 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
     public void RemoveEpic()
     {
         Epic = null;
+        EpicIssueId = null;
     }
 
     /// <summary>
