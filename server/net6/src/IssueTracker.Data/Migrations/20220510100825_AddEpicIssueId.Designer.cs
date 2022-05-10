@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IssueTracker.Data.Migrations
 {
     [DbContext(typeof(IssuesDbContext))]
-    [Migration("20220508005646_AddEpic")]
-    partial class AddEpic
+    [Migration("20220510100825_AddEpicIssueId")]
+    partial class AddEpicIssueId
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -85,8 +85,8 @@ namespace IssueTracker.Data.Migrations
                     b.HasData(
                         new
                         {
-                            IssueId = new Guid("06c3e187-0486-4eed-91db-b346a7044879"),
-                            ConcurrencyToken = "b2d2aac4-77e6-415a-89b9-711d37f13636",
+                            IssueId = new Guid("ee88fef9-ccf4-41b0-8326-1200f60b308b"),
+                            ConcurrencyToken = "a8bd5368-4ce4-4d60-98a5-e89e0c15d855",
                             Description = "add projects and use project id as link between issue and project",
                             Id = "APP-1",
                             IssueNumber = 1,
@@ -98,8 +98,8 @@ namespace IssueTracker.Data.Migrations
                         },
                         new
                         {
-                            IssueId = new Guid("47cc7642-a8ed-4cc7-ba94-3c2ed8fc2165"),
-                            ConcurrencyToken = "3d9f247a-82a1-43d4-8928-76a94c245a8d",
+                            IssueId = new Guid("33e3d8bf-af55-498a-b96f-f514a3b0a39d"),
+                            ConcurrencyToken = "c5cbc3aa-0a9e-4ccb-96de-b4bf61854d5b",
                             Description = "",
                             Id = "APP-2",
                             IssueNumber = 2,
@@ -111,8 +111,8 @@ namespace IssueTracker.Data.Migrations
                         },
                         new
                         {
-                            IssueId = new Guid("cda71c85-f63b-42eb-8f48-f0ad1409e10d"),
-                            ConcurrencyToken = "3ced4422-84d5-4d7d-8701-b56d660ac6c1",
+                            IssueId = new Guid("cd9a0df2-5f83-4942-9c08-4d97b2a90d55"),
+                            ConcurrencyToken = "1c0b0db4-1a94-4af7-903e-9bbf8fc71ce6",
                             Description = "As a user I want to be able to retreive all projects",
                             Id = "APP-3",
                             IssueNumber = 3,
@@ -124,8 +124,8 @@ namespace IssueTracker.Data.Migrations
                         },
                         new
                         {
-                            IssueId = new Guid("ddbb6026-129b-474e-af0a-4f58a9dd68b4"),
-                            ConcurrencyToken = "45217bdc-4936-445d-b6ef-703eab053412",
+                            IssueId = new Guid("794c169c-a1dd-45ee-b093-fd80c25a28bf"),
+                            ConcurrencyToken = "132e3b89-ce8d-4ed7-9a6b-81410c11832e",
                             Description = "add the model(s) for project type ensuring it's id matches the expectations of issue",
                             Id = "APP-4",
                             IssueNumber = 4,
@@ -137,8 +137,8 @@ namespace IssueTracker.Data.Migrations
                         },
                         new
                         {
-                            IssueId = new Guid("d180b554-0a2b-4e44-bb57-82075f4f5fbf"),
-                            ConcurrencyToken = "254447bd-1ce7-4726-bc95-fe2330cb4556",
+                            IssueId = new Guid("b0454fc6-9014-4dc8-bccc-a90b997e7b02"),
+                            ConcurrencyToken = "4a9f3a8b-5618-4daf-b6db-a254857f5287",
                             Description = "add the request handlers to get projects by id and a summary",
                             Id = "APP-5",
                             IssueNumber = 5,
@@ -186,19 +186,19 @@ namespace IssueTracker.Data.Migrations
                     b.HasData(
                         new
                         {
-                            ParentIssueId = new Guid("ddbb6026-129b-474e-af0a-4f58a9dd68b4"),
-                            ChildIssueId = new Guid("d180b554-0a2b-4e44-bb57-82075f4f5fbf"),
+                            ParentIssueId = new Guid("794c169c-a1dd-45ee-b093-fd80c25a28bf"),
+                            ChildIssueId = new Guid("b0454fc6-9014-4dc8-bccc-a90b997e7b02"),
                             ChildId = "APP-5",
-                            ConcurrencyToken = "1c386db3-4549-498c-a55b-49231a9d0ddf",
+                            ConcurrencyToken = "69925489-fdbf-4645-a0a7-928316b6d3b7",
                             LinkType = 2,
                             ParentId = "APP-4"
                         },
                         new
                         {
-                            ParentIssueId = new Guid("47cc7642-a8ed-4cc7-ba94-3c2ed8fc2165"),
-                            ChildIssueId = new Guid("cda71c85-f63b-42eb-8f48-f0ad1409e10d"),
+                            ParentIssueId = new Guid("33e3d8bf-af55-498a-b96f-f514a3b0a39d"),
+                            ChildIssueId = new Guid("cd9a0df2-5f83-4942-9c08-4d97b2a90d55"),
                             ChildId = "APP-3",
-                            ConcurrencyToken = "4962858d-e5a8-4143-872f-bd19ba370d9c",
+                            ConcurrencyToken = "6082d1e3-d7a5-413d-873e-9bca4715d346",
                             LinkType = 0,
                             ParentId = "APP-2"
                         });
@@ -206,7 +206,7 @@ namespace IssueTracker.Data.Migrations
 
             modelBuilder.Entity("IssueTracker.Core.Model.Issue", b =>
                 {
-                    b.HasOne("IssueTracker.Core.Model.Issue", "Epic")
+                    b.HasOne("IssueTracker.Core.Model.Issue", null)
                         .WithMany()
                         .HasForeignKey("EpicIssueId");
 
@@ -264,8 +264,6 @@ namespace IssueTracker.Data.Migrations
 
                     b.Navigation("Assignee")
                         .IsRequired();
-
-                    b.Navigation("Epic");
 
                     b.Navigation("Reporter")
                         .IsRequired();

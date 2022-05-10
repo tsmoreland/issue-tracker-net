@@ -40,7 +40,6 @@ public sealed class LinkedIssueView : IEquatable<LinkedIssueView>
     public TriageUser Reporter => _issue.Reporter;
     public Maintainer Assignee => _issue.Assignee;
     public Guid? EpicIssueId => _issue.EpicIssueId;
-    public Issue? Epic => _issue.Epic;
     public DateTime LastUpdated => _issue.LastUpdated;
 
 
@@ -56,7 +55,6 @@ public sealed class LinkedIssueView : IEquatable<LinkedIssueView>
         out TriageUser reporter,
         out Maintainer assignee,
         out Guid? epicIssueId,
-        out Issue? epic,
         out DateTime? lastUpdated)
     {
         linkType = LinkType;
@@ -72,7 +70,6 @@ public sealed class LinkedIssueView : IEquatable<LinkedIssueView>
         assignee = Assignee;
         reporter = Reporter;
         epicIssueId = EpicIssueId;
-        epic = Epic;
     }
 
     /// <inheritdoc />

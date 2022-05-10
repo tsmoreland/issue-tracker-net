@@ -37,9 +37,9 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
     /// <summary>
     /// Instanties a new instance of <see cref="Issue"/>
     /// </summary>
-    public Issue(string project, string title, string description, Priority priority, IssueType type, TriageUser reporter, Maintainer assignee, Issue? epic)
+    public Issue(string project, string title, string description, Priority priority, IssueType type, TriageUser reporter, Maintainer assignee, Guid? epicIssueId)
         : this(project, title, description, priority, type, Array.Empty<LinkedIssue>(), Array.Empty<LinkedIssue>(),
-            reporter, assignee, epic)
+            reporter, assignee, epicIssueId)
     {
     }
 
@@ -56,7 +56,7 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
         IEnumerable<LinkedIssue> childIssueEntities,
         TriageUser reporter,
         Maintainer assignee,
-        Issue? epic)
+        Guid? epicIssueId)
         : this(Guid.NewGuid(), new IssueIdentifier(project, 0))
     {
         _project = project;
@@ -68,7 +68,7 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
         ChildIssueEntities = childIssueEntities.ToHashSet();
         Reporter = reporter;
         Assignee = assignee;
-        Epic = epic;
+        EpicIssueId = epicIssueId;
     }
 
     /// <summary>
@@ -86,12 +86,11 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
         TriageUser reporter,
         Maintainer assignee,
         Guid? epicIssueId,
-        Issue? epic,
         DateTime lastUpdated,
         string? concurrencyToken)
         : this(project, title, description, priority, type,
             parentIssueEntities, childIssueEntities,
-            reporter, assignee, epic)
+            reporter, assignee, epicIssueId)
     {
         Id = new IssueIdentifier(project, issueNumber);
         EpicIssueId = epicIssueId;
@@ -210,14 +209,9 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
     public TriageUser Reporter { get; private set; } = TriageUser.Unassigned;
 
     /// <summary>
-    /// Foreign Key for <see cref="Epic"/>
+    /// reference to Epic
     /// </summary>
     public Guid? EpicIssueId { get; private set; } 
-
-    /// <summary>
-    /// Associated Epic; only valid if the issue type is not <see cref="IssueType.Epic"/>
-    /// </summary>
-    public Issue? Epic { get; private set; }
 
     /// <summary>
     /// Issues that are linked to this one, this also serves as the ones that may be
@@ -322,7 +316,6 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
         }
 
         EpicIssueId = epic.IssueId;
-        Epic = epic;
     }
 
     /// <summary>
@@ -330,7 +323,6 @@ public sealed record class Issue(Guid IssueId, IssueIdentifier Id)
     /// </summary>
     public void RemoveEpic()
     {
-        Epic = null;
         EpicIssueId = null;
     }
 

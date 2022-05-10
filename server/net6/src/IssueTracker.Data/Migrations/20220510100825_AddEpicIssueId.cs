@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace IssueTracker.Data.Migrations
 {
-    public partial class AddEpic : Migration
+    public partial class AddEpicIssueId : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -53,37 +53,37 @@ namespace IssueTracker.Data.Migrations
             migrationBuilder.InsertData(
                 table: "Issues",
                 columns: new[] { "IssueId", "ConcurrencyToken", "Description", "EpicIssueId", "Id", "IssueNumber", "LastUpdated", "Priority", "Project", "Title", "Type" },
-                values: new object[] { new Guid("06c3e187-0486-4eed-91db-b346a7044879"), "b2d2aac4-77e6-415a-89b9-711d37f13636", "add projects and use project id as link between issue and project", null, "APP-1", 1, 637766370000000000L, 2, "APP", "Add Project support", 0 });
+                values: new object[] { new Guid("33e3d8bf-af55-498a-b96f-f514a3b0a39d"), "c5cbc3aa-0a9e-4ccb-96de-b4bf61854d5b", "", null, "APP-2", 2, 637766376000000000L, 1, "APP", "The database should story issues with links to projects", 1 });
 
             migrationBuilder.InsertData(
                 table: "Issues",
                 columns: new[] { "IssueId", "ConcurrencyToken", "Description", "EpicIssueId", "Id", "IssueNumber", "LastUpdated", "Priority", "Project", "Title", "Type" },
-                values: new object[] { new Guid("47cc7642-a8ed-4cc7-ba94-3c2ed8fc2165"), "3d9f247a-82a1-43d4-8928-76a94c245a8d", "", null, "APP-2", 2, 637766376000000000L, 1, "APP", "The database should story issues with links to projects", 1 });
+                values: new object[] { new Guid("794c169c-a1dd-45ee-b093-fd80c25a28bf"), "132e3b89-ce8d-4ed7-9a6b-81410c11832e", "add the model(s) for project type ensuring it's id matches the expectations of issue", null, "APP-4", 4, 637767216000000000L, 1, "APP", "add project core models", 2 });
 
             migrationBuilder.InsertData(
                 table: "Issues",
                 columns: new[] { "IssueId", "ConcurrencyToken", "Description", "EpicIssueId", "Id", "IssueNumber", "LastUpdated", "Priority", "Project", "Title", "Type" },
-                values: new object[] { new Guid("cda71c85-f63b-42eb-8f48-f0ad1409e10d"), "3ced4422-84d5-4d7d-8701-b56d660ac6c1", "As a user I want to be able to retreive all projects", null, "APP-3", 3, 637766379000000000L, 0, "APP", "The api should be able to retrieve projects", 1 });
+                values: new object[] { new Guid("b0454fc6-9014-4dc8-bccc-a90b997e7b02"), "4a9f3a8b-5618-4daf-b6db-a254857f5287", "add the request handlers to get projects by id and a summary", null, "APP-5", 5, 637768143000000000L, 0, "APP", "add mediator request/handlers for project query", 2 });
 
             migrationBuilder.InsertData(
                 table: "Issues",
                 columns: new[] { "IssueId", "ConcurrencyToken", "Description", "EpicIssueId", "Id", "IssueNumber", "LastUpdated", "Priority", "Project", "Title", "Type" },
-                values: new object[] { new Guid("d180b554-0a2b-4e44-bb57-82075f4f5fbf"), "254447bd-1ce7-4726-bc95-fe2330cb4556", "add the request handlers to get projects by id and a summary", null, "APP-5", 5, 637768143000000000L, 0, "APP", "add mediator request/handlers for project query", 2 });
+                values: new object[] { new Guid("cd9a0df2-5f83-4942-9c08-4d97b2a90d55"), "1c0b0db4-1a94-4af7-903e-9bbf8fc71ce6", "As a user I want to be able to retreive all projects", null, "APP-3", 3, 637766379000000000L, 0, "APP", "The api should be able to retrieve projects", 1 });
 
             migrationBuilder.InsertData(
                 table: "Issues",
                 columns: new[] { "IssueId", "ConcurrencyToken", "Description", "EpicIssueId", "Id", "IssueNumber", "LastUpdated", "Priority", "Project", "Title", "Type" },
-                values: new object[] { new Guid("ddbb6026-129b-474e-af0a-4f58a9dd68b4"), "45217bdc-4936-445d-b6ef-703eab053412", "add the model(s) for project type ensuring it's id matches the expectations of issue", null, "APP-4", 4, 637767216000000000L, 1, "APP", "add project core models", 2 });
+                values: new object[] { new Guid("ee88fef9-ccf4-41b0-8326-1200f60b308b"), "a8bd5368-4ce4-4d60-98a5-e89e0c15d855", "add projects and use project id as link between issue and project", null, "APP-1", 1, 637766370000000000L, 2, "APP", "Add Project support", 0 });
 
             migrationBuilder.InsertData(
                 table: "LinkedIssues",
                 columns: new[] { "ChildIssueId", "ParentIssueId", "ChildId", "ConcurrencyToken", "LinkType", "ParentId" },
-                values: new object[] { new Guid("cda71c85-f63b-42eb-8f48-f0ad1409e10d"), new Guid("47cc7642-a8ed-4cc7-ba94-3c2ed8fc2165"), "APP-3", "4962858d-e5a8-4143-872f-bd19ba370d9c", 0, "APP-2" });
+                values: new object[] { new Guid("cd9a0df2-5f83-4942-9c08-4d97b2a90d55"), new Guid("33e3d8bf-af55-498a-b96f-f514a3b0a39d"), "APP-3", "6082d1e3-d7a5-413d-873e-9bca4715d346", 0, "APP-2" });
 
             migrationBuilder.InsertData(
                 table: "LinkedIssues",
                 columns: new[] { "ChildIssueId", "ParentIssueId", "ChildId", "ConcurrencyToken", "LinkType", "ParentId" },
-                values: new object[] { new Guid("d180b554-0a2b-4e44-bb57-82075f4f5fbf"), new Guid("ddbb6026-129b-474e-af0a-4f58a9dd68b4"), "APP-5", "1c386db3-4549-498c-a55b-49231a9d0ddf", 2, "APP-4" });
+                values: new object[] { new Guid("b0454fc6-9014-4dc8-bccc-a90b997e7b02"), new Guid("794c169c-a1dd-45ee-b093-fd80c25a28bf"), "APP-5", "69925489-fdbf-4645-a0a7-928316b6d3b7", 2, "APP-4" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Issues_EpicIssueId",
@@ -111,37 +111,37 @@ namespace IssueTracker.Data.Migrations
             migrationBuilder.DeleteData(
                 table: "Issues",
                 keyColumn: "IssueId",
-                keyValue: new Guid("06c3e187-0486-4eed-91db-b346a7044879"));
+                keyValue: new Guid("ee88fef9-ccf4-41b0-8326-1200f60b308b"));
 
             migrationBuilder.DeleteData(
                 table: "LinkedIssues",
                 keyColumns: new[] { "ChildIssueId", "ParentIssueId" },
-                keyValues: new object[] { new Guid("cda71c85-f63b-42eb-8f48-f0ad1409e10d"), new Guid("47cc7642-a8ed-4cc7-ba94-3c2ed8fc2165") });
+                keyValues: new object[] { new Guid("cd9a0df2-5f83-4942-9c08-4d97b2a90d55"), new Guid("33e3d8bf-af55-498a-b96f-f514a3b0a39d") });
 
             migrationBuilder.DeleteData(
                 table: "LinkedIssues",
                 keyColumns: new[] { "ChildIssueId", "ParentIssueId" },
-                keyValues: new object[] { new Guid("d180b554-0a2b-4e44-bb57-82075f4f5fbf"), new Guid("ddbb6026-129b-474e-af0a-4f58a9dd68b4") });
+                keyValues: new object[] { new Guid("b0454fc6-9014-4dc8-bccc-a90b997e7b02"), new Guid("794c169c-a1dd-45ee-b093-fd80c25a28bf") });
 
             migrationBuilder.DeleteData(
                 table: "Issues",
                 keyColumn: "IssueId",
-                keyValue: new Guid("47cc7642-a8ed-4cc7-ba94-3c2ed8fc2165"));
+                keyValue: new Guid("33e3d8bf-af55-498a-b96f-f514a3b0a39d"));
 
             migrationBuilder.DeleteData(
                 table: "Issues",
                 keyColumn: "IssueId",
-                keyValue: new Guid("cda71c85-f63b-42eb-8f48-f0ad1409e10d"));
+                keyValue: new Guid("794c169c-a1dd-45ee-b093-fd80c25a28bf"));
 
             migrationBuilder.DeleteData(
                 table: "Issues",
                 keyColumn: "IssueId",
-                keyValue: new Guid("d180b554-0a2b-4e44-bb57-82075f4f5fbf"));
+                keyValue: new Guid("b0454fc6-9014-4dc8-bccc-a90b997e7b02"));
 
             migrationBuilder.DeleteData(
                 table: "Issues",
                 keyColumn: "IssueId",
-                keyValue: new Guid("ddbb6026-129b-474e-af0a-4f58a9dd68b4"));
+                keyValue: new Guid("cd9a0df2-5f83-4942-9c08-4d97b2a90d55"));
 
             migrationBuilder.DropColumn(
                 name: "EpicIssueId",
