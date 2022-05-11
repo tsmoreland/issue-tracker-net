@@ -15,5 +15,11 @@ namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
 public sealed record class Maintainer(Guid UserId, string FullName) : User(UserId, FullName)
 {
-    public static Maintainer Unassigned { get; } = new(UnassignedId, UnasignedFullname);
+    /// <summary>
+    /// Unassigned maintainer
+    /// </summary>
+    /// <remarks>
+    /// intentionally created on each request due to ef tracking
+    /// </remarks>
+    public static Maintainer Unassigned => new(UnassignedId, UnasignedFullname);
 }

@@ -24,43 +24,52 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
     {
         builder
             .ToTable("Issues")
-            .HasKey("_id");
+            .HasKey(e => e.Id);
 
-        builder.HasIndex("_id");
         builder.HasIndex(e => e.Title);
         builder.HasIndex(e => e.Priority);
         builder.HasIndex("_project");
         builder.HasIndex("_issueNumber");
 
-        builder.Property<Guid>("_id")
-            .HasColumnName("Id")
-            .UsePropertyAccessMode(PropertyAccessMode.Field)
-            .IsRequired();
-
-        builder.Property(e => e.DisplayId)
+        builder.Property(e => e.Id)
             .HasConversion(e => e.ToString(), @string => IssueIdentifier.FromString(@string))
             .IsRequired();
+        builder.Ignore(e => e.Project);
         builder.Property<string>("_project")
             .HasColumnName("Project")
             .UsePropertyAccessMode(PropertyAccessMode.Field)
             .HasMaxLength(3)
             .IsUnicode(false)
             .IsRequired();
+        builder.Ignore(e => e.IssueNumber);
         builder.Property<int>("_issueNumber")
             .HasColumnName("IssueNumber")
             .UsePropertyAccessMode(PropertyAccessMode.Field)
             .IsRequired();
         builder.Property(e => e.Title).IsRequired().IsUnicode().HasMaxLength(200);
         builder.Property(e => e.Description).IsUnicode().HasMaxLength(500);
-        builder.Property(e => e.Priority).IsRequired();
+        builder.Ignore(e => e.Priority);
+        builder
+            .Property(e => e.Priority)
+            .IsRequired();
+        builder.Ignore(e => e.Type);
+        builder
+            .Property<IssueType>("_type")
+            .HasColumnName("Type")
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .IsRequired();
 
-        builder.Property<Guid>("_epicId")
+        builder.Ignore(e => e.EpidId);
+        builder.Property<IssueIdentifier?>("_epicId")
             .HasColumnName("EpicId")
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
-        builder.HasOne<Issue>()
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasConversion(e => e != null ? e.ToString() : null, @string => !string.IsNullOrEmpty(@string) ? IssueIdentifier.FromString(@string) : null);
+        builder
+            .HasOne<Issue>()
             .WithMany()
-            .HasForeignKey("_epidId");
-
+            .HasForeignKey("_epicId")
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.NoAction);
         builder.Property(e => e.ConcurrencyToken).IsConcurrencyToken();
         builder.Property(e => e.LastModifiedTime)
             .HasConversion(

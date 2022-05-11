@@ -13,9 +13,12 @@
 
 namespace IssueTracker.Issues.Domain.DataContracts;
 
-public interface IEntity
+public abstract class Entity
 {
-    public Guid Id { get; }
-    public DateTimeOffset LastModifiedTime { get; }
-    public void UpdateLastModifiedTime();
+    public DateTimeOffset LastModifiedTime { get; private set; } 
+
+    public void UpdateLastModifiedTime()
+    {
+        LastModifiedTime = DateTimeOffset.UtcNow;
+    }
 }

@@ -15,5 +15,12 @@ namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
 public sealed record class TriageUser(Guid UserId, string FullName) : User(UserId, FullName)
 {
-    public static TriageUser Unassigned { get; } = new(UnassignedId, UnasignedFullname);
+    /// <summary>
+    /// Unassigned user
+    /// </summary>
+    /// <remarks>
+    /// intentionally created on each request due to ef tracking
+    /// </remarks>
+    public static TriageUser Unassigned => new(UnassignedId, UnasignedFullname);
+
 }

@@ -12,6 +12,7 @@
 //
 
 using IssueTracker.Issues.Domain.DataContracts;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -44,22 +45,24 @@ public sealed class IssuesDbContext : DbContext
         ChangeTracker.Tracked += ChangeTracker_Tracked;
     }
 
-    private static void ChangeTracker_Tracked(object? sender, Microsoft.EntityFrameworkCore.ChangeTracking.EntityTrackedEventArgs e)
+    public DbSet<Issue> Issues { get; init; } = null!;
+
+    private static void ChangeTracker_Tracked(object? sender, EntityTrackedEventArgs e)
     {
-        if (e.Entry.Entity is IEntity entity)
+        if (e.Entry.Entity is Entity entity)
         {
             RefreshIssueTimestamp(entity, e);
         }
     }
 
-    private static void ChangeTracker_StateChanged(object? sender, Microsoft.EntityFrameworkCore.ChangeTracking.EntityStateChangedEventArgs e)
+    private static void ChangeTracker_StateChanged(object? sender, EntityStateChangedEventArgs e)
     {
-        if (e.Entry.Entity is IEntity entity)
+        if (e.Entry.Entity is Entity entity)
         {
             RefreshIssueTimestamp(entity, e);
         }
     }
-    private static void RefreshIssueTimestamp(IEntity entity, EntityEntryEventArgs e)
+    private static void RefreshIssueTimestamp(Entity entity, EntityEntryEventArgs e)
     {
         if (e.Entry.State is EntityState.Added or EntityState.Modified)
         {

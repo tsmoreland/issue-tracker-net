@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IssueTracker.Issues.Infrastructure.Migrations
 {
     [DbContext(typeof(IssuesDbContext))]
-    [Migration("20220511001553_Initial")]
+    [Migration("20220511203429_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,10 +21,8 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
 
             modelBuilder.Entity("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Issue", b =>
                 {
-                    b.Property<Guid>("_id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Id");
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ConcurrencyToken")
                         .IsConcurrencyToken()
@@ -35,13 +33,6 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .IsUnicode(true)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DisplayId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("EpidId")
                         .HasColumnType("TEXT");
 
                     b.Property<long>("LastModifiedTime")
@@ -56,15 +47,9 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                         .IsUnicode(true)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid>("_epicId")
+                    b.Property<string>("_epicId")
                         .HasColumnType("TEXT")
                         .HasColumnName("EpicId");
-
-                    b.Property<Guid?>("_epidId")
-                        .HasColumnType("TEXT");
 
                     b.Property<int>("_issueNumber")
                         .HasColumnType("INTEGER")
@@ -77,15 +62,15 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("Project");
 
-                    b.HasKey("_id");
+                    b.Property<int>("_type")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("Type");
 
-                    b.HasIndex("Priority");
+                    b.HasKey("Id");
 
                     b.HasIndex("Title");
 
-                    b.HasIndex("_epidId");
-
-                    b.HasIndex("_id");
+                    b.HasIndex("_epicId");
 
                     b.HasIndex("_issueNumber");
 
@@ -98,11 +83,12 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                 {
                     b.HasOne("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Issue", null)
                         .WithMany()
-                        .HasForeignKey("_epidId");
+                        .HasForeignKey("_epicId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.OwnsOne("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Maintainer", "Assignee", b1 =>
                         {
-                            b1.Property<Guid>("Issue_id")
+                            b1.Property<string>("IssueId")
                                 .HasColumnType("TEXT");
 
                             b1.Property<string>("FullName")
@@ -118,17 +104,17 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                                 .HasColumnType("TEXT")
                                 .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
 
-                            b1.HasKey("Issue_id");
+                            b1.HasKey("IssueId");
 
                             b1.ToTable("Issues");
 
                             b1.WithOwner()
-                                .HasForeignKey("Issue_id");
+                                .HasForeignKey("IssueId");
                         });
 
                     b.OwnsOne("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.TriageUser", "Reporter", b1 =>
                         {
-                            b1.Property<Guid>("Issue_id")
+                            b1.Property<string>("IssueId")
                                 .HasColumnType("TEXT");
 
                             b1.Property<string>("FullName")
@@ -144,12 +130,12 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                                 .HasColumnType("TEXT")
                                 .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
 
-                            b1.HasKey("Issue_id");
+                            b1.HasKey("IssueId");
 
                             b1.ToTable("Issues");
 
                             b1.WithOwner()
-                                .HasForeignKey("Issue_id");
+                                .HasForeignKey("IssueId");
                         });
 
                     b.Navigation("Assignee")

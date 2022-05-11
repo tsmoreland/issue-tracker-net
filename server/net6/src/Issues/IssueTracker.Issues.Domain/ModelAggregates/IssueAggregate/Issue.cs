@@ -15,24 +15,24 @@ using IssueTracker.Issues.Domain.DataContracts;
 
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
-public sealed class Issue : IEntity
+public sealed class Issue : Entity
 {
-    private Guid _id = Guid.NewGuid();
     private string _title = string.Empty;
     private string _description = string.Empty;
-    private Guid? _epidId;
+    private IssueIdentifier? _epidId;
     private string _project = string.Empty;
-    private int _issueNumber = 0;
+    private int _issueNumber;
     private IssueType _type = IssueType.Defect;
-    private Priority _priority = Priority.Low;
     private Maintainer _assignee = Maintainer.Unassigned;
     private TriageUser _reporter = TriageUser.Unassigned;
 
-    public Issue(string project, string title, string description)
+    public Issue(string project, int issueNumber, string title, string description)
     {
         Title = title;
         Description = description;
-        DisplayId = new IssueIdentifier(project, 0);
+        Id = new IssueIdentifier(project, issueNumber);
+        Project = project;
+        IssueNumber = issueNumber;
     }
 
     private Issue()
@@ -40,8 +40,33 @@ public sealed class Issue : IEntity
         
     }
 
-    Guid IEntity.Id => _id;
-    public IssueIdentifier DisplayId { get; private set; } = IssueIdentifier.Empty;
+    public IssueIdentifier Id { get; private set; } = IssueIdentifier.Empty;
+
+    public string Project
+    {
+        get => _project;
+        init
+        {
+            if (value is not { Length: > 0 } and { Length: <= 3 })
+            {
+                throw new ArgumentException("project must cannot be empty or greater than 3 characters", nameof(value));
+            }
+            _project = value;
+        }
+    }
+
+    public int IssueNumber
+    {
+        get => _issueNumber;
+        init
+        {
+            if (value < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value), "issue number cannot be negative");
+            }
+            _issueNumber = value;
+        }
+    }
 
     public string Title
     {
@@ -53,7 +78,7 @@ public sealed class Issue : IEntity
                 return;
             }
 
-            if (value is not { Length: > 0 })
+            if (value is not {Length: > 0} and {Length: <= 200})
             {
                 throw new ArgumentException("title cannot be empty", nameof(value));
             }
@@ -64,14 +89,17 @@ public sealed class Issue : IEntity
     public string Description
     {
         get => _description;
-        set => _description = value ?? string.Empty;
+        set
+        {
+            if (_description is not {Length: <= 500})
+            {
+                throw new ArgumentException("Description cannot be longer than 500", nameof(value));
+            }
+            _description = value ?? string.Empty;
+        }
     }
 
-    public Priority Priority
-    {
-        get => _priority;
-        set => _priority = value;
-    }
+    public Priority Priority { get; set; } = Priority.Low;
 
     public IssueType Type
     {
@@ -106,7 +134,7 @@ public sealed class Issue : IEntity
         }
     }
 
-    public Guid? EpidId
+    public IssueIdentifier? EpidId
     {
         get => _epidId;
         set
@@ -120,9 +148,4 @@ public sealed class Issue : IEntity
     }
 
     public string ConcurrencyToken { get; private set; } = Guid.NewGuid().ToString();
-    public DateTimeOffset LastModifiedTime { get; private set; } = DateTimeOffset.UtcNow;
-    void IEntity.UpdateLastModifiedTime()
-    {
-        LastModifiedTime = DateTimeOffset.UtcNow;
-    }
 }
