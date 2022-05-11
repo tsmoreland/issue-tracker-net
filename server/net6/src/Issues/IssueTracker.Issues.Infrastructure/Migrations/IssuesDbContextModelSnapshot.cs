@@ -21,7 +21,8 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                 {
                     b.Property<Guid>("_id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Id");
 
                     b.Property<string>("ConcurrencyToken")
                         .IsConcurrencyToken()
@@ -57,19 +58,22 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid>("_epicId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("EpicId");
 
                     b.Property<Guid?>("_epidId")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("_issueNumber")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("IssueNumber");
 
                     b.Property<string>("_project")
                         .IsRequired()
                         .HasMaxLength(3)
                         .IsUnicode(false)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Project");
 
                     b.HasKey("_id");
 

@@ -13,7 +13,7 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                 name: "Issues",
                 columns: table => new
                 {
-                    _id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     DisplayId = table.Column<string>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
@@ -26,19 +26,19 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                     EpidId = table.Column<Guid>(type: "TEXT", nullable: true),
                     ConcurrencyToken = table.Column<string>(type: "TEXT", nullable: false),
                     LastModifiedTime = table.Column<long>(type: "INTEGER", nullable: false),
-                    _epicId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    EpicId = table.Column<Guid>(type: "TEXT", nullable: false),
                     _epidId = table.Column<Guid>(type: "TEXT", nullable: true),
-                    _issueNumber = table.Column<int>(type: "INTEGER", nullable: false),
-                    _project = table.Column<string>(type: "TEXT", unicode: false, maxLength: 3, nullable: false)
+                    IssueNumber = table.Column<int>(type: "INTEGER", nullable: false),
+                    Project = table.Column<string>(type: "TEXT", unicode: false, maxLength: 3, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Issues", x => x._id);
+                    table.PrimaryKey("PK_Issues", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Issues_Issues__epidId",
                         column: x => x._epidId,
                         principalTable: "Issues",
-                        principalColumn: "_id");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -47,24 +47,24 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                 column: "_epidId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Issues__id",
+                name: "IX_Issues_Id",
                 table: "Issues",
-                column: "_id");
+                column: "Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Issues__issueNumber",
+                name: "IX_Issues_IssueNumber",
                 table: "Issues",
-                column: "_issueNumber");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Issues__project",
-                table: "Issues",
-                column: "_project");
+                column: "IssueNumber");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Issues_Priority",
                 table: "Issues",
                 column: "Priority");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Issues_Project",
+                table: "Issues",
+                column: "Project");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Issues_Title",

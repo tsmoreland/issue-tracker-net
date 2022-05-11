@@ -33,6 +33,7 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
         builder.HasIndex("_issueNumber");
 
         builder.Property<Guid>("_id")
+            .HasColumnName("Id")
             .UsePropertyAccessMode(PropertyAccessMode.Field)
             .IsRequired();
 
@@ -40,11 +41,13 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
             .HasConversion(e => e.ToString(), @string => IssueIdentifier.FromString(@string))
             .IsRequired();
         builder.Property<string>("_project")
+            .HasColumnName("Project")
             .UsePropertyAccessMode(PropertyAccessMode.Field)
             .HasMaxLength(3)
             .IsUnicode(false)
             .IsRequired();
         builder.Property<int>("_issueNumber")
+            .HasColumnName("IssueNumber")
             .UsePropertyAccessMode(PropertyAccessMode.Field)
             .IsRequired();
         builder.Property(e => e.Title).IsRequired().IsUnicode().HasMaxLength(200);
@@ -52,6 +55,7 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
         builder.Property(e => e.Priority).IsRequired();
 
         builder.Property<Guid>("_epicId")
+            .HasColumnName("EpicId")
             .UsePropertyAccessMode(PropertyAccessMode.Field);
         builder.HasOne<Issue>()
             .WithMany()

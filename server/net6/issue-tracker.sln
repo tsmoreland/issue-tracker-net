@@ -75,6 +75,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Issues.Infrast
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Issues.Services", "src\Issues\IssueTracker.Issues.Services\IssueTracker.Issues.Services.csproj", "{21D483A6-CEE4-48F2-A260-79A2B4782132}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssuesTracker.Issues.cli", "src\Issues\IssuesTracker.Issues.cli\IssuesTracker.Issues.cli.csproj", "{93ADD8BD-1064-4401-A6DF-F60C3B10014F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -169,6 +171,10 @@ Global
 		{21D483A6-CEE4-48F2-A260-79A2B4782132}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21D483A6-CEE4-48F2-A260-79A2B4782132}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21D483A6-CEE4-48F2-A260-79A2B4782132}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93ADD8BD-1064-4401-A6DF-F60C3B10014F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93ADD8BD-1064-4401-A6DF-F60C3B10014F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93ADD8BD-1064-4401-A6DF-F60C3B10014F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93ADD8BD-1064-4401-A6DF-F60C3B10014F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -201,6 +207,7 @@ Global
 		{B7AFF034-03AF-48FF-ACA6-0A454AA2737D} = {85C789BA-B097-45BB-9FA1-4B3E584236E4}
 		{ED10ECF2-F14E-46B6-AA63-908931FCC5E6} = {85C789BA-B097-45BB-9FA1-4B3E584236E4}
 		{21D483A6-CEE4-48F2-A260-79A2B4782132} = {85C789BA-B097-45BB-9FA1-4B3E584236E4}
+		{93ADD8BD-1064-4401-A6DF-F60C3B10014F} = {85C789BA-B097-45BB-9FA1-4B3E584236E4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8421BB6A-BA23-402F-AC65-8492F4641EA7}
