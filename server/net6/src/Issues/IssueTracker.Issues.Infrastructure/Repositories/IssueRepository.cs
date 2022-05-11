@@ -11,20 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace IssueTracker.Issues.Domain.DataContracts;
+namespace IssueTracker.Issues.Infrastructure.Repositories;
 
-public abstract class Entity : IEqualityComparer<Entity>
+public sealed class IssueRepository
 {
-    public DateTimeOffset LastModifiedTime { get; private set; } 
-
-    public void UpdateLastModifiedTime()
-    {
-        LastModifiedTime = DateTimeOffset.UtcNow;
-    }
-
-    /// <inheritdoc />
-    public abstract bool Equals(Entity? x, Entity? y);
-
-    /// <inheritdoc />
-    public abstract int GetHashCode(Entity obj);
 }

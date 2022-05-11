@@ -3,6 +3,7 @@ using System;
 using IssueTracker.Issues.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IssueTracker.Issues.Infrastructure.Migrations
 {
     [DbContext(typeof(IssuesDbContext))]
-    partial class IssuesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220511225336_RelatedIssues")]
+    partial class RelatedIssues
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.4");
@@ -84,11 +86,6 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
 
                     b.Property<string>("RightId")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("Link")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(0);
 
                     b.HasKey("LeftId", "RightId");
 

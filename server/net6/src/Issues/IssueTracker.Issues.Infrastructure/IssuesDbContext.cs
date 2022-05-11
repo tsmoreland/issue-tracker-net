@@ -22,7 +22,7 @@ using Microsoft.Extensions.Logging;
 
 namespace IssueTracker.Issues.Infrastructure;
 
-public sealed class IssuesDbContext : DbContext
+public sealed class IssuesDbContext : DbContext, IUnitOfWork
 {
     private readonly IConfiguration _configuration;
     private readonly IHostEnvironment _environment;
@@ -85,8 +85,7 @@ public sealed class IssuesDbContext : DbContext
                 connectionString,
                 options => options.MigrationsAssembly(typeof(IssuesDbContext).Assembly.FullName))
             .LogTo(message => _logger.LogInformation("{SQL}", message))
-            //.EnableSensitiveDataLogging(_environment.IsDevelopment());
-            .EnableSensitiveDataLogging(true);
+            .EnableSensitiveDataLogging(_environment.IsDevelopment());
 
         base.OnConfiguring(optionsBuilder);
     }
@@ -97,6 +96,7 @@ public sealed class IssuesDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.ApplyConfiguration(new IssueEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new IssueLinkEntityTypeConfiguration());
     }
 
     /// <inheritdoc />
@@ -113,5 +113,15 @@ public sealed class IssuesDbContext : DbContext
         ChangeTracker.StateChanged -= ChangeTracker_StateChanged;
         ChangeTracker.Tracked -= ChangeTracker_Tracked; 
         return base.DisposeAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
+    {
+        // raise events here, likely through MediatR, those event may contain entities tracked by this
+        // context and those changes may need to be included here.
+
+        await base.SaveChangesAsync(cancellationToken);
+        return true;
     }
 }

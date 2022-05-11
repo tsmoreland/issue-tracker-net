@@ -11,20 +11,19 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace IssueTracker.Issues.Domain.DataContracts;
+namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
-public abstract class Entity : IEqualityComparer<Entity>
+public sealed record class IssueLink(
+    LinkType Link,
+    IssueIdentifier LeftId,
+    Issue Left,
+    IssueIdentifier RightId,
+    Issue Right)
 {
-    public DateTimeOffset LastModifiedTime { get; private set; } 
 
-    public void UpdateLastModifiedTime()
+    private IssueLink()
+        : this(LinkType.Related, IssueIdentifier.Empty, null!, IssueIdentifier.Empty, null!)
     {
-        LastModifiedTime = DateTimeOffset.UtcNow;
+
     }
-
-    /// <inheritdoc />
-    public abstract bool Equals(Entity? x, Entity? y);
-
-    /// <inheritdoc />
-    public abstract int GetHashCode(Entity obj);
 }

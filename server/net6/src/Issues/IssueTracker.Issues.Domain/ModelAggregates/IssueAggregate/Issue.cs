@@ -25,6 +25,8 @@ public sealed class Issue : Entity
     private IssueType _type = IssueType.Defect;
     private Maintainer _assignee = Maintainer.Unassigned;
     private TriageUser _reporter = TriageUser.Unassigned;
+    private readonly ICollection<IssueLink> _relatedTo = new HashSet<IssueLink>();
+    private readonly ICollection<IssueLink> _relatedFrom = new HashSet<IssueLink>();
 
     public Issue(string project, int issueNumber, string title, string description)
     {
@@ -147,5 +149,29 @@ public sealed class Issue : Entity
         }
     }
 
+    public void AddRelatedTo(LinkType link, Issue issue)
+    {
+        ArgumentNullException.ThrowIfNull(issue, nameof(issue));
+        IssueLink issueLink = new(link, Id, this, issue.Id, issue);
+        _relatedTo.Add(issueLink);
+    }
+
+    public IEnumerable<Issue> RelatedIssues => _relatedTo.Select(i => i.Right)
+        .Union(_relatedFrom.Select(i => i.Left));
+
     public string ConcurrencyToken { get; private set; } = Guid.NewGuid().ToString();
+
+    /// <inheritdoc />
+    public override bool Equals(Entity? x, Entity? y)
+    {
+        return (x is null && y is null) || (x is Issue issueX && y is Issue issueY && issueX.Id == issueY.Id);
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode(Entity obj)
+    {
+        return obj is Issue issue
+            ? issue.Id.GetHashCode()
+            : 0;
+    }
 }

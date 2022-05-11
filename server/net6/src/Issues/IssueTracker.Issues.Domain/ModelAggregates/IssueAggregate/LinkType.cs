@@ -11,20 +11,32 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace IssueTracker.Issues.Domain.DataContracts;
+namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
-public abstract class Entity : IEqualityComparer<Entity>
+/// <summary>
+/// Link type associating two issues, the left side of the joined is the parent entry which
+/// is related many values such as <see cref="Blocking"/> is the case the left side
+/// would be the cause of the block while the right side is the one who is blocked
+/// </summary>
+public enum LinkType
 {
-    public DateTimeOffset LastModifiedTime { get; private set; } 
+    /// <summary>
+    /// Issue is related to
+    /// </summary>
+    Related,
 
-    public void UpdateLastModifiedTime()
-    {
-        LastModifiedTime = DateTimeOffset.UtcNow;
-    }
+    /// <summary>
+    /// Duplicates or duplicated by depending on which side of the join
+    /// </summary>
+    Duplicate,
 
-    /// <inheritdoc />
-    public abstract bool Equals(Entity? x, Entity? y);
+    /// <summary>
+    /// Blockes or blocked by depending on which side of the join
+    /// </summary>
+    Blocking,
 
-    /// <inheritdoc />
-    public abstract int GetHashCode(Entity obj);
+    /// <summary>
+    /// Clones or cloned from depending which on side of the join
+    /// </summary>
+    Clone,
 }

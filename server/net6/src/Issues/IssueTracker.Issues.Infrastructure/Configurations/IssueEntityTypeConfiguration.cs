@@ -107,5 +107,50 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
                     .IsUnicode(true)
                     .HasDefaultValue(Maintainer.Unassigned.FullName);
             });
+
+        builder.Ignore(e => e.RelatedIssues);
+        builder
+            .HasMany("_relatedTo")
+            .WithOne();
+        builder
+            .HasMany("_relatedFrom")
+            .WithOne();
     }
 }
+
+internal sealed class IssueLinkEntityTypeConfiguration : IEntityTypeConfiguration<IssueLink>
+{
+    /// <inheritdoc />
+    public void Configure(EntityTypeBuilder<IssueLink> builder)
+    {
+        builder.ToTable("IssueLinks").HasKey(e => new { e.LeftId, e.RightId });
+
+        builder
+            .Property(e => e.Link)
+            .IsRequired()
+            .HasDefaultValue(LinkType.Related);
+
+        builder
+            .Property(e => e.LeftId)
+            .HasConversion(e => e.ToString(), @string => IssueIdentifier.FromString(@string))
+            .IsRequired();
+        builder
+            .Property(e => e.RightId)
+            .HasConversion(e => e.ToString(), @string => IssueIdentifier.FromString(@string))
+            .IsRequired();
+
+        builder
+            .HasOne(e => e.Left)
+            .WithMany("_relatedFrom")
+            .HasPrincipalKey(e => e.Id)
+            .HasForeignKey(e => e.LeftId)
+            .OnDelete(DeleteBehavior.Cascade);
+        builder
+            .HasOne(e => e.Right)
+            .WithMany("_relatedTo")
+            .HasPrincipalKey(e => e.Id)
+            .HasForeignKey(e => e.RightId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
