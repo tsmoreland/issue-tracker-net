@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IssueTracker.Issues.Infrastructure.Migrations
 {
     [DbContext(typeof(IssuesDbContext))]
-    [Migration("20220511203429_Initial")]
+    [Migration("20220511205935_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

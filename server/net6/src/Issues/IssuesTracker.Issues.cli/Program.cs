@@ -16,6 +16,7 @@ ILoggerFactory loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerF
 IssuesDbContext dbContext = scope.ServiceProvider.GetRequiredService<IssuesDbContext>();
 ILogger logger = loggerFactory.CreateLogger<IssuesDbContext>();
 
+await dbContext.Database.EnsureDeletedAsync();
 await dbContext.Database.MigrateAsync();
 
 Issue epic = new("APP",1, "Epic1", "...") { Type = IssueType.Epic };
@@ -30,7 +31,7 @@ catch (Exception ex)
     logger.LogError("{Exception}", ex.ToString());
 }
 
-Issue story = new("APP",2, "Story1", "...") { Type = IssueType.Story, EpidId = epic.Id };
+Issue story = new("APP",2, "Story1", "...") { Type = IssueType.Story, EpicId = epic.Id };
 try
 {
     dbContext.Issues.Add(story);

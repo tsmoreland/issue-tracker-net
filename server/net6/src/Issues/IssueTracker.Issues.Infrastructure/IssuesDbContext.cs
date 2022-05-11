@@ -85,7 +85,8 @@ public sealed class IssuesDbContext : DbContext
                 connectionString,
                 options => options.MigrationsAssembly(typeof(IssuesDbContext).Assembly.FullName))
             .LogTo(message => _logger.LogInformation("{SQL}", message))
-            .EnableSensitiveDataLogging(_environment.IsDevelopment());
+            //.EnableSensitiveDataLogging(_environment.IsDevelopment());
+            .EnableSensitiveDataLogging(true);
 
         base.OnConfiguring(optionsBuilder);
     }

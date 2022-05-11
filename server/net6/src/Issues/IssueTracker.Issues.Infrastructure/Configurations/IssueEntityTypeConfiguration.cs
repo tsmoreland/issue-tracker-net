@@ -59,11 +59,14 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
             .UsePropertyAccessMode(PropertyAccessMode.Field)
             .IsRequired();
 
-        builder.Ignore(e => e.EpidId);
+        builder.Ignore(e => e.EpicId);
         builder.Property<IssueIdentifier?>("_epicId")
             .HasColumnName("EpicId")
             .UsePropertyAccessMode(PropertyAccessMode.Field)
-            .HasConversion(e => e != null ? e.ToString() : null, @string => !string.IsNullOrEmpty(@string) ? IssueIdentifier.FromString(@string) : null);
+            .HasConversion(e => e != null ? e.ToString() : null!,
+                @string => !string.IsNullOrEmpty(@string) ? IssueIdentifier.FromString(@string) : null)
+            .IsRequired(false);
+
         builder
             .HasOne<Issue>()
             .WithMany()

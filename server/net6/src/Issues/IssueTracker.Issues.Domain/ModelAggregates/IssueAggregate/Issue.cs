@@ -19,7 +19,7 @@ public sealed class Issue : Entity
 {
     private string _title = string.Empty;
     private string _description = string.Empty;
-    private IssueIdentifier? _epidId;
+    private IssueIdentifier? _epicId;
     private string _project = string.Empty;
     private int _issueNumber;
     private IssueType _type = IssueType.Defect;
@@ -108,7 +108,7 @@ public sealed class Issue : Entity
         {
             if (value is IssueType.Epic)
             {
-                EpidId = null;
+                EpicId = null;
             }
             _type = value;
         }
@@ -134,16 +134,16 @@ public sealed class Issue : Entity
         }
     }
 
-    public IssueIdentifier? EpidId
+    public IssueIdentifier? EpicId
     {
-        get => _epidId;
+        get => _epicId;
         set
         {
             if (Type is IssueType.Epic)
             {
                 throw new ArgumentException("Cannot assign epic to an epic", nameof(value));
             }
-            _epidId = value;
+            _epicId = value;
         }
     }
 
