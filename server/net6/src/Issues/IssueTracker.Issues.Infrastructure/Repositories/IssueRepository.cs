@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.Specifications;
 using IssueTracker.Issues.Domain.Extensions;
@@ -18,7 +19,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IssueTracker.Issues.Infrastructure.Repositories;
 
-public sealed class IssueRepository
+public sealed class IssueRepository 
 {
     private readonly IssuesDbContext _dbContext;
 
@@ -26,6 +27,8 @@ public sealed class IssueRepository
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
+
+    public IUnitOfWork UnitOfWork => _dbContext;
 
     public Task<T> Max<T>(IEnumerable<WhereClauseSpecification<Issue>> filterExpressions, SelectorSpecification<Issue, T> selectExpression, CancellationToken cancellationToken = default)
     {
@@ -63,5 +66,31 @@ public sealed class IssueRepository
             .Skip(paging.Skip)
             .Take(paging.Take)
             .AsAsyncEnumerable();
+    }
+
+    public Task<bool> IssueExists(IssueIdentifier id, CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Issues.AsNoTracking()
+            .AnyAsync(i => i.Id == id, cancellationToken);
+    }
+
+    public Task<bool> DeleteIssueById(IssueIdentifier id, CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Issues
+            .FindAsync(new object[] { id }, cancellationToken)
+            .AsTask()
+            .ContinueWith(findTask =>
+            {
+                Issue? issue = findTask.Result;
+                if (issue is not null)
+                {
+                    _dbContext.Issues.Remove(issue);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                } 
+            }, cancellationToken);
     }
 }
