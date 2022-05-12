@@ -11,8 +11,57 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Domain.Specifications;
+using IssueTracker.Issues.Domain.Extensions;
+using Microsoft.EntityFrameworkCore;
+
 namespace IssueTracker.Issues.Infrastructure.Repositories;
 
 public sealed class IssueRepository
 {
+    private readonly IssuesDbContext _dbContext;
+
+    public IssueRepository(IssuesDbContext dbContext)
+    {
+        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+    }
+
+    public Task<T> Max<T>(IEnumerable<WhereClauseSpecification<Issue>> filterExpressions, SelectorSpecification<Issue, T> selectExpression, CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Issues.AsNoTracking()
+            .Where(filterExpressions)
+            .MaxAsync(selectExpression.Select, cancellationToken);
+    }
+
+    public ValueTask<Issue?> GetIssueByIdOrDefault(IssueIdentifier id, bool track = true, CancellationToken cancellationToken = default)
+    {
+        return track
+            ? _dbContext.Issues.FindAsync(new object[] { id }, cancellationToken)
+            : new ValueTask<Issue?>(_dbContext.Issues.AsNoTracking().FirstOrDefaultAsync(i => i.Id == id, cancellationToken));
+    }
+
+    public Task<Issue?> GetIssueByFilter(IEnumerable<WhereClauseSpecification<Issue>> filterExpressions,
+        bool track = true,
+        CancellationToken cancellationToken = default)
+    {
+        IQueryable<Issue> query = _dbContext.Issues;
+        if (!track)
+        {
+            query = query.AsNoTracking();
+        }
+
+        return query.Where(filterExpressions).FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public IAsyncEnumerable<T> GetPagedAndSortedCollection<T>(IEnumerable<WhereClauseSpecification<Issue>> filterExpressions,
+        SelectorSpecification<Issue, T> selectExpression, PageSpecification paging)
+    {
+        return _dbContext.Issues.AsNoTracking()
+            .Where(filterExpressions)
+            .Select(selectExpression)
+            .Skip(paging.Skip)
+            .Take(paging.Take)
+            .AsAsyncEnumerable();
+    }
 }
