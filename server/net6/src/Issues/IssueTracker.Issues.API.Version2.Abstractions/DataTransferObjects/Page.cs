@@ -11,15 +11,6 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-
 namespace IssueTracker.Issues.API.Version2.Abstractions.DataTransferObjects;
 
-public sealed record class IssueDto(
-    string Id,
-    string Title,
-    string? Description,
-    Priority Priority,
-    IssueType Type,
-    string? EpicId,
-    IEnumerable<LinkedIssueSummaryDto> RelatedTo);
+public abstract record class Page<TItem>(int PageNumber, int Total, IAsyncEnumerable<TItem> Items);

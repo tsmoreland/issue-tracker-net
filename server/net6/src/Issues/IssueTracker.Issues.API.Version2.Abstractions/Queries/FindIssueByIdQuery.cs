@@ -11,15 +11,10 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Issues.API.Version2.Abstractions.DataTransferObjects;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using MediatR;
 
-namespace IssueTracker.Issues.API.Version2.Abstractions.DataTransferObjects;
+namespace IssueTracker.Issues.API.Version2.Abstractions.Queries;
 
-public sealed record class IssueDto(
-    string Id,
-    string Title,
-    string? Description,
-    Priority Priority,
-    IssueType Type,
-    string? EpicId,
-    IEnumerable<LinkedIssueSummaryDto> RelatedTo);
+public sealed record class FindIssueByIdQuery(IssueIdentifier Id) : IRequest<IssueDto>;
