@@ -13,7 +13,7 @@
 
 namespace IssueTracker.Issues.Domain.Specifications;
 
-public sealed record class PageSpecification(int PageNumber, int PageSize)
+public sealed record class PagingOptions(int PageNumber, int PageSize)
 {
     /// <summary>
     /// Page Number, starting at position 1
