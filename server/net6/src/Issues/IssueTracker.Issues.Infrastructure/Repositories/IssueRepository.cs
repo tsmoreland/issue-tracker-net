@@ -15,6 +15,7 @@ using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.Specifications;
 using IssueTracker.Issues.Domain.Extensions;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace IssueTracker.Issues.Infrastructure.Repositories;
@@ -22,10 +23,12 @@ namespace IssueTracker.Issues.Infrastructure.Repositories;
 public sealed class IssueRepository : IIssueRepository
 {
     private readonly IssuesDbContext _dbContext;
+    private readonly IIssueSpecificationFactory _specification;
 
-    public IssueRepository(IssuesDbContext dbContext)
+    public IssueRepository(IssuesDbContext dbContext, IIssueSpecificationFactory specificationFactory)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        _specification = specificationFactory ?? throw new ArgumentNullException(nameof(specificationFactory));
     }
 
     public IUnitOfWork UnitOfWork => _dbContext;
@@ -42,11 +45,28 @@ public sealed class IssueRepository : IIssueRepository
         _dbContext.Entry(issue).State = EntityState.Modified;
     }
 
-    public Task<T> Max<T>(PredicateSpecification<Issue> filterExpression, SelectorSpecification<Issue, T> selectExpression, CancellationToken cancellationToken = default)
+    /// <inheritdoc />
+    public ValueTask<int> MaxIssueNumber(string project, CancellationToken cancellationToken = default)
     {
         return _dbContext.Issues.AsNoTracking()
+            .Where(_specification.ProjectMatches(project))
+            .OrderByDescending(_specification.SelectIssueNumber().Select)
+            .Select(_specification.SelectIssueNumber())
+            .Take(1)
+            .AsAsyncEnumerable()
+            .DefaultIfEmpty(0)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    [Obsolete("default if empty doesn't work for sqlite based on experimentation")]
+    public Task<T?> Max<T>(IPredicateSpecification<Issue> filterExpression, ISelectorSpecification<Issue, T> selectExpression, CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Issues.AsNoTracking()
+            .AsNoTracking()
             .Where(filterExpression)
-            .MaxAsync(selectExpression.Select, cancellationToken);
+            .Select(selectExpression)
+            .DefaultIfEmpty(default)
+            .MaxAsync(cancellationToken);
     }
 
     public ValueTask<Issue?> GetByIdOrDefault(IssueIdentifier id, bool track = true, CancellationToken cancellationToken = default)
@@ -56,7 +76,7 @@ public sealed class IssueRepository : IIssueRepository
             : new ValueTask<Issue?>(_dbContext.Issues.AsNoTracking().FirstOrDefaultAsync(i => i.Id == id, cancellationToken));
     }
 
-    public Task<Issue?> GetByFilter(PredicateSpecification<Issue> filterExpression,
+    public Task<Issue?> GetByFilter(IPredicateSpecification<Issue> filterExpression,
         bool track = true,
         CancellationToken cancellationToken = default)
     {
@@ -70,8 +90,8 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     public Task<T?> GetProjectionByFilter<T>(
-        PredicateSpecification<Issue> filterExpression,
-        SelectorSpecification<Issue, T> selectExpression,
+        IPredicateSpecification<Issue> filterExpression,
+        ISelectorSpecification<Issue, T> selectExpression,
         CancellationToken cancellationToken = default)
     {
         return _dbContext.Issues.AsNoTracking()
@@ -80,8 +100,8 @@ public sealed class IssueRepository : IIssueRepository
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public IAsyncEnumerable<T> GetPagedAndSortedProjections<T>(PredicateSpecification<Issue> filterExpression,
-        SelectorSpecification<Issue, T> selectExpression, PagingOptions paging)
+    public IAsyncEnumerable<T> GetPagedAndSortedProjections<T>(IPredicateSpecification<Issue> filterExpression,
+        ISelectorSpecification<Issue, T> selectExpression, PagingOptions paging)
     {
         return _dbContext.Issues.AsNoTracking()
             .Where(filterExpression)

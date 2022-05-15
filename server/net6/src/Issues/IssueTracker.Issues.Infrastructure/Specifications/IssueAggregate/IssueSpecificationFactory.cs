@@ -11,32 +11,15 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
-using IssueTracker.Issues.Infrastructure;
-using IssueTracker.Issues.Infrastructure.Repositories;
-using IssueTracker.Issues.Infrastructure.Specifications.IssueAggregate;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 
-[assembly: HostingStartup(typeof(HostingStartup))]
+namespace IssueTracker.Issues.Infrastructure.Specifications.IssueAggregate;
 
-namespace IssueTracker.Issues.Infrastructure;
-
-public sealed class HostingStartup : IHostingStartup
+public sealed class IssueSpecificationFactory : IIssueSpecificationFactory
 {
     /// <inheritdoc />
-    public void Configure(IWebHostBuilder builder)
-    {
-        builder.ConfigureServices(Configure);
-    }
+    public ISelectIssueNumber SelectIssueNumber() => new SelectIssueNumber();
 
-    public static void Configure(IServiceCollection services)
-    {
-        services
-            .AddDbContext<IssuesDbContext>(optionsLifetime: ServiceLifetime.Singleton)
-            .AddDbContextFactory<IssuesDbContext>()
-            .AddScoped<IIssueRepository, IssueRepository>()
-            .AddTransient<IIssueSpecificationFactory, IssueSpecificationFactory>();
-    }
+    /// <inheritdoc />
+    public IProjectMatchesPredicate ProjectMatches(string project) => new ProjectMatchesPredicate(project);
 }
