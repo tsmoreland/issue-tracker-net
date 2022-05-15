@@ -19,7 +19,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IssueTracker.Issues.Infrastructure.Repositories;
 
-public sealed class IssueRepository 
+public sealed class IssueRepository : IIssueRepository
 {
     private readonly IssuesDbContext _dbContext;
 
@@ -37,14 +37,14 @@ public sealed class IssueRepository
             .MaxAsync(selectExpression.Select, cancellationToken);
     }
 
-    public ValueTask<Issue?> GetIssueByIdOrDefault(IssueIdentifier id, bool track = true, CancellationToken cancellationToken = default)
+    public ValueTask<Issue?> GetByIdOrDefault(IssueIdentifier id, bool track = true, CancellationToken cancellationToken = default)
     {
         return track
             ? _dbContext.Issues.FindAsync(new object[] { id }, cancellationToken)
             : new ValueTask<Issue?>(_dbContext.Issues.AsNoTracking().FirstOrDefaultAsync(i => i.Id == id, cancellationToken));
     }
 
-    public Task<Issue?> GetIssueByFilter(IEnumerable<WhereClauseSpecification<Issue>> filterExpressions,
+    public Task<Issue?> GetByFilter(IEnumerable<WhereClauseSpecification<Issue>> filterExpressions,
         bool track = true,
         CancellationToken cancellationToken = default)
     {
@@ -57,7 +57,7 @@ public sealed class IssueRepository
         return query.Where(filterExpressions).FirstOrDefaultAsync(cancellationToken);
     }
 
-    public Task<T?> GetIssueProjectionByFilter<T>(
+    public Task<T?> GetProjectionByFilter<T>(
         IEnumerable<WhereClauseSpecification<Issue>> filterExpressions,
         SelectorSpecification<Issue, T> selectExpression,
         CancellationToken cancellationToken = default)
@@ -79,13 +79,13 @@ public sealed class IssueRepository
             .AsAsyncEnumerable();
     }
 
-    public Task<bool> IssueExists(IssueIdentifier id, CancellationToken cancellationToken = default)
+    public Task<bool> Exists(IssueIdentifier id, CancellationToken cancellationToken = default)
     {
         return _dbContext.Issues.AsNoTracking()
             .AnyAsync(i => i.Id == id, cancellationToken);
     }
 
-    public Task<bool> DeleteIssueById(IssueIdentifier id, CancellationToken cancellationToken = default)
+    public Task<bool> DeleteById(IssueIdentifier id, CancellationToken cancellationToken = default)
     {
         return _dbContext.Issues
             .FindAsync(new object[] { id }, cancellationToken)
