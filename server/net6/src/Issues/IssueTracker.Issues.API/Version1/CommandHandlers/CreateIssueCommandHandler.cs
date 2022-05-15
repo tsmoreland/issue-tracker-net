@@ -15,7 +15,6 @@ using IssueTracker.Issues.API.Version1.Abstractions.Commands;
 using IssueTracker.Issues.API.Version1.Abstractions.DataTransferObjects;
 using IssueTracker.Issues.API.Version1.Extensions;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
 using MediatR;
 
 namespace IssueTracker.Issues.API.Version1.CommandHandlers;
@@ -36,10 +35,7 @@ public sealed class CreateIssueCommandHandler : IRequestHandler<CreateIssueComma
 
         (string project, string title, string description, Priority priority) = request;
 
-        int issueNumber = await _repository.Max(
-            new WhereProjectMatches(project),
-            new SelectIssueNumber(), cancellationToken);
-
+        int issueNumber = await _repository.MaxIssueNumber(project, cancellationToken) + 1;
         Issue issue = builder
             .WithProject(project)
             .WithIssueNumber(issueNumber)
