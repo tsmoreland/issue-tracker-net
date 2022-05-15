@@ -42,8 +42,8 @@ internal record struct AssemblyLocation(Assembly Assembly, string Folder, string
             .Select(AssemblyName.GetAssemblyName)
             .Where(asm => referencedAssemblyNames.DoesNotContain(asm))
             .Select(Assembly.Load)
+            .Union(referencedAssemblyNames.Select(Assembly.Load))
             .ToHashSet();
-
 
         return assemblies
             .Where(ContainsType<T>);
