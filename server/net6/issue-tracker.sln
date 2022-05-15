@@ -75,9 +75,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.Infrast
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.API.Version1.Abstractions", "src\Issues\IssueTracker.Issues.API.Version1.Abstractions\IssueTracker.Issues.API.Version1.Abstractions.csproj", "{07F17ABA-2937-413E-A5F3-135D97D29613}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Issues.API.Version2.Abstractions", "src\Issues\IssueTracker.Issues.API.Version2.Abstractions\IssueTracker.Issues.API.Version2.Abstractions.csproj", "{483B359B-D55F-49AA-8C8B-43F2E67A1280}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.API.Version2.Abstractions", "src\Issues\IssueTracker.Issues.API.Version2.Abstractions\IssueTracker.Issues.API.Version2.Abstractions.csproj", "{483B359B-D55F-49AA-8C8B-43F2E67A1280}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.cli", "src\Issues\IssueTracker.Issues.cli\IssueTracker.Issues.cli.csproj", "{3F6444F1-3146-43B3-AB08-8460DD20A9B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.Cli", "src\Issues\IssueTracker.Issues.cli\IssueTracker.Issues.Cli.csproj", "{3F6444F1-3146-43B3-AB08-8460DD20A9B9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.API", "src\Issues\IssueTracker.Issues.API\IssueTracker.Issues.API.csproj", "{5E6DB3CE-0567-45A3-9756-4BD2355AC8B1}"
 EndProject
