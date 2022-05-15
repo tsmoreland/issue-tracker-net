@@ -1,4 +1,5 @@
 ﻿using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Domain.Specifications;
 using IssueTracker.Issues.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -126,15 +127,34 @@ static async Task VerifyApiV1(IServiceScope scope)
     Version1.DataTransferObjects.IssueDto story =
         await mediator.Send(new Version1.Commands.CreateIssueCommand("app", "sample story", "first story", Priority.Medium));
 
-    DisplayIssueDto(epic);
-    DisplayIssueDto(story);
+    DisplayIssueDtoV1(epic);
+    DisplayIssueDtoV1(story);
+
+    Version1.DataTransferObjects.IssueDto? readEpic = 
+        await mediator.Send(new Version1.Queries.FindIssueByIdQuery(new IssueIdentifier("APP", 1)));
+    DisplayIssueDtoV1(readEpic);
+
+    Version1.DataTransferObjects.IssueSummaryPage page = await mediator.Send(new Version1.Queries.GetAllSortedAndPagedQuery(new PagingOptions(1, 10)));
+    Console.WriteLine($"Page {page.PageNumber} Total: {page.Total}");
+
+    await foreach (Version1.DataTransferObjects.IssueSummaryDto issue in page.Items)
+    {
+        DisplayIssueSummaryDtoV1(issue);
+    }
+
 }
 
 static void DisplayIssue(Issue issue)
 {
     Console.WriteLine($"{issue.Id} {issue.Title}");
 }
-static void DisplayIssueDto(Version1.DataTransferObjects.IssueDto issue)
+static void DisplayIssueDtoV1(Version1.DataTransferObjects.IssueDto? issue)
+{
+    Console.WriteLine(issue is not null
+        ? $"{issue.Id} {issue.Title}"
+        : $"issue not found");
+}
+static void DisplayIssueSummaryDtoV1(Version1.DataTransferObjects.IssueSummaryDto issue)
 {
     Console.WriteLine($"{issue.Id} {issue.Title}");
 }
