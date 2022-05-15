@@ -21,9 +21,4 @@
     <ProjectReference Include="..\IssueTracker.Issues.Domain\IssueTracker.Issues.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Version1\CommandHandlers\" />
-    <Folder Include="Version2\Extensions\" />
-  </ItemGroup>
-
 </Project>
