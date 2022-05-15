@@ -10,12 +10,27 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Linq.Expressions;
 using IssueTracker.Issues.Domain.DataContracts;
 
-namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+namespace IssueTracker.Issues.Domain.Specifications;
 
-public interface IIssueRepository : IRepository<IssueIdentifier, Issue>
+internal sealed class AndPredicateSpecification<TEntity> : PredicateSpecification<TEntity>
+    where TEntity : Entity
 {
-    public Issue Add(Issue issue);
-    public void Update(Issue issue);
+    public AndPredicateSpecification(PredicateSpecification<TEntity> left, PredicateSpecification<TEntity> right)
+    {
+        ParameterExpression parameter = left.Filter.Parameters[0];
+
+        Filter = Expression.Lambda<Func<TEntity, bool>>(ReferenceEquals(parameter, right.Filter.Parameters[0])
+            ? Expression.AndAlso(
+                left.Filter.Body,
+                right.Filter.Body)
+            : Expression.AndAlso(
+                left.Filter.Body,
+                Expression.Invoke(right.Filter, parameter)), parameter);
+    }
+
+    /// <inheritdoc />
+    public override Expression<Func<TEntity, bool>> Filter { get; }
 }

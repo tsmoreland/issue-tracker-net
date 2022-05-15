@@ -16,12 +16,30 @@ using IssueTracker.Issues.Domain.DataContracts;
 
 namespace IssueTracker.Issues.Domain.Specifications;
 
-public abstract class WhereClauseSpecification<TEntity>
+public abstract class PredicateSpecification<TEntity>
     where TEntity : Entity
 {
-    protected WhereClauseSpecification()
+    protected PredicateSpecification()
     {
-        
+
     }
     public abstract Expression<Func<TEntity, bool>> Filter { get; }
+}
+
+public static class PredicateSpecificationExtensions
+{
+    public static PredicateSpecification<TEntity> And<TEntity>(this PredicateSpecification<TEntity> left,
+        PredicateSpecification<TEntity> right)
+        where TEntity : Entity
+    {
+        return new AndPredicateSpecification<TEntity>(left, right);
+    }
+
+    public static PredicateSpecification<TEntity> Or<TEntity>(this PredicateSpecification<TEntity> left,
+        PredicateSpecification<TEntity> right)
+        where TEntity : Entity
+    {
+        return new OrPredicateSpecification<TEntity>(left, right);
+    }
+
 }

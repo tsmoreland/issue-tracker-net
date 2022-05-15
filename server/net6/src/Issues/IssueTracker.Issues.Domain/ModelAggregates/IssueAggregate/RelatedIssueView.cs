@@ -11,19 +11,6 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Linq.Expressions;
-using IssueTracker.Issues.Domain.DataContracts;
+namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
-namespace IssueTracker.Issues.Domain.Specifications;
-
-public abstract class SelectorSpecification<TEntity, T>
-    where TEntity : Entity
-{
-    protected SelectorSpecification()
-    {
-
-    }
-
-    public abstract Expression<Func<TEntity, T>> Select { get; }
-}
-
+public sealed record class RelatedIssueView(LinkType Link, Issue Issue);

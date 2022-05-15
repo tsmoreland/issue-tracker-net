@@ -12,18 +12,19 @@
 //
 
 using System.Linq.Expressions;
-using IssueTracker.Issues.Domain.DataContracts;
+using IssueTracker.Issues.Domain.Specifications;
 
-namespace IssueTracker.Issues.Domain.Specifications;
+namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
 
-public abstract class SelectorSpecification<TEntity, T>
-    where TEntity : Entity
+public sealed class WhereProjectMatches : PredicateSpecification<Issue>
 {
-    protected SelectorSpecification()
-    {
+    private readonly string _project;
 
+    public WhereProjectMatches(string project)
+    {
+        _project = project.ToUpperInvariant();
     }
 
-    public abstract Expression<Func<TEntity, T>> Select { get; }
+    /// <inheritdoc />
+    public override Expression<Func<Issue, bool>> Filter => issue => issue.Project == _project;
 }
-

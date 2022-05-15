@@ -20,19 +20,23 @@ public interface IRepository<in TIdentity, TEntity> where TEntity : Entity
 {
     IUnitOfWork UnitOfWork { get; }
 
-    Task<T> Max<T>(IEnumerable<WhereClauseSpecification<TEntity>> filterExpressions, SelectorSpecification<TEntity, T> selectExpression, CancellationToken cancellationToken = default);
+    Task<T> Max<T>(
+        PredicateSpecification<TEntity> filterExpression,
+        SelectorSpecification<TEntity, T> selectExpression,
+        CancellationToken cancellationToken = default);
+
     ValueTask<TEntity?> GetByIdOrDefault(TIdentity id, bool track = true, CancellationToken cancellationToken = default);
 
-    Task<Issue?> GetByFilter(IEnumerable<WhereClauseSpecification<TEntity>> filterExpressions,
+    Task<Issue?> GetByFilter(PredicateSpecification<TEntity> filterExpression,
         bool track = true,
         CancellationToken cancellationToken = default);
 
     Task<T?> GetProjectionByFilter<T>(
-        IEnumerable<WhereClauseSpecification<TEntity>> filterExpressions,
+        PredicateSpecification<TEntity> filterExpression,
         SelectorSpecification<TEntity, T> selectExpression,
         CancellationToken cancellationToken = default);
 
-    IAsyncEnumerable<T> GetPagedAndSortedProjections<T>(IEnumerable<WhereClauseSpecification<TEntity>> filterExpressions,
+    IAsyncEnumerable<T> GetPagedAndSortedProjections<T>(PredicateSpecification<TEntity> filterExpression,
         SelectorSpecification<TEntity, T> selectExpression, PagingOptions paging);
 
     Task<bool> Exists(TIdentity id, CancellationToken cancellationToken = default);

@@ -26,15 +26,16 @@ public sealed class Issue : Entity
     private Maintainer _assignee = Maintainer.Unassigned;
     private TriageUser _reporter = TriageUser.Unassigned;
     private readonly ICollection<IssueLink> _relatedTo = new HashSet<IssueLink>();
+    // ReSharper disable once CollectionNeverUpdated.Local
     private readonly ICollection<IssueLink> _relatedFrom = new HashSet<IssueLink>();
 
     public Issue(string project, int issueNumber, string title, string description)
     {
         Title = title;
         Description = description;
-        Id = new IssueIdentifier(project, issueNumber);
-        Project = project;
+        Project = project.ToUpperInvariant();
         IssueNumber = issueNumber;
+        Id = new IssueIdentifier(Project, IssueNumber);
     }
 
     private Issue()

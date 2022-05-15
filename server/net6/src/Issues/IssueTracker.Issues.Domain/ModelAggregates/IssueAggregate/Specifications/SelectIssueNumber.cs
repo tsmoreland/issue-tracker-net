@@ -12,18 +12,12 @@
 //
 
 using System.Linq.Expressions;
-using IssueTracker.Issues.Domain.DataContracts;
+using IssueTracker.Issues.Domain.Specifications;
 
-namespace IssueTracker.Issues.Domain.Specifications;
+namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
 
-public abstract class SelectorSpecification<TEntity, T>
-    where TEntity : Entity
+public sealed class SelectIssueNumber : SelectorSpecification<Issue,int>
 {
-    protected SelectorSpecification()
-    {
-
-    }
-
-    public abstract Expression<Func<TEntity, T>> Select { get; }
+    /// <inheritdoc />
+    public override Expression<Func<Issue, int>> Select => issue => issue.IssueNumber;
 }
-

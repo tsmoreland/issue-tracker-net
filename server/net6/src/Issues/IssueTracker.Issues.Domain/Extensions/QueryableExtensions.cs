@@ -18,15 +18,27 @@ namespace IssueTracker.Issues.Domain.Extensions;
 
 public static class QueryableExtensions
 {
+
     public static IQueryable<TEntity> Where<TEntity>(this IQueryable<TEntity> query,
-        IEnumerable<WhereClauseSpecification<TEntity>> filterExpressions)
+        PredicateSpecification<TEntity> filterExpression)
         where TEntity : Entity
     {
 
-        return filterExpressions
-            .Aggregate(
-                query,
-                (current, filterExpression) => current.Where(filterExpression.Filter));
+        return query.Where(filterExpression.Filter);
+    }
+
+    public static IQueryable<TEntity> Where<TEntity>(this IQueryable<TEntity> query,
+        IEnumerable<PredicateSpecification<TEntity>> filterExpressions)
+        where TEntity : Entity
+    {
+        PredicateSpecification<TEntity>? predicate = filterExpressions
+            .Aggregate<PredicateSpecification<TEntity>, PredicateSpecification<TEntity>?>(null, (current, filterExpression) => current is null
+                ? filterExpression
+                : current.And(filterExpression));
+
+        return predicate is not null
+            ? query.Where(predicate.Filter)
+            : query;
     }
 
     public static IQueryable<TResult> Select<TEntity, TResult>(this IQueryable<TEntity> query,
