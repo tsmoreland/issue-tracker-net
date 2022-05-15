@@ -57,8 +57,19 @@ public sealed class IssueRepository
         return query.Where(filterExpressions).FirstOrDefaultAsync(cancellationToken);
     }
 
-    public IAsyncEnumerable<T> GetPagedAndSortedCollection<T>(IEnumerable<WhereClauseSpecification<Issue>> filterExpressions,
-        SelectorSpecification<Issue, T> selectExpression, PageSpecification paging)
+    public Task<T?> GetIssueProjectionByFilter<T>(
+        IEnumerable<WhereClauseSpecification<Issue>> filterExpressions,
+        SelectorSpecification<Issue, T> selectExpression,
+        CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Issues.AsNoTracking()
+            .Where(filterExpressions)
+            .Select(selectExpression)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public IAsyncEnumerable<T> GetPagedAndSortedProjections<T>(IEnumerable<WhereClauseSpecification<Issue>> filterExpressions,
+        SelectorSpecification<Issue, T> selectExpression, PagingOptions paging)
     {
         return _dbContext.Issues.AsNoTracking()
             .Where(filterExpressions)
