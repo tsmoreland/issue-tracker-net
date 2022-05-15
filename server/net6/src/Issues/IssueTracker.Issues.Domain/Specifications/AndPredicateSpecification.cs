@@ -15,10 +15,10 @@ using IssueTracker.Issues.Domain.DataContracts;
 
 namespace IssueTracker.Issues.Domain.Specifications;
 
-internal sealed class AndPredicateSpecification<TEntity> : PredicateSpecification<TEntity>
+internal sealed class AndPredicateSpecification<TEntity> : IPredicateSpecification<TEntity>
     where TEntity : Entity
 {
-    public AndPredicateSpecification(PredicateSpecification<TEntity> left, PredicateSpecification<TEntity> right)
+    public AndPredicateSpecification(IPredicateSpecification<TEntity> left, IPredicateSpecification<TEntity> right)
     {
         ParameterExpression parameter = left.Filter.Parameters[0];
 
@@ -32,5 +32,5 @@ internal sealed class AndPredicateSpecification<TEntity> : PredicateSpecificatio
     }
 
     /// <inheritdoc />
-    public override Expression<Func<TEntity, bool>> Filter { get; }
+    public Expression<Func<TEntity, bool>> Filter { get; }
 }

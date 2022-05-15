@@ -12,12 +12,30 @@
 //
 
 using System.Linq.Expressions;
-using IssueTracker.Issues.Domain.Specifications;
+using IssueTracker.Issues.Domain.DataContracts;
 
-namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
+namespace IssueTracker.Issues.Domain.Specifications;
 
-public sealed class SelectIssueNumber : SelectorSpecification<Issue,int>
+public interface IPredicateSpecification<TEntity>
+    where TEntity : Entity
 {
-    /// <inheritdoc />
-    public override Expression<Func<Issue, int>> Select => issue => issue.IssueNumber;
+    public Expression<Func<TEntity, bool>> Filter { get; }
+}
+
+public static class PredicateSpecificationExtensions
+{
+    public static IPredicateSpecification<TEntity> And<TEntity>(this IPredicateSpecification<TEntity> left,
+        IPredicateSpecification<TEntity> right)
+        where TEntity : Entity
+    {
+        return new AndPredicateSpecification<TEntity>(left, right);
+    }
+
+    public static IPredicateSpecification<TEntity> Or<TEntity>(this IPredicateSpecification<TEntity> left,
+        IPredicateSpecification<TEntity> right)
+        where TEntity : Entity
+    {
+        return new OrPredicateSpecification<TEntity>(left, right);
+    }
+
 }

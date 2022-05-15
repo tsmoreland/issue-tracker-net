@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using IssueTracker.Issues.Domain.DataContracts;
+using IssueTracker.Issues.Domain.Specifications;
 
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
@@ -18,4 +19,6 @@ public interface IIssueRepository : IRepository<IssueIdentifier, Issue>
 {
     public Issue Add(Issue issue);
     public void Update(Issue issue);
+
+    public ValueTask<int> MaxIssueNumber(string project, CancellationToken cancellationToken = default);
 }

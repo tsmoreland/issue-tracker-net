@@ -20,24 +20,25 @@ public interface IRepository<in TIdentity, TEntity> where TEntity : Entity
 {
     IUnitOfWork UnitOfWork { get; }
 
-    Task<T> Max<T>(
-        PredicateSpecification<TEntity> filterExpression,
-        SelectorSpecification<TEntity, T> selectExpression,
+    [Obsolete("Doesn't work with Sqlite provider due to lack of support for Default if empty")]
+    Task<T?> Max<T>(
+        IPredicateSpecification<TEntity> filterExpression,
+        ISelectorSpecification<TEntity, T> selectExpression,
         CancellationToken cancellationToken = default);
 
     ValueTask<TEntity?> GetByIdOrDefault(TIdentity id, bool track = true, CancellationToken cancellationToken = default);
 
-    Task<Issue?> GetByFilter(PredicateSpecification<TEntity> filterExpression,
+    Task<Issue?> GetByFilter(IPredicateSpecification<TEntity> filterExpression,
         bool track = true,
         CancellationToken cancellationToken = default);
 
     Task<T?> GetProjectionByFilter<T>(
-        PredicateSpecification<TEntity> filterExpression,
-        SelectorSpecification<TEntity, T> selectExpression,
+        IPredicateSpecification<TEntity> filterExpression,
+        ISelectorSpecification<TEntity, T> selectExpression,
         CancellationToken cancellationToken = default);
 
-    IAsyncEnumerable<T> GetPagedAndSortedProjections<T>(PredicateSpecification<TEntity> filterExpression,
-        SelectorSpecification<TEntity, T> selectExpression, PagingOptions paging);
+    IAsyncEnumerable<T> GetPagedAndSortedProjections<T>(IPredicateSpecification<TEntity> filterExpression,
+        ISelectorSpecification<TEntity, T> selectExpression, PagingOptions paging);
 
     Task<bool> Exists(TIdentity id, CancellationToken cancellationToken = default);
     Task<bool> DeleteById(TIdentity id, CancellationToken cancellationToken = default);

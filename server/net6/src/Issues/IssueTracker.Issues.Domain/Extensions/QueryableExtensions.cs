@@ -20,7 +20,7 @@ public static class QueryableExtensions
 {
 
     public static IQueryable<TEntity> Where<TEntity>(this IQueryable<TEntity> query,
-        PredicateSpecification<TEntity> filterExpression)
+        IPredicateSpecification<TEntity> filterExpression)
         where TEntity : Entity
     {
 
@@ -28,11 +28,11 @@ public static class QueryableExtensions
     }
 
     public static IQueryable<TEntity> Where<TEntity>(this IQueryable<TEntity> query,
-        IEnumerable<PredicateSpecification<TEntity>> filterExpressions)
+        IEnumerable<IPredicateSpecification<TEntity>> filterExpressions)
         where TEntity : Entity
     {
-        PredicateSpecification<TEntity>? predicate = filterExpressions
-            .Aggregate<PredicateSpecification<TEntity>, PredicateSpecification<TEntity>?>(null, (current, filterExpression) => current is null
+        IPredicateSpecification<TEntity>? predicate = filterExpressions
+            .Aggregate<IPredicateSpecification<TEntity>, IPredicateSpecification<TEntity>?>(null, (current, filterExpression) => current is null
                 ? filterExpression
                 : current.And(filterExpression));
 
@@ -42,7 +42,7 @@ public static class QueryableExtensions
     }
 
     public static IQueryable<TResult> Select<TEntity, TResult>(this IQueryable<TEntity> query,
-        SelectorSpecification<TEntity, TResult> selectExpression)
+        ISelectorSpecification<TEntity, TResult> selectExpression)
         where TEntity : Entity
     {
         return query.Select(selectExpression.Select);
