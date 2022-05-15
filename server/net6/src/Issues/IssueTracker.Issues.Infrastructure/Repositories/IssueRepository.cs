@@ -30,10 +30,22 @@ public sealed class IssueRepository : IIssueRepository
 
     public IUnitOfWork UnitOfWork => _dbContext;
 
-    public Task<T> Max<T>(IEnumerable<WhereClauseSpecification<Issue>> filterExpressions, SelectorSpecification<Issue, T> selectExpression, CancellationToken cancellationToken = default)
+    /// <inheritdoc />
+    public Issue Add(Issue issue)
+    {
+        return _dbContext.Issues.Add(issue).Entity;
+    }
+
+    /// <inheritdoc />
+    public void Update(Issue issue)
+    {
+        _dbContext.Entry(issue).State = EntityState.Modified;
+    }
+
+    public Task<T> Max<T>(PredicateSpecification<Issue> filterExpression, SelectorSpecification<Issue, T> selectExpression, CancellationToken cancellationToken = default)
     {
         return _dbContext.Issues.AsNoTracking()
-            .Where(filterExpressions)
+            .Where(filterExpression)
             .MaxAsync(selectExpression.Select, cancellationToken);
     }
 
@@ -44,7 +56,7 @@ public sealed class IssueRepository : IIssueRepository
             : new ValueTask<Issue?>(_dbContext.Issues.AsNoTracking().FirstOrDefaultAsync(i => i.Id == id, cancellationToken));
     }
 
-    public Task<Issue?> GetByFilter(IEnumerable<WhereClauseSpecification<Issue>> filterExpressions,
+    public Task<Issue?> GetByFilter(PredicateSpecification<Issue> filterExpression,
         bool track = true,
         CancellationToken cancellationToken = default)
     {
@@ -54,25 +66,25 @@ public sealed class IssueRepository : IIssueRepository
             query = query.AsNoTracking();
         }
 
-        return query.Where(filterExpressions).FirstOrDefaultAsync(cancellationToken);
+        return query.Where(filterExpression).FirstOrDefaultAsync(cancellationToken);
     }
 
     public Task<T?> GetProjectionByFilter<T>(
-        IEnumerable<WhereClauseSpecification<Issue>> filterExpressions,
+        PredicateSpecification<Issue> filterExpression,
         SelectorSpecification<Issue, T> selectExpression,
         CancellationToken cancellationToken = default)
     {
         return _dbContext.Issues.AsNoTracking()
-            .Where(filterExpressions)
+            .Where(filterExpression)
             .Select(selectExpression)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public IAsyncEnumerable<T> GetPagedAndSortedProjections<T>(IEnumerable<WhereClauseSpecification<Issue>> filterExpressions,
+    public IAsyncEnumerable<T> GetPagedAndSortedProjections<T>(PredicateSpecification<Issue> filterExpression,
         SelectorSpecification<Issue, T> selectExpression, PagingOptions paging)
     {
         return _dbContext.Issues.AsNoTracking()
-            .Where(filterExpressions)
+            .Where(filterExpression)
             .Select(selectExpression)
             .Skip(paging.Skip)
             .Take(paging.Take)
@@ -104,4 +116,5 @@ public sealed class IssueRepository : IIssueRepository
                 } 
             }, cancellationToken);
     }
+
 }
