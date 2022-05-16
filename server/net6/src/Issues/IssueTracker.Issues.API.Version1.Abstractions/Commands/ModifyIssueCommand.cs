@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Issues.API.Version1.Abstractions.DataTransferObjects;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using MediatR;
 
@@ -18,6 +19,6 @@ namespace IssueTracker.Issues.API.Version1.Abstractions.Commands;
 
 public sealed record class ModifyIssueCommand(
     IssueIdentifier Id,
-    string? Title,
-    string? Description,
-    Priority? Priority) : IRequest<bool>;
+    string? Title = null,
+    string? Description = null,
+    Priority? Priority = null) : IRequest<IssueDto?>;

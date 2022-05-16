@@ -11,14 +11,65 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using IssueTracker.Issues.API.Version2.Abstractions.Commands;
+using IssueTracker.Issues.API.Version2.Abstractions.DataTransferObjects;
+using IssueTracker.Issues.API.Version2.Extensions;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using MediatR;
 
 namespace IssueTracker.Issues.API.Version2.CommandHandlers;
 
-public sealed class ModifyIssueCommandHandler
+public sealed class ModifyIssueCommandHandler : IRequestHandler<ModifyIssueCommand, IssueDto?>
 {
+    private readonly IIssueRepository _repository;
+
+    public ModifyIssueCommandHandler(IIssueRepository repository)
+    {
+        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+    }
+    
+    /// <inheritdoc />
+    public async Task<IssueDto?> Handle(ModifyIssueCommand request, CancellationToken cancellationToken)
+    {
+        (IssueIdentifier id, string? title, string? description, Priority? priority, IssueType? type, IssueIdentifier? epicId) = request;
+
+        Issue? issue = await _repository.GetByIdOrDefault(id, true, cancellationToken);
+        if (issue is null)
+        {
+            return null;
+        }
+
+        if (title is not null)
+        {
+            issue.Title = title;
+        }
+
+        if (description is not null)
+        {
+            issue.Description = description;
+        }
+
+        if (priority is not null)
+        {
+            issue.Priority = priority.Value;
+        }
+
+        if (type is not null)
+        {
+            issue.Type = type.Value;
+        }
+
+        if (epicId is not null)
+        {
+            issue.EpicId = epicId == IssueIdentifier.Empty
+                ? null
+                : epicId;
+        }
+
+        issue = _repository.Update(issue);
+
+        await _repository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+
+        return issue.ToDto();
+    }
 }

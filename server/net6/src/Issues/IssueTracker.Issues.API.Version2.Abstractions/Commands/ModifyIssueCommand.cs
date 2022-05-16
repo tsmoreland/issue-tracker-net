@@ -19,8 +19,8 @@ namespace IssueTracker.Issues.API.Version2.Abstractions.Commands;
 
 public sealed record class ModifyIssueCommand(
     IssueIdentifier Id,
-    string? Title,
-    string? Description,
-    Priority? Priority,
-    IssueType? Type,
-    IssueIdentifier? EpicId) : IRequest<IssueDto?>;
+    string? Title = null,
+    string? Description = null,
+    Priority? Priority = null,
+    IssueType? Type = null,
+    IssueIdentifier? EpicId = null) : IRequest<IssueDto?>;
