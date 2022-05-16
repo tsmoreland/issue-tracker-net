@@ -1,4 +1,5 @@
-﻿using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+﻿using IssueTracker.Issues.API.Version1.Abstractions.DataTransferObjects;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.Specifications;
 using IssueTracker.Issues.Infrastructure;
 using MediatR;
@@ -142,6 +143,8 @@ static async Task VerifyApiV1(IServiceScope scope)
         DisplayIssueSummaryDtoV1(issue);
     }
 
+    IssueDto? updatedStory = await mediator.Send(new Version1.Commands.ModifyIssueCommand(new IssueIdentifier("APP", 2), Description: "updated story description"));
+    DisplayIssueDtoV1(updatedStory);
 }
 
 static void DisplayIssue(Issue issue)
@@ -151,7 +154,7 @@ static void DisplayIssue(Issue issue)
 static void DisplayIssueDtoV1(Version1.DataTransferObjects.IssueDto? issue)
 {
     Console.WriteLine(issue is not null
-        ? $"{issue.Id} {issue.Title}"
+        ? $"{issue.Id} {issue.Title} {issue.Priority}"
         : $"issue not found");
 }
 static void DisplayIssueSummaryDtoV1(Version1.DataTransferObjects.IssueSummaryDto issue)
