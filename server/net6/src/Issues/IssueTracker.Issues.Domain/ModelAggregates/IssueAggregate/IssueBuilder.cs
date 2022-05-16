@@ -20,7 +20,7 @@ public sealed class IssueBuilder
     private int? _issueNumber;
     private string? _title;
     private string? _description;
-    private Priority _priority = Priority.Low;
+    private Priority? _priority = null;
     private IssueType? _type;
     private IEnumerable<IssueLink>? _relatedTo;
     private IEnumerable<IssueLink>? _relatedFrom;
@@ -39,7 +39,7 @@ public sealed class IssueBuilder
         _project = null;
         _issueNumber = null;
         _title = null;
-        _priority = Priority.Low;
+        _priority = null;
         _type = null;
         _reporter = null;
         _assignee = null;
@@ -143,10 +143,7 @@ public sealed class IssueBuilder
         
         if (_id is not null)
         {
-            issue = new Issue(_id.Value.Project, _id.Value.IssueNumber, _title, _description)
-            {
-                Priority = _priority
-            };
+            issue = new Issue(_id.Value.Project, _id.Value.IssueNumber, _title, _description);
         }
         else if (_project is { Length: > 0 } && _issueNumber > 0)
         {
@@ -155,6 +152,11 @@ public sealed class IssueBuilder
         else
         {
             throw new InvalidOperationException("Either id or project and issue number must be set");
+        }
+
+        if (_priority is not null)
+        {
+            issue.Priority = _priority.Value;
         }
 
         if (_type is not null)

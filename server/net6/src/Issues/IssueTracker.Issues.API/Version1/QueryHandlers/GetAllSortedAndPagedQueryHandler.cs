@@ -37,12 +37,12 @@ public sealed class GetAllSortedAndPagedQueryHandler : IRequestHandler<GetAllSor
     /// <inheritdoc />
     public async Task<IssueSummaryPage> Handle(GetAllSortedAndPagedQuery request, CancellationToken cancellationToken)
     {
-        PagingOptions paging = request.Paging;
+        (PagingOptions paging, SortingOptions sorting)  = request;
         (int total, IAsyncEnumerable<IssueSummaryProjection> summaries) = await _repository
             .GetPagedAndSortedProjections(
                 IPredicateSpecification<Issue>.None,
                 _specification.SelectSummary(),
-                paging,
+                paging, sorting,
                 cancellationToken);
 
         return new IssueSummaryPage(paging.PageNumber, total, summaries.ToDto());

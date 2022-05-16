@@ -11,10 +11,33 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Issues.API.Version1.Abstractions.DataTransferObjects;
-using IssueTracker.Issues.Domain.Specifications;
-using MediatR;
+namespace IssueTracker.Issues.Domain.Specifications
+{
+    public sealed record class SortingOptions(
+        string OrderByProperty,
+        IEnumerable<string>? ThenByProperty = null,
+        bool Ascending = true)
+    {
 
-namespace IssueTracker.Issues.API.Version1.Abstractions.Queries;
+        public static SortingOptions OrderBy(string property)
+        {
+            return new SortingOptions(property, Array.Empty<string>(), true);
+        }
+        public static SortingOptions OrderByDescending(string property)
+        {
+            return new SortingOptions(property, Array.Empty<string>(), false);
+        }
 
-public sealed record class GetAllSortedAndPagedQuery(PagingOptions Paging, SortingOptions Sorting) : IRequest<IssueSummaryPage>;
+        public SortingOptions ThenBy(string property)
+        {
+            if (ThenByProperty is null)
+            {
+                return this with { ThenByProperty = new [] { property } };
+            }
+
+            return this with { ThenByProperty = ThenByProperty.Union(new[] { property }) };
+
+        }
+
+    }
+}

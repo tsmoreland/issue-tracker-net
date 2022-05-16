@@ -1,5 +1,4 @@
-﻿using IssueTracker.Issues.API.Version1.Abstractions.DataTransferObjects;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+﻿using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.Specifications;
 using IssueTracker.Issues.Infrastructure;
 using MediatR;
@@ -135,7 +134,8 @@ static async Task VerifyApiV1(IServiceScope scope)
         await mediator.Send(new Version1.Queries.FindIssueByIdQuery(new IssueIdentifier("APP", 1)));
     DisplayIssueDtoV1(readEpic);
 
-    Version1.DataTransferObjects.IssueSummaryPage page = await mediator.Send(new Version1.Queries.GetAllSortedAndPagedQuery(new PagingOptions(1, 10)));
+    Version1.DataTransferObjects.IssueSummaryPage page = await mediator.Send(
+        new Version1.Queries.GetAllSortedAndPagedQuery(new PagingOptions(1, 10), SortingOptions.OrderBy("IssueNumber")));
     Console.WriteLine($"Page {page.PageNumber} Total: {page.Total}");
 
     await foreach (Version1.DataTransferObjects.IssueSummaryDto issue in page.Items)
@@ -143,7 +143,8 @@ static async Task VerifyApiV1(IServiceScope scope)
         DisplayIssueSummaryDtoV1(issue);
     }
 
-    IssueDto? updatedStory = await mediator.Send(new Version1.Commands.ModifyIssueCommand(new IssueIdentifier("APP", 2), Description: "updated story description"));
+    Version1.DataTransferObjects.IssueDto? updatedStory = await mediator.Send(
+        new Version1.Commands.ModifyIssueCommand(new IssueIdentifier("APP", 2), Description: "updated story description"));
     DisplayIssueDtoV1(updatedStory);
 }
 

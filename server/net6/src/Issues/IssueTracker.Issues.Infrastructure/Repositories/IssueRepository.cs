@@ -16,6 +16,7 @@ using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.Specifications;
 using IssueTracker.Issues.Domain.Extensions;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
+using IssueTracker.Issues.Infrastructure.Specifications.IssueAggregate;
 using Microsoft.EntityFrameworkCore;
 
 namespace IssueTracker.Issues.Infrastructure.Repositories;
@@ -104,7 +105,7 @@ public sealed class IssueRepository : IIssueRepository
     public async Task<(int Total, IAsyncEnumerable<T> Collection)> GetPagedAndSortedProjections<T>(
         IPredicateSpecification<Issue> filterExpression,
         ISelectorSpecification<Issue, T> selectExpression,
-        PagingOptions paging,
+        PagingOptions paging, SortingOptions sorting,
         CancellationToken cancellationToken = default)
     {
         int total = await _dbContext.Issues.AsNoTracking()
@@ -113,6 +114,7 @@ public sealed class IssueRepository : IIssueRepository
 
         return (total, _dbContext.Issues.AsNoTracking()
             .Where(filterExpression)
+            .OrderUsing(sorting)
             .Select(selectExpression)
             .Skip(paging.Skip)
             .Take(paging.Take)

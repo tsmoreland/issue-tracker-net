@@ -11,7 +11,6 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.Specifications;
 
 namespace IssueTracker.Issues.Domain.DataContracts;
@@ -44,17 +43,19 @@ public interface IRepository<in TIdentity, TEntity> where TEntity : Entity
         CancellationToken cancellationToken = default);
 
     public Task<(int Total, IAsyncEnumerable<T> Collection)> GetPagedAndSortedProjections<T>(
-        ISelectorSpecification<TEntity, T> selectExpression, PagingOptions paging,
+        ISelectorSpecification<TEntity, T> selectExpression,
+        PagingOptions paging, SortingOptions sorting,
         CancellationToken cancellationToken = default) =>
         GetPagedAndSortedProjections(
             IPredicateSpecification<TEntity>.None,
             selectExpression,
-            paging,
+            paging, sorting,
             cancellationToken);
 
     Task<(int Total, IAsyncEnumerable<T> Collection)> GetPagedAndSortedProjections<T>(
         IPredicateSpecification<TEntity> filterExpression,
-        ISelectorSpecification<TEntity, T> selectExpression, PagingOptions paging,
+        ISelectorSpecification<TEntity, T> selectExpression, 
+        PagingOptions paging, SortingOptions sorting,
         CancellationToken cancellationToken = default);
 
     Task<bool> Exists(TIdentity id, CancellationToken cancellationToken = default);
