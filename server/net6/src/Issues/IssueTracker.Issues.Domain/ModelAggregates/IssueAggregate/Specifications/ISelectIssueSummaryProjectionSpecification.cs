@@ -11,33 +11,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Linq.Expressions;
-using IssueTracker.Issues.Domain.DataContracts;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Projections;
+using IssueTracker.Issues.Domain.Specifications;
 
-namespace IssueTracker.Issues.Domain.Specifications;
+namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
 
-public interface IPredicateSpecification<TEntity>
-    where TEntity : Entity
+public interface ISelectIssueSummaryProjectionSpecification : ISelectorSpecification<Issue, IssueSummaryProjection>
 {
-    public Expression<Func<TEntity, bool>> Filter { get; }
-
-    public static IPredicateSpecification<TEntity> None { get; } = new NoFilterPredicateSpecification<TEntity>();
-}
-
-public static class PredicateSpecificationExtensions
-{
-    public static IPredicateSpecification<TEntity> And<TEntity>(this IPredicateSpecification<TEntity> left,
-        IPredicateSpecification<TEntity> right)
-        where TEntity : Entity
-    {
-        return new AndPredicateSpecification<TEntity>(left, right);
-    }
-
-    public static IPredicateSpecification<TEntity> Or<TEntity>(this IPredicateSpecification<TEntity> left,
-        IPredicateSpecification<TEntity> right)
-        where TEntity : Entity
-    {
-        return new OrPredicateSpecification<TEntity>(left, right);
-    }
-
 }

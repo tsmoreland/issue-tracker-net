@@ -23,8 +23,9 @@ public static class QueryableExtensions
         IPredicateSpecification<TEntity> filterExpression)
         where TEntity : Entity
     {
-
-        return query.Where(filterExpression.Filter);
+        return filterExpression is not NoFilterPredicateSpecification<TEntity>
+            ? query.Where(filterExpression.Filter)
+            : query;
     }
 
     public static IQueryable<TEntity> Where<TEntity>(this IQueryable<TEntity> query,

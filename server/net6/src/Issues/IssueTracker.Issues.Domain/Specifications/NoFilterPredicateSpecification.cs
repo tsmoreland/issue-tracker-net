@@ -16,28 +16,9 @@ using IssueTracker.Issues.Domain.DataContracts;
 
 namespace IssueTracker.Issues.Domain.Specifications;
 
-public interface IPredicateSpecification<TEntity>
+internal sealed class NoFilterPredicateSpecification<TEntity> : IPredicateSpecification<TEntity>
     where TEntity : Entity
 {
-    public Expression<Func<TEntity, bool>> Filter { get; }
-
-    public static IPredicateSpecification<TEntity> None { get; } = new NoFilterPredicateSpecification<TEntity>();
-}
-
-public static class PredicateSpecificationExtensions
-{
-    public static IPredicateSpecification<TEntity> And<TEntity>(this IPredicateSpecification<TEntity> left,
-        IPredicateSpecification<TEntity> right)
-        where TEntity : Entity
-    {
-        return new AndPredicateSpecification<TEntity>(left, right);
-    }
-
-    public static IPredicateSpecification<TEntity> Or<TEntity>(this IPredicateSpecification<TEntity> left,
-        IPredicateSpecification<TEntity> right)
-        where TEntity : Entity
-    {
-        return new OrPredicateSpecification<TEntity>(left, right);
-    }
-
+    /// <inheritdoc />
+    public Expression<Func<TEntity, bool>> Filter => _ => true;
 }

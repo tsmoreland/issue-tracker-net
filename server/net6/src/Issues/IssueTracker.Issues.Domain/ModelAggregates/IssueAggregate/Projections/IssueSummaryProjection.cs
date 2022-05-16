@@ -11,33 +11,12 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Linq.Expressions;
-using IssueTracker.Issues.Domain.DataContracts;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace IssueTracker.Issues.Domain.Specifications;
+namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Projections;
 
-public interface IPredicateSpecification<TEntity>
-    where TEntity : Entity
-{
-    public Expression<Func<TEntity, bool>> Filter { get; }
-
-    public static IPredicateSpecification<TEntity> None { get; } = new NoFilterPredicateSpecification<TEntity>();
-}
-
-public static class PredicateSpecificationExtensions
-{
-    public static IPredicateSpecification<TEntity> And<TEntity>(this IPredicateSpecification<TEntity> left,
-        IPredicateSpecification<TEntity> right)
-        where TEntity : Entity
-    {
-        return new AndPredicateSpecification<TEntity>(left, right);
-    }
-
-    public static IPredicateSpecification<TEntity> Or<TEntity>(this IPredicateSpecification<TEntity> left,
-        IPredicateSpecification<TEntity> right)
-        where TEntity : Entity
-    {
-        return new OrPredicateSpecification<TEntity>(left, right);
-    }
-
-}
+public sealed record class IssueSummaryProjection(IssueIdentifier Id, string Title, Priority Priority, IssueType Type);

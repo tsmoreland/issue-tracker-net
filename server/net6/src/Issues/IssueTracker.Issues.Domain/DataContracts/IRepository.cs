@@ -37,8 +37,10 @@ public interface IRepository<in TIdentity, TEntity> where TEntity : Entity
         ISelectorSpecification<TEntity, T> selectExpression,
         CancellationToken cancellationToken = default);
 
-    IAsyncEnumerable<T> GetPagedAndSortedProjections<T>(IPredicateSpecification<TEntity> filterExpression,
-        ISelectorSpecification<TEntity, T> selectExpression, PagingOptions paging);
+    Task<(int Total, IAsyncEnumerable<T> Collection)> GetPagedAndSortedProjections<T>(
+        IPredicateSpecification<TEntity> filterExpression,
+        ISelectorSpecification<TEntity, T> selectExpression, PagingOptions paging,
+        CancellationToken cancellationToken = default);
 
     Task<bool> Exists(TIdentity id, CancellationToken cancellationToken = default);
     Task<bool> DeleteById(TIdentity id, CancellationToken cancellationToken = default);

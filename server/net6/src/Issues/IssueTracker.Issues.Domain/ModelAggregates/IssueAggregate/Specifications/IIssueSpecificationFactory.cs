@@ -15,6 +15,7 @@ namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specificatio
 
 public interface IIssueSpecificationFactory
 {
+    ISelectIssueSummaryProjectionSpecification SelectSummary();
     ISelectIssueNumber SelectIssueNumber();
     IProjectMatchesPredicate ProjectMatches(string project);
 }

@@ -16,28 +16,19 @@ using IssueTracker.Issues.Domain.DataContracts;
 
 namespace IssueTracker.Issues.Domain.Specifications;
 
-public interface IPredicateSpecification<TEntity>
+/// <summary>
+/// intend for use in IQueryable where value tuple cannot be used;
+/// to accomplish this <see cref="Select"/> should be used against the IQueryable
+/// and once converted to IEnumerable <see cref="ToConcrete"/> to
+/// translate to final type
+/// </summary>
+/// <typeparam name="TEntity">Entity to choose elements from</typeparam>
+/// <typeparam name="T">final output of the selector</typeparam>
+public interface IAnonymousSelectorSpecification<TEntity, out T>
     where TEntity : Entity
 {
-    public Expression<Func<TEntity, bool>> Filter { get; }
 
-    public static IPredicateSpecification<TEntity> None { get; } = new NoFilterPredicateSpecification<TEntity>();
-}
+    public Expression<Func<TEntity, dynamic>> Select { get; }
 
-public static class PredicateSpecificationExtensions
-{
-    public static IPredicateSpecification<TEntity> And<TEntity>(this IPredicateSpecification<TEntity> left,
-        IPredicateSpecification<TEntity> right)
-        where TEntity : Entity
-    {
-        return new AndPredicateSpecification<TEntity>(left, right);
-    }
-
-    public static IPredicateSpecification<TEntity> Or<TEntity>(this IPredicateSpecification<TEntity> left,
-        IPredicateSpecification<TEntity> right)
-        where TEntity : Entity
-    {
-        return new OrPredicateSpecification<TEntity>(left, right);
-    }
-
+    public T ToConcrete(dynamic anonysmous);
 }
