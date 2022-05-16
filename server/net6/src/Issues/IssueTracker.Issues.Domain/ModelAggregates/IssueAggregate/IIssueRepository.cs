@@ -17,7 +17,7 @@ namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 public interface IIssueRepository : IRepository<IssueIdentifier, Issue>
 {
     public Issue Add(Issue issue);
-    public void Update(Issue issue);
+    public Issue Update(Issue issue);
 
     public ValueTask<int> MaxIssueNumber(string project, CancellationToken cancellationToken = default);
 }

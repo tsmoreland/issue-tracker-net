@@ -40,9 +40,10 @@ public sealed class IssueRepository : IIssueRepository
     }
 
     /// <inheritdoc />
-    public void Update(Issue issue)
+    public Issue Update(Issue issue)
     {
         _dbContext.Entry(issue).State = EntityState.Modified;
+        return _dbContext.Entry(issue).Entity;
     }
 
     /// <inheritdoc />
