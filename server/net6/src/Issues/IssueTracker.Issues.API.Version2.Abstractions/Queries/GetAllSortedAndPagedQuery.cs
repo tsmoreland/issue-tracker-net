@@ -12,27 +12,9 @@
 //
 
 using IssueTracker.Issues.API.Version2.Abstractions.DataTransferObjects;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Projections;
+using IssueTracker.Issues.Domain.Specifications;
+using MediatR;
 
-namespace IssueTracker.Issues.API.Version2.Extensions;
+namespace IssueTracker.Issues.API.Version2.Abstractions.Queries;
 
-internal static class DtoExtensions
-{
-    public static IssueDto ToDto(this Issue issue)
-    {
-        return new IssueDto(
-            issue.Id.ToString(),
-            issue.Title,
-            issue.Description,
-            issue.Priority,
-            issue.Type, issue.EpicId?.ToString(),
-            Array.Empty<LinkedIssueSummaryDto>());
-    }
-
-    public static IAsyncEnumerable<IssueSummaryDto> ToDto(this IAsyncEnumerable<IssueSummaryProjection> summaries)
-    {
-        return summaries
-            .Select(i => new IssueSummaryDto(i.Id.ToString(), i.Title, i.Priority, i.Type));
-    }
-}
+public sealed record class GetAllSortedAndPagedQuery(PagingOptions Paging, SortingOptions Sorting) : IRequest<IssueSummaryPage>;
