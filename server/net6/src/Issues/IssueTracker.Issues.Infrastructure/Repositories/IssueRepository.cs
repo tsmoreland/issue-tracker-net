@@ -100,15 +100,22 @@ public sealed class IssueRepository : IIssueRepository
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public IAsyncEnumerable<T> GetPagedAndSortedProjections<T>(IPredicateSpecification<Issue> filterExpression,
-        ISelectorSpecification<Issue, T> selectExpression, PagingOptions paging)
+    public async Task<(int Total, IAsyncEnumerable<T> Collection)> GetPagedAndSortedProjections<T>(
+        IPredicateSpecification<Issue> filterExpression,
+        ISelectorSpecification<Issue, T> selectExpression,
+        PagingOptions paging,
+        CancellationToken cancellationToken = default)
     {
-        return _dbContext.Issues.AsNoTracking()
+        int total = await _dbContext.Issues.AsNoTracking()
+            .Where(filterExpression)
+            .CountAsync(cancellationToken);
+
+        return (total, _dbContext.Issues.AsNoTracking()
             .Where(filterExpression)
             .Select(selectExpression)
             .Skip(paging.Skip)
             .Take(paging.Take)
-            .AsAsyncEnumerable();
+            .AsAsyncEnumerable());
     }
 
     public Task<bool> Exists(IssueIdentifier id, CancellationToken cancellationToken = default)

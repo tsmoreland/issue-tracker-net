@@ -46,7 +46,10 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
             .HasColumnName("IssueNumber")
             .UsePropertyAccessMode(PropertyAccessMode.Field)
             .IsRequired();
-        builder.Property(e => e.Title).IsRequired().IsUnicode().HasMaxLength(200);
+        builder.Property("_title")
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasColumnName("Title")
+            .IsRequired().IsUnicode().HasMaxLength(200);
         builder.Property(e => e.Description).IsUnicode().HasMaxLength(500);
         builder.Ignore(e => e.Priority);
         builder
