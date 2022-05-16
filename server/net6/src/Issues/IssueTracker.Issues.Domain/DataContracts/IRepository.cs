@@ -28,14 +28,29 @@ public interface IRepository<in TIdentity, TEntity> where TEntity : Entity
 
     ValueTask<TEntity?> GetByIdOrDefault(TIdentity id, bool track = true, CancellationToken cancellationToken = default);
 
-    Task<Issue?> GetByFilter(IPredicateSpecification<TEntity> filterExpression,
+    Task<TEntity?> GetByFilter(IPredicateSpecification<TEntity> filterExpression,
         bool track = true,
         CancellationToken cancellationToken = default);
+
+    public Task<T?> GetProjection<T>(
+        ISelectorSpecification<TEntity, T> selectExpression,
+        CancellationToken cancellationToken = default) =>
+        GetProjectionByFilter<T>(IPredicateSpecification<TEntity>.None, selectExpression, cancellationToken);
+
 
     Task<T?> GetProjectionByFilter<T>(
         IPredicateSpecification<TEntity> filterExpression,
         ISelectorSpecification<TEntity, T> selectExpression,
         CancellationToken cancellationToken = default);
+
+    public Task<(int Total, IAsyncEnumerable<T> Collection)> GetPagedAndSortedProjections<T>(
+        ISelectorSpecification<TEntity, T> selectExpression, PagingOptions paging,
+        CancellationToken cancellationToken = default) =>
+        GetPagedAndSortedProjections(
+            IPredicateSpecification<TEntity>.None,
+            selectExpression,
+            paging,
+            cancellationToken);
 
     Task<(int Total, IAsyncEnumerable<T> Collection)> GetPagedAndSortedProjections<T>(
         IPredicateSpecification<TEntity> filterExpression,
