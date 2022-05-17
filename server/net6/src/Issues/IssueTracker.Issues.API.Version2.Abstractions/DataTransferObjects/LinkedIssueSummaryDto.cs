@@ -15,4 +15,9 @@ using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
 namespace IssueTracker.Issues.API.Version2.Abstractions.DataTransferObjects;
 
-public sealed record class LinkedIssueSummaryDto(string Id, string Title, Priority Priority, IssueType IssueType, LinkType LinkType);
+public sealed record class LinkedIssueSummaryDto(
+    string Id,
+    string Title,
+    Priority Priority,
+    IssueType IssueType,
+    LinkType LinkType);
