@@ -68,6 +68,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.RestApi.Controllers", "src\IssueTracker.RestApi.Controllers\IssueTracker.RestApi.Controllers.csproj", "{8079E32A-5235-48A2-B87C-0C2B555192EC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Issues", "Issues", "{85C789BA-B097-45BB-9FA1-4B3E584236E4}"
+	ProjectSection(SolutionItems) = preProject
+		src\Issues\Readme.md = src\Issues\Readme.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.Domain", "src\Issues\IssueTracker.Issues.Domain\IssueTracker.Issues.Domain.csproj", "{B7AFF034-03AF-48FF-ACA6-0A454AA2737D}"
 EndProject
@@ -81,9 +84,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.Cli", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.API", "src\Issues\IssueTracker.Issues.API\IssueTracker.Issues.API.csproj", "{5E6DB3CE-0567-45A3-9756-4BD2355AC8B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Issues.API.Version1.REST", "src\Issues\IssueTracker.Issues.API.Version1.REST\IssueTracker.Issues.API.Version1.REST.csproj", "{BEB0D4F7-C42E-43EA-9EF9-A6034AEB23DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.API.Version1.REST", "src\Issues\IssueTracker.Issues.API.Version1.REST\IssueTracker.Issues.API.Version1.REST.csproj", "{BEB0D4F7-C42E-43EA-9EF9-A6034AEB23DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Issues.API.Version2.REST", "src\Issues\IssueTracker.Issues.API.Version2.REST\IssueTracker.Issues.API.Version2.REST.csproj", "{A8FA785B-4717-445B-BFF2-7D5C2B0CFC8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.API.Version2.REST", "src\Issues\IssueTracker.Issues.API.Version2.REST\IssueTracker.Issues.API.Version2.REST.csproj", "{A8FA785B-4717-445B-BFF2-7D5C2B0CFC8B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{7E6F8B0A-3A22-4045-A52B-38D3BD39DD7A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Issues.Shared.REST", "src\Issues\IssueTracker.Issues.Shared.REST\IssueTracker.Issues.Shared.REST.csproj", "{722B4601-7709-4DB0-B662-6BB3FBC3FAD9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -199,6 +206,10 @@ Global
 		{A8FA785B-4717-445B-BFF2-7D5C2B0CFC8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8FA785B-4717-445B-BFF2-7D5C2B0CFC8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8FA785B-4717-445B-BFF2-7D5C2B0CFC8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{722B4601-7709-4DB0-B662-6BB3FBC3FAD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{722B4601-7709-4DB0-B662-6BB3FBC3FAD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{722B4601-7709-4DB0-B662-6BB3FBC3FAD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{722B4601-7709-4DB0-B662-6BB3FBC3FAD9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -236,6 +247,7 @@ Global
 		{5E6DB3CE-0567-45A3-9756-4BD2355AC8B1} = {85C789BA-B097-45BB-9FA1-4B3E584236E4}
 		{BEB0D4F7-C42E-43EA-9EF9-A6034AEB23DB} = {85C789BA-B097-45BB-9FA1-4B3E584236E4}
 		{A8FA785B-4717-445B-BFF2-7D5C2B0CFC8B} = {85C789BA-B097-45BB-9FA1-4B3E584236E4}
+		{722B4601-7709-4DB0-B662-6BB3FBC3FAD9} = {85C789BA-B097-45BB-9FA1-4B3E584236E4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8421BB6A-BA23-402F-AC65-8492F4641EA7}
