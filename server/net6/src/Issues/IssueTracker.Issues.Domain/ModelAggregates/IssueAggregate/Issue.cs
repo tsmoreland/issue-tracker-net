@@ -38,6 +38,13 @@ public sealed class Issue : Entity
         Id = new IssueIdentifier(Project, IssueNumber);
     }
 
+    public Issue(string project, int issueNumber, string title, string description, Priority priority, IssueType type)
+        : this(project, issueNumber, title, description)
+    {
+        Priority = priority;
+        _type = type;
+    }
+
     private Issue()
     {
         

@@ -14,12 +14,12 @@
 using System.IO.Compression;
 using System.Text.Json.Serialization;
 using Hellang.Middleware.ProblemDetails;
-using IssueTracker.Data.Abstractions;
+using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Middelware.SecurityHeaders;
 using IssueTracker.RestApi.App.Filters;
-using IssueTracker.RestApi.Controllers.Shared;
 using IssueTracker.ServiceDiscovery;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.ResponseCompression;
 using Serilog;
@@ -81,15 +81,14 @@ builder.Services
         tokenProviderOptions.TokenLifespan = TimeSpan.FromHours(1);
     });
 
-builder.Services
-    .AddScoped<ValidateIssueIdActionFilterAttribute>();
 
 
 WebApplication app = builder.Build();
 using (IServiceScope scope = app.Services.CreateScope())
 {
     IIssueDataMigration migration =  scope.ServiceProvider.GetRequiredService<IIssueDataMigration>();
-    migration.Migrate();
+    await migration.MigrateAsync();
+    await migration.ResetAndRepopultateAsync();
 }
 
 app.UseSecurityHeaders();
@@ -128,5 +127,11 @@ app.MapGet("/about",
 app.MapGet("/serverTime", (bool utc) =>
     Results.Json(new {time = utc ? DateTime.UtcNow.ToString("o") : DateTime.Now.ToString("o")}));
 
+app.MapDelete("/api/reset",
+    ([FromServices] IIssueDataMigration migration) =>
+    {
+        migration.ResetAndRepopultateAsync();
+        return Results.StatusCode(StatusCodes.Status418ImATeapot);
+    });
 
 app.Run();

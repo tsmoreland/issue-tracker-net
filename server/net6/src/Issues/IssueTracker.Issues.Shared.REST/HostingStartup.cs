@@ -11,19 +11,16 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Issues.Domain.DataContracts;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
-using IssueTracker.Issues.Infrastructure;
-using IssueTracker.Issues.Infrastructure.Repositories;
-using IssueTracker.Issues.Infrastructure.Specifications.IssueAggregate;
+using IssueTracker.Issues.Shared.REST;
+using IssueTracker.Issues.Shared.REST.Filters;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: HostingStartup(typeof(HostingStartup))]
 
-namespace IssueTracker.Issues.Infrastructure;
+namespace IssueTracker.Issues.Shared.REST;
 
+/// <inheritdoc cref="IHostingStartup"/>
 public sealed class HostingStartup : IHostingStartup
 {
     /// <inheritdoc />
@@ -32,15 +29,12 @@ public sealed class HostingStartup : IHostingStartup
         builder.ConfigureServices(Configure);
     }
 
+    /// <summary>
+    /// Configure Services
+    /// </summary>
     public static void Configure(IServiceCollection services)
     {
-        // separated to highlight that it's not a common entry while the others would be
-        services.AddTransient<IIssueDataMigration, IssueDataMigration>();
-
         services
-            .AddDbContext<IssuesDbContext>(optionsLifetime: ServiceLifetime.Singleton)
-            .AddDbContextFactory<IssuesDbContext>()
-            .AddScoped<IIssueRepository, IssueRepository>()
-            .AddTransient<IIssueSpecificationFactory, IssueSpecificationFactory>();
+            .AddScoped<ValidateIssueIdActionFilterAttribute>();
     }
 }

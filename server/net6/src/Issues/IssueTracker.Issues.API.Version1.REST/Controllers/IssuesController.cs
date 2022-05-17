@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
 using AutoMapper;
 using IssueTracker.Issues.API.Version1.Abstractions.Commands;
@@ -85,7 +86,7 @@ public class IssuesController : ControllerBase
     /// <summary>
     /// Returns issue matching <paramref name="id"/> if found
     /// </summary>
-    /// <param name="id" example="1385056E-8AFA-4E09-96DF-AE12EFDF1A29">unique id of issue</param>
+    /// <param name="id" example="APP-1">unique id of issue</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
     [HttpGet("{id}")]
@@ -95,7 +96,9 @@ public class IssuesController : ControllerBase
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
+    public async Task<IActionResult> Get(
+        [RegularExpression("[A-Z][A-Z][A-Z]-[1-9][0-9]*")] string id,
+        CancellationToken cancellationToken)
     {
         IssueDto? issue = _mapper.Map<IssueDto?>(await _mediator
             .Send(new FindIssueByIdQuery(IssueIdentifier.FromString(id)), cancellationToken));
@@ -143,7 +146,10 @@ public class IssuesController : ControllerBase
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> Put(string id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
+    public async Task<IActionResult> Put(
+        [RegularExpression("[A-Z][A-Z][A-Z]-[1-9][0-9]*")] string id,
+        [FromBody] EditIssueDto model,
+        CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
@@ -170,7 +176,9 @@ public class IssuesController : ControllerBase
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete(
+        [RegularExpression("[A-Z][A-Z][A-Z]-[1-9][0-9]*")] string id,
+        CancellationToken cancellationToken)
     {
         return await _mediator.Send(new DeleteIssueCommand(IssueIdentifier.FromString(id)), cancellationToken)
             ? new StatusCodeResult(StatusCodes.Status204NoContent)
