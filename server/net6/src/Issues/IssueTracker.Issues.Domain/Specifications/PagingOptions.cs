@@ -11,6 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace IssueTracker.Issues.Domain.Specifications;
 
 public sealed record class PagingOptions(int PageNumber, int PageSize)
@@ -18,12 +20,12 @@ public sealed record class PagingOptions(int PageNumber, int PageSize)
     /// <summary>
     /// Page Number, starting at position 1
     /// </summary>
-    public int PageNumber { get; init; } = ValidateOrThrow(PageNumber, nameof(PageNumber));
+    public int PageNumber { get; init; } = PageNumber;
 
     /// <summary>
     /// Number of items in a page, must be greater than 0
     /// </summary>
-    public int PageSize { get; init; } = ValidateOrThrow(PageSize, nameof(PageSize));
+    public int PageSize { get; init; } = PageSize;
 
 
     /// <summary>
@@ -36,14 +38,34 @@ public sealed record class PagingOptions(int PageNumber, int PageSize)
     /// </summary>
     public int Take => PageSize;
 
-    private static int ValidateOrThrow(int value, string pararmeterName)
+    /// <summary>
+    /// Validates <see cref="PageNumber"/> and <see cref="PageSize"/>
+    /// </summary>
+    /// <param name="invalidProperty">name of the property</param>
+    /// <param name="errorMessage">description of what's wrong</param>
+    /// <returns><see langword="true"/> if the parameters are valid</returns>
+    public bool IsValid(
+        [NotNullWhen(false)] out string? invalidProperty,
+        [NotNullWhen(false)] out string? errorMessage)
     {
-        if (value <= 0)
+        if (PageNumber < 1)
         {
-            throw new ArgumentOutOfRangeException(pararmeterName);
+            invalidProperty = "pageNumber"; // camel case until I can convert using nameof
+            errorMessage =  "must be greater than or equal to 1";
+            return false;
         }
-
-        return value;
+        else if (PageSize < 1)
+        {
+            invalidProperty = "pageSize";
+            errorMessage = "must be greater than or equal to 1";
+            return false;
+        }
+        else
+        {
+            invalidProperty = null;
+            errorMessage = null;
+            return true;
+        }
     }
 
 }

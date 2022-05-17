@@ -20,7 +20,6 @@ namespace IssueTracker.Issues.Infrastructure.Specifications.IssueAggregate;
 
 internal static class IssueSortingOptionsExtensions
 {
-
     public static IOrderedQueryable<Issue> OrderUsing(this IQueryable<Issue> query, SortingOptions sorting)
     {
         (string orderByProperty, IEnumerable<string>? thenByProperties, bool ascending) = sorting;
@@ -28,6 +27,11 @@ internal static class IssueSortingOptionsExtensions
             ? query.OrderBy(i => i.Id) // order by id by default 
             : query.OrderByDescending(i => i.Id);
 
+
+        if (sorting == SortingOptions.Empty)
+        {
+            return query.OrderBy(i => i.Id);
+        }
 
         Expression<Func<Issue, object>>? orderBy = GenerateOrderExpression(orderByProperty);
         orderedQuery = ascending

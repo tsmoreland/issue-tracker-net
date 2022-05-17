@@ -18,6 +18,7 @@ namespace IssueTracker.Issues.Domain.Specifications
         IEnumerable<string>? ThenByProperty = null,
         bool Ascending = true)
     {
+        public static SortingOptions Empty { get; } = new (string.Empty);
 
         public static SortingOptions OrderBy(string property)
         {
@@ -36,7 +37,41 @@ namespace IssueTracker.Issues.Domain.Specifications
             }
 
             return this with { ThenByProperty = ThenByProperty.Union(new[] { property }) };
+        }
 
+        public static SortingOptions FromString(string? orderBy)
+        {
+            try
+            {
+                if (orderBy is null)
+                {
+                    return Empty;
+                }
+
+                orderBy = orderBy.Trim();
+
+                bool ascending = true;
+                if (orderBy.EndsWith(" DESC", StringComparison.OrdinalIgnoreCase))
+                {
+                    orderBy = orderBy[..^5].ToString();
+                    ascending = false;
+                }
+
+                string[] properties = orderBy.Split(',').Select(s => s.Trim()).ToArray();
+                if (!properties.Any())
+                {
+                    return Empty;
+                }
+
+                orderBy = properties[0];
+                string[] thenBy = properties[1..].ToArray();
+
+                return new SortingOptions(orderBy, thenBy, ascending);
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException("Invalid order clause", nameof(orderBy), ex);
+            }
         }
 
     }
