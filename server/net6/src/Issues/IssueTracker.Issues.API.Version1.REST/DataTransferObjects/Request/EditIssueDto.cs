@@ -26,7 +26,7 @@ public sealed class EditIssueDto
     /// <summary>
     /// Instantiates a new instance of the <see cref="EditIssueDto"/> class.
     /// </summary>
-    public EditIssueDto(string title, string? description, Priority priority)
+    public EditIssueDto(string title, string description, Priority priority)
     {
         Title = title;
         Description = description;
@@ -38,28 +38,36 @@ public sealed class EditIssueDto
     /// </summary>
     public EditIssueDto()
     {
-        
+        // used for deserialization
     }
 
     /// <summary>
     /// Issue Title
     /// </summary>
     /// <example>Example Title</example>
-    [Required]
     [MaxLength(200)]
-    public string Title { get; init; } = string.Empty;
+    public string? Title { get; init; } 
 
     /// <summary>
     /// Issue Description
     /// </summary>
     /// <example>Example description</example>
     [MaxLength(500)]
-    public string? Description { get; init; }
+    public string? Description { get; init; } 
 
     /// <summary>
     /// Issue Priority
     /// </summary>
     /// <example>High</example>
-    [Required]
-    public Priority Priority { get; init; } = Priority.Low;
+    public Priority? Priority { get; init; } 
+
+    /// <summary>
+    /// Deconstructor
+    /// </summary>
+    public void Deconstruct(out string? title, out string? description, out Priority? priority)
+    {
+        title = Title;
+        description = Description;
+        priority = Priority;
+    }
 }

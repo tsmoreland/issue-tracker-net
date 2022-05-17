@@ -71,4 +71,16 @@ public sealed class AddIssueDto
     /// <example>Low</example>
     [Required]
     public Priority Priority { get; set; } = Priority.Low;
+
+
+    /// <summary>
+    /// Deconstructor
+    /// </summary>
+    public void Deconstruct(out string project, out string title, out string description, out Priority priority)
+    {
+        project = Project;
+        title = Title;
+        description = Description;
+        priority = Priority;
+    }
 }
