@@ -11,30 +11,36 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Linq.Expressions;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
 
 namespace IssueTracker.Issues.Infrastructure.Specifications.IssueAggregate;
 
-public sealed class IssueSpecificationFactory : IIssueSpecificationFactory
+public sealed class ExpressionPredicate : IExpressionPredicate
 {
-    /// <inheritdoc />
-    public ISelectIssueSummaryProjectionSpecification SelectSummary() =>
-        new SelectIssueSummaryProjection();
+    /// <summary>
+    /// Parses <paramref name="expression"/> into <see cref="Filter"/> or
+    /// </summary>
+    /// <param name="expression">string representation of a expression predicate</param>
+    /// <exception cref="ArgumentException">
+    /// if <paramref name="expression"/> is <see langword="null"/> or empty; of it does
+    /// not represent a valid expression.
+    /// </exception>
+    public ExpressionPredicate(string expression)
+    {
+        if (expression is not {Length: > 0})
+        {
+            throw new ArgumentException("Expression cannot be empty", nameof(expression));
+        }
+
+        Expression = expression;
+    }
 
     /// <inheritdoc />
-    public ISelectIssueNumber SelectIssueNumber() =>
-        new SelectIssueNumber();
+    public Expression<Func<Issue, bool>> Filter =>
+        _ => true;
 
     /// <inheritdoc />
-    public IProjectMatchesPredicate ProjectMatches(string project) =>
-        new ProjectMatchesPredicate(project);
-
-    /// <inheritdoc />
-    public IIssueTypeMatchesPredicate IssueTypeMatches(IssueType issueType) =>
-        new IssueTypeMatchesPredicate(issueType);
-
-    /// <inheritdoc />
-    public IExpressionPredicate UsingExpression(string expression) => 
-        new ExpressionPredicate(expression);
+    public string Expression { get; }
 }

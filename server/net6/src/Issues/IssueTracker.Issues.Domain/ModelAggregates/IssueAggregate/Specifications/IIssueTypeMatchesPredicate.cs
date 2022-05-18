@@ -11,30 +11,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
+using IssueTracker.Issues.Domain.Specifications;
 
-namespace IssueTracker.Issues.Infrastructure.Specifications.IssueAggregate;
+namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
 
-public sealed class IssueSpecificationFactory : IIssueSpecificationFactory
+public interface IIssueTypeMatchesPredicate : IPredicateSpecification<Issue>
 {
-    /// <inheritdoc />
-    public ISelectIssueSummaryProjectionSpecification SelectSummary() =>
-        new SelectIssueSummaryProjection();
-
-    /// <inheritdoc />
-    public ISelectIssueNumber SelectIssueNumber() =>
-        new SelectIssueNumber();
-
-    /// <inheritdoc />
-    public IProjectMatchesPredicate ProjectMatches(string project) =>
-        new ProjectMatchesPredicate(project);
-
-    /// <inheritdoc />
-    public IIssueTypeMatchesPredicate IssueTypeMatches(IssueType issueType) =>
-        new IssueTypeMatchesPredicate(issueType);
-
-    /// <inheritdoc />
-    public IExpressionPredicate UsingExpression(string expression) => 
-        new ExpressionPredicate(expression);
+    IssueType Type { get; }
 }

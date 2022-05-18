@@ -13,60 +13,72 @@
 
 using System.ComponentModel.DataAnnotations;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.SwashbuckleExtensions.Abstractions;
 
 namespace IssueTracker.Issues.API.Version2.REST.DataTransferObjects.Request;
 
 /// <summary>
-/// Model used to create a new Issue
+/// Add Issue DTO Base class, not intended for direct serialization/deserializtion
 /// </summary>
-[SwaggerSchemaName("Add Issue")]
-public sealed class AddIssueDto : AddIssueDtoBase
+public abstract class AddIssueDtoBase
 {
     /// <summary>
-    /// Instantiates a new instance of the <see cref="AddIssueDto"/> class.
+    /// Instantiates a new instance of the <see cref="AddIssueDtoBase"/> class.
     /// </summary>
-    public AddIssueDto(string project, string title, string description, Priority priority, IssueType type, string? epicId)
-        : base(project, title, description, priority)
+    protected AddIssueDtoBase(string project, string title, string description, Priority priority)
     {
-        Type = type;
-        EpicId = epicId;
+        Project = project;
+        Title = title;
+        Description = description;
+        Priority = priority;
     }
 
     /// <summary>
-    /// Instantiates a new instance of the <see cref="AddIssueDto"/> class.
+    /// Instantiates a new instance of the <see cref="AddIssueDtoBase"/> class.
     /// </summary>
-    private AddIssueDto()
+    protected AddIssueDtoBase()
     {
-        // used for serialization
+        
     }
 
     /// <summary>
-    /// Issue Type
+    /// Project Identifier
     /// </summary>
-    /// <example>Defect</example>
+    /// <example>APP</example>
     [Required]
-    public IssueType Type { get; set; } = IssueType.Defect;
+    public string Project { get; set; } = string.Empty;
 
     /// <summary>
-    /// Epic Id
+    /// Issue Title
     /// </summary>
-    /// <example>APP-1</example>
-    [RegularExpression("[A-Z][A-Z][A-Z]-[0-9]+")]
-    public string? EpicId { get; set; } 
+    /// <example>Sample Title</example>
+    [Required]
+    [MaxLength(200)]
+    public string Title { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Issue description
+    /// </summary>
+    /// <example>Sample Description</example>
+    [Required]
+    [MaxLength(500)]
+    public string Description { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Issue Priority
+    /// </summary>
+    /// <example>Low</example>
+    [Required]
+    public Priority Priority { get; set; } = Priority.Low;
+    
     /// <summary>
     /// Deconstructor
     /// </summary>
     public void Deconstruct(out string project, out string title,
-        out string description, out Priority priority, out IssueType type,
-        out string? epicId)
+        out string description, out Priority priority)
     {
         project = Project;
         title = Title;
         description = Description;
         priority = Priority;
-        type = Type;
-        epicId = EpicId;
     }
 }

@@ -18,4 +18,8 @@ public interface IIssueSpecificationFactory
     ISelectIssueSummaryProjectionSpecification SelectSummary();
     ISelectIssueNumber SelectIssueNumber();
     IProjectMatchesPredicate ProjectMatches(string project);
+
+    IIssueTypeMatchesPredicate IssueTypeMatches(IssueType issueType);
+
+    IExpressionPredicate UsingExpression(string expression);
 }

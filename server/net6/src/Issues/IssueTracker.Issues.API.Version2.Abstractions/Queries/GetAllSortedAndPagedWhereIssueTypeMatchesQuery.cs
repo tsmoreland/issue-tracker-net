@@ -11,30 +11,14 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Issues.API.Version2.Abstractions.DataTransferObjects;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
+using IssueTracker.Issues.Domain.Specifications;
+using MediatR;
 
-namespace IssueTracker.Issues.Infrastructure.Specifications.IssueAggregate;
+namespace IssueTracker.Issues.API.Version2.Abstractions.Queries;
 
-public sealed class IssueSpecificationFactory : IIssueSpecificationFactory
-{
-    /// <inheritdoc />
-    public ISelectIssueSummaryProjectionSpecification SelectSummary() =>
-        new SelectIssueSummaryProjection();
-
-    /// <inheritdoc />
-    public ISelectIssueNumber SelectIssueNumber() =>
-        new SelectIssueNumber();
-
-    /// <inheritdoc />
-    public IProjectMatchesPredicate ProjectMatches(string project) =>
-        new ProjectMatchesPredicate(project);
-
-    /// <inheritdoc />
-    public IIssueTypeMatchesPredicate IssueTypeMatches(IssueType issueType) =>
-        new IssueTypeMatchesPredicate(issueType);
-
-    /// <inheritdoc />
-    public IExpressionPredicate UsingExpression(string expression) => 
-        new ExpressionPredicate(expression);
-}
+public sealed record class GetAllSortedAndPagedWhereIssueTypeMatchesQuery(
+    PagingOptions Paging,
+    SortingOptions Sorting,
+    IssueType Type) : IRequest<IssueSummaryPage>;
