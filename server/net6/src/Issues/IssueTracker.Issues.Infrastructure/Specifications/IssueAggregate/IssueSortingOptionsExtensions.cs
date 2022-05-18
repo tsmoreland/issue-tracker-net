@@ -65,25 +65,27 @@ internal static class IssueSortingOptionsExtensions
 
     private static Expression<Func<Issue, object>> GenerateOrderExpression(string property)
     {
-        return property switch
+        return property.ToUpperInvariant() switch
         {
-            nameof(Issue.Id) =>
+            "ID" =>
                 issue => issue.Id,
-            nameof(Issue.Title) =>
+            "TITLE" =>
                 issue => EF.Property<string>(issue, "_title"),
-            nameof(Issue.Description) =>
+            "DESCRIPTION" =>
                 issue => EF.Property<string>(issue,"_description"),
-            nameof(Issue.EpicId) =>
+            "EPICID" =>
                 issue => EF.Property<IssueIdentifier>(issue, "_epicId"),
-            nameof(Issue.Project) =>
+            "PROJECT" =>
                 issue => EF.Property<string>(issue, "_project"),
-            nameof(Issue.IssueNumber) =>
+            "ISSUENUMBER" =>
                 issue => EF.Property<int>(issue, "_issueNumber"),
-            nameof(Issue.Type) =>
+            "TYPE" =>
                 issue => EF.Property<IssueType>(issue, "_type"),
-            nameof(Issue.Assignee) =>
-                issue => EF.Property<string>(issue, "_assignee.FullName"),
-            nameof(Issue.Reporter) =>
+            "PRIORITY" =>
+                issue => issue.Priority,
+            "ASSIGNEE" =>
+                issue => issue.Assignee.FullName,
+            "REPORTER" =>
                 issue => EF.Property<string>(issue, "_reporter.FullName"),
             _ =>
                 issue => issue.Id,

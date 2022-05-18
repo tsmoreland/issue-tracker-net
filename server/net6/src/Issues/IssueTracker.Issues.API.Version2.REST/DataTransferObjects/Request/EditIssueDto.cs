@@ -78,4 +78,17 @@ public sealed class EditIssueDto
     /// <example>APP-1</example>
     [RegularExpression("[A-Z][A-Z][A-Z]-[0-9]+")]
     public string? EpicId { get; set; }
+
+    /// <summary>
+    /// Deconstructor
+    /// </summary>
+    public void Deconstruct(out string? title, out string? description,
+        out Priority? priority, out IssueType type, out string? epicId)
+    {
+        title = Title;
+        description = Description;
+        priority = Priority;
+        type = Type;
+        epicId = EpicId;
+    }
 }

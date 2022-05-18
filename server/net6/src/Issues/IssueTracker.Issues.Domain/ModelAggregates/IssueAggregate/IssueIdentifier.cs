@@ -53,6 +53,16 @@ public readonly record struct IssueIdentifier(string Project, int IssueNumber) :
     public override string ToString() =>
         $"{Project}-{IssueNumber}";
 
+    public static IssueIdentifier? FromStringIfNotNull(string? id)
+    {
+        if (id is null)
+        {
+            return null;
+        }
+
+        (string projectId, int issueNumber) = DeconstructId(id);
+        return new IssueIdentifier(projectId, issueNumber);
+    }
     public static IssueIdentifier FromString(string id)
     {
         (string projectId, int issueNumber) = DeconstructId(id);
