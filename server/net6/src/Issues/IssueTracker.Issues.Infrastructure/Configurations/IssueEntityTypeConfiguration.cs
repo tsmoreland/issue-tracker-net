@@ -23,59 +23,34 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
     public void Configure(EntityTypeBuilder<Issue> builder)
     {
         builder
-            .ToTable("Issues")
-            .HasKey(e => e.Id);
+            .ToTable("Issues");
 
-        builder.HasIndex(e => e.Title);
         builder.HasIndex(e => e.Priority);
+        builder.HasIndex("_title");
         builder.HasIndex("_project");
         builder.HasIndex("_issueNumber");
 
-        builder.Property(e => e.Id)
-            .HasConversion(e => e.ToString(), @string => IssueIdentifier.FromString(@string))
-            .IsRequired();
         builder.Ignore(e => e.Project);
-        builder.Property<string>("_project")
-            .HasColumnName("Project")
-            .UsePropertyAccessMode(PropertyAccessMode.Field)
-            .HasMaxLength(3)
-            .IsUnicode(false)
-            .IsRequired();
         builder.Ignore(e => e.IssueNumber);
-        builder.Property<int>("_issueNumber")
-            .HasColumnName("IssueNumber")
-            .UsePropertyAccessMode(PropertyAccessMode.Field)
-            .IsRequired();
-        builder.Property("_title")
-            .UsePropertyAccessMode(PropertyAccessMode.Field)
-            .HasColumnName("Title")
-            .IsRequired().IsUnicode().HasMaxLength(200);
-        builder.Property(e => e.Description).IsUnicode().HasMaxLength(500);
-        builder.Ignore(e => e.Priority);
-        builder
-            .Property(e => e.Priority)
-            .IsRequired();
+        builder.Ignore(e => e.Title);
+        builder.Ignore(e => e.Description);
         builder.Ignore(e => e.Type);
-        builder
-            .Property<IssueType>("_type")
-            .HasColumnName("Type")
-            .UsePropertyAccessMode(PropertyAccessMode.Field)
-            .IsRequired();
-
         builder.Ignore(e => e.EpicId);
-        builder.Property<IssueIdentifier?>("_epicId")
-            .HasColumnName("EpicId")
-            .UsePropertyAccessMode(PropertyAccessMode.Field)
-            .HasConversion(e => e != null ? e.ToString() : null!,
-                @string => !string.IsNullOrEmpty(@string) ? IssueIdentifier.FromString(@string) : null)
-            .IsRequired(false);
 
-        builder
-            .HasOne<Issue>()
-            .WithMany()
-            .HasForeignKey("_epicId")
-            .IsRequired(false)
-            .OnDelete(DeleteBehavior.NoAction);
+        builder.Property<string>("_project")
+            .HasColumnName("Project");
+        builder.Property<int>("_issueNumber")
+            .HasColumnName("IssueNumber");
+        builder.Property<string>("_title")
+            .HasColumnName("Title");
+        builder.Property<string>("_description")
+            .HasColumnName("Description");
+        builder.Property<IssueType>("_type")
+            .HasColumnName("Type");
+
+        builder.Property<IssueIdentifier?>("_epicId")
+            .HasColumnName("EpicId");
+
         builder.Property(e => e.ConcurrencyToken).IsConcurrencyToken();
         builder.Property(e => e.LastModifiedTime)
             .HasConversion(
@@ -85,75 +60,20 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
         builder.OwnsOne(e => e.Assignee,
             (owned) =>
             {
-                owned
-                    .Property(e => e.UserId)
-                    .IsRequired()
+                owned.Property(e => e.UserId)
                     .HasDefaultValue(TriageUser.Unassigned.UserId);
-                owned
-                    .Property(e => e.FullName)
-                    .IsRequired()
-                    .HasMaxLength(200)
-                    .IsUnicode(true)
+                owned.Property(e => e.FullName)
                     .HasDefaultValue(TriageUser.Unassigned.FullName);
             });
         builder.OwnsOne(e => e.Reporter,
             (owned) =>
             {
-                owned
-                    .Property(e => e.UserId)
-                    .IsRequired()
+                owned.Property(e => e.UserId)
                     .HasDefaultValue(Maintainer.Unassigned.UserId);
-                owned
-                    .Property(e => e.FullName)
-                    .IsRequired()
-                    .HasMaxLength(200)
-                    .IsUnicode(true)
+                owned.Property(e => e.FullName)
                     .HasDefaultValue(Maintainer.Unassigned.FullName);
             });
 
         builder.Ignore(e => e.RelatedIssues);
-        builder
-            .HasMany("_relatedTo")
-            .WithOne();
-        builder
-            .HasMany("_relatedFrom")
-            .WithOne();
     }
 }
-
-internal sealed class IssueLinkEntityTypeConfiguration : IEntityTypeConfiguration<IssueLink>
-{
-    /// <inheritdoc />
-    public void Configure(EntityTypeBuilder<IssueLink> builder)
-    {
-        builder.ToTable("IssueLinks").HasKey(e => new { e.LeftId, e.RightId });
-
-        builder
-            .Property(e => e.Link)
-            .IsRequired()
-            .HasDefaultValue(LinkType.Related);
-
-        builder
-            .Property(e => e.LeftId)
-            .HasConversion(e => e.ToString(), @string => IssueIdentifier.FromString(@string))
-            .IsRequired();
-        builder
-            .Property(e => e.RightId)
-            .HasConversion(e => e.ToString(), @string => IssueIdentifier.FromString(@string))
-            .IsRequired();
-
-        builder
-            .HasOne(e => e.Left)
-            .WithMany("_relatedFrom")
-            .HasPrincipalKey(e => e.Id)
-            .HasForeignKey(e => e.LeftId)
-            .OnDelete(DeleteBehavior.Cascade);
-        builder
-            .HasOne(e => e.Right)
-            .WithMany("_relatedTo")
-            .HasPrincipalKey(e => e.Id)
-            .HasForeignKey(e => e.RightId)
-            .OnDelete(DeleteBehavior.Cascade);
-    }
-}
-

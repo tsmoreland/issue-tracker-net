@@ -11,16 +11,16 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Issues.Domain;
 using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
-using IssueTracker.Issues.Infrastructure;
+using IssueTracker.Issues.Domain.Shared;
+using IssueTracker.Issues.Infrastructure.Configurations;
 using IssueTracker.Issues.Infrastructure.Repositories;
-using IssueTracker.Issues.Infrastructure.Specifications.IssueAggregate;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-[assembly: HostingStartup(typeof(HostingStartup))]
+[assembly: HostingStartup(typeof(IssueTracker.Issues.Infrastructure.HostingStartup))]
 
 namespace IssueTracker.Issues.Infrastructure;
 
@@ -40,7 +40,7 @@ public sealed class HostingStartup : IHostingStartup
         services
             .AddDbContext<IssuesDbContext>(optionsLifetime: ServiceLifetime.Singleton)
             .AddDbContextFactory<IssuesDbContext>()
-            .AddScoped<IIssueRepository, IssueRepository>()
-            .AddTransient<IIssueSpecificationFactory, IssueSpecificationFactory>();
+            .AddTransient<IModelConfiguration, SqliteModelConfiguration>()
+            .AddScoped<IIssueRepository, IssueRepository>();
     }
 }

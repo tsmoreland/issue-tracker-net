@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\IssueTracker.SwashbuckleExtensions.Abstractions\IssueTracker.SwashbuckleExtensions.Abstractions.csproj" />
-    <ProjectReference Include="..\IssueTracker.Issues.API.Version2.Abstractions\IssueTracker.Issues.API.Version2.Abstractions.csproj" />
     <ProjectReference Include="..\IssueTracker.Issues.Domain\IssueTracker.Issues.Domain.csproj" />
     <ProjectReference Include="..\IssueTracker.Issues.Shared.REST\IssueTracker.Issues.Shared.REST.csproj" />
   </ItemGroup>
@@ -19,7 +18,7 @@
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="MediatR" Version="10.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.1" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
   </ItemGroup>
 

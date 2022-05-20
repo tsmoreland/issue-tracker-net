@@ -11,6 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Issues.Domain;
+using IssueTracker.Issues.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -31,13 +33,15 @@ public sealed class IssuesDbContextDesignTimeFactory : IDesignTimeDbContextFacto
             .LogTo(Console.WriteLine)
             .UseSqlite(
                 "Data Source=designTime.db",
-                options => options.MigrationsAssembly(typeof(IssuesDbContext).Assembly.FullName));
+                options => options
+                    .MigrationsAssembly(typeof(SqliteModelConfiguration).Assembly.FullName));
 
         return new IssuesDbContext(
             optionsBuilder.Options,
-            new ConfigurationBuilder().Build(),
-            new DesignTimeEnvironment(),
-            new LoggerFactory());
+            new SqliteModelConfiguration(
+                new ConfigurationBuilder().Build(),
+                new DesignTimeEnvironment(),
+                new LoggerFactory()));
     }
 
     private sealed class DesignTimeEnvironment : IHostEnvironment

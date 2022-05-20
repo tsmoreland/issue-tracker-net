@@ -1,16 +1,18 @@
-﻿using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.Specifications;
-using IssueTracker.Issues.Infrastructure;
+﻿using IssueTracker.Issues.Domain;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
+using IssueTracker.Issues.Domain.Services.Version1.DataTransferObjects;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using HostingStartup = IssueTracker.Issues.Infrastructure.HostingStartup;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-using Version1 = IssueTracker.Issues.API.Version1.Abstractions;
-using Version2 = IssueTracker.Issues.API.Version2.Abstractions;
+using Version1 = IssueTracker.Issues.Domain.Services.Version1;
+using Version2 = IssueTracker.Issues.Domain.Services.Version2;
 
 
 #if ASPNETCORE
@@ -31,7 +33,7 @@ hostBuilder
     .ConfigureServices(services =>
     {
         HostingStartup.Configure(services);
-        IssueTracker.Issues.API.HostingStartup.Configure(services);
+        IssueTracker.Issues.Domain.HostingStartup.Configure(services);
     });
 #endif
 
@@ -121,16 +123,16 @@ static async Task VerifyApiV1(IServiceScope scope)
 {
     IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-    Version1.DataTransferObjects.IssueDto epic =
+    IssueDto epic =
         await mediator.Send(new Version1.Commands.CreateIssueCommand("app", "sample epic", "first epic", Priority.High));
 
-    Version1.DataTransferObjects.IssueDto story =
+    IssueDto story =
         await mediator.Send(new Version1.Commands.CreateIssueCommand("app", "sample story", "first story", Priority.Medium));
 
     DisplayIssueDtoV1(epic);
     DisplayIssueDtoV1(story);
 
-    Version1.DataTransferObjects.IssueDto? readEpic = 
+    IssueDto? readEpic = 
         await mediator.Send(new Version1.Queries.FindIssueByIdQuery(new IssueIdentifier("APP", 1)));
     DisplayIssueDtoV1(readEpic);
 
@@ -143,7 +145,7 @@ static async Task VerifyApiV1(IServiceScope scope)
         DisplayIssueSummaryDtoV1(issue);
     }
 
-    Version1.DataTransferObjects.IssueDto? updatedStory = await mediator.Send(
+    IssueDto? updatedStory = await mediator.Send(
         new Version1.Commands.ModifyIssueCommand(new IssueIdentifier("APP", 2), Description: "updated story description"));
     DisplayIssueDtoV1(updatedStory);
 }
@@ -152,7 +154,7 @@ static void DisplayIssue(Issue issue)
 {
     Console.WriteLine($"{issue.Id} {issue.Title}");
 }
-static void DisplayIssueDtoV1(Version1.DataTransferObjects.IssueDto? issue)
+static void DisplayIssueDtoV1(IssueDto? issue)
 {
     Console.WriteLine(issue is not null
         ? $"{issue.Id} {issue.Title} {issue.Priority}"
