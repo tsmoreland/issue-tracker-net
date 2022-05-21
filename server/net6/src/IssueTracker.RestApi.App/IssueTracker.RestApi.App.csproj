@@ -27,9 +27,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="11.0.1" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="6.4.2" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
@@ -58,23 +55,10 @@
     -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.5" />
 
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Issues\IssueTracker.Issues.API.Version1.REST\IssueTracker.Issues.API.Version1.REST.csproj">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </ProjectReference>
-    <ProjectReference Include="..\Issues\IssueTracker.Issues.API.Version2.REST\IssueTracker.Issues.API.Version2.REST.csproj">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </ProjectReference>
-    <ProjectReference Include="..\Issues\IssueTracker.Issues.Domain\IssueTracker.Issues.Domain.csproj" />
-    <ProjectReference Include="..\Issues\IssueTracker.Issues.Infrastructure\IssueTracker.Issues.Infrastructure.csproj">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </ProjectReference>
+    <ProjectReference Include="..\Issues\IssueTracker.Issues.API.REST\IssueTracker.Issues.API.REST.csproj" />
     <ProjectReference Include="..\IssueTracker.Middelware.SecurityHeaders\IssueTracker.Middelware.SecurityHeaders.csproj" />
     <ProjectReference Include="..\IssueTracker.ServiceDiscovery\IssueTracker.ServiceDiscovery.csproj" />
     <ProjectReference Include="..\IssueTracker.SwashbuckleExtensions.Abstractions\IssueTracker.SwashbuckleExtensions.Abstractions.csproj" />

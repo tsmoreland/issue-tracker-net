@@ -2,6 +2,7 @@
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
 using IssueTracker.Issues.Domain.Services.Version1.DataTransferObjects;
+using IssueTracker.Issues.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
