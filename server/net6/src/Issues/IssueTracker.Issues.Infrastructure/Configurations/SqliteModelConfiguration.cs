@@ -18,7 +18,7 @@ using Microsoft.Extensions.Logging;
 
 namespace IssueTracker.Issues.Infrastructure.Configurations;
 
-public sealed class SqliteModelConfiguration 
+public sealed class SqliteModelConfiguration : IModelConfiguration
 {
     private readonly IConfiguration _configuration;
     private readonly IHostEnvironment _environment;
@@ -35,11 +35,13 @@ public sealed class SqliteModelConfiguration
         _logger = loggerFactory.CreateLogger<SqliteModelConfiguration>();
     }
 
-    public static void ConfigureModel(ModelBuilder modelBuilder)
+    /// <inheritdoc />
+    public void ConfigureModel(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(SqliteModelConfiguration).Assembly);
     }
 
+    /// <inheritdoc />
     public void ConfigureContext(DbContextOptionsBuilder optionsBuilder)
     {
         if (optionsBuilder.IsConfigured)

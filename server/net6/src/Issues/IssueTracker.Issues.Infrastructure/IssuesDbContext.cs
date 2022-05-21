@@ -20,11 +20,11 @@ namespace IssueTracker.Issues.Infrastructure;
 
 public sealed class IssuesDbContext : DbContext, IUnitOfWork
 {
-    private readonly SqliteModelConfiguration _modelConfiguration;
+    private readonly IModelConfiguration _modelConfiguration;
 
     public IssuesDbContext(
         DbContextOptions<IssuesDbContext> options,
-        SqliteModelConfiguration modelConfiguration)
+        IModelConfiguration modelConfiguration)
         : base(options)
     {
         _modelConfiguration = modelConfiguration ?? throw new ArgumentNullException(nameof(modelConfiguration));
@@ -36,7 +36,7 @@ public sealed class IssuesDbContext : DbContext, IUnitOfWork
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(Issue).Assembly);
-        SqliteModelConfiguration.ConfigureModel(modelBuilder);
+        _modelConfiguration.ConfigureModel(modelBuilder);
     }
 
     /// <inheritdoc />

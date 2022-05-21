@@ -38,7 +38,7 @@ public sealed class HostingStartup : IHostingStartup
         services
             .AddDbContext<IssuesDbContext>(optionsLifetime: ServiceLifetime.Singleton)
             .AddDbContextFactory<IssuesDbContext>()
-            .AddScoped<SqliteModelConfiguration>()
+            .AddScoped<IModelConfiguration, SqliteModelConfiguration>()
             .AddScoped<IIssueRepository, IssueRepository>();
     }
 }
