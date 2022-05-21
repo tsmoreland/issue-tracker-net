@@ -20,20 +20,20 @@ the projects are separated mostly using HostedStartup assemblies which is a bit 
 
 The projet layout is inspired by domain driven design:
 
-### Core 
-The models/projections and value types - these should have no dependencies or very very minimal interface dependencies, the intent is that the business logic goes here and most of the unit test benefit comes from here
+### Domain 
+The entities / projections and domain services as well as some of the entity configuration (only those related to validation rules)
 
 ## Infrastructure
-Databases would be the big example for this, external tools used by the application in conjuction with the domain layer
+DbContext and repository wrapper, repository may one day be changed to a facade exposing one DbSet<T> and a context itself as a unit of work
 
-## Services
-The service layer is intended to co-ordinate between the domain and infrastructure layers
+## API
+The application layer, including REST controllers, GRPC Services, ... though for the time being these are kept separate for more isolated examples.  These could also represent a microservice if deployed as a full application
 
 ## App 
-The application itself which for the most part should just translate inputs and send to the service layer to execute
+Since this isn't a Microsoervice for now we instead use an App for each though this may yet change
 
 As there are multiple Applications they are prepending by the type, currently this consists of RestApi - A RESTful service and GrcpApi, the beginnings of an equivalent GRPC API
 
 ### GRPC Notes
 
-The GRPC app requires a valid certifacate, as a way around this for development purposes the HTTP port should be used
+The GRPC app requires a valid certifacate, as a way around this for development purposes the HTTP port should be used but does still require HTTP/2 usage which has been configured in the app
