@@ -13,18 +13,18 @@
 
 using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.Shared;
+using IssueTracker.Issues.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace IssueTracker.Issues.Infrastructure;
 
 public sealed class IssuesDbContext : DbContext, IUnitOfWork
 {
-    private readonly IModelConfiguration _modelConfiguration;
+    private readonly SqliteModelConfiguration _modelConfiguration;
 
     public IssuesDbContext(
         DbContextOptions<IssuesDbContext> options,
-        IModelConfiguration modelConfiguration)
+        SqliteModelConfiguration modelConfiguration)
         : base(options)
     {
         _modelConfiguration = modelConfiguration ?? throw new ArgumentNullException(nameof(modelConfiguration));
@@ -36,7 +36,7 @@ public sealed class IssuesDbContext : DbContext, IUnitOfWork
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(Issue).Assembly);
-        _modelConfiguration.ConfigureModel(modelBuilder);
+        SqliteModelConfiguration.ConfigureModel(modelBuilder);
     }
 
     /// <inheritdoc />

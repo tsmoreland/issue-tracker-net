@@ -30,11 +30,15 @@ As described above the project(s) are arranged in a domain-driven-design like wa
 Data entities / models with the business logic associated with them, and ideally minimal dependencies.  This library is where the most benefit of unit tests should be seen.
 In addition the data contracts implemented by the infrastruture layer.
 
+Domain Services which primarily consist of MediatR request/request handlers mostly for use by the API layer.
+
+Since the entities make use of private fields a reference to EntityFrameworkCore is included - but not a specific database provider, the aim is to get access to the
+abstractions but never the less this is a slight leak of infrastructure into Domain.  Additionally since we have this reference we're making use of it to define
+the ```EntityTypeConfiguration<T>``` for the domain entities but only the validation rules, none of the database provided specific settings
+
 ### Infrastructure
 
-Database Context and repository implementations.  Additionally some specification implementations for the query/select specification interfaces defined in Domain.  Ideally those
-would all live in domain but because the domain object uses private fields we require ```Microsoft.EntityFrameworkCore.EF.Property<T>(entity, "fieldName")``` to perform the queries;
-for that to work in the domain layer it would need to reference EF Core
+Database Context and repository implementations, as well as further ```EntityTypeConfiguration<T>``` classes 
 
 ### Application 
 

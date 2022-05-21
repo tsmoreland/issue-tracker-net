@@ -11,10 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Issues.Domain;
 using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.Shared;
 using IssueTracker.Issues.Infrastructure.Configurations;
 using IssueTracker.Issues.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Hosting;
@@ -40,7 +38,7 @@ public sealed class HostingStartup : IHostingStartup
         services
             .AddDbContext<IssuesDbContext>(optionsLifetime: ServiceLifetime.Singleton)
             .AddDbContextFactory<IssuesDbContext>()
-            .AddTransient<IModelConfiguration, SqliteModelConfiguration>()
+            .AddScoped<SqliteModelConfiguration>()
             .AddScoped<IIssueRepository, IssueRepository>();
     }
 }

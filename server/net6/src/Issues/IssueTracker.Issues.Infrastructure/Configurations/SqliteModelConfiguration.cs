@@ -11,8 +11,6 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Issues.Domain;
-using IssueTracker.Issues.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -20,7 +18,7 @@ using Microsoft.Extensions.Logging;
 
 namespace IssueTracker.Issues.Infrastructure.Configurations;
 
-internal sealed class SqliteModelConfiguration : IModelConfiguration
+public sealed class SqliteModelConfiguration 
 {
     private readonly IConfiguration _configuration;
     private readonly IHostEnvironment _environment;
@@ -37,13 +35,11 @@ internal sealed class SqliteModelConfiguration : IModelConfiguration
         _logger = loggerFactory.CreateLogger<SqliteModelConfiguration>();
     }
 
-    /// <inheritdoc />
-    public void ConfigureModel(ModelBuilder modelBuilder)
+    public static void ConfigureModel(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(SqliteModelConfiguration).Assembly);
     }
 
-    /// <inheritdoc />
     public void ConfigureContext(DbContextOptionsBuilder optionsBuilder)
     {
         if (optionsBuilder.IsConfigured)
