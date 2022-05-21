@@ -12,35 +12,20 @@
 //
 
 using System.Linq.Expressions;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
+using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
+using Microsoft.EntityFrameworkCore;
 
-namespace IssueTracker.Issues.Infrastructure.Specifications.IssueAggregate;
+namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
 
-public sealed class ExpressionPredicate : IExpressionPredicate
+public sealed class IssueTypeMatchesPredicate : IPredicateSpecification<Issue>
 {
-    /// <summary>
-    /// Parses <paramref name="expression"/> into <see cref="Filter"/> or
-    /// </summary>
-    /// <param name="expression">string representation of a expression predicate</param>
-    /// <exception cref="ArgumentException">
-    /// if <paramref name="expression"/> is <see langword="null"/> or empty; of it does
-    /// not represent a valid expression.
-    /// </exception>
-    public ExpressionPredicate(string expression)
+    public IssueTypeMatchesPredicate(IssueType type)
     {
-        if (expression is not {Length: > 0})
-        {
-            throw new ArgumentException("Expression cannot be empty", nameof(expression));
-        }
-
-        Expression = expression;
+        Type = type;
     }
 
     /// <inheritdoc />
-    public Expression<Func<Issue, bool>> Filter =>
-        _ => true;
+    public Expression<Func<Issue, bool>> Filter => issue => EF.Property<IssueType>(issue, "_type") == Type;
 
-    /// <inheritdoc />
-    public string Expression { get; }
+    public IssueType Type { get; }
 }

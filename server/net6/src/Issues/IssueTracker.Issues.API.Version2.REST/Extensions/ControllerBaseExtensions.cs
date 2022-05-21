@@ -12,12 +12,12 @@
 //
 
 using AutoMapper;
-using IssueTracker.Issues.API.Version2.Abstractions.Commands;
-using IssueTracker.Issues.API.Version2.Abstractions.Queries;
 using IssueTracker.Issues.API.Version2.REST.DataTransferObjects.Request;
 using IssueTracker.Issues.API.Version2.REST.DataTransferObjects.Response;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.Specifications;
+using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
+using IssueTracker.Issues.Domain.Services.Version2.Commands;
+using IssueTracker.Issues.Domain.Services.Version2.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

@@ -11,13 +11,14 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Issues.API.Version2.Abstractions.DataTransferObjects;
-using IssueTracker.Issues.Domain.Specifications;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
+using IssueTracker.Issues.Domain.Services.Version2.DataTransferObjects;
 using MediatR;
 
-namespace IssueTracker.Issues.API.Version2.Abstractions.Queries;
+namespace IssueTracker.Issues.Domain.Services.Version2.Queries;
 
-public sealed record class GetAllSortedAndPagedByFilterQuery(
+public sealed record class GetAllSortedAndPagedWhereIssueTypeMatchesQuery(
     PagingOptions Paging,
     SortingOptions Sorting,
-    string Filter) : IRequest<IssueSummaryPage>;
+    IssueType Type) : IRequest<IssueSummaryPage>;

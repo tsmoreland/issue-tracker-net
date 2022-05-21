@@ -11,26 +11,24 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Issues.API.Version2.Abstractions.DataTransferObjects;
-using IssueTracker.Issues.API.Version2.Abstractions.Queries;
-using IssueTracker.Issues.API.Version2.Extensions;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Projections;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
-using IssueTracker.Issues.Domain.Specifications;
+using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
+using IssueTracker.Issues.Domain.Services.Version2.DataTransferObjects;
+using IssueTracker.Issues.Domain.Services.Version2.Extensions;
+using IssueTracker.Issues.Domain.Services.Version2.Queries;
 using MediatR;
 
-namespace IssueTracker.Issues.API.Version2.QueryHandlers;
+namespace IssueTracker.Issues.Domain.Services.Version2.QueryHandlers;
 
 public sealed class GetAllSortedAndPagedWhereIssueTypeMatchesQueryHandler : IRequestHandler<GetAllSortedAndPagedWhereIssueTypeMatchesQuery, IssueSummaryPage>
 {
     private readonly IIssueRepository _repository;
-    private readonly IIssueSpecificationFactory _specification;
 
-    public GetAllSortedAndPagedWhereIssueTypeMatchesQueryHandler(IIssueRepository repository, IIssueSpecificationFactory specification)
+    public GetAllSortedAndPagedWhereIssueTypeMatchesQueryHandler(IIssueRepository repository)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        _specification = specification ?? throw new ArgumentNullException(nameof(specification));
     }
 
     /// <inheritdoc />
@@ -39,8 +37,8 @@ public sealed class GetAllSortedAndPagedWhereIssueTypeMatchesQueryHandler : IReq
         (PagingOptions paging, SortingOptions sorting, IssueType type)  = request;
         (int total, IAsyncEnumerable<IssueSummaryProjection> summaries) = await _repository
             .GetPagedAndSortedProjections(
-                _specification.IssueTypeMatches(type),
-                _specification.SelectSummary(),
+                new IssueTypeMatchesPredicate(type),
+                new SelectIssueSummaryProjection(),
                 paging, sorting,
                 cancellationToken);
 

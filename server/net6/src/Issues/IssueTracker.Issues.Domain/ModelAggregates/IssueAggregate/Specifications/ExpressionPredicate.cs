@@ -11,11 +11,35 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Issues.Domain.Specifications;
+using System.Linq.Expressions;
+using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
 
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
 
-public interface IIssueTypeMatchesPredicate : IPredicateSpecification<Issue>
+public sealed class ExpressionPredicate : IPredicateSpecification<Issue>
 {
-    IssueType Type { get; }
+    /// <summary>
+    /// Parses <paramref name="expression"/> into <see cref="Filter"/> or
+    /// </summary>
+    /// <param name="expression">string representation of a expression predicate</param>
+    /// <exception cref="ArgumentException">
+    /// if <paramref name="expression"/> is <see langword="null"/> or empty; of it does
+    /// not represent a valid expression.
+    /// </exception>
+    public ExpressionPredicate(string expression)
+    {
+        if (expression is not {Length: > 0})
+        {
+            throw new ArgumentException("Expression cannot be empty", nameof(expression));
+        }
+
+        Expression = expression;
+    }
+
+    /// <inheritdoc />
+    public Expression<Func<Issue, bool>> Filter =>
+        _ => true;
+
+    /// <inheritdoc />
+    public string Expression { get; }
 }
