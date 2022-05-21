@@ -13,23 +13,21 @@
 
 using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.Specifications;
 using IssueTracker.Issues.Domain.Extensions;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
-using IssueTracker.Issues.Infrastructure.Specifications.IssueAggregate;
 using Microsoft.EntityFrameworkCore;
+using IssueTracker.Issues.Domain;
+using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
 
 namespace IssueTracker.Issues.Infrastructure.Repositories;
 
 public sealed class IssueRepository : IIssueRepository
 {
     private readonly IssuesDbContext _dbContext;
-    private readonly IIssueSpecificationFactory _specification;
 
-    public IssueRepository(IssuesDbContext dbContext, IIssueSpecificationFactory specificationFactory)
+    public IssueRepository(IssuesDbContext dbContext)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-        _specification = specificationFactory ?? throw new ArgumentNullException(nameof(specificationFactory));
     }
 
     public IUnitOfWork UnitOfWork => _dbContext;
@@ -50,10 +48,11 @@ public sealed class IssueRepository : IIssueRepository
     /// <inheritdoc />
     public ValueTask<int> MaxIssueNumber(string project, CancellationToken cancellationToken = default)
     {
+        SelectIssueNumber selector = new();
         return _dbContext.Issues.AsNoTracking()
-            .Where(_specification.ProjectMatches(project))
-            .OrderByDescending(_specification.SelectIssueNumber().Select)
-            .Select(_specification.SelectIssueNumber())
+            .Where(new ProjectMatchesPredicate(project).Filter)
+            .OrderByDescending(selector.Select)
+            .Select(selector.Select)
             .Take(1)
             .AsAsyncEnumerable()
             .DefaultIfEmpty(0)

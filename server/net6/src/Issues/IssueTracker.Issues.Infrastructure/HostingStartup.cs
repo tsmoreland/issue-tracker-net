@@ -13,14 +13,12 @@
 
 using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
-using IssueTracker.Issues.Infrastructure;
+using IssueTracker.Issues.Infrastructure.Configurations;
 using IssueTracker.Issues.Infrastructure.Repositories;
-using IssueTracker.Issues.Infrastructure.Specifications.IssueAggregate;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-[assembly: HostingStartup(typeof(HostingStartup))]
+[assembly: HostingStartup(typeof(IssueTracker.Issues.Infrastructure.HostingStartup))]
 
 namespace IssueTracker.Issues.Infrastructure;
 
@@ -40,7 +38,7 @@ public sealed class HostingStartup : IHostingStartup
         services
             .AddDbContext<IssuesDbContext>(optionsLifetime: ServiceLifetime.Singleton)
             .AddDbContextFactory<IssuesDbContext>()
-            .AddScoped<IIssueRepository, IssueRepository>()
-            .AddTransient<IIssueSpecificationFactory, IssueSpecificationFactory>();
+            .AddScoped<IModelConfiguration, SqliteModelConfiguration>()
+            .AddScoped<IIssueRepository, IssueRepository>();
     }
 }

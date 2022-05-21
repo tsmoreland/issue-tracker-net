@@ -12,7 +12,7 @@
 //
 
 using IssueTracker.Issues.Domain.DataContracts;
-using IssueTracker.Issues.Domain.Specifications;
+using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
 
 namespace IssueTracker.Issues.Domain.Extensions;
 

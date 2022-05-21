@@ -15,7 +15,7 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.4");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.5");
 
             modelBuilder.Entity("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Issue", b =>
                 {
@@ -27,22 +27,18 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .IsUnicode(true)
-                        .HasColumnType("TEXT");
-
                     b.Property<long>("LastModifiedTime")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Priority")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("_description")
                         .IsRequired()
+                        .HasMaxLength(500)
+                        .IsUnicode(true)
                         .HasColumnType("TEXT")
-                        .HasColumnName("Title1");
+                        .HasColumnName("Description");
 
                     b.Property<string>("_epicId")
                         .HasColumnType("TEXT")
@@ -72,13 +68,15 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Title");
+                    b.HasIndex("Priority");
 
                     b.HasIndex("_epicId");
 
                     b.HasIndex("_issueNumber");
 
                     b.HasIndex("_project");
+
+                    b.HasIndex("_title");
 
                     b.ToTable("Issues", (string)null);
                 });
