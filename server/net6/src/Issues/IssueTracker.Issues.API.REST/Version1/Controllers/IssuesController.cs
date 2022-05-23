@@ -61,7 +61,7 @@ public class IssuesController : ControllerBase
     [HttpGet]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IAsyncEnumerable<IssueSummaryDto>), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueSummaryPage), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     public async Task<IActionResult> GetAll(
         [FromQuery] int pageNumber = 1,
@@ -75,7 +75,7 @@ public class IssuesController : ControllerBase
 
         if (paging.IsValid(out string? invalidProperty, out string? errorMessage))
         {
-            return Ok(await _mediator.Send(query, cancellationToken));
+            return Ok(IssueSummaryPage.Convert(await _mediator.Send(query, cancellationToken), _mapper));
         }
 
         ModelState.AddModelError(invalidProperty, errorMessage);
