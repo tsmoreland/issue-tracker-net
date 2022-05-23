@@ -33,9 +33,6 @@ public sealed class Version2MappingProfile : Profile
         CreateMap<Source.IssueSummaryDto, Destination.IssueSummaryDto>()
             .ReverseMap();
 
-        CreateMap<Source.IssueSummaryPage, Destination.IssueSummaryPage>()
-            .ReverseMap();
-
         CreateMap<Source.LinkedIssueSummaryDto, Destination.LinkedIssueSummaryDto>()
             .ReverseMap();
     }
