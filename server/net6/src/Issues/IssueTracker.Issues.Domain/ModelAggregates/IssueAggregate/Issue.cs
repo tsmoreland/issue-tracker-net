@@ -12,6 +12,7 @@
 //
 
 using IssueTracker.Issues.Domain.DataContracts;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
 
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
@@ -25,6 +26,7 @@ public sealed class Issue : Entity
     private IssueType _type = IssueType.Defect;
     private Maintainer _assignee = Maintainer.Unassigned;
     private TriageUser _reporter = TriageUser.Unassigned;
+    private IssueState _issueState = new BackLogState();
     private readonly ICollection<IssueLink> _relatedTo = new HashSet<IssueLink>();
     // ReSharper disable once CollectionNeverUpdated.Local
     private readonly ICollection<IssueLink> _relatedFrom = new HashSet<IssueLink>();
@@ -124,6 +126,11 @@ public sealed class Issue : Entity
         }
     }
 
+    /// <summary>
+    /// Issue State
+    /// </summary>
+    public IssueState State { get; private set; } = new BackLogState();
+
     public TriageUser Reporter
     {
         get => _reporter;
@@ -155,6 +162,61 @@ public sealed class Issue : Entity
             }
             _epicId = value;
         }
+    }
+
+    /// <summary>
+    /// Move to next state in the sequence
+    /// </summary>
+    /// <param name="success">used by some states to control what the next state is</param>
+    /// <returns>new state</returns>
+    public void MoveStateToNext(bool success)
+    {
+        _issueState = _issueState.MoveToNext(success);
+    }
+
+    /// <summary>
+    /// Move to the backlog
+    /// </summary>
+    public void MoveToBacklog()
+    {
+        _issueState = _issueState.MoveToBacklog();
+    }
+
+    /// <summary>
+    /// Attempt to close the issue,
+    /// </summary>
+    /// <param name="reason">reason for the closure</param>
+    /// <returns>
+    /// <see langword="true"/> on success
+    /// </returns>
+    public bool TryClose(ClosureReason reason)
+    {
+        IssueState newState = _issueState.TryClose(reason);
+        if (newState == _issueState)
+        {
+            return false;
+        }
+
+        _issueState = newState;
+        return true;
+    }
+
+    /// <summary>
+    /// Attempt to re-open a closed issue
+    /// </summary>
+    /// <returns>
+    /// <see langword="true"/> on succcess
+    /// </returns>
+    public bool TryOpen()
+    {
+        IssueState newState = _issueState.TryOpen();
+        if (newState == _issueState)
+        {
+            return false;
+        }
+
+        _issueState = newState;
+        return true;
     }
 
     public void AddRelatedTo(LinkType link, Issue issue)
