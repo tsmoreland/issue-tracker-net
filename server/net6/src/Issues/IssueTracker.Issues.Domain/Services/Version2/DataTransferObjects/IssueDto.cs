@@ -21,5 +21,6 @@ public sealed record class IssueDto(
     string? Description,
     Priority Priority,
     IssueType Type,
+    IssueStateValue State,
     string? EpicId,
     IEnumerable<LinkedIssueSummaryDto> RelatedTo);

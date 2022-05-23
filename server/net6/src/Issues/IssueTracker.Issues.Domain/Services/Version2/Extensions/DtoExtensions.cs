@@ -26,7 +26,9 @@ internal static class DtoExtensions
             issue.Title,
             issue.Description,
             issue.Priority,
-            issue.Type, issue.EpicId?.ToString(),
+            issue.Type,
+            issue.State.Value,
+            issue.EpicId?.ToString(),
             Array.Empty<LinkedIssueSummaryDto>());
     }
 
