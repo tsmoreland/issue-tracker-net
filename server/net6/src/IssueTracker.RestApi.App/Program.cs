@@ -62,9 +62,10 @@ builder.Services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'
 builder.Services.AddApiVersioning(
     options =>
     {
+        options.ReportApiVersions = true;
         options.ApiVersionReader = new AggregateApiVersionReader();
-        options.AssumeDefaultVersionWhenUnspecified = false;
-        options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+        options.DefaultApiVersion = new ApiVersion(1, 0);
+        options.AssumeDefaultVersionWhenUnspecified = true;
     });
 
 builder.Services
@@ -128,9 +129,9 @@ app.MapGet("/serverTime", (bool utc) =>
     Results.Json(new {time = utc ? DateTime.UtcNow.ToString("o") : DateTime.Now.ToString("o")}));
 
 app.MapDelete("/api/reset",
-    ([FromServices] IIssueDataMigration migration) =>
+    async ([FromServices] IIssueDataMigration migration) =>
     {
-        migration.ResetAndRepopultateAsync();
+        await migration.ResetAndRepopultateAsync();
         return Results.StatusCode(StatusCodes.Status418ImATeapot);
     });
 

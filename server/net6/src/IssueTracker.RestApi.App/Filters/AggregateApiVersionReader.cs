@@ -30,8 +30,8 @@ public sealed class AggregateApiVersionReader : IApiVersionReader
     public AggregateApiVersionReader()
     {
         _urlSegmentApiVersionReader = new UrlSegmentApiVersionReader();
-        _headerApiVersionReader = new HeaderApiVersionReader();
-        _queryStringApiVersionReader = new QueryStringApiVersionReader();
+        _headerApiVersionReader = new HeaderApiVersionReader("X-Api-Version");
+        _queryStringApiVersionReader = new QueryStringApiVersionReader("api-version");
     }
 
     /// <inheritdoc />
