@@ -12,6 +12,7 @@
 //
 
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -51,6 +52,11 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
             .Property<IssueType>("_type")
             .UsePropertyAccessMode(PropertyAccessMode.Field)
             .IsRequired();
+
+        builder
+            .Property(e => e.State)
+            .IsRequired()
+            .HasConversion(i => i.Value, state => IssueState.Build(state));
 
         builder.Property<IssueIdentifier?>("_epicId")
             .UsePropertyAccessMode(PropertyAccessMode.Field)
