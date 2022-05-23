@@ -26,7 +26,7 @@ public sealed class IssueDto
     /// <summary>
     /// Instantiates a new instance of the <see cref="IssueDto"/> class
     /// </summary>
-    public IssueDto(string id, string title, string description, Priority priority, IssueType type, string? epicId)
+    public IssueDto(string id, string title, string description, Priority priority, IssueType type, string? epicId, IssueStateValue state)
     {
         Id = id;
         Title = title;
@@ -34,6 +34,7 @@ public sealed class IssueDto
         Priority = priority;
         Type = type;
         EpicId = epicId;
+        State = state;
     }
 
     /// <summary>
@@ -79,6 +80,13 @@ public sealed class IssueDto
     /// <example>Defect</example>
     [Required]
     public IssueType Type { get; set; } = IssueType.Defect;
+
+    /// <summary>
+    /// Issue State
+    /// </summary>
+    /// <example>BackLog</example>
+    [Required]
+    public IssueStateValue State { get; set; } = IssueStateValue.Backlog;
 
     /// <summary>
     /// Epic Id
