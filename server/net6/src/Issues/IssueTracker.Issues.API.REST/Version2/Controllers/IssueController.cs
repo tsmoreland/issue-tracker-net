@@ -20,7 +20,6 @@ using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
 using IssueTracker.Issues.Domain.Services.Version2.Commands;
 using IssueTracker.Issues.Domain.Services.Version2.Queries;
-using IssueTracker.SwashbuckleExtensions.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +32,6 @@ namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/v{version:apiVersion}/issues")]
-[TrimVersionFromSwagger]
 [Tags("Issues (URL versioning)")]
 [ApiVersion("2")]
 public sealed class IssueController : ControllerBase

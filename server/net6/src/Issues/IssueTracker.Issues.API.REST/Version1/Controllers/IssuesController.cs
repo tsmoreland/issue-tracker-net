@@ -33,7 +33,7 @@ namespace IssueTracker.Issues.API.REST.Version1.Controllers;
 /// </summary>
 [Route("api/v{version:apiVersion}/issues")]
 [ApiController]
-[TrimVersionFromSwagger]
+//[TrimVersionFromSwagger]
 [Tags("Issues (URL Versioned)")]
 [ApiVersion("1")]
 public class IssuesController : ControllerBase

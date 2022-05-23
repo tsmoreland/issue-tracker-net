@@ -58,7 +58,12 @@ builder.Services
     });
 
 builder.Services.AddSecurityHeaders(builder.Configuration);
-builder.Services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'V");
+builder.Services
+    .AddVersionedApiExplorer(options =>
+    {
+        options.GroupNameFormat = "'v'V";
+        options.SubstituteApiVersionInUrl = true;
+    });
 builder.Services.AddApiVersioning(
     options =>
     {

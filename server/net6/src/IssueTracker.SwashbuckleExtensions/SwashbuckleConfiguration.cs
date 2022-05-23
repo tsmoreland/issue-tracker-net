@@ -14,8 +14,6 @@
 using System.Reflection;
 using IssueTracker.ServiceDiscovery;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
-using IssueTracker.SwashbuckleExtensions.Filters;
-using IssueTracker.SwashBuckleExtensions.Filters;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -71,8 +69,6 @@ public class SwashbuckleConfiguration : ConfigureNamedOptions<SwaggerGenOptions,
         }
 
         options.CustomSchemaIds(SetSchemaName);
-        options.OperationFilter<TrimVersionOperationFilter>();
-        options.DocumentFilter<ApplyApiVersionDocumentFilter>();
 
         static void AddSwaggerDocsPerVersion(SwaggerGenOptions options, IEnumerable<ApiVersionDescription> versionDescriptions)
         {

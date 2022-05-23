@@ -15,7 +15,6 @@ using System.Net.Mime;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 using IssueTracker.Issues.API.REST.Version2.Extensions;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.SwashbuckleExtensions.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +28,6 @@ namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/v{version:apiVersion}/stories")]
-[TrimVersionFromSwagger]
 [Tags("Stories (URL versioning)")]
 [ApiVersion("2")]
 public sealed class StoriesController : ControllerBase
