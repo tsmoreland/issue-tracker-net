@@ -12,6 +12,7 @@
 //
 
 using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
 namespace IssueTracker.Issues.API.REST.Version1.DataTransferObjects.Response;
@@ -32,12 +33,24 @@ public sealed class IssueSummaryPage
         Items = items;
     }
 
+
     /// <summary>
     /// Instantiates a new instance of the <see cref="IssueSummaryPage"/> class.
     /// </summary>
     public IssueSummaryPage()
     {
         
+    }
+
+    /// <summary>
+    /// Convert <paramref name="page"/> to <see cref="IssueSummaryPage"/>
+    /// </summary>
+    public static IssueSummaryPage Convert(Domain.Services.Version1.DataTransferObjects.IssueSummaryPage page, IMapper mapper)
+    {
+        return new IssueSummaryPage(
+            page.PageNumber,
+            page.Total,
+            page.Items.Select(mapper.Map<IssueSummaryDto>));
     }
 
     /// <summary>

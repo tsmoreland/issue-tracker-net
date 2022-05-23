@@ -12,6 +12,7 @@
 //
 
 using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
 namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
@@ -38,6 +39,17 @@ public sealed class IssueSummaryPage
     public IssueSummaryPage()
     {
         
+    }
+
+    /// <summary>
+    /// Convert <paramref name="page"/> to <see cref="IssueSummaryPage"/>
+    /// </summary>
+    public static IssueSummaryPage Convert(Domain.Services.Version2.DataTransferObjects.IssueSummaryPage page, IMapper mapper)
+    {
+        return new IssueSummaryPage(
+            page.PageNumber,
+            page.Total,
+            page.Items.Select(mapper.Map<IssueSummaryDto>));
     }
 
     /// <summary>
