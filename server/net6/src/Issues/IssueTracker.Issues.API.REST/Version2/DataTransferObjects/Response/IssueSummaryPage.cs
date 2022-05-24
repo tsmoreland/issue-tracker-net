@@ -20,7 +20,7 @@ namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 /// <summary>
 /// Issue Summary Page
 /// </summary>
-[SwaggerSchemaName("Issue Summary Page (v1)")]
+[SwaggerSchemaName("Issue Summary Page (v2)")]
 public sealed class IssueSummaryPage
 {
     /// <summary>

@@ -37,11 +37,11 @@ internal static class ControllerBaseExtensions
     {
         PagingOptions paging = new (pageNumber, pageSize);
         SortingOptions sorting = SortingOptions.FromString(orderBy);
-        GetAllSortedAndPagedWhereIssueTypeMatchesQuery query = new(paging, sorting, type);
+        GetAllSortedAndPagedWhereIssueTypeMatchesSummaryQuery summaryQuery = new(paging, sorting, type);
 
         if (paging.IsValid(out string? invalidProperty, out string? errorMessage))
         {
-            return controller.Ok(await mediator.Send(query, cancellationToken));
+            return controller.Ok(await mediator.Send(summaryQuery, cancellationToken));
         }
 
         controller.ModelState.AddModelError(invalidProperty, errorMessage);

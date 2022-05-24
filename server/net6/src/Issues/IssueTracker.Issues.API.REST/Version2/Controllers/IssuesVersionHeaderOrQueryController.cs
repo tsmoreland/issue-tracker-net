@@ -61,11 +61,11 @@ public sealed class IssuesVersionHeaderOrQueryController : ControllerBase
     {
         PagingOptions paging = new(pageNumber, pageSize);
         SortingOptions sorting = SortingOptions.FromString(orderBy);
-        GetAllSortedAndPagedQuery query = new(paging, sorting);
+        GetAllSortedAndPagedSummaryQuery summaryQuery = new(paging, sorting);
 
         if (paging.IsValid(out string? invalidProperty, out string? errorMessage))
         {
-            return Ok(IssueSummaryPage.Convert(await _mediator.Send(query, cancellationToken), _mapper));
+            return Ok(IssueSummaryPage.Convert(await _mediator.Send(summaryQuery, cancellationToken), _mapper));
         }
 
         ModelState.AddModelError(invalidProperty, errorMessage);

@@ -35,5 +35,11 @@ public sealed class Version2MappingProfile : Profile
 
         CreateMap<Source.LinkedIssueSummaryDto, Destination.LinkedIssueSummaryDto>()
             .ReverseMap();
+
+        CreateMap<Source.TriageUserDto, Destination.TriageUserDto>()
+            .ReverseMap();
+
+        CreateMap<Source.MaintainerDto, Destination.MaintainerDto>()
+            .ReverseMap();
     }
 }

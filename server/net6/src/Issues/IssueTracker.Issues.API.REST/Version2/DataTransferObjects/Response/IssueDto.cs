@@ -26,15 +26,20 @@ public sealed class IssueDto
     /// <summary>
     /// Instantiates a new instance of the <see cref="IssueDto"/> class
     /// </summary>
-    public IssueDto(string id, string title, string description, Priority priority, IssueType type, string? epicId, IssueStateValue state)
+    public IssueDto(string id, string title, string description,
+        Priority priority, IssueType type, IssueStateValue state,
+        TriageUserDto reporter, MaintainerDto assignee,
+        string? epicId)
     {
         Id = id;
         Title = title;
         Description = description;
         Priority = priority;
         Type = type;
-        EpicId = epicId;
         State = state;
+        Reporter = reporter;
+        Assignee = assignee;
+        EpicId = epicId;
     }
 
     /// <summary>
@@ -42,7 +47,9 @@ public sealed class IssueDto
     /// </summary>
     public IssueDto()
     {
-        
+        Assignee = new MaintainerDto(Maintainer.Unassigned.UserId, Maintainer.Unassigned.FullName);
+        Reporter = new TriageUserDto(TriageUser.Unassigned.UserId, TriageUser.Unassigned.FullName);
+
     }
 
     /// <summary>
@@ -87,6 +94,18 @@ public sealed class IssueDto
     /// <example>BackLog</example>
     [Required]
     public IssueStateValue State { get; set; } = IssueStateValue.Backlog;
+
+    /// <summary>
+    /// Reporter
+    /// </summary>
+    [Required]
+    public TriageUserDto Reporter { get; set; }
+
+    /// <summary>
+    /// Assigned maintainer
+    /// </summary>
+    [Required]
+    public MaintainerDto Assignee { get; set; }
 
     /// <summary>
     /// Epic Id

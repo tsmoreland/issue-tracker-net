@@ -12,62 +12,29 @@
 //
 
 using System.ComponentModel.DataAnnotations;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.SwashbuckleExtensions.Abstractions;
 
 namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 
 /// <summary>
-/// Issue Summary 
+/// Maintainer
 /// </summary>
-[SwaggerSchemaName("Issue Summary (v2)")]
-public sealed class IssueSummaryDto
+/// <param name="Id">Unique Identifier</param>
+/// <param name="FullName">Full name</param>
+[SwaggerSchemaName("Maintainer")]
+public sealed record class MaintainerDto(Guid Id, string FullName)
 {
     /// <summary>
-    /// Instantiates a new instance of the <see cref="IssueSummaryDto"/> class.
+    /// Unique Identifier
     /// </summary>
-    public IssueSummaryDto(string id, string title, Priority priority, IssueType type)
-    {
-        Id = id;
-        Title = title;
-        Priority = priority;
-        Type = type;
-    }
-
-    /// <summary>
-    /// Instantiates a new instance of the <see cref="IssueSummaryDto"/> class.
-    /// </summary>
-    public IssueSummaryDto()
-    {
-        
-    }
-
-    /// <summary>
-    /// Unqiue Issue Id
-    /// </summary>
-    /// <example>APP-1</example>
+    /// <example>F3296326-A40A-4208-AE6F-055EE106AC85</example>
     [Required]
-    [RegularExpression("[A-Z][A-Z][A-Z]-[0-9]+")]
-    public string Id { get; set; } = string.Empty;
+    public Guid Id { get; init; } = Id;
 
     /// <summary>
-    /// Issue Title
+    /// Full name
     /// </summary>
-    /// <example>Sample Title</example>
+    /// <example>John Smith</example>
     [Required]
-    public string Title { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Priority
-    /// </summary>
-    /// <example>Low</example>
-    [Required]
-    public Priority Priority { get; set; } = Priority.Low;
-
-    /// <summary>
-    /// Issue Type
-    /// </summary>
-    /// <example>Defect</example>
-    [Required]
-    public IssueType Type { get; set; } = IssueType.Defect;
+    public string FullName { get; init; } = FullName;
 }
