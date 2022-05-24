@@ -11,8 +11,10 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using IssueTracker.Issues.API.GRPC.Proto;
+using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.Services.Version2.Commands;
 using IssueTracker.Issues.Domain.Services.Version2.DataTransferObjects;
@@ -23,10 +25,19 @@ namespace IssueTracker.Issues.API.GRPC;
 public sealed class IssueCommandService : IssueTrackerCommandService.IssueTrackerCommandServiceBase
 {
     private readonly IMediator _mediator;
+    private readonly IIssueDataMigration _dataMigration;
 
-    public IssueCommandService(IMediator mediator)
+    public IssueCommandService(IMediator mediator, IIssueDataMigration dataMigration)
     {
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+        _dataMigration = dataMigration ?? throw new ArgumentNullException(nameof(dataMigration));
+    }
+
+    /// <inheritdoc />
+    public override async Task<Empty> ResetDatabase(Empty request, ServerCallContext context)
+    {
+        await _dataMigration.ResetAndRepopultateAsync(context.CancellationToken);
+        return new Empty();
     }
 
     /// <inheritdoc />

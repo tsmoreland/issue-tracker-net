@@ -1,10 +1,12 @@
 syntax = "proto3";
 
 import "issueTracker.issues.shared.proto";
+import "google/protobuf/empty.proto";
 
 option csharp_namespace = "IssueTracker.Issues.API.GRPC.Proto";
 
 service IssueTrackerCommandService {
+    rpc ResetDatabase(google.protobuf.Empty) returns (google.protobuf.Empty);
     rpc AddIssue(AddIssueMessage) returns (StatusMessage);
     rpc EditIssue(EditIssueMessage) returns (StatusMessage);
 }
@@ -31,3 +33,6 @@ message EditIssueMessage {
     OptionalString EpicId = 8;
 }
 
+message ResetDatabaseMesssage {
+
+}

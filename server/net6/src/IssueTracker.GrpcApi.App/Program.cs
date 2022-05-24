@@ -1,7 +1,7 @@
 using System.IO.Compression;
 using Hellang.Middleware.ProblemDetails;
-using IssueTracker.Data.Abstractions;
-using IssueTracker.GrpcApi.Services;
+using IssueTracker.Issues.API.GRPC;
+using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Middelware.SecurityHeaders;
 using IssueTracker.ServiceDiscovery;
 using Microsoft.AspNetCore.Identity;
@@ -24,7 +24,7 @@ WebApplication app = builder.Build();
 using (IServiceScope scope = app.Services.CreateScope())
 {
     IIssueDataMigration migration =  scope.ServiceProvider.GetRequiredService<IIssueDataMigration>();
-    migration.Migrate();
+    await migration.MigrateAsync();
 }
 
 ConfigurePipeline(app);
