@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+option csharp_namespace = "IssueTracker.Issues.API.GRPC.Proto";
+
+enum ResultCode {
+    ResultUnknown = 0;
+    ResultSuccess = 1;
+    ResultFailure = 2;
+    ResultNotFound = 3;
+    ResultInvalidArgument = 4;
+}
+
+enum Priority {
+    PriorityNone = 0;
+    PriorityLow = 1;
+    PriorityMedium = 2;
+    PriorityHigh = 3;
+}
+
+enum IssueType {
+    IssueTypeNone = 0;
+    IssueTypeEpic = 1;
+    IssueTypeStory = 2;
+    IssueTypeTask = 3;
+    IssueTypeSubTask = 4;
+    IssueTypeDefect = 5;
+}
+
+enum IssueState {
+    None = 0;
+    StateBacklog = 1;
+    StateToDo = 2;
+    StateOpen = 3;
+    StateInReview = 4;
+    StateWontDo = 5;
+    StateCannotReproduce = 6;
+    StateNotADefect = 7;
+    StateInTesting = 8;
+    StateComplete = 9;
+    StateClosedAsResolved = 10;
+    StateClosedAsDeferred = 11;
+    StateClosedAsWontDo = 12;
+    StateClosedAsCannotReproduce = 13;
+    StateClosedAsNotADefect = 14;
+}
+
+message OptionalString {
+    bool HasValue = 1;
+    string Value = 2;
+}
+
+message StatusMessage {
+    ResultCode Status = 1;
+    string Message = 2;
+}
+
+message TriageUserMessage {
+    string UserId = 1;   
+    string FullName = 2;
+}
+message MaintainerMessage {
+    string UserId = 1;   
+    string FullName = 2;
+}
+
