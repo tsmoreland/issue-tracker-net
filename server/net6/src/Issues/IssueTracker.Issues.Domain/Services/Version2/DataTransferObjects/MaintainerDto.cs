@@ -11,10 +11,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.Services.Version2.DataTransferObjects;
-using MediatR;
+namespace IssueTracker.Issues.Domain.Services.Version2.DataTransferObjects;
 
-namespace IssueTracker.Issues.Domain.Services.Version2.Queries;
-
-public sealed record class FindIssueByIdQuery(IssueIdentifier Id) : IRequest<IssueDto?>;
+/// <summary>
+/// Maintainer
+/// </summary>
+/// <param name="Id">Unique Identifier</param>
+/// <param name="FullName">Full name of the user</param>
+public sealed record class MaintainerDto(Guid Id, string FullName);

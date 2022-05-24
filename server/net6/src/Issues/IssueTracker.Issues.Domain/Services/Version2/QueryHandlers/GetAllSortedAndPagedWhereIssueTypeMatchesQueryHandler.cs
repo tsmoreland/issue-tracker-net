@@ -22,7 +22,7 @@ using MediatR;
 
 namespace IssueTracker.Issues.Domain.Services.Version2.QueryHandlers;
 
-public sealed class GetAllSortedAndPagedWhereIssueTypeMatchesQueryHandler : IRequestHandler<GetAllSortedAndPagedWhereIssueTypeMatchesQuery, IssueSummaryPage>
+public sealed class GetAllSortedAndPagedWhereIssueTypeMatchesQueryHandler : IRequestHandler<GetAllSortedAndPagedWhereIssueTypeMatchesSummaryQuery, IssueSummaryPage>
 {
     private readonly IIssueRepository _repository;
 
@@ -32,7 +32,7 @@ public sealed class GetAllSortedAndPagedWhereIssueTypeMatchesQueryHandler : IReq
     }
 
     /// <inheritdoc />
-    public async Task<IssueSummaryPage> Handle(GetAllSortedAndPagedWhereIssueTypeMatchesQuery request, CancellationToken cancellationToken)
+    public async Task<IssueSummaryPage> Handle(GetAllSortedAndPagedWhereIssueTypeMatchesSummaryQuery request, CancellationToken cancellationToken)
     {
         (PagingOptions paging, SortingOptions sorting, IssueType type)  = request;
         (int total, IAsyncEnumerable<IssueSummaryProjection> summaries) = await _repository

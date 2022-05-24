@@ -17,7 +17,4 @@ using MediatR;
 
 namespace IssueTracker.Issues.Domain.Services.Version2.Queries;
 
-public sealed record class GetAllSortedAndPagedByFilterQuery(
-    PagingOptions Paging,
-    SortingOptions Sorting,
-    string Filter) : IRequest<IssueSummaryPage>;
+public sealed record class GetAllSortedAndPagedSummaryQuery(PagingOptions Paging, SortingOptions Sorting) : IRequest<IssueSummaryPage>;

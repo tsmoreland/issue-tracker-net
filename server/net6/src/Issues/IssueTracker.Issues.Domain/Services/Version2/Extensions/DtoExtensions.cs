@@ -19,17 +19,28 @@ namespace IssueTracker.Issues.Domain.Services.Version2.Extensions;
 
 internal static class DtoExtensions
 {
-    public static IssueDto ToDto(this Issue issue)
+    public static IssueDto ToDto(this Issue source)
     {
         return new IssueDto(
-            issue.Id.ToString(),
-            issue.Title,
-            issue.Description,
-            issue.Priority,
-            issue.Type,
-            issue.State.Value,
-            issue.EpicId?.ToString(),
+            source.Id.ToString(),
+            source.Title,
+            source.Description,
+            source.Priority,
+            source.Type,
+            source.State.Value,
+            source.Reporter.ToDto(),
+            source.Assignee.ToDto(),
+            source.EpicId?.ToString(),
             Array.Empty<LinkedIssueSummaryDto>());
+    }
+
+    public static TriageUserDto ToDto(this TriageUser source)
+    {
+        return new TriageUserDto(source.UserId, source.FullName);
+    }
+    public static MaintainerDto ToDto(this Maintainer source)
+    {
+        return new MaintainerDto(source.UserId, source.FullName);
     }
 
     public static IAsyncEnumerable<IssueSummaryDto> ToDto(this IAsyncEnumerable<IssueSummaryProjection> summaries)
