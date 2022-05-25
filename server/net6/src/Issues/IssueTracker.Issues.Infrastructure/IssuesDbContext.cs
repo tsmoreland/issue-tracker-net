@@ -12,7 +12,6 @@
 //
 
 using IssueTracker.Issues.Domain.DataContracts;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 
