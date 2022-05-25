@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5A9582DD-FF85-461A-BAD0-998E158AD8AF}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\.editorconfig = ..\..\.editorconfig
+		bin\ef-tools.py = bin\ef-tools.py
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Core", "src\IssueTracker.Core\IssueTracker.Core.csproj", "{2EC2D449-98C4-48E7-94BF-FFD3E3854965}"
@@ -66,7 +67,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.Test", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.API.GRPC", "src\Issues\IssueTracker.Issues.API.GRPC\IssueTracker.Issues.API.GRPC.csproj", "{3664D14C-593B-4A96-8A5A-5293BD841A1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Issues.API.GRPCNet", "src\Issues\IssueTracker.Issues.API.GRPCNet\IssueTracker.Issues.API.GRPCNet.csproj", "{BE6429CC-2C7E-4442-8A5E-1768B8C557AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.API.GRPCNet", "src\Issues\IssueTracker.Issues.API.GRPCNet\IssueTracker.Issues.API.GRPCNet.csproj", "{BE6429CC-2C7E-4442-8A5E-1768B8C557AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
