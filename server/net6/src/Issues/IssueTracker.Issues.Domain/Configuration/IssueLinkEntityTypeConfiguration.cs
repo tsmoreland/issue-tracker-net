@@ -10,6 +10,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using IssueTracker.Issues.Domain.Configuration.ValueConverters;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -29,11 +30,11 @@ internal sealed class IssueLinkEntityTypeConfiguration : IEntityTypeConfiguratio
 
         builder
             .Property(e => e.LeftId)
-            .HasConversion(e => e.ToString(), @string => IssueIdentifier.FromString(@string))
+            .HasConversion<IssueIdentifierValueConverter>()
             .IsRequired();
         builder
             .Property(e => e.RightId)
-            .HasConversion(e => e.ToString(), @string => IssueIdentifier.FromString(@string))
+            .HasConversion<IssueIdentifierValueConverter>()
             .IsRequired();
 
         builder

@@ -11,8 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Issues.Domain.Configuration.ValueConverters;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -28,7 +28,7 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
 
 
         builder.Property(e => e.Id)
-            .HasConversion(e => e.ToString(), @string => IssueIdentifier.FromString(@string))
+            .HasConversion<IssueIdentifierValueConverter>()
             .IsRequired();
         builder.Property<string>("_project")
             .UsePropertyAccessMode(PropertyAccessMode.Field)
@@ -56,12 +56,11 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
         builder
             .Property(e => e.State)
             .IsRequired()
-            .HasConversion(i => i.Value, state => IssueState.Build(state));
+            .HasConversion<IssueStateValueConverter>();
 
         builder.Property<IssueIdentifier?>("_epicId")
             .UsePropertyAccessMode(PropertyAccessMode.Field)
-            .HasConversion(e => e != null ? e.ToString() : null!,
-                @string => !string.IsNullOrEmpty(@string) ? IssueIdentifier.FromString(@string) : null)
+            .HasConversion<NullableIssueIdentifierValueConverter>()
             .IsRequired(false);
 
         builder

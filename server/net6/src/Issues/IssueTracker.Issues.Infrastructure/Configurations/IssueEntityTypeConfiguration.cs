@@ -12,6 +12,7 @@
 //
 
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Infrastructure.Configurations.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -53,9 +54,7 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
 
         builder.Property(e => e.ConcurrencyToken).IsConcurrencyToken();
         builder.Property(e => e.LastModifiedTime)
-            .HasConversion(
-                dateTime => dateTime.ToUniversalTime().Ticks,
-                ticks => new DateTimeOffset(new DateTime(ticks, DateTimeKind.Utc), TimeSpan.FromSeconds(0)));
+            .HasConversion<DateTimeOffsetValueConverter>();
 
         builder.OwnsOne(e => e.Assignee,
             (owned) =>
