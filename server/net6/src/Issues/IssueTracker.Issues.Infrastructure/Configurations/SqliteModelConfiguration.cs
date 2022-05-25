@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Issues.Infrastructure.CompiledModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -20,19 +21,20 @@ namespace IssueTracker.Issues.Infrastructure.Configurations;
 
 public sealed class SqliteModelConfiguration : IModelConfiguration
 {
-    private readonly IConfiguration _configuration;
-    private readonly IHostEnvironment _environment;
     private readonly ILogger<SqliteModelConfiguration> _logger;
+    private readonly string _connectionString;
+    private readonly bool _isDevelopment;
 
     public SqliteModelConfiguration(
         IConfiguration configuration,
         IHostEnvironment environment,
         ILoggerFactory loggerFactory)
     {
-        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-        _environment = environment ?? throw new ArgumentNullException(nameof(environment));
         ArgumentNullException.ThrowIfNull(loggerFactory, nameof(loggerFactory));
         _logger = loggerFactory.CreateLogger<SqliteModelConfiguration>();
+
+        _connectionString = configuration.GetConnectionString("ApplicationConnection");
+        _isDevelopment = environment.IsDevelopment();
     }
 
     /// <inheritdoc />
@@ -49,12 +51,18 @@ public sealed class SqliteModelConfiguration : IModelConfiguration
             return;
         }
 
-        string connectionString = _configuration.GetConnectionString("ApplicationConnection");
         optionsBuilder
             .UseSqlite(
-                connectionString,
+                _connectionString,
                 options => options.MigrationsAssembly(typeof(SqliteModelConfiguration).Assembly.FullName))
             .LogTo(message => _logger.LogInformation("{SQL}", message))
-            .EnableSensitiveDataLogging(_environment.IsDevelopment());
+            .EnableSensitiveDataLogging(_isDevelopment);
+
+        if (!_isDevelopment)
+        {
+            optionsBuilder.UseModel(IssuesDbContextModel.Instance);
+        }
+
+
     }
 }
