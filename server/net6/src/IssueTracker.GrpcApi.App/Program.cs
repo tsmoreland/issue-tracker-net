@@ -17,7 +17,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Host
     .UseSerilog((context, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(context.Configuration));
 builder.WebHost.ConfigureKestrel(ConfigureKestrel);
-ConfigureServices(builder.Services, builder.Environment, builder.Configuration);
+ConfigureServices(builder.Services, builder.Configuration);
 
 WebApplication app = builder.Build();
 
@@ -41,7 +41,7 @@ static void ConfigureKestrel(WebHostBuilderContext context, KestrelServerOptions
         httpsDefaults.ClientCertificateMode = Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode.AllowCertificate);
 }
 
-static void ConfigureServices(IServiceCollection services, IHostEnvironment environment, IConfiguration configuration)
+static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
 {
     services.AddProblemDetails();
     services
@@ -65,16 +65,6 @@ static void ConfigureServices(IServiceCollection services, IHostEnvironment envi
                     .AllowAnyMethod()
                     .AllowAnyHeader()))
         .AddControllers();
-
-    if (environment.IsDevelopment())
-    {
-        services.AddGrpc(options => options.EnableDetailedErrors = true);
-    }
-    else
-    {
-        services.AddGrpc();
-    }
-
 }
 
 static void ConfigurePipeline(WebApplication app)
