@@ -1,20 +1,7 @@
 using System.IO.Compression;
-using GraphQL;
-using GraphQL.MicrosoftDI;
-using GraphQL.DataLoader;
-using GraphQL.Execution;
-using GraphQL.Instrumentation;
-using GraphQL.Server;
-using GraphQL.Server.Authorization.AspNetCore;
-using GraphQL.Server.Transports.AspNetCore;
-using GraphQL.Server.Ui.Altair;
-using GraphQL.Server.Ui.GraphiQL;
 using GraphQL.Server.Ui.Playground;
-using GraphQL.Server.Ui.Voyager;
-using GraphQL.SystemTextJson;
-using IssueTracker.Data.Abstractions;
-using IssueTracker.GraphQl.App.Profiles;
-using IssueTracker.GraphQl.App.Services;
+using IssueTracker.Issues.API.GraphQL.Schemas;
+using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Middelware.SecurityHeaders;
 using IssueTracker.ServiceDiscovery;
 using Microsoft.AspNetCore.Identity;
@@ -31,14 +18,15 @@ builder.WebHost.ConfigureKestrel(ConfigureKestrel);
 builder.Host
     .UseSerilog((context, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(context.Configuration));
 
-ConfigureServices(builder.Services, builder.Environment, builder.Configuration);
+ConfigureServices(builder.Services, builder.Configuration);
 
 WebApplication app = builder.Build();
 
 using (IServiceScope scope = app.Services.CreateScope())
 {
     IIssueDataMigration migration =  scope.ServiceProvider.GetRequiredService<IIssueDataMigration>();
-    migration.Migrate();
+    await migration.MigrateAsync();
+    await migration.ResetAndRepopultateAsync();
 }
 
 ConfigurePipeline(app);
@@ -53,10 +41,9 @@ static void ConfigureKestrel(WebHostBuilderContext context, KestrelServerOptions
         httpsDefaults.ClientCertificateMode = Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode.AllowCertificate);
 #endif
 }
-static void ConfigureServices(IServiceCollection services, IHostEnvironment environment, IConfiguration configuration)
+static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
 {
     services
-        .AddAutoMapper(typeof(MappingProfile).Assembly)
         .AddSecurityHeaders(configuration)
         .AddResponseCompression(options =>
         {
@@ -77,27 +64,6 @@ static void ConfigureServices(IServiceCollection services, IHostEnvironment envi
                     .AllowAnyMethod()
                     .AllowAnyHeader()))
         .AddControllers();
-
-    services.AddGraphQL(builder =>
-        builder
-            .AddHttpMiddleware<IssueTrackerSchema>()
-            .AddWebSocketsHttpMiddleware<IssueTrackerSchema>()
-            .AddSchema<IssueTrackerSchema>()
-            .ConfigureExecutionOptions(options =>
-            {
-                options.EnableMetrics = true;
-                ILogger<Program>? logger = options.RequestServices?.GetRequiredService<ILogger<Program>>();
-                options.UnhandledExceptionDelegate = ctx =>
-                {
-                    logger?.LogError("{Error} occurred", ctx.OriginalException.Message);
-                    return Task.CompletedTask;
-                };
-            })
-            .AddSystemTextJson()
-            .AddErrorInfoProvider(options => options.ExposeExceptionStackTrace = environment.IsDevelopment())
-            .AddWebSockets()
-            .AddDataLoader()
-            .AddGraphTypes(typeof(IssueTrackerSchema).Assembly));
 }
 
 static void ConfigurePipeline(WebApplication app)
@@ -122,6 +88,6 @@ static void ConfigurePipeline(WebApplication app)
     app.UseWebSockets();
     app.UseGraphQLWebSockets<IssueTrackerSchema>();
 #endif
-    app.UseGraphQL<IssueTrackerSchema>();
+    app.UseGraphQL<IssuesSchema>();
     app.UseGraphQLPlayground(new PlaygroundOptions());
 }
