@@ -13,6 +13,7 @@
 
 using System.IO.Compression;
 using System.Text.Json.Serialization;
+using AspNetCoreRateLimit;
 using Hellang.Middleware.ProblemDetails;
 using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Middelware.SecurityHeaders;
@@ -87,7 +88,14 @@ builder.Services
         tokenProviderOptions.TokenLifespan = TimeSpan.FromHours(1);
     });
 
-
+// Rate Limiting
+builder.Services
+    .AddMemoryCache()
+    .Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"))
+    .AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>()
+    .AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>()
+    .AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>()
+    .AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
 WebApplication app = builder.Build();
 using (IServiceScope scope = app.Services.CreateScope())
@@ -99,6 +107,7 @@ using (IServiceScope scope = app.Services.CreateScope())
 
 app.UseSecurityHeaders();
 app.UseProblemDetails();
+app.UseIpRateLimiting();
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>
