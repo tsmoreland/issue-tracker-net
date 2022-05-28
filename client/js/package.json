@@ -120,7 +120,7 @@
     "pinkie-promise": "^2.0.1",
     "prepend-http": "^2.0.0",
     "process-nextick-args": "^2.0.1",
-    "protobufjs": "^6.11.2",
+    "protobufjs": "^6.11.3",
     "pump": "^3.0.0",
     "query-string": "^5.1.1",
     "readable-stream": "^3.6.0",
