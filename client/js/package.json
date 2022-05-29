@@ -4,7 +4,7 @@
   "description": "## Source initialization steps",
   "main": "index.js",
   "dependencies": {
-    "@grpc/grpc-js": "^1.6.5",
+    "@grpc/grpc-js": "^1.6.7",
     "@grpc/proto-loader": "^0.6.9",
     "abbrev": "^1.1.1",
     "agent-base": "^6.0.2",
