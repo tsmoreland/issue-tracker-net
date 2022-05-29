@@ -9,25 +9,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		bin\ef-tools.py = bin\ef-tools.py
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Core", "src\IssueTracker.Core\IssueTracker.Core.csproj", "{2EC2D449-98C4-48E7-94BF-FFD3E3854965}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Data.Abstractions", "src\IssueTracker.Data.Abstractions\IssueTracker.Data.Abstractions.csproj", "{E9BE1CF7-7251-440A-93A0-7C7FF5885E8B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Data", "src\IssueTracker.Data\IssueTracker.Data.csproj", "{B646D685-4DC9-45C7-8383-431C535AF825}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Middelware.SecurityHeaders", "src\IssueTracker.Middelware.SecurityHeaders\IssueTracker.Middelware.SecurityHeaders.csproj", "{45A18FDB-3712-4AD4-82F8-B778D4FADC2C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.SwashbuckleExtensions", "src\IssueTracker.SwashbuckleExtensions\IssueTracker.SwashbuckleExtensions.csproj", "{6E0D0766-7F73-415A-A38B-0795B74C5CC3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.SwashbuckleExtensions.Abstractions", "src\IssueTracker.SwashbuckleExtensions.Abstractions\IssueTracker.SwashbuckleExtensions.Abstractions.csproj", "{7B03B59B-E862-4B8F-827A-EA9E84B4EE8E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Services", "src\IssueTracker.Services\IssueTracker.Services.csproj", "{145882D1-59F4-4B70-9B55-0B07F9477C7B}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{67872BB0-951C-413D-8EA7-98E7D2D38189}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{F6FAAA63-3594-4FFD-884A-390055066734}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{437CCE27-62F4-4886-AB44-A1ACE97DB18C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.ServiceDiscovery", "src\IssueTracker.ServiceDiscovery\IssueTracker.ServiceDiscovery.csproj", "{2DF6D6FF-30B2-4721-8A2E-E5D58A72D563}"
 EndProject
@@ -45,8 +35,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GraphQL", "GraphQL", "{7C59
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.GraphQl.App", "src\IssueTracker.GraphQl.App\IssueTracker.GraphQl.App.csproj", "{5559C5E9-7591-4AE0-828D-323D52EB3FDB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Core.Test", "test\IssueTracker.Core.Test\IssueTracker.Core.Test.csproj", "{ECF60E3D-D8F0-4A21-84FE-BAB8D0CD8E2C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Issues", "Issues", "{85C789BA-B097-45BB-9FA1-4B3E584236E4}"
 	ProjectSection(SolutionItems) = preProject
 		src\Issues\issueTracker.issues.proto = src\Issues\issueTracker.issues.proto
@@ -59,8 +47,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.Infrast
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.Cli", "src\Issues\IssueTracker.Issues.cli\IssueTracker.Issues.Cli.csproj", "{3F6444F1-3146-43B3-AB08-8460DD20A9B9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{7E6F8B0A-3A22-4045-A52B-38D3BD39DD7A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.API.REST", "src\Issues\IssueTracker.Issues.API.REST\IssueTracker.Issues.API.REST.csproj", "{2FE3F54A-607A-4218-AE7D-4B9485A814C0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.Test", "src\Issues\IssueTracker.Issues.Test\IssueTracker.Issues.Test.csproj", "{152FF566-AA1A-46F2-9AA6-1174FB0C011C}"
@@ -69,7 +55,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.API.GRP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.API.GRPCNet", "src\Issues\IssueTracker.Issues.API.GRPCNet\IssueTracker.Issues.API.GRPCNet.csproj", "{BE6429CC-2C7E-4442-8A5E-1768B8C557AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Issues.API.GraphQL", "src\Issues\IssueTracker.Issues.API.GraphQL\IssueTracker.Issues.API.GraphQL.csproj", "{906A784E-E8F0-48AA-91D5-481EFB98B33C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Issues.API.GraphQL", "src\Issues\IssueTracker.Issues.API.GraphQL\IssueTracker.Issues.API.GraphQL.csproj", "{906A784E-E8F0-48AA-91D5-481EFB98B33C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,18 +63,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2EC2D449-98C4-48E7-94BF-FFD3E3854965}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2EC2D449-98C4-48E7-94BF-FFD3E3854965}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2EC2D449-98C4-48E7-94BF-FFD3E3854965}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2EC2D449-98C4-48E7-94BF-FFD3E3854965}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E9BE1CF7-7251-440A-93A0-7C7FF5885E8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E9BE1CF7-7251-440A-93A0-7C7FF5885E8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E9BE1CF7-7251-440A-93A0-7C7FF5885E8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E9BE1CF7-7251-440A-93A0-7C7FF5885E8B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B646D685-4DC9-45C7-8383-431C535AF825}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B646D685-4DC9-45C7-8383-431C535AF825}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B646D685-4DC9-45C7-8383-431C535AF825}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B646D685-4DC9-45C7-8383-431C535AF825}.Release|Any CPU.Build.0 = Release|Any CPU
 		{45A18FDB-3712-4AD4-82F8-B778D4FADC2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{45A18FDB-3712-4AD4-82F8-B778D4FADC2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45A18FDB-3712-4AD4-82F8-B778D4FADC2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -101,10 +75,6 @@ Global
 		{7B03B59B-E862-4B8F-827A-EA9E84B4EE8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B03B59B-E862-4B8F-827A-EA9E84B4EE8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B03B59B-E862-4B8F-827A-EA9E84B4EE8E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{145882D1-59F4-4B70-9B55-0B07F9477C7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{145882D1-59F4-4B70-9B55-0B07F9477C7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{145882D1-59F4-4B70-9B55-0B07F9477C7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{145882D1-59F4-4B70-9B55-0B07F9477C7B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2DF6D6FF-30B2-4721-8A2E-E5D58A72D563}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2DF6D6FF-30B2-4721-8A2E-E5D58A72D563}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DF6D6FF-30B2-4721-8A2E-E5D58A72D563}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -121,10 +91,6 @@ Global
 		{5559C5E9-7591-4AE0-828D-323D52EB3FDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5559C5E9-7591-4AE0-828D-323D52EB3FDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5559C5E9-7591-4AE0-828D-323D52EB3FDB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ECF60E3D-D8F0-4A21-84FE-BAB8D0CD8E2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ECF60E3D-D8F0-4A21-84FE-BAB8D0CD8E2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ECF60E3D-D8F0-4A21-84FE-BAB8D0CD8E2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ECF60E3D-D8F0-4A21-84FE-BAB8D0CD8E2C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B7AFF034-03AF-48FF-ACA6-0A454AA2737D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B7AFF034-03AF-48FF-ACA6-0A454AA2737D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7AFF034-03AF-48FF-ACA6-0A454AA2737D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -162,13 +128,9 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{2EC2D449-98C4-48E7-94BF-FFD3E3854965} = {67872BB0-951C-413D-8EA7-98E7D2D38189}
-		{E9BE1CF7-7251-440A-93A0-7C7FF5885E8B} = {F6FAAA63-3594-4FFD-884A-390055066734}
-		{B646D685-4DC9-45C7-8383-431C535AF825} = {F6FAAA63-3594-4FFD-884A-390055066734}
 		{45A18FDB-3712-4AD4-82F8-B778D4FADC2C} = {F6FAAA63-3594-4FFD-884A-390055066734}
 		{6E0D0766-7F73-415A-A38B-0795B74C5CC3} = {F6FAAA63-3594-4FFD-884A-390055066734}
 		{7B03B59B-E862-4B8F-827A-EA9E84B4EE8E} = {F6FAAA63-3594-4FFD-884A-390055066734}
-		{145882D1-59F4-4B70-9B55-0B07F9477C7B} = {437CCE27-62F4-4886-AB44-A1ACE97DB18C}
 		{2DF6D6FF-30B2-4721-8A2E-E5D58A72D563} = {F6FAAA63-3594-4FFD-884A-390055066734}
 		{390046E2-814B-4466-B941-9B0684750103} = {13D0B969-90F7-4214-BC8C-5432426C746A}
 		{A08D7323-67EB-4370-A9F0-90203B9A1A0A} = {390046E2-814B-4466-B941-9B0684750103}
@@ -176,7 +138,6 @@ Global
 		{3920ECE2-DB8A-4CCE-A6BA-516356E100B4} = {AF6DF8B6-CA34-4F45-8296-3CDD9429E289}
 		{7C5926E5-7CE8-4BE4-8FEB-CC55F3D5BB08} = {13D0B969-90F7-4214-BC8C-5432426C746A}
 		{5559C5E9-7591-4AE0-828D-323D52EB3FDB} = {7C5926E5-7CE8-4BE4-8FEB-CC55F3D5BB08}
-		{ECF60E3D-D8F0-4A21-84FE-BAB8D0CD8E2C} = {67872BB0-951C-413D-8EA7-98E7D2D38189}
 		{B7AFF034-03AF-48FF-ACA6-0A454AA2737D} = {85C789BA-B097-45BB-9FA1-4B3E584236E4}
 		{ED10ECF2-F14E-46B6-AA63-908931FCC5E6} = {85C789BA-B097-45BB-9FA1-4B3E584236E4}
 		{3F6444F1-3146-43B3-AB08-8460DD20A9B9} = {85C789BA-B097-45BB-9FA1-4B3E584236E4}
