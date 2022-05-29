@@ -17,4 +17,8 @@
     <PackageReference Include="coverlet.collector" Version="3.1.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Issues\IssueTracker.Issues.Domain\IssueTracker.Issues.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
