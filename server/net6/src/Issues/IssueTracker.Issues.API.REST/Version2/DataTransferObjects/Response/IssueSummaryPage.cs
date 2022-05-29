@@ -13,7 +13,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
-using IssueTracker.SwashbuckleExtensions.Abstractions;
+using IssueTracker.Shared;
 
 namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 

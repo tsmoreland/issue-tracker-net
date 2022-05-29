@@ -13,7 +13,7 @@
 
 using System.Reflection;
 using IssueTracker.ServiceDiscovery;
-using IssueTracker.SwashbuckleExtensions.Abstractions;
+using IssueTracker.Shared;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;

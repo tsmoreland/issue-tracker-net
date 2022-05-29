@@ -12,7 +12,7 @@
 //
 
 using System.ComponentModel.DataAnnotations;
-using IssueTracker.SwashbuckleExtensions.Abstractions;
+using IssueTracker.Shared;
 
 namespace IssueTracker.Issues.API.REST.Version1.DataTransferObjects.Response;
 

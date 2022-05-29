@@ -62,7 +62,6 @@
     <ProjectReference Include="..\Issues\IssueTracker.Issues.API.REST\IssueTracker.Issues.API.REST.csproj" />
     <ProjectReference Include="..\IssueTracker.Middelware.SecurityHeaders\IssueTracker.Middelware.SecurityHeaders.csproj" />
     <ProjectReference Include="..\IssueTracker.ServiceDiscovery\IssueTracker.ServiceDiscovery.csproj" />
-    <ProjectReference Include="..\IssueTracker.SwashbuckleExtensions.Abstractions\IssueTracker.SwashbuckleExtensions.Abstractions.csproj" />
     <ProjectReference Include="..\IssueTracker.SwashbuckleExtensions\IssueTracker.SwashbuckleExtensions.csproj">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
