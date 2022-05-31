@@ -19,6 +19,7 @@ using IssueTracker.Issues.API.Version2.Abstractions.Commands;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
 using IssueTracker.Issues.Domain.Services.Version2.Commands;
+using IssueTracker.Issues.Domain.Services.Version2.Commands.StateChangeCommands;
 using IssueTracker.Issues.Domain.Services.Version2.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -102,88 +103,6 @@ public sealed class IssueController : ControllerBase
             : NotFound();
     }
 
-#if SUPPORTED
-    /// <summary>
-    /// Returns all parent issues 
-    /// </summary>
-    /// <param name="id" example="APP-1234">unique id of issue</param>
-    /// <param name="pageNumber" example="1" >current page number to return</param>
-    /// <param name="pageSize" example="10">maximum number of items to return</param>
-    /// <param name="cancellationToken">a cancellation token.</param>
-    /// <returns>all parent issues</returns>
-    [HttpGet("{id}/parents")]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IAsyncEnumerable<LinkedIssueSummaryDto>), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> GetParentIssues(
-        [FromRoute] string id,
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10,
-        CancellationToken cancellationToken = default)
-    {
-        if (!ValidatePaging(ModelState, pageNumber, pageSize))
-        {
-            return BadRequest(ModelState);
-        }
-
-        IssueIdentifier issueId = IssueIdentifier.FromString(id);
-        if (await _mediator.Send(new IssueExistsRequest(issueId), cancellationToken))
-        {
-            return Ok(LinkedIssueSummaryDto
-                .MapFrom(await _mediator
-                    .Send(new GetParentIssueSummariesRequest(issueId, pageNumber, pageSize, Core.Model.Issue.SortBy.Title, Core.ValueObjects.SortDirection.Ascending)
-                        , cancellationToken)
-                    , cancellationToken));
-        }
-
-        ModelState.AddModelError(nameof(id), "issue not found");
-        return NotFound(ModelState);
-    }
-
-    /// <summary>
-    /// Returns all child issues 
-    /// </summary>
-    /// <param name="id" example="APP-1234">unique id of issue</param>
-    /// <param name="pageNumber" example="1" >current page number to return</param>
-    /// <param name="pageSize" example="10">maximum number of items to return</param>
-    /// <param name="cancellationToken">a cancellation token.</param>
-    /// <returns>all child issues</returns>
-    [HttpGet("{id}/children")]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IAsyncEnumerable<LinkedIssueSummaryDto>), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> GetChildIssues(
-        [FromRoute] string id,
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10,
-        CancellationToken cancellationToken = default)
-    {
-        if (!ValidatePaging(ModelState, pageNumber, pageSize))
-        {
-            return BadRequest(ModelState);
-        }
-
-        IssueIdentifier issueId = IssueIdentifier.FromString(id);
-        if (await _mediator.Send(new IssueExistsRequest(issueId), cancellationToken))
-        {
-            return Ok(LinkedIssueSummaryDto
-                .MapFrom(await _mediator
-                    .Send(new GetChildIssueSummariesRequest(issueId, pageNumber, pageSize, Core.Model.Issue.SortBy.Title, Core.ValueObjects.SortDirection.Ascending)
-                        , cancellationToken)
-                    , cancellationToken));
-        }
-
-        ModelState.AddModelError(nameof(id), "issue not found");
-        return NotFound(ModelState);
-    }
-#endif
-
     /// <summary>
     /// Adds a new issue 
     /// </summary>
@@ -262,5 +181,26 @@ public sealed class IssueController : ControllerBase
         return await _mediator.Send(new DeleteIssueCommand(IssueIdentifier.FromString(id)), cancellationToken)
             ? new StatusCodeResult(StatusCodes.Status204NoContent)
             : NotFound();
+    }
+
+
+    /// <summary>
+    /// execute move to backlog state change command
+    /// </summary>
+    /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
+    /// <param name="cancellationToken">A cancellation token</param>
+    /// <returns>empty response on success; otherwise, problem details</returns>
+    [HttpPut("{id}/moveToBacklog")]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
+    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new [] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [SwaggerResponse(StatusCodes.Status409Conflict, "state change not possible", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [Filters.ValidateIssueIdServiceFilter]
+    public async Task<IActionResult> MoveToBackLog(string id, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new ExecuteMoveToBackLogStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
+        return Ok();
     }
 }
