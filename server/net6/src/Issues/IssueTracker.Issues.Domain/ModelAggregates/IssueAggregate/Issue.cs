@@ -12,6 +12,7 @@
 //
 
 using IssueTracker.Issues.Domain.DataContracts;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
 
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
@@ -165,57 +166,17 @@ public sealed class Issue : Entity
     }
 
     /// <summary>
-    /// Move to next state in the sequence
+    /// Execute <paramref name="command"/> updating state if necessary
     /// </summary>
-    /// <param name="success">used by some states to control what the next state is</param>
-    /// <returns>new state</returns>
-    public void MoveStateToNext(bool success)
+    /// <param name="command">state change command to execute</param>
+    public bool ChangeState(StateChangeCommand command)
     {
-        _issueState = _issueState.MoveToNext(success);
-    }
-
-    /// <summary>
-    /// Move to the backlog
-    /// </summary>
-    public void MoveToBacklog()
-    {
-        _issueState = _issueState.MoveToBacklog();
-    }
-
-    /// <summary>
-    /// Attempt to close the issue,
-    /// </summary>
-    /// <param name="reason">reason for the closure</param>
-    /// <returns>
-    /// <see langword="true"/> on success
-    /// </returns>
-    public bool TryClose(ClosureReason reason)
-    {
-        IssueState newState = _issueState.TryClose(reason);
-        if (newState == _issueState)
+        if (!_issueState.CanExecute(command))
         {
             return false;
         }
 
-        _issueState = newState;
-        return true;
-    }
-
-    /// <summary>
-    /// Attempt to re-open a closed issue
-    /// </summary>
-    /// <returns>
-    /// <see langword="true"/> on succcess
-    /// </returns>
-    public bool TryOpen()
-    {
-        IssueState newState = _issueState.TryOpen();
-        if (newState == _issueState)
-        {
-            return false;
-        }
-
-        _issueState = newState;
+        _issueState = _issueState.Execute(command);
         return true;
     }
 
