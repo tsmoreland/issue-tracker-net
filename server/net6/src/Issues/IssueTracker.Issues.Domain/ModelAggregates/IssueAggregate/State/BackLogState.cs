@@ -11,22 +11,34 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
+
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
 
 public sealed record class BackLogState : IssueState
 {
     /// <inheritdoc />
-    public override IssueState MoveToNext(bool success) => new ToDoState();
+    public override IssueState Execute(StateChangeCommand command)
+    {
+        return command switch
+        {
+            WontDoStateChangeCommand _ => new WontDoState(),
+            CannotReproduceStateChangeCommand _ => new CannotReproduceState(),
+            NotADefectStateChangeCommand _ => new NotADefectState(),
+            OpenStateChangeCommand _ =>  new InProgressState(),
+            ToDoStateChangeCommand _ => new ToDoState(),
+            _ => this,
+        };
+    }
 
     /// <inheritdoc />
-    public override IssueState MoveToBacklog() => this;
-
-    /// <inheritdoc />
-    public override IssueState TryClose(ClosureReason reason) =>
-        Close(reason);
-
-    /// <inheritdoc />
-    public override IssueState TryOpen() => this;
+    public override bool CanExecute(StateChangeCommand command) =>
+        command is
+            NotADefectStateChangeCommand or
+            WontDoStateChangeCommand or
+            CannotReproduceStateChangeCommand or
+            OpenStateChangeCommand or
+            ToDoStateChangeCommand;
 
     /// <inheritdoc />
     public override IssueStateValue Value => IssueStateValue.Backlog;

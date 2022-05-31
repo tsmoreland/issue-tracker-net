@@ -11,6 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
+
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
 
 /// <summary>
@@ -18,38 +20,23 @@ namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
 /// </summary>
 public abstract record class IssueState
 {
-    /// <inheritdoc cref="Issue.MoveStateToNext(bool)"/>
-    public abstract IssueState MoveToNext(bool success);
+    /// <inheritdoc cref="Issue.Execute(StateChangeCommand)"/>
+    public abstract IssueState Execute(StateChangeCommand command);
 
-    /// <inheritdoc cref="Issue.MoveToBacklog()"/>
-    public abstract IssueState MoveToBacklog();
-
-    /// <inheritdoc cref="Issue.TryClose(ClosureReason)"/>
-    public abstract IssueState TryClose(ClosureReason reason);
-
-    /// <inheritdoc cref="Issue.TryOpen()"/>
-    public abstract IssueState TryOpen();
+    /// <summary>
+    /// Checks if <paramref name="command"/> can be run against 
+    /// </summary>
+    /// <param name="command">the command to check</param>
+    /// <returns>
+    /// <see langword="true"/> if the command will result in a new state;
+    /// otherwise, <see langword="false"/>
+    /// </returns>
+    public abstract bool CanExecute(StateChangeCommand command);
 
     /// <summary>
     /// Underlying value
     /// </summary>
     public abstract IssueStateValue Value { get; }
-
-    /// <summary>
-    /// moves to closed state using <paramref name="reason"/>
-    /// </summary>
-    protected IssueState Close(ClosureReason reason)
-    {
-        return reason switch
-        {
-            ClosureReason.CannotReproduce => new ClosedAsCannotReproduceState(),
-            ClosureReason.Deferred => new ClosedAsDeferredState(),
-            ClosureReason.Resolved => new ClosedAsResolvedState(),
-            ClosureReason.NotADefect => new ClosedAsNotADefectState(),
-            ClosureReason.WontDo => new ClosedAsWontDoState(),
-            _ => this,
-        };
-    }
 
     internal static IssueState Build(IssueStateValue state)
     {
@@ -57,15 +44,14 @@ public abstract record class IssueState
         {
             IssueStateValue.Backlog => new BackLogState(),
             IssueStateValue.ToDo => new ToDoState(),
-            IssueStateValue.Open => new OpenState(),
+            IssueStateValue.InProgress => new InProgressState(),
             IssueStateValue.InReview => new InReviewState(),
-            IssueStateValue.WontDo => new WontDoState(),
-            IssueStateValue.CannotReproduce => new CannotReproduceState(),
-            IssueStateValue.NotADefect => new NotADefectState(),
             IssueStateValue.InTesting => new InTestingState(),
             IssueStateValue.Complete => new CompleteState(),
+            IssueStateValue.CannotReproduce => new CannotReproduceState(),
+            IssueStateValue.WontDo => new WontDoState(),
+            IssueStateValue.NotADefect => new NotADefectState(),
             IssueStateValue.ClosedAsResolved => new ClosedAsResolvedState(),
-            IssueStateValue.ClosedAsDeferred => new ClosedAsDeferredState(),
             IssueStateValue.ClosedAsWontDo => new ClosedAsWontDoState(),
             IssueStateValue.ClosedAsCannotReproduce => new ClosedAsCannotReproduceState(),
             IssueStateValue.ClosedAsNotADefect => new ClosedAsNotADefectState(),

@@ -10,23 +10,26 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
+
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
 
 public sealed record CompleteState : IssueState
 {
     /// <inheritdoc />
-    public override IssueState MoveToNext(bool success) => this;
+    public override IssueState Execute(StateChangeCommand command)
+    {
+        return command switch
+        {
+            CloseStateChangeCommand _ => new ClosedAsResolvedState(),
+            MoveToBackLogStateChangeCommand _ => new BackLogState(),
+            _ => this,
+        };
+    }
 
     /// <inheritdoc />
-    public override IssueState MoveToBacklog() => this;
-
-    /// <inheritdoc />
-    public override IssueState TryClose(ClosureReason reason) => reason == ClosureReason.Resolved
-        ? Close(ClosureReason.Resolved)
-        : Close(ClosureReason.Deferred);
-
-    /// <inheritdoc />
-    public override IssueState TryOpen() => throw new NotImplementedException();
+    public override bool CanExecute(StateChangeCommand command) =>
+        command is CloseStateChangeCommand or MoveToBackLogStateChangeCommand;
 
     /// <inheritdoc />
     public override IssueStateValue Value => IssueStateValue.Complete;

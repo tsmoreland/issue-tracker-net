@@ -1,20 +1,23 @@
-﻿namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
+﻿using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
+
+namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
 
 public sealed record InReviewState : IssueState
 {
     /// <inheritdoc />
-    public override IssueState MoveToNext(bool success) => success
-        ? new InTestingState()
-        : new OpenState();
+    public override IssueState Execute(StateChangeCommand command)
+    {
+        return command switch
+        {
+            ReadyForTestStateChangeCommand _ => new InTestingState(),
+            ReviewFailedStateChangeCommand _ => new InProgressState(),
+            _ => this,
+        };
+    }
 
     /// <inheritdoc />
-    public override IssueState MoveToBacklog() => new BackLogState();
-
-    /// <inheritdoc />
-    public override IssueState TryClose(ClosureReason reason) => Close(reason);
-
-    /// <inheritdoc />
-    public override IssueState TryOpen() => throw new NotImplementedException();
+    public override bool CanExecute(StateChangeCommand command) =>
+        command is ReadyForTestStateChangeCommand or ReviewFailedStateChangeCommand;
 
     /// <inheritdoc />
     public override IssueStateValue Value => IssueStateValue.InReview;

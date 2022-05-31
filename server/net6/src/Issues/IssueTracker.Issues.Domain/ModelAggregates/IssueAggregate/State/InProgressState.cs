@@ -10,22 +10,35 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
+
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
 
-public sealed record OpenState : IssueState
+public sealed record InProgressState : IssueState
 {
     /// <inheritdoc />
-    public override IssueState MoveToNext(bool success) => new InReviewState();
+    public override IssueState Execute(StateChangeCommand command)
+    {
+        return command switch
+        {
+            ReadyForReviewStateChangeCommand _ => new InReviewState(),
+            MoveToBackLogStateChangeCommand _ => new BackLogState(),
+            WontDoStateChangeCommand _ => new WontDoState(),
+            CannotReproduceStateChangeCommand _ => new CannotReproduceState(),
+            NotADefectStateChangeCommand _ => new NotADefectState(),
+            _ => this,
+        };
+    }
 
     /// <inheritdoc />
-    public override IssueState MoveToBacklog() => new BackLogState();
+    public override bool CanExecute(StateChangeCommand command) =>
+        command is
+            ReadyForReviewStateChangeCommand or
+            MoveToBackLogStateChangeCommand or
+            WontDoStateChangeCommand or
+            CannotReproduceStateChangeCommand or
+            NotADefectStateChangeCommand;
 
     /// <inheritdoc />
-    public override IssueState TryClose(ClosureReason reason) => Close(reason);
-
-    /// <inheritdoc />
-    public override IssueState TryOpen() => this;
-
-    /// <inheritdoc />
-    public override IssueStateValue Value => IssueStateValue.Open;
+    public override IssueStateValue Value => IssueStateValue.InProgress;
 }

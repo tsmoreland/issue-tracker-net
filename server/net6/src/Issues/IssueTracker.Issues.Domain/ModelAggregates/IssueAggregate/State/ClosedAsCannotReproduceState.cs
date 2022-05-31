@@ -1,18 +1,22 @@
-﻿namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
+﻿using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
+
+namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
 
 public sealed record ClosedAsCannotReproduceState : IssueState
 {
     /// <inheritdoc />
-    public override IssueState MoveToNext(bool success) => this;
+    public override IssueState Execute(StateChangeCommand command)
+    {
+        return command switch
+        {
+            OpenStateChangeCommand _ => new InProgressState(),
+            _ => this,
+        };
+    }
 
     /// <inheritdoc />
-    public override IssueState MoveToBacklog() => this;
-
-    /// <inheritdoc />
-    public override IssueState TryClose(ClosureReason reason) => this;
-
-    /// <inheritdoc />
-    public override IssueState TryOpen() => new OpenState();
+    public override bool CanExecute(StateChangeCommand command) =>
+        command is OpenStateChangeCommand;
 
     /// <inheritdoc />
     public override IssueStateValue Value => IssueStateValue.ClosedAsCannotReproduce;
