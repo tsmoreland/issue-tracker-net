@@ -19,5 +19,6 @@ namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specificatio
 public sealed class SelectIssueNumber : ISelectorSpecification<Issue, int>
 {
     /// <inheritdoc />
-    public Expression<Func<Issue, int>> Select => issue => EF.Property<int>(issue, "_issueNumber");
+    public Expression<Func<Issue, int>> Select => issue =>
+        EF.Property<int>(issue, "_issueNumber");
 }
