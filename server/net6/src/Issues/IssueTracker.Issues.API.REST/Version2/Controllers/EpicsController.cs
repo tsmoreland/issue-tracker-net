@@ -12,6 +12,7 @@
 //
 
 using System.Net.Mime;
+using AutoMapper;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 using IssueTracker.Issues.API.REST.Version2.Extensions;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
@@ -29,16 +30,14 @@ namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 [Route("api/v{version:apiVersion=2}/epics")]
 [Tags("Epics (URL versioning)")]
 [ApiVersion("2")]
-public sealed class EpicsController : ControllerBase
+public sealed class EpicsController : IssueControllerBase
 {
-    private readonly IMediator _mediator;
-
     /// <summary>
     /// Instantiates a new instance of the <see cref="TasksController"/> class.
     /// </summary>
-    public EpicsController(IMediator mediator)
+    public EpicsController(IMediator mediator, IMapper mapper)
+        : base(mediator, mapper)
     {
-        _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }
 
     /// <summary>
@@ -64,7 +63,7 @@ public sealed class EpicsController : ControllerBase
     {
         // extension method so 'this' is required
         return this.GetAllWithIssueType(
-            _mediator,
+            Mediator,
             IssueType.Epic,
             pageNumber,
             pageSize,
