@@ -48,4 +48,9 @@ internal static class DtoExtensions
         return summaries
             .Select(i => new IssueSummaryDto(i.Id.ToString(), i.Title, i.Priority, i.Type));
     }
+
+    public static IAsyncEnumerable<IssueDto> ToDto(this IAsyncEnumerable<Issue> items)
+    {
+        return items.Select(i => i.ToDto());
+    }
 }
