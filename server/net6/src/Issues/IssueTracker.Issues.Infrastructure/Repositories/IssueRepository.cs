@@ -17,6 +17,7 @@ using IssueTracker.Issues.Domain.Extensions;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
 using Microsoft.EntityFrameworkCore;
 using IssueTracker.Issues.Domain;
+using IssueTracker.Issues.Domain.Configuration.ValueConverters;
 using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
 
 namespace IssueTracker.Issues.Infrastructure.Repositories;
@@ -64,6 +65,8 @@ public sealed class IssueRepository : IIssueRepository
     {
         return _dbContext.Issues.AsNoTracking()
             .AsNoTracking()
+            .Include("_relatedTo")
+            .Include("_relatedFrom")
             .Where(filterExpression)
             .Select(selectExpression)
             .DefaultIfEmpty(default)
@@ -72,9 +75,53 @@ public sealed class IssueRepository : IIssueRepository
 
     public ValueTask<Issue?> GetByIdOrDefault(IssueIdentifier id, bool track = true, CancellationToken cancellationToken = default)
     {
-        return track
-            ? _dbContext.Issues.FindAsync(new object[] { id }, cancellationToken)
-            : new ValueTask<Issue?>(_dbContext.Issues.AsNoTracking().FirstOrDefaultAsync(i => i.Id == id, cancellationToken));
+        if (!track)
+        {
+            return new ValueTask<Issue?>(_dbContext.Issues
+                .AsNoTracking()
+                .Include("_relatedTo")
+                .Include("_relatedFrom")
+                .FirstOrDefaultAsync(i => i.Id == id, cancellationToken));
+        }
+
+        ValueTask<Issue?> issueTask = _dbContext.Issues.FindAsync(new object[] { id }, cancellationToken);
+        if (!issueTask.IsCompleted)
+        {
+            return LoadRelatedWhenComplete(issueTask);
+        }
+
+        if (!issueTask.IsCompletedSuccessfully || issueTask.Result is null)
+        {
+            return issueTask;
+        }
+
+        return new ValueTask<Issue?>(LoadRelated(_dbContext, issueTask, cancellationToken)
+            .ContinueWith(_ => (Issue?)issueTask.Result, cancellationToken));
+
+        async ValueTask<Issue?> LoadRelatedWhenComplete(ValueTask<Issue?> task)
+        {
+            Issue? issue = await task;
+            if (issue is null)
+            {
+                return null;
+            }
+
+            await LoadRelated(_dbContext, task, cancellationToken);
+            return issue;
+        }
+
+        static Task LoadRelated(DbContext dbContext, ValueTask<Issue?> task, CancellationToken cancellationToken)
+        {
+            if (!task.IsCompletedSuccessfully || task.Result is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            Task relatedToTask = dbContext.Entry(task.Result).Reference("_relatedTo").LoadAsync(cancellationToken);
+            Task relatedFromTask = dbContext.Entry(task.Result).Reference("_relatedFrom").LoadAsync(cancellationToken);
+
+            return Task.WhenAll(relatedToTask, relatedFromTask);
+        }
     }
 
     public Task<Issue?> GetByFilter(IPredicateSpecification<Issue> filterExpression,
@@ -112,6 +159,8 @@ public sealed class IssueRepository : IIssueRepository
             .CountAsync(cancellationToken);
 
         return (total, _dbContext.Issues.AsNoTracking()
+            .Include("_relatedTo")
+            .Include("_relatedFrom")
             .Where(filterExpression)
             .OrderUsing(sorting)
             .Select(selectExpression)
