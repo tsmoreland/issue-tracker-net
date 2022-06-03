@@ -14,8 +14,10 @@
 using System.Reflection;
 using IssueTracker.ServiceDiscovery;
 using IssueTracker.Shared;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -45,11 +47,29 @@ public class SwashbuckleConfiguration : ConfigureNamedOptions<SwaggerGenOptions,
         AddSwaggerDocsPerVersion(options, apiVersionDescriptionProvider.ApiVersionDescriptions);
         options.DocInclusionPredicate(
             (documentName, apiDescription) =>
-                apiDescription
-                    .ActionDescriptor
-                    .GetApiVersionModel(ApiVersionMapping.Explicit)
-                    .ImplementedApiVersions
-                    .Any(version => $"v{version}" == documentName));
+            {
+                if (!apiDescription.TryGetMethodInfo(out MethodInfo methodInfo))
+                {
+                    return false;
+                }
+
+                IEnumerable<ApiVersion> versions;
+                if (apiDescription.ActionDescriptor is ControllerActionDescriptor actionDescriptor)
+                {
+                    versions = actionDescriptor
+                        .ControllerTypeInfo
+                        .AsType()
+                        .GetCustomAttribute<ApiVersionAttribute>()?.Versions ?? Array.Empty<ApiVersion>();
+
+                }
+                else
+                {
+                    versions = methodInfo.DeclaringType?.GetCustomAttribute<ApiVersionAttribute>()?.Versions ??
+                               Array.Empty<ApiVersion>();
+                }
+
+                return versions.Any(version => $"v{version}" == documentName);
+            });
 
         IEnumerable<string> xmlFilenames = ControllerDocumentationDiscovery
             .DiscoverXmlDocumentationFiles();
