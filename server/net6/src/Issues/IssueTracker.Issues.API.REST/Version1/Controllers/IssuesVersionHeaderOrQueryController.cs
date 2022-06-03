@@ -11,15 +11,10 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Net.Mime;
 using AutoMapper;
-using IssueTracker.Issues.API.REST.Version1.DataTransferObjects.Response;
-using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
-using IssueTracker.Issues.Domain.Services.Version1.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace IssueTracker.Issues.API.REST.Version1.Controllers;
 
@@ -28,54 +23,12 @@ namespace IssueTracker.Issues.API.REST.Version1.Controllers;
 [Route("api/issues")]
 [Tags("issues v1 (header or query versioning)")]
 [ApiVersion("1")]
-public sealed class IssuesVersionHeaderOrQueryController : ControllerBase
+public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
 {
     /// <summary/>
     public IssuesVersionHeaderOrQueryController(IMediator mediator, IMapper mapper)
-        //: base(mediator, mapper)
+        : base(mediator, mapper)
     {
-        Mediator = mediator;
-        Mapper = mapper;
     }
 
-    /// <summary/>
-    private IMediator Mediator { get; }
-
-    /// <summary/>
-    private IMapper Mapper { get; }
-
-    /*
-     * investigating exception
-    /// <summary>
-    /// Returns all issues 
-    /// </summary>
-    /// <param name="pageNumber" example="1" >current page number to return</param>
-    /// <param name="pageSize" example="10">maximum number of items to return</param>
-    /// <param name="orderBy" example="Priority, Type, Title DESC" >order by spec</param>
-    /// <param name="cancellationToken">a cancellation token.</param>
-    /// <returns>all issues in batches of <paramref name="pageSize"/></returns>
-    [HttpGet]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueSummaryPage), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    public async Task<IActionResult> GetAll(
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10,
-        [FromQuery] string? orderBy = null,
-        CancellationToken cancellationToken = default)
-    {
-        PagingOptions paging = new (pageNumber, pageSize);
-        SortingOptions sorting = SortingOptions.FromString(orderBy);
-        GetAllSortedAndPagedSummaryQuery summaryQuery = new(paging, sorting);
-
-        if (paging.IsValid(out string? invalidProperty, out string? errorMessage))
-        {
-            return Ok(IssueSummaryPage.Convert(await Mediator.Send(summaryQuery, cancellationToken), Mapper));
-        }
-
-        ModelState.AddModelError(invalidProperty, errorMessage);
-        return BadRequest(ModelState);
-    }
-    */
 }
