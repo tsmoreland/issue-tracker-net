@@ -27,21 +27,15 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 
 /// <summary>
-/// Issues Controller (v2)
+/// Controller methods shared between <see cref="IssuesController"/> and <see cref="IssuesVersionHeaderOrQueryController"/>
 /// </summary>
-[ApiController]
-[Route("api/v{version:apiVersion}/issues")]
-[Tags("Issues (URL versioning)")]
-[ApiVersion("2")]
-public sealed class IssuessController : IssuesControllerBase
+public abstract class IssuesSharedControllerBase : IssuesControllerBase
 {
-    /// <summary>
-    /// Instantiates a new instance of the <see cref="IssuessController"/> class.
-    /// </summary>
-    public IssuessController(IMediator mediator, IMapper mapper)
+    /// <summary/>
+    protected IssuesSharedControllerBase(IMediator mediator, IMapper mapper)
         : base(mediator, mapper)
     {
-
+        
     }
 
     /// <summary>
@@ -158,6 +152,5 @@ public sealed class IssuessController : IssuesControllerBase
             ? Ok(issue)
             : NotFound();
     }
-
 
 }

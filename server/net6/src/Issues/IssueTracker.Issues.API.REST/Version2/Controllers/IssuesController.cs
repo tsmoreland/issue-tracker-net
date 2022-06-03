@@ -18,17 +18,21 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 
-/// <inheritdoc cref="IssuesController"/>
+/// <summary>
+/// Issues Controller (v2)
+/// </summary>
 [ApiController]
-[Route("api/issues")]
-[Tags("issues v2 (header or query versioning)")]
+[Route("api/v{version:apiVersion}/issues")]
+[Tags("Issues (URL versioning)")]
 [ApiVersion("2")]
-public sealed class IssuesVersionHeaderOrQueryController : IssuesSharedControllerBase
+public sealed class IssuesController : IssuesSharedControllerBase
 {
-
-    /// <summary/>
-    public IssuesVersionHeaderOrQueryController(IMediator mediator, IMapper mapper)
+    /// <summary>
+    /// Instantiates a new instance of the <see cref="IssuesController"/> class.
+    /// </summary>
+    public IssuesController(IMediator mediator, IMapper mapper)
         : base(mediator, mapper)
     {
+
     }
 }
