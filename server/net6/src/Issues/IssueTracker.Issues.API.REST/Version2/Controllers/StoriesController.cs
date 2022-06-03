@@ -31,7 +31,7 @@ namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 [Route("api/v{version:apiVersion}/stories")]
 [Tags("Stories (URL versioning)")]
 [ApiVersion("2")]
-public sealed class StoriesController : IssueControllerBase
+public sealed class StoriesController : IssuesControllerBase
 {
     /// <summary>
     /// Instantiates a new instance of the <see cref="TasksController"/> class.

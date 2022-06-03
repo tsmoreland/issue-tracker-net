@@ -26,11 +26,11 @@ namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 /// <summary>
 /// Base class for Issue and specific issue type controllers
 /// </summary>
-public abstract class IssueControllerBase : ControllerBase
+public abstract class IssuesControllerBase : ControllerBase
 {
 
     /// <summary/>
-    protected IssueControllerBase(IMediator mediator, IMapper mapper)
+    protected IssuesControllerBase(IMediator mediator, IMapper mapper)
     {
         Mediator = mediator;
         Mapper = mapper;

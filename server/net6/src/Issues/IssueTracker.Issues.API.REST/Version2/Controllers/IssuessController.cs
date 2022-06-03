@@ -33,12 +33,12 @@ namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 [Route("api/v{version:apiVersion}/issues")]
 [Tags("Issues (URL versioning)")]
 [ApiVersion("2")]
-public sealed class IssueController : IssueControllerBase
+public sealed class IssuessController : IssuesControllerBase
 {
     /// <summary>
-    /// Instantiates a new instance of the <see cref="IssueController"/> class.
+    /// Instantiates a new instance of the <see cref="IssuessController"/> class.
     /// </summary>
-    public IssueController(IMediator mediator, IMapper mapper)
+    public IssuessController(IMediator mediator, IMapper mapper)
         : base(mediator, mapper)
     {
 

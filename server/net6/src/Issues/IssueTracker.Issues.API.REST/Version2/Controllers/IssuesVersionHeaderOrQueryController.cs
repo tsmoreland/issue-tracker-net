@@ -23,10 +23,10 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 
-/// <summary/>
+/// <inheritdoc cref="IssuessController"/>
 [ApiController]
 [Route("api/issues")]
-[Tags("issues (header or query versioning)")]
+[Tags("issues v2 (header or query versioning)")]
 [ApiVersion("2")]
 public sealed class IssuesVersionHeaderOrQueryController : ControllerBase
 {

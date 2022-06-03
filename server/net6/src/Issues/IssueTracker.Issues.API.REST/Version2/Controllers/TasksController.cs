@@ -30,7 +30,7 @@ namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 [Route("api/v{version:apiVersion=2}/tasks")]
 [Tags("Tasks (URL versioning)")]
 [ApiVersion("2")]
-public sealed class TasksController : IssueControllerBase
+public sealed class TasksController : IssuesControllerBase
 {
 
     /// <summary>

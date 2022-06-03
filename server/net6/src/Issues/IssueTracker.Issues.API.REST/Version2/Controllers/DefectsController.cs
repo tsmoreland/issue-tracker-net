@@ -30,7 +30,7 @@ namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 [Route("api/v{version:apiVersion}/defects")]
 [Tags("Defects (URL versioning)")]
 [ApiVersion("2")]
-public sealed class DefectsController : IssueControllerBase
+public sealed class DefectsController : IssuesControllerBase
 {
     /// <summary>
     /// Instantiates a new instance of the <see cref="TasksController"/> class.
