@@ -12,6 +12,7 @@
 //
 
 using System.IO.Compression;
+using System.Reflection;
 using System.Text.Json.Serialization;
 using AspNetCoreRateLimit;
 using Hellang.Middleware.ProblemDetails;
@@ -26,8 +27,16 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Serilog;
 using Tcell.Agent.AspNetCore;
 
+AssemblyLocation? maybeLocation = AssemblyLocation.FromAssembly(Assembly.GetEntryAssembly());
+if (maybeLocation is null)
+{
+    return;
+}
+AssemblyLocation location = maybeLocation.Value;
+
+
 HostingStartupDiscovery
-    .DiscoverUnloadedAssembliesContainingHostingStartup()
+    .DiscoverUnloadedAssembliesContainingHostingStartup(in location)
     .SetHostingStartupAssemblies();
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -56,6 +65,12 @@ builder.Services
         jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
         jsonOptions.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         jsonOptions.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
+        foreach (Type type in JsonSerializerContextDiscovery.DiscoverSerializerContexts(in location))
+        {
+            // no good, we can't add using Type
+        }
+
     });
 
 builder.Services.AddSecurityHeaders(builder.Configuration);

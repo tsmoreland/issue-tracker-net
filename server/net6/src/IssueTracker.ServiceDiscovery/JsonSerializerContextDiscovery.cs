@@ -12,24 +12,24 @@
 //
 
 using System.Reflection;
+using System.Text.Json.Serialization;
 
 namespace IssueTracker.ServiceDiscovery;
 
-public static class HostingStartupDiscovery
+public static class JsonSerializerContextDiscovery
 {
     private const string RootNamespace = "IssueTracker";
 
-    public static IEnumerable<AssemblyName> DiscoverUnloadedAssembliesContainingHostingStartup()
+    public static IEnumerable<Type> DiscoverSerializerContexts()
     {
         AssemblyLocation? location = AssemblyLocation.FromAssembly(Assembly.GetEntryAssembly());
         return location is null
-            ? Array.Empty<AssemblyName>()
-            : location.Value.GetHostingStartupAssemblies(RootNamespace);
+            ? Array.Empty<Type>()
+            : location.Value.DiscoverTypes<JsonSerializerContext>(RootNamespace);
     }
 
-    public static IEnumerable<AssemblyName> DiscoverUnloadedAssembliesContainingHostingStartup(in AssemblyLocation location)
+    public static IEnumerable<Type> DiscoverSerializerContexts(in AssemblyLocation location)
     {
-        return location.GetHostingStartupAssemblies(RootNamespace);
+        return location.DiscoverTypes<JsonSerializerContext>(RootNamespace);
     }
-
 }
