@@ -12,6 +12,7 @@
 //
 
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Shared;
 
@@ -21,36 +22,11 @@ namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 /// Issue Response DTO
 /// </summary>
 [SwaggerSchemaName("Issue (v1)")]
-public sealed class IssueDto
+public sealed record class IssueDto(string Id, string Title, string Description,
+        Priority Priority, IssueType Type, IssueStateValue State,
+        TriageUserDto Reporter, MaintainerDto Assignee,
+        string? EpicId)
 {
-    /// <summary>
-    /// Instantiates a new instance of the <see cref="IssueDto"/> class
-    /// </summary>
-    public IssueDto(string id, string title, string description,
-        Priority priority, IssueType type, IssueStateValue state,
-        TriageUserDto reporter, MaintainerDto assignee,
-        string? epicId)
-    {
-        Id = id;
-        Title = title;
-        Description = description;
-        Priority = priority;
-        Type = type;
-        State = state;
-        Reporter = reporter;
-        Assignee = assignee;
-        EpicId = epicId;
-    }
-
-    /// <summary>
-    /// Instantiates a new instance of the <see cref="IssueDto"/> class
-    /// </summary>
-    public IssueDto()
-    {
-        Assignee = new MaintainerDto(Maintainer.Unassigned.UserId, Maintainer.Unassigned.FullName);
-        Reporter = new TriageUserDto(TriageUser.Unassigned.UserId, TriageUser.Unassigned.FullName);
-
-    }
 
     /// <summary>
     /// Unique issue id
@@ -58,59 +34,67 @@ public sealed class IssueDto
     /// <example>APP-1</example>
     [Required]
     [RegularExpression("[A-Z][A-Z][A-Z]-[0-9]+")]
-    public string Id { get; set; } = string.Empty;
+    public string Id { get; set; } = Id;
 
     /// <summary>
     /// Issue Title
     /// </summary>
     /// <example>Sample Title</example>
     [Required]
-    public string Title { get; set; } = string.Empty;
+    public string Title { get; set; } = Title;
 
     /// <summary>
     /// Short description of the issue
     /// </summary>
     /// <example>Sample Description</example>
     [Required]
-    public string? Description { get; set; } = string.Empty;
+    public string? Description { get; set; } = Description;
 
     /// <summary>
     /// Issue Priority
     /// </summary>
     /// <example>Low</example>
     [Required]
-    public Priority Priority { get; set; } = Priority.Low;
+    public Priority Priority { get; set; } = Priority;
 
     /// <summary>
     /// Issue type
     /// </summary>
     /// <example>Defect</example>
     [Required]
-    public IssueType Type { get; set; } = IssueType.Defect;
+    public IssueType Type { get; set; } = Type;
 
     /// <summary>
     /// Issue State
     /// </summary>
     /// <example>BackLog</example>
     [Required]
-    public IssueStateValue State { get; set; } = IssueStateValue.Backlog;
+    public IssueStateValue State { get; set; } = State;
 
     /// <summary>
     /// Reporter
     /// </summary>
     [Required]
-    public TriageUserDto Reporter { get; set; }
+    public TriageUserDto Reporter { get; set; } = Reporter;
 
     /// <summary>
     /// Assigned maintainer
     /// </summary>
     [Required]
-    public MaintainerDto Assignee { get; set; }
+    public MaintainerDto Assignee { get; set; } = Assignee;
 
     /// <summary>
     /// Epic Id
     /// </summary>
     /// <example>APP-1</example>
     [RegularExpression("[A-Z][A-Z][A-Z]-[0-9]+")]
-    public string? EpicId { get; set; }
+    public string? EpicId { get; set; } = EpicId;
+
 }
+
+[JsonSerializable(typeof(IssueDto))]
+[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, GenerationMode = JsonSourceGenerationMode.Serialization)]
+internal partial class IssueDtoSerializerContext : JsonSerializerContext
+{
+}
+
