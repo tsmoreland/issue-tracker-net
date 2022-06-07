@@ -20,6 +20,7 @@ using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Middelware.SecurityHeaders;
 using IssueTracker.RestApi.App.Filters;
 using IssueTracker.ServiceDiscovery;
+using IssueTracker.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -66,9 +67,9 @@ builder.Services
         jsonOptions.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         jsonOptions.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 
-        foreach (Type type in JsonSerializerContextDiscovery.DiscoverSerializerContexts(in location))
+        foreach (IJsonSerializerOptionsConfiguration configuration in JsonSerializerContextDiscovery.DiscoverSerializerContextConfiguration(in location))
         {
-            // no good, we can't add using Type
+            configuration.Configure(jsonOptions.JsonSerializerOptions);
         }
 
     });

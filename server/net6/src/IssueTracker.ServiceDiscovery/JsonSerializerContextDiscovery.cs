@@ -13,6 +13,7 @@
 
 using System.Reflection;
 using System.Text.Json.Serialization;
+using IssueTracker.Shared;
 
 namespace IssueTracker.ServiceDiscovery;
 
@@ -20,16 +21,26 @@ public static class JsonSerializerContextDiscovery
 {
     private const string RootNamespace = "IssueTracker";
 
-    public static IEnumerable<Type> DiscoverSerializerContexts()
+    public static IEnumerable<IJsonSerializerOptionsConfiguration> DiscoverSerializerContextConfiguration()
     {
         AssemblyLocation? location = AssemblyLocation.FromAssembly(Assembly.GetEntryAssembly());
         return location is null
-            ? Array.Empty<Type>()
-            : location.Value.DiscoverTypes<JsonSerializerContext>(RootNamespace);
+            ? Array.Empty<IJsonSerializerOptionsConfiguration>()
+            : location.Value
+                .DiscoverTypes<IJsonSerializerOptionsConfiguration>(RootNamespace)
+                .Where(t => t.FullName is {Length: > 0})
+                .Where(t => !t.IsAbstract && !t.IsInterface)
+                .Select(t => t.Assembly.CreateInstance(t.FullName!))
+                .OfType<IJsonSerializerOptionsConfiguration>();
     }
 
-    public static IEnumerable<Type> DiscoverSerializerContexts(in AssemblyLocation location)
+    public static IEnumerable<IJsonSerializerOptionsConfiguration> DiscoverSerializerContextConfiguration(in AssemblyLocation location)
     {
-        return location.DiscoverTypes<JsonSerializerContext>(RootNamespace);
+        return location
+            .DiscoverTypes<IJsonSerializerOptionsConfiguration>(RootNamespace)
+            .Where(t => t.FullName is {Length: > 0})
+            .Where(t => !t.IsAbstract && !t.IsInterface)
+            .Select(t => t.Assembly.CreateInstance(t.FullName!))
+            .OfType<IJsonSerializerOptionsConfiguration>();
     }
 }
