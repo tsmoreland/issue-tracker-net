@@ -21,7 +21,7 @@ namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 /// <summary>
 /// Issue Response DTO
 /// </summary>
-[SwaggerSchemaName("Issue (v1)")]
+[SwaggerSchemaName("Issue (v2)")]
 public sealed record class IssueDto(string Id, string Title, string Description,
         Priority Priority, IssueType Type, IssueStateValue State,
         TriageUserDto Reporter, MaintainerDto Assignee,
