@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Text.Json.Serialization;
 using IssueTracker.Issues.API.REST;
 using IssueTracker.Issues.API.REST.Filters;
 using Microsoft.AspNetCore.Hosting;
@@ -39,5 +40,23 @@ public sealed class HostingStartup : IHostingStartup
 
         services
             .AddScoped<ValidateIssueIdActionFilterAttribute>();
+
+        services
+            .AddControllers(options => options.RespectBrowserAcceptHeader = true)
+            .AddXmlSerializerFormatters()
+            .ConfigureApiBehaviorOptions(apiBehaviourOptions =>
+            {
+                apiBehaviourOptions.SuppressConsumesConstraintForFormFileParameters = true;
+                apiBehaviourOptions.SuppressInferBindingSourcesForParameters = true;
+                apiBehaviourOptions.SuppressMapClientErrors = true;
+                apiBehaviourOptions.SuppressModelStateInvalidFilter = true;
+            })
+            .AddJsonOptions(jsonOptions =>
+            {
+                jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+                jsonOptions.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                jsonOptions.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                jsonOptions.JsonSerializerOptions.AddContext<SerializerContext>();
+            });
     }
 }
