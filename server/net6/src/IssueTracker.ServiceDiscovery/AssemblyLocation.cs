@@ -45,9 +45,9 @@ public readonly record struct AssemblyLocation(Assembly Assembly, string Folder,
             {
                 ImmutableArray<AssemblyName> referencedAssemblyNames = assembly.GetReferencedAssemblies()
                     .Where(asm => asm.FullName.StartsWith(@namespace))
-                    .Union(new [] { assembly.GetName() })
+                    .Union(new[] { assembly.GetName() })
                     .ToImmutableArray();
-                return GetRelatedAssemblyFilenames(folder,  @namespace)
+                return GetRelatedAssemblyFilenames(folder, @namespace)
                     .Select(AssemblyName.GetAssemblyName)
                     .Where(asm => referencedAssemblyNames.DoesNotContain(asm))
                     .Select(Assembly.Load)
@@ -73,7 +73,7 @@ public readonly record struct AssemblyLocation(Assembly Assembly, string Folder,
     {
         ImmutableArray<AssemblyName> referencedAssemblyNames = assembly.GetReferencedAssemblies()
             .Where(asm => asm.FullName.StartsWith(rootNamespace))
-            .Union(new [] { assembly.GetName() })
+            .Union(new[] { assembly.GetName() })
             .ToImmutableArray();
 
         HashSet<Assembly> assemblies = GetRelatedAssemblyFilenames(folder, rootNamespace)

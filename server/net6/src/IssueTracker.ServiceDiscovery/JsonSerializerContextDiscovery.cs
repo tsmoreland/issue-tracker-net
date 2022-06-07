@@ -28,7 +28,7 @@ public static class JsonSerializerContextDiscovery
             ? Array.Empty<IJsonSerializerOptionsConfiguration>()
             : location.Value
                 .DiscoverTypes<IJsonSerializerOptionsConfiguration>(RootNamespace)
-                .Where(t => t.FullName is {Length: > 0})
+                .Where(t => t.FullName is { Length: > 0 })
                 .Where(t => !t.IsAbstract && !t.IsInterface)
                 .Select(t => t.Assembly.CreateInstance(t.FullName!))
                 .OfType<IJsonSerializerOptionsConfiguration>();
@@ -38,7 +38,7 @@ public static class JsonSerializerContextDiscovery
     {
         return location
             .DiscoverTypes<IJsonSerializerOptionsConfiguration>(RootNamespace)
-            .Where(t => t.FullName is {Length: > 0})
+            .Where(t => t.FullName is { Length: > 0 })
             .Where(t => !t.IsAbstract && !t.IsInterface)
             .Select(t => t.Assembly.CreateInstance(t.FullName!))
             .OfType<IJsonSerializerOptionsConfiguration>();
