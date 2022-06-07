@@ -17,14 +17,14 @@ public abstract record class StateChangeCommand;
 
 public sealed record class MoveToBackLogStateChangeCommand : StateChangeCommand;
 public sealed record class CloseStateChangeCommand : StateChangeCommand;
-public sealed record class WontDoStateChangeCommand : StateChangeCommand;
-public sealed record class NotADefectStateChangeCommand : StateChangeCommand;
-public sealed record class CannotReproduceStateChangeCommand : StateChangeCommand;
-public sealed record class OpenStateChangeCommand : StateChangeCommand;
+public sealed record class WontDoStateChangeCommand(DateTimeOffset StopTime) : StateChangeCommand;
+public sealed record class NotADefectStateChangeCommand(DateTimeOffset StopTime) : StateChangeCommand;
+public sealed record class CannotReproduceStateChangeCommand(DateTimeOffset StopTime) : StateChangeCommand;
+public sealed record class OpenStateChangeCommand(DateTimeOffset StartTime) : StateChangeCommand;
 public sealed record class ToDoStateChangeCommand : StateChangeCommand;
 public sealed record class ReadyForReviewStateChangeCommand : StateChangeCommand;
 public sealed record class ReviewFailedStateChangeCommand : StateChangeCommand;
 public sealed record class ReadyForTestStateChangeCommand : StateChangeCommand;
 public sealed record class TestFailedStateChangeCommand : StateChangeCommand;
-public sealed record class CompletedStateChangeCommand : StateChangeCommand;
+public sealed record class CompletedStateChangeCommand(DateTimeOffset StopTime) : StateChangeCommand;
 
