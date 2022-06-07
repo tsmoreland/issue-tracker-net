@@ -21,7 +21,7 @@ namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
 public abstract record class IssueState
 {
     /// <inheritdoc cref="Issue.Execute(StateChangeCommand)"/>
-    public abstract IssueState Execute(StateChangeCommand command);
+    public abstract IssueState Execute(StateChangeCommand command, Issue issue);
 
     /// <summary>
     /// Checks if <paramref name="command"/> can be run against 

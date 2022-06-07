@@ -138,7 +138,7 @@ public abstract class IssuesControllerBase : ControllerBase
     [Filters.ValidateIssueIdServiceFilter]
     public async Task<IActionResult> NotADefect(string id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new ExecuteNotADefectStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
+        await Mediator.Send(new ExecuteNotADefectStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
         return Ok();
     }
 
@@ -158,7 +158,7 @@ public abstract class IssuesControllerBase : ControllerBase
     [Filters.ValidateIssueIdServiceFilter]
     public async Task<IActionResult> CannotReproduce(string id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new ExecuteCannotReproduceStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
+        await Mediator.Send(new ExecuteCannotReproduceStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
         return Ok();
     }
 
@@ -178,7 +178,7 @@ public abstract class IssuesControllerBase : ControllerBase
     [Filters.ValidateIssueIdServiceFilter]
     public async Task<IActionResult> Open(string id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new ExecuteOpenStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
+        await Mediator.Send(new ExecuteOpenStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
         return Ok();
     }
 
@@ -298,7 +298,7 @@ public abstract class IssuesControllerBase : ControllerBase
     [Filters.ValidateIssueIdServiceFilter]
     public async Task<IActionResult> Complete(string id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new ExecuteCompletedStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
+        await Mediator.Send(new ExecuteCompletedStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
         return Ok();
     }
 }

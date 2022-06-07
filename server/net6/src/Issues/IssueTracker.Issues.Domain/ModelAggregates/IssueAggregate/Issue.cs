@@ -169,14 +169,14 @@ public sealed class Issue : Entity
     /// Execute <paramref name="command"/> updating state if necessary
     /// </summary>
     /// <param name="command">state change command to execute</param>
-    public bool ChangeState(StateChangeCommand command)
+    public bool Execute(StateChangeCommand command)
     {
         if (!_issueState.CanExecute(command))
         {
             return false;
         }
 
-        _issueState = _issueState.Execute(command);
+        _issueState = _issueState.Execute(command, this);
         return true;
     }
 

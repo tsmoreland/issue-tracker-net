@@ -18,7 +18,7 @@ namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
 public sealed record class BackLogState : IssueState
 {
     /// <inheritdoc />
-    public override IssueState Execute(StateChangeCommand command)
+    public override IssueState Execute(StateChangeCommand command, Issue issue)
     {
         return command switch
         {

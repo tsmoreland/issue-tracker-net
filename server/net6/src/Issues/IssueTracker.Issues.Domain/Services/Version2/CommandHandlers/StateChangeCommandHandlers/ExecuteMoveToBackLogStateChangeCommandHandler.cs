@@ -13,6 +13,7 @@
 
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Exceptions;
 using IssueTracker.Issues.Domain.Services.Version2.Commands.StateChangeCommands;
 using MediatR;
 
@@ -33,12 +34,12 @@ public sealed class ExecuteMoveToBackLogStateChangeCommandHandler : IRequestHand
         Issue? issue = await _repository.GetByIdOrDefault(request.Id, track: true, cancellationToken);
         if (issue is null)
         {
-            throw new ArgumentException("Issue not found"); // TODO: use specific domain releated exception
+            throw new IssueNotFoundException(request.Id.ToString());
         }
 
-        if (!issue.ChangeState(new MoveToBackLogStateChangeCommand()))
+        if (!issue.Execute(new MoveToBackLogStateChangeCommand()))
         {
-            throw new ArgumentException("change not valid"); // TODO: use specific domain related exception - or change return type, probably change return type
+            throw new InvalidStateChangeException(issue.State.Value, typeof(MoveToBackLogStateChangeCommand));
         }
 
         await _repository.UnitOfWork.SaveChangesAsync(cancellationToken);
