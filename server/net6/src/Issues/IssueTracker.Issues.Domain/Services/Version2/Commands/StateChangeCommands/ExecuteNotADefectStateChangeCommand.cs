@@ -3,4 +3,4 @@ using MediatR;
 
 namespace IssueTracker.Issues.Domain.Services.Version2.Commands.StateChangeCommands;
 
-public sealed record class ExecuteNotADefectStateChangeCommand(IssueIdentifier Id) : IRequest<Unit>;
+public sealed record class ExecuteNotADefectStateChangeCommand(IssueIdentifier Id, DateTimeOffset StopTime) : IRequest<Unit>;
