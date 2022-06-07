@@ -13,7 +13,7 @@
 using System.Text.Json.Serialization;
 using ResponseV2 = IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 
-namespace IssueTracker.Issues.API.REST;
+namespace IssueTracker.RestApi.App;
 
 /// <summary/>
 [JsonSerializable(typeof(ResponseV2.IssueDto))]

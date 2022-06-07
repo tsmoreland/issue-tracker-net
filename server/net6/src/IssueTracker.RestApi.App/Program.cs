@@ -13,10 +13,12 @@
 
 using System.IO.Compression;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using AspNetCoreRateLimit;
 using Hellang.Middleware.ProblemDetails;
 using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Middelware.SecurityHeaders;
+using IssueTracker.RestApi.App;
 using IssueTracker.RestApi.App.Filters;
 using IssueTracker.ServiceDiscovery;
 using Microsoft.AspNetCore.Identity;
@@ -48,6 +50,24 @@ builder.WebHost
 // Add services to the container.
 
 builder.Services.AddProblemDetails();
+
+builder.Services
+    .AddControllers(options => options.RespectBrowserAcceptHeader = true)
+    .AddXmlSerializerFormatters()
+    .ConfigureApiBehaviorOptions(apiBehaviourOptions =>
+    {
+        apiBehaviourOptions.SuppressConsumesConstraintForFormFileParameters = true;
+        apiBehaviourOptions.SuppressInferBindingSourcesForParameters = true;
+        apiBehaviourOptions.SuppressMapClientErrors = true;
+        apiBehaviourOptions.SuppressModelStateInvalidFilter = true;
+    })
+    .AddJsonOptions(jsonOptions =>
+    {
+        jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+        jsonOptions.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+        jsonOptions.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        jsonOptions.JsonSerializerOptions.AddContext<SerializerContext>();
+    });
 
 builder.Services.AddSecurityHeaders(builder.Configuration);
 builder.Services
