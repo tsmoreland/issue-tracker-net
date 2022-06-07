@@ -12,6 +12,7 @@
 //
 
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 using IssueTracker.Shared;
 
@@ -23,7 +24,19 @@ public sealed class JsonSerializerOptionsConfiguration : IJsonSerializerOptionsC
     /// <inheritdoc />
     public void Configure(JsonSerializerOptions options)
     {
-        options.AddContext<IssueDtoSerializerContext>();
-
+        options.AddContext<SerializerContext>();
     }
+}
+
+/// <summary/>
+[JsonSerializable(typeof(IssueDto))]
+[JsonSerializable(typeof(IssueSummaryPage))]
+[JsonSerializable(typeof(IssueSummaryDto))]
+[JsonSerializable(typeof(LinkedIssueSummaryPage))]
+[JsonSerializable(typeof(LinkedIssueSummaryDto))]
+[JsonSerializable(typeof(TriageUserDto))]
+[JsonSerializable(typeof(MaintainerDto))]
+[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Serialization)]
+internal partial class SerializerContext : JsonSerializerContext
+{
 }

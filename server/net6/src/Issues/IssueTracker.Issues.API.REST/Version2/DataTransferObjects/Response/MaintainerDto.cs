@@ -29,12 +29,13 @@ public sealed record class MaintainerDto(Guid Id, string FullName)
     /// </summary>
     /// <example>F3296326-A40A-4208-AE6F-055EE106AC85</example>
     [Required]
-    public Guid Id { get; init; } = Id;
+    public Guid Id { get; } = Id;
 
     /// <summary>
     /// Full name
     /// </summary>
     /// <example>John Smith</example>
     [Required]
-    public string FullName { get; init; } = FullName;
+    public string FullName { get; } = FullName;
 }
+

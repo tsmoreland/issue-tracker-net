@@ -12,6 +12,7 @@
 //
 
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Shared;
 
@@ -83,3 +84,4 @@ public sealed class LinkedIssueSummaryDto
     [Required]
     public LinkType LinkType { get; set; } = LinkType.Related;
 }
+

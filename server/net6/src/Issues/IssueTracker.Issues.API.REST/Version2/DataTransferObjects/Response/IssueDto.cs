@@ -92,9 +92,3 @@ public sealed record class IssueDto(string Id, string Title, string Description,
 
 }
 
-[JsonSerializable(typeof(IssueDto))]
-[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Serialization)]
-internal partial class IssueDtoSerializerContext : JsonSerializerContext
-{
-}
-

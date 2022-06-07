@@ -71,3 +71,4 @@ public sealed class IssueSummaryDto
     [Required]
     public IssueType Type { get; set; } = IssueType.Defect;
 }
+

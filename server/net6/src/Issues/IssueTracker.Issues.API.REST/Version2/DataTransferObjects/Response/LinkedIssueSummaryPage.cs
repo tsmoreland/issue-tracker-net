@@ -12,6 +12,7 @@
 //
 
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using IssueTracker.Shared;
 
 namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
@@ -62,3 +63,4 @@ public sealed class LinkedIssueSummaryPage
     [Required]
     public IAsyncEnumerable<LinkedIssueSummaryDto> Items { get; set; } = AsyncEnumerable.Empty<LinkedIssueSummaryDto>(); 
 }
+
