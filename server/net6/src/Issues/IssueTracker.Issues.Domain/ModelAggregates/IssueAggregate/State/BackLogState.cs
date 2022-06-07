@@ -25,7 +25,7 @@ public sealed record class BackLogState : IssueState
             WontDoStateChangeCommand _ => new WontDoState(),
             CannotReproduceStateChangeCommand _ => new CannotReproduceState(),
             NotADefectStateChangeCommand _ => new NotADefectState(),
-            OpenStateChangeCommand _ =>  new InProgressState(),
+            OpenStateChangeCommand _ => new InProgressState(),
             ToDoStateChangeCommand _ => new ToDoState(),
             _ => this,
         };

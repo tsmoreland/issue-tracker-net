@@ -34,7 +34,7 @@ public sealed class GetAllSortedAndPagedWhereIssueTypeMatchesQueryHandler : IReq
     /// <inheritdoc />
     public async Task<IssueSummaryPage> Handle(GetAllSortedAndPagedWhereIssueTypeMatchesSummaryQuery request, CancellationToken cancellationToken)
     {
-        (PagingOptions paging, SortingOptions sorting, IssueType type)  = request;
+        (PagingOptions paging, SortingOptions sorting, IssueType type) = request;
         (int total, IAsyncEnumerable<IssueSummaryProjection> summaries) = await _repository
             .GetPagedAndSortedProjections(
                 new IssueTypeMatchesPredicate(type),

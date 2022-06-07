@@ -17,7 +17,7 @@ namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
 public readonly record struct IssueIdentifier(string Project, int IssueNumber) : IEquatable<IssueIdentifier>
 {
-    public static IssueIdentifier Empty { get; } = new ();
+    public static IssueIdentifier Empty { get; } = new();
 
     public string Project { get; init; } = (Project is { Length: > 0 } and { Length: <= 3 })
         ? Project

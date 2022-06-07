@@ -18,7 +18,7 @@ public sealed record class SortingOptions(
     IEnumerable<string>? ThenByProperty = null,
     bool Ascending = true)
 {
-    public static SortingOptions Empty { get; } = new (string.Empty);
+    public static SortingOptions Empty { get; } = new(string.Empty);
 
     public static SortingOptions OrderBy(string property)
     {
@@ -33,7 +33,7 @@ public sealed record class SortingOptions(
     {
         if (ThenByProperty is null)
         {
-            return this with { ThenByProperty = new [] { property } };
+            return this with { ThenByProperty = new[] { property } };
         }
 
         return this with { ThenByProperty = ThenByProperty.Union(new[] { property }) };

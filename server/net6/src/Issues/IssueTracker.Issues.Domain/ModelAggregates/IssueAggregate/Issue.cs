@@ -50,7 +50,7 @@ public sealed class Issue : Entity
 
     private Issue()
     {
-        
+
     }
 
     public IssueIdentifier Id { get; private set; } = IssueIdentifier.Empty;
@@ -91,20 +91,20 @@ public sealed class Issue : Entity
                 return;
             }
 
-            if (value is not {Length: > 0} and {Length: <= 200})
+            if (value is not { Length: > 0 } and { Length: <= 200 })
             {
                 throw new ArgumentException("title cannot be empty", nameof(value));
             }
             _title = value;
         }
-    } 
+    }
 
     public string Description
     {
         get => _description;
         set
         {
-            if (_description is not {Length: <= 500})
+            if (_description is not { Length: <= 500 })
             {
                 throw new ArgumentException("Description cannot be longer than 500", nameof(value));
             }

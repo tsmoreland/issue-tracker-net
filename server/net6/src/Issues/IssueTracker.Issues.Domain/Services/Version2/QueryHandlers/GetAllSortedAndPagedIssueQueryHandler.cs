@@ -33,7 +33,7 @@ public sealed class GetAllSortedAndPagedIssueQueryHandler : IRequestHandler<GetA
     /// <inheritdoc />
     public async Task<IssuePage> Handle(GetAllSortedAndPagedIssueQuery request, CancellationToken cancellationToken)
     {
-        (PagingOptions paging, SortingOptions sorting, IssueType? type)  = request;
+        (PagingOptions paging, SortingOptions sorting, IssueType? type) = request;
 
         IPredicateSpecification<Issue> predicate = type is not null
             ? new IssueTypeMatchesPredicate(type.Value)
@@ -42,7 +42,7 @@ public sealed class GetAllSortedAndPagedIssueQueryHandler : IRequestHandler<GetA
         (int total, IAsyncEnumerable<Issue> items) = await _repository
             .GetPagedAndSortedProjections(predicate, new SelectIssue(),
                 paging, sorting, cancellationToken);
-        
+
         return new IssuePage(paging.PageNumber, total, items.ToDto());
     }
 }

@@ -71,7 +71,7 @@ public static class IssueSortingOptionsExtensions
             "TITLE" =>
                 issue => EF.Property<string>(issue, "_title"),
             "DESCRIPTION" =>
-                issue => EF.Property<string>(issue,"_description"),
+                issue => EF.Property<string>(issue, "_description"),
             "EPICID" =>
                 issue => EF.Property<IssueIdentifier>(issue, "_epicId"),
             "PROJECT" =>

@@ -16,7 +16,7 @@ namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 /// <summary>
 /// Issue Priorities
 /// </summary>
-public enum Priority 
+public enum Priority
 {
     /// <summary>
     ///  Low Priority

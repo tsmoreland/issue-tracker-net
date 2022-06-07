@@ -28,7 +28,7 @@ public sealed class ExpressionPredicate : IPredicateSpecification<Issue>
     /// </exception>
     public ExpressionPredicate(string expression)
     {
-        if (expression is not {Length: > 0})
+        if (expression is not { Length: > 0 })
         {
             throw new ArgumentException("Expression cannot be empty", nameof(expression));
         }

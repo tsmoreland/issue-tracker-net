@@ -54,7 +54,7 @@ public interface IRepository<in TIdentity, TEntity> where TEntity : Entity
 
     Task<(int Total, IAsyncEnumerable<T> Collection)> GetPagedAndSortedProjections<T>(
         IPredicateSpecification<TEntity> filterExpression,
-        ISelectorSpecification<TEntity, T> selectExpression, 
+        ISelectorSpecification<TEntity, T> selectExpression,
         PagingOptions paging, SortingOptions sorting,
         CancellationToken cancellationToken = default);
 

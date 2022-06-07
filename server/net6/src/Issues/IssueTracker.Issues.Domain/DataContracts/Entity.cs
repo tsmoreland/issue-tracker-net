@@ -15,7 +15,7 @@ namespace IssueTracker.Issues.Domain.DataContracts;
 
 public abstract class Entity : IEqualityComparer<Entity>
 {
-    public DateTimeOffset LastModifiedTime { get; private set; } 
+    public DateTimeOffset LastModifiedTime { get; private set; }
 
     public void UpdateLastModifiedTime()
     {

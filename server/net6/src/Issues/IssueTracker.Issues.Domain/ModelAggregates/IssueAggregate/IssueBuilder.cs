@@ -140,7 +140,7 @@ public sealed class IssueBuilder
         {
             throw new InvalidOperationException("description cannot be empty");
         }
-        
+
         if (_id is not null)
         {
             issue = new Issue(_id.Value.Project, _id.Value.IssueNumber, _title, _description);

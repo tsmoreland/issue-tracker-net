@@ -27,7 +27,7 @@ public sealed class ModifyIssueCommandHandler : IRequestHandler<ModifyIssueComma
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
-    
+
     /// <inheritdoc />
     public async Task<IssueDto?> Handle(ModifyIssueCommand request, CancellationToken cancellationToken)
     {

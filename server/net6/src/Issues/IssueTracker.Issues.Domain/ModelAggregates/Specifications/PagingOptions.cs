@@ -51,7 +51,7 @@ public sealed record class PagingOptions(int PageNumber, int PageSize)
         if (PageNumber < 1)
         {
             invalidProperty = "pageNumber"; // camel case until I can convert using nameof
-            errorMessage =  "must be greater than or equal to 1";
+            errorMessage = "must be greater than or equal to 1";
             return false;
         }
         else if (PageSize < 1)
