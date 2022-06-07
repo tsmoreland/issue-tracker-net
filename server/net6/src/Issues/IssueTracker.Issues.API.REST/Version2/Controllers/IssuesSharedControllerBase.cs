@@ -35,7 +35,7 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
     protected IssuesSharedControllerBase(IMediator mediator, IMapper mapper)
         : base(mediator, mapper)
     {
-        
+
     }
 
     /// <summary>
@@ -57,7 +57,7 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
         [FromQuery] string? orderBy = null,
         CancellationToken cancellationToken = default)
     {
-        PagingOptions paging = new (pageNumber, pageSize);
+        PagingOptions paging = new(pageNumber, pageSize);
         SortingOptions sorting = SortingOptions.FromString(orderBy);
         GetAllSortedAndPagedSummaryQuery summaryQuery = new(paging, sorting);
 

@@ -21,6 +21,6 @@ public sealed class DateTimeOffsetValueConverter : ValueConverter<DateTimeOffset
         : base(dateTime => dateTime.ToUniversalTime().Ticks,
             ticks => new DateTimeOffset(new DateTime(ticks, DateTimeKind.Utc), TimeSpan.FromSeconds(0)))
     {
-        
+
     }
 }

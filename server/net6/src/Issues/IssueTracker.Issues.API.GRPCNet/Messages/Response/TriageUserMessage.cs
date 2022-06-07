@@ -25,5 +25,5 @@ public sealed class TriageUserMessage
     public string FullName { get; set; } = TriageUser.Unassigned.FullName;
 
     public static TriageUserMessage Unassigned { get; } =
-        new() { Id =  TriageUser.Unassigned.UserId.ToString(), FullName = TriageUser.Unassigned.FullName };
+        new() { Id = TriageUser.Unassigned.UserId.ToString(), FullName = TriageUser.Unassigned.FullName };
 }

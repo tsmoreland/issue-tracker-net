@@ -40,7 +40,7 @@ public sealed class EditIssueDto
     /// </summary>
     public EditIssueDto()
     {
-        
+
     }
 
     /// <summary>

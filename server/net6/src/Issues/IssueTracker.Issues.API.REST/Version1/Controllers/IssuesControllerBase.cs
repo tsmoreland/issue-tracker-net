@@ -66,7 +66,7 @@ public abstract class IssuesControllerBase : ControllerBase
         [FromQuery] string? orderBy = null,
         CancellationToken cancellationToken = default)
     {
-        PagingOptions paging = new (pageNumber, pageSize);
+        PagingOptions paging = new(pageNumber, pageSize);
         SortingOptions sorting = SortingOptions.FromString(orderBy);
         GetAllSortedAndPagedSummaryQuery summaryQuery = new(paging, sorting);
 
@@ -168,7 +168,7 @@ public abstract class IssuesControllerBase : ControllerBase
     [HttpDelete("{id}")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status204NoContent, "Successful Response", ContentTypes = new [] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateIssueIdServiceFilter]

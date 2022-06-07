@@ -35,7 +35,7 @@ internal static class ControllerBaseExtensions
         [FromQuery] string? orderBy = null,
         CancellationToken cancellationToken = default)
     {
-        PagingOptions paging = new (pageNumber, pageSize);
+        PagingOptions paging = new(pageNumber, pageSize);
         SortingOptions sorting = SortingOptions.FromString(orderBy);
         GetAllSortedAndPagedWhereIssueTypeMatchesSummaryQuery summaryQuery = new(paging, sorting, type);
 

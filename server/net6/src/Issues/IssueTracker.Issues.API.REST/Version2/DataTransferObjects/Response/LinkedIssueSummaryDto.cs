@@ -46,7 +46,7 @@ public sealed class LinkedIssueSummaryDto
     /// </summary>
     public LinkedIssueSummaryDto()
     {
-            
+
     }
 
     /// <summary>

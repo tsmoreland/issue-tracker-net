@@ -21,7 +21,7 @@ internal static class RequestMessageExtensions
 {
     public static GetAllSortedAndPagedSummaryQuery ToMediatorRequest(this PagedIssueRequestMessage request)
     {
-        PagingOptions paging = new (request.PageNumber, request.PageSize);
+        PagingOptions paging = new(request.PageNumber, request.PageSize);
         SortingOptions sorting = SortingOptions.FromString(request.OrderBy);
 
         return new GetAllSortedAndPagedSummaryQuery(paging, sorting);

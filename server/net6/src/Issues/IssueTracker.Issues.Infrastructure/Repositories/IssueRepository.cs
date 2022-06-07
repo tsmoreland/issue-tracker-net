@@ -11,14 +11,14 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Issues.Domain.DataContracts;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.Extensions;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
-using Microsoft.EntityFrameworkCore;
 using IssueTracker.Issues.Domain;
 using IssueTracker.Issues.Domain.Configuration.ValueConverters;
+using IssueTracker.Issues.Domain.DataContracts;
+using IssueTracker.Issues.Domain.Extensions;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
 using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
+using Microsoft.EntityFrameworkCore;
 
 namespace IssueTracker.Issues.Infrastructure.Repositories;
 
@@ -191,7 +191,7 @@ public sealed class IssueRepository : IIssueRepository
                 else
                 {
                     return false;
-                } 
+                }
             }, cancellationToken);
     }
 

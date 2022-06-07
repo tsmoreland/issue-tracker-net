@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IssueTracker.Issues.API.REST.Filters;
 
-    /// <summary/>
+/// <summary/>
 public sealed class ValidateIssueIdServiceFilterAttribute : ServiceFilterAttribute
 {
     /// <summary/>

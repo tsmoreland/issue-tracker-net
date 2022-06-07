@@ -46,20 +46,20 @@ public sealed class EditIssueDto
     /// </summary>
     /// <example>Example Title</example>
     [MaxLength(200)]
-    public string? Title { get; init; } 
+    public string? Title { get; init; }
 
     /// <summary>
     /// Issue Description
     /// </summary>
     /// <example>Example description</example>
     [MaxLength(500)]
-    public string? Description { get; init; } 
+    public string? Description { get; init; }
 
     /// <summary>
     /// Issue Priority
     /// </summary>
     /// <example>High</example>
-    public Priority? Priority { get; init; } 
+    public Priority? Priority { get; init; }
 
     /// <summary>
     /// Deconstructor

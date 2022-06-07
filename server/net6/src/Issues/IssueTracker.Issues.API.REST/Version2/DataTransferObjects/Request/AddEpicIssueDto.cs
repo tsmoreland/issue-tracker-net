@@ -37,7 +37,7 @@ public sealed class AddEpicIssueDto : AddIssueDtoBase
     /// </summary>
     public AddEpicIssueDto()
     {
-        
+
     }
 
     /// <summary>

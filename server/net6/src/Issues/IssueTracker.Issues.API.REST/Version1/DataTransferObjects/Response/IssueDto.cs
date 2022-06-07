@@ -39,7 +39,7 @@ public sealed class IssueDto
     /// </summary>
     public IssueDto()
     {
-        
+
     }
 
     /// <summary>

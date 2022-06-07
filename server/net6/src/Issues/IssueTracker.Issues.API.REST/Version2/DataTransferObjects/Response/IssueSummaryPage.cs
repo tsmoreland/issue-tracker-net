@@ -40,7 +40,7 @@ public sealed class IssueSummaryPage
     /// </summary>
     public IssueSummaryPage()
     {
-        
+
     }
 
     /// <summary>
@@ -74,6 +74,6 @@ public sealed class IssueSummaryPage
     /// Issues
     /// </summary>
     [Required]
-    public IAsyncEnumerable<IssueSummaryDto> Items { get; set; } = AsyncEnumerable.Empty<IssueSummaryDto>(); 
+    public IAsyncEnumerable<IssueSummaryDto> Items { get; set; } = AsyncEnumerable.Empty<IssueSummaryDto>();
 }
 

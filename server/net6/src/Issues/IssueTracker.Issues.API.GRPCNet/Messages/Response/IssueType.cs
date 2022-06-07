@@ -36,7 +36,7 @@ public enum IssueType
 
     [EnumMember]
     [ProtoEnum]
-    SubTask  = 4,
+    SubTask = 4,
 
     [EnumMember]
     [ProtoEnum]

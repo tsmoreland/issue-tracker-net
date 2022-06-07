@@ -38,7 +38,7 @@ public sealed class LinkedIssueSummaryPage
     /// </summary>
     public LinkedIssueSummaryPage()
     {
-        
+
     }
 
     /// <summary>
@@ -61,6 +61,6 @@ public sealed class LinkedIssueSummaryPage
     /// Issues
     /// </summary>
     [Required]
-    public IAsyncEnumerable<LinkedIssueSummaryDto> Items { get; set; } = AsyncEnumerable.Empty<LinkedIssueSummaryDto>(); 
+    public IAsyncEnumerable<LinkedIssueSummaryDto> Items { get; set; } = AsyncEnumerable.Empty<LinkedIssueSummaryDto>();
 }
 

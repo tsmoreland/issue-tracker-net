@@ -12,8 +12,8 @@
 //
 
 using AutoMapper;
-using Source = IssueTracker.Issues.Domain.Services.Version1.DataTransferObjects;
 using Destination = IssueTracker.Issues.API.REST.Version1.DataTransferObjects.Response;
+using Source = IssueTracker.Issues.Domain.Services.Version1.DataTransferObjects;
 
 namespace IssueTracker.Issues.API.REST.Profiles;
 

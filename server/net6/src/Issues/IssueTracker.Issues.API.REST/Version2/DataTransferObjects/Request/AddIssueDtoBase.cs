@@ -37,7 +37,7 @@ public abstract class AddIssueDtoBase
     /// </summary>
     protected AddIssueDtoBase()
     {
-        
+
     }
 
     /// <summary>
@@ -68,7 +68,7 @@ public abstract class AddIssueDtoBase
     /// <example>Low</example>
     [Required]
     public Priority Priority { get; set; } = Priority.Low;
-    
+
     /// <summary>
     /// Deconstructor
     /// </summary>

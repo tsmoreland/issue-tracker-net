@@ -75,5 +75,5 @@ public sealed class IssueMessage
     public string? EpicId { get; set; } = null;
 
     public static IssueMessage NotFound() =>
-        new () { Status = ResultCode.NotFound };
+        new() { Status = ResultCode.NotFound };
 }

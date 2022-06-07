@@ -34,7 +34,7 @@ public static class EndpointRouteBuilderExtensions
         builder
             .MapGrpcService<IssueQueryService>()
             .EnableGrpcWeb()
-            .RequireCors("AllowAll"); 
+            .RequireCors("AllowAll");
 
         return builder;
     }

@@ -25,5 +25,5 @@ public sealed class MaintainerMessage
     public string FullName { get; set; } = Maintainer.Unassigned.FullName;
 
     public static MaintainerMessage Unassigned { get; } =
-        new() { Id =  Maintainer.Unassigned.UserId.ToString(), FullName = Maintainer.Unassigned.FullName };
+        new() { Id = Maintainer.Unassigned.UserId.ToString(), FullName = Maintainer.Unassigned.FullName };
 }

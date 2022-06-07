@@ -39,7 +39,7 @@ public sealed class AddSubTaskIssueDto : AddIssueDtoBase
     /// </summary>
     public AddSubTaskIssueDto()
     {
-        
+
     }
 
     /// <summary>
@@ -52,5 +52,5 @@ public sealed class AddSubTaskIssueDto : AddIssueDtoBase
     /// </summary>
     /// <example>APP-1</example>
     [RegularExpression("[A-Z][A-Z][A-Z]-[0-9]+")]
-    public string? EpicId { get; set; } 
+    public string? EpicId { get; set; }
 }

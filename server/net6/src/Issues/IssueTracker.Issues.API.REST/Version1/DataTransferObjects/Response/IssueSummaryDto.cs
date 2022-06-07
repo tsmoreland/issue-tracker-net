@@ -36,7 +36,7 @@ public sealed class IssueSummaryDto
     /// </summary>
     public IssueSummaryDto()
     {
-        
+
     }
 
     /// <summary>
