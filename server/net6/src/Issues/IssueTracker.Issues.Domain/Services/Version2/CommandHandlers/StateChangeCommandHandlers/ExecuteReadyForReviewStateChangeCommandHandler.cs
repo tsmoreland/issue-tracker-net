@@ -1,4 +1,5 @@
 ﻿using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Exceptions;
 using IssueTracker.Issues.Domain.Services.Version2.Commands.StateChangeCommands;
 using MediatR;
 
@@ -14,8 +15,14 @@ public sealed class ExecuteReadyForReviewStateChangeCommandHandler : IRequestHan
     }
 
     /// <inheritdoc />
-    public Task<Unit> Handle(ExecuteReadyForReviewStateChangeCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(ExecuteReadyForReviewStateChangeCommand request, CancellationToken cancellationToken)
     {
+        IssueIdentifier id = request.Id;
+        Issue? issue = await _repository.GetByIdOrDefault(id, track: true, cancellationToken);
+        if (issue is null)
+        {
+            throw new IssueNotFoundException(request.Id.ToString());
+        }
         throw new NotImplementedException();
     }
 }
