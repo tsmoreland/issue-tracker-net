@@ -37,12 +37,12 @@ class CommandLineProcessor(object):
                 skip = 2;
                 if  idx + 2 >= length:
                     continue
-                pair[0](args[idx+1])
+                pair[0](args[idx+1], args[idx+2])
             elif pair[1] == 1:
                 skip = 1;
                 if  idx + 1 >= length:
                     continue
-                pair[0](args[idx+1], args[idx+2])
+                pair[0](args[idx+1])
             else:
                 skip = 0
                 pair[0]()
