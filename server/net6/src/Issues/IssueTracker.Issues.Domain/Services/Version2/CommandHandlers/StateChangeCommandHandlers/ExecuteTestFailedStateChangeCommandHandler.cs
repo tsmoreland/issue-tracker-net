@@ -1,4 +1,5 @@
 ﻿using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Exceptions;
 using IssueTracker.Issues.Domain.Services.Version2.Commands.StateChangeCommands;
 using MediatR;
@@ -23,6 +24,11 @@ public sealed class ExecuteTestFailedStateChangeCommandHandler : IRequestHandler
         {
             throw new IssueNotFoundException(request.Id.ToString());
         }
-        throw new NotImplementedException();
+        if (!issue.Execute(new TestFailedStateChangeCommand()))
+        {
+            throw new InvalidStateChangeException(issue.State.Value, typeof(CannotReproduceStateChangeCommand));
+        }
+        await _repository.UnitOfWork.SaveChangesAsync(cancellationToken);
+        return Unit.Value;
     }
 }

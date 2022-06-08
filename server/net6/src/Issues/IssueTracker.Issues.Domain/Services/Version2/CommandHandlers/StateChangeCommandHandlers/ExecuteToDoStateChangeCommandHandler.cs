@@ -1,4 +1,5 @@
 ﻿using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Exceptions;
 using IssueTracker.Issues.Domain.Services.Version2.Commands.StateChangeCommands;
 using MediatR;
@@ -24,7 +25,11 @@ public sealed class ExecuteToDoStateChangeCommandHandler : IRequestHandler<Execu
             throw new IssueNotFoundException(request.Id.ToString());
         }
 
-
-        throw new NotImplementedException();
+        if (!issue.Execute(new ToDoStateChangeCommand()))
+        {
+            throw new InvalidStateChangeException(issue.State.Value, typeof(CannotReproduceStateChangeCommand));
+        }
+        await _repository.UnitOfWork.SaveChangesAsync(cancellationToken);
+        return Unit.Value;
     }
 }

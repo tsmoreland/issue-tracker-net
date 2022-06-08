@@ -1,4 +1,5 @@
 ﻿using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Exceptions;
 using IssueTracker.Issues.Domain.Services.Version2.Commands.StateChangeCommands;
 using MediatR;
@@ -17,12 +18,17 @@ public sealed class ExecuteCompletedStateChangeCommandHandler : IRequestHandler<
     /// <inheritdoc />
     public async Task<Unit> Handle(ExecuteCompletedStateChangeCommand request, CancellationToken cancellationToken)
     {
-        IssueIdentifier id = request.Id;
+        (IssueIdentifier id, DateTimeOffset stopTime) = request;
         Issue? issue = await _repository.GetByIdOrDefault(id, track: true, cancellationToken);
         if (issue is null)
         {
             throw new IssueNotFoundException(request.Id.ToString());
         }
-        throw new NotImplementedException();
+        if (!issue.Execute(new CompletedStateChangeCommand(stopTime)))
+        {
+            throw new InvalidStateChangeException(issue.State.Value, typeof(CannotReproduceStateChangeCommand));
+        }
+        await _repository.UnitOfWork.SaveChangesAsync(cancellationToken);
+        return Unit.Value;
     }
 }
