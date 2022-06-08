@@ -11,7 +11,6 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Infrastructure.Configurations.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -37,6 +36,8 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
         builder.Ignore(e => e.Description);
         builder.Ignore(e => e.Type);
         builder.Ignore(e => e.EpicId);
+        builder.Ignore(e => e.StartTime);
+        builder.Ignore(e => e.StopTime);
 
         builder.Property<string>("_project")
             .HasColumnName("Project");
