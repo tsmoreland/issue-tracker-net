@@ -54,6 +54,16 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
             .IsRequired();
 
         builder
+            .Property<DateTimeOffset?>("_startTime")
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasConversion<NullableDateTimeOffsetValueConverter>();
+
+        builder
+            .Property<DateTimeOffset?>("_stopTime")
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasConversion<NullableDateTimeOffsetValueConverter>();
+
+        builder
             .Property(e => e.State)
             .IsRequired()
             .HasConversion<IssueStateValueConverter>();

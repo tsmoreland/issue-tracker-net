@@ -31,6 +31,8 @@ public sealed class Issue : Entity
     private readonly ICollection<IssueLink> _relatedTo = new HashSet<IssueLink>();
     // ReSharper disable once CollectionNeverUpdated.Local
     private readonly ICollection<IssueLink> _relatedFrom = new HashSet<IssueLink>();
+    private DateTimeOffset? _startTime;
+    private DateTimeOffset? _stopTime;
 
     public Issue(string project, int issueNumber, string title, string description)
     {
@@ -149,6 +151,42 @@ public sealed class Issue : Entity
         {
             ArgumentNullException.ThrowIfNull(value, nameof(value));
             _assignee = value;
+        }
+    }
+
+    /// <summary>
+    /// Time when issues was first opened, can only be set once
+    /// </summary>
+    public DateTimeOffset? StartTime
+    {
+        get => _startTime;
+        set
+        {
+            if (value is null)
+            {
+                throw new ArgumentException("Start time cannot be set to null", nameof(value));
+            }
+            _startTime = value;
+        }
+    }
+    /// <summary>
+    /// Time when issue was completed, or set to a variation of non-defect; can only be set once
+    /// </summary>
+    public DateTimeOffset? StopTime
+    {
+        get => _stopTime;
+        set
+        {
+            if (value is null)
+            {
+                throw new ArgumentException("Stop time cannot be set to null", nameof(value));
+            }
+
+            if (_startTime > value)
+            {
+                throw new ArgumentException("Stop time cannot be less than start time", nameof(value));
+            }
+            _stopTime = value;
         }
     }
 
