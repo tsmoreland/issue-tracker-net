@@ -92,6 +92,22 @@ namespace IssueTracker.Issues.Infrastructure.CompiledModels
                 unicode: false);
             _project.AddAnnotation("Relational:ColumnName", "Project");
 
+            var _startTime = runtimeEntityType.AddProperty(
+                "_startTime",
+                typeof(DateTimeOffset?),
+                fieldInfo: typeof(Issue).GetField("_startTime", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                propertyAccessMode: PropertyAccessMode.Field,
+                nullable: true,
+                valueConverter: new NullableDateTimeOffsetValueConverter());
+
+            var _stopTime = runtimeEntityType.AddProperty(
+                "_stopTime",
+                typeof(DateTimeOffset?),
+                fieldInfo: typeof(Issue).GetField("_stopTime", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                propertyAccessMode: PropertyAccessMode.Field,
+                nullable: true,
+                valueConverter: new NullableDateTimeOffsetValueConverter());
+
             var _title = runtimeEntityType.AddProperty(
                 "_title",
                 typeof(string),
