@@ -20,7 +20,6 @@ public sealed class ExecuteCannotReproduceStateChangeCommandHandler : IRequestHa
     {
         (IssueIdentifier id, DateTimeOffset stopTime) = request;
 
-
         Issue? issue = await _repository.GetByIdOrDefault(id, track: true, cancellationToken);
         if (issue is null)
         {
