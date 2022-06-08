@@ -118,7 +118,7 @@ public abstract class IssuesControllerBase : ControllerBase
     [Filters.ValidateIssueIdServiceFilter]
     public async Task<IActionResult> WontDo(string id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new ExecuteWontDoStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
+        await Mediator.Send(new ExecuteWontDoStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
         return Ok();
     }
 
