@@ -39,13 +39,13 @@ internal sealed class IssueLinkEntityTypeConfiguration : IEntityTypeConfiguratio
 
         builder
             .HasOne(e => e.Left)
-            .WithMany("_relatedFrom")
+            .WithMany("_relatedTo")
             .HasPrincipalKey(e => e.Id)
             .HasForeignKey(e => e.LeftId)
             .OnDelete(DeleteBehavior.Cascade);
         builder
             .HasOne(e => e.Right)
-            .WithMany("_relatedTo")
+            .WithMany("_relatedFrom")
             .HasPrincipalKey(e => e.Id)
             .HasForeignKey(e => e.RightId)
             .OnDelete(DeleteBehavior.Cascade);
