@@ -20,7 +20,7 @@ public sealed record class BackLogState : IssueState
     /// <inheritdoc />
     public override IssueState Execute(StateChangeCommand command, Issue issue)
     {
-        return command switch
+        IssueState state = command switch
         {
             WontDoStateChangeCommand _ => new WontDoState(),
             CannotReproduceStateChangeCommand _ => new CannotReproduceState(),
@@ -29,6 +29,14 @@ public sealed record class BackLogState : IssueState
             ToDoStateChangeCommand _ => new ToDoState(),
             _ => this,
         };
+
+        if (!ReferenceEquals(state, this))
+        {
+            command.UpdateIssue(issue);
+        }
+
+        return state;
+
     }
 
     /// <inheritdoc />

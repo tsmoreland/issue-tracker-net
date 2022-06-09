@@ -19,7 +19,8 @@ public sealed record InProgressState : IssueState
     /// <inheritdoc />
     public override IssueState Execute(StateChangeCommand command, Issue issue)
     {
-        return command switch
+
+        IssueState state = command switch
         {
             ReadyForReviewStateChangeCommand _ => new InReviewState(),
             MoveToBackLogStateChangeCommand _ => new BackLogState(),
@@ -28,6 +29,13 @@ public sealed record InProgressState : IssueState
             NotADefectStateChangeCommand _ => new NotADefectState(),
             _ => this,
         };
+
+        if (!ReferenceEquals(this, state))
+        {
+            command.UpdateIssue(issue);
+        }
+
+        return state;
     }
 
     /// <inheritdoc />

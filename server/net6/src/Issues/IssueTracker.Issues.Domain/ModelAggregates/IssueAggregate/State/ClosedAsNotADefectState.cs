@@ -7,11 +7,17 @@ public sealed record ClosedAsNotADefectState : IssueState
     /// <inheritdoc />
     public override IssueState Execute(StateChangeCommand command, Issue issue)
     {
-        return command switch
+        IssueState state = command switch
         {
             OpenStateChangeCommand _ => new InProgressState(),
             _ => this,
         };
+        if (!ReferenceEquals(this, state))
+        {
+            command.UpdateIssue(issue);
+        }
+
+        return state;
     }
 
     /// <inheritdoc />

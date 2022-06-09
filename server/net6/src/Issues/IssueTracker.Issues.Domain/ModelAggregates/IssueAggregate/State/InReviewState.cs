@@ -7,12 +7,18 @@ public sealed record InReviewState : IssueState
     /// <inheritdoc />
     public override IssueState Execute(StateChangeCommand command, Issue issue)
     {
-        return command switch
+        IssueState state = command switch
         {
             ReadyForTestStateChangeCommand _ => new InTestingState(),
             ReviewFailedStateChangeCommand _ => new InProgressState(),
             _ => this,
         };
+        if (!ReferenceEquals(this, state))
+        {
+            command.UpdateIssue(issue);
+        }
+
+        return state;
     }
 
     /// <inheritdoc />
