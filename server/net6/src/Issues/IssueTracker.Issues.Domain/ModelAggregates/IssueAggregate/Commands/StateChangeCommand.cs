@@ -13,18 +13,23 @@
 
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
 
-public abstract record class StateChangeCommand;
+public abstract record class StateChangeCommand
+{
+    /// <summary>
+    /// Visitor function used to apply additional
+    /// settings from commands to issue
+    /// </summary>
+    /// <param name="issue"><see cref="Issue"/> to visit</param>
+    public virtual void UpdateIssue(Issue issue)
+    {
+    }
+}
 
 public sealed record class MoveToBackLogStateChangeCommand : StateChangeCommand;
 public sealed record class CloseStateChangeCommand : StateChangeCommand;
-public sealed record class WontDoStateChangeCommand(DateTimeOffset StopTime) : StateChangeCommand;
-public sealed record class NotADefectStateChangeCommand(DateTimeOffset StopTime) : StateChangeCommand;
-public sealed record class CannotReproduceStateChangeCommand(DateTimeOffset StopTime) : StateChangeCommand;
-public sealed record class OpenStateChangeCommand(DateTimeOffset StartTime) : StateChangeCommand;
+
 public sealed record class ToDoStateChangeCommand : StateChangeCommand;
 public sealed record class ReadyForReviewStateChangeCommand : StateChangeCommand;
 public sealed record class ReviewFailedStateChangeCommand : StateChangeCommand;
 public sealed record class ReadyForTestStateChangeCommand : StateChangeCommand;
 public sealed record class TestFailedStateChangeCommand : StateChangeCommand;
-public sealed record class CompletedStateChangeCommand(DateTimeOffset StopTime) : StateChangeCommand;
-
