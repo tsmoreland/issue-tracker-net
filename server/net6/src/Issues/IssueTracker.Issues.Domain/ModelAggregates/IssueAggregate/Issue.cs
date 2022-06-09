@@ -27,7 +27,6 @@ public sealed class Issue : Entity
     private IssueType _type = IssueType.Defect;
     private Maintainer _assignee = Maintainer.Unassigned;
     private TriageUser _reporter = TriageUser.Unassigned;
-    private IssueState _issueState = new BackLogState();
     private readonly ICollection<IssueLink> _relatedTo = new HashSet<IssueLink>();
     // ReSharper disable once CollectionNeverUpdated.Local
     private readonly ICollection<IssueLink> _relatedFrom = new HashSet<IssueLink>();
@@ -182,7 +181,7 @@ public sealed class Issue : Entity
                 throw new ArgumentException("Stop time cannot be set to null", nameof(value));
             }
 
-            if (_startTime > value)
+            if (value < _startTime)
             {
                 throw new ArgumentException("Stop time cannot be less than start time", nameof(value));
             }
@@ -209,12 +208,12 @@ public sealed class Issue : Entity
     /// <param name="command">state change command to execute</param>
     public bool Execute(StateChangeCommand command)
     {
-        if (!_issueState.CanExecute(command))
+        if (!State.CanExecute(command))
         {
             return false;
         }
 
-        _issueState = _issueState.Execute(command, this);
+        State = State.Execute(command, this);
         return true;
     }
 
