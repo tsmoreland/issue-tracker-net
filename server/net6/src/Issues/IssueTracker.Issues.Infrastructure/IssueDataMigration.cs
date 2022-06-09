@@ -11,9 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Issues.Domain;
 using IssueTracker.Issues.Domain.DataContracts;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
 using Microsoft.EntityFrameworkCore;
 
 namespace IssueTracker.Issues.Infrastructure;
@@ -60,6 +59,42 @@ public sealed class IssueDataMigration : IIssueDataMigration
 
         _repository.Add(epic);
         _repository.Add(story);
+
+        Issue task = new("APP", 3,
+            "Add commands to modify state",
+            "add support for modifying issue state",
+            Priority.Medium, IssueType.Task)
+        {
+            EpicId = new IssueIdentifier(epic.Id.Project, epic.Id.IssueNumber),
+        };
+        task.Execute(new OpenStateChangeCommand(DateTimeOffset.UtcNow));
+
+        Issue linkedIssueTask1 = new("APP", 4,
+            "verify related to",
+            "add issue with related link to verify database adds it",
+            Priority.Medium, IssueType.Task)
+        {
+            EpicId = new IssueIdentifier(epic.Id.Project, epic.Id.IssueNumber),
+        };
+        linkedIssueTask1.Execute(new OpenStateChangeCommand(DateTimeOffset.UtcNow));
+        linkedIssueTask1.Execute(new ReadyForReviewStateChangeCommand());
+
+        Issue linkedIssueTask2 = new("APP", 5,
+            "verify related from",
+            "add issue with related link to verify database adds it",
+            Priority.Medium, IssueType.Task)
+        {
+            EpicId = new IssueIdentifier(epic.Id.Project, epic.Id.IssueNumber),
+        };
+
+        linkedIssueTask2.Execute(new OpenStateChangeCommand(DateTimeOffset.UtcNow));
+        linkedIssueTask2.Execute(new ReadyForReviewStateChangeCommand());
+        linkedIssueTask2.Execute(new ReadyForTestStateChangeCommand());
+        linkedIssueTask1.AddRelatedTo(LinkType.Related, linkedIssueTask2);
+
+        _repository.Add(task);
+        _repository.Add(linkedIssueTask1);
+        _repository.Add(linkedIssueTask2);
 
         await _repository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
     }
