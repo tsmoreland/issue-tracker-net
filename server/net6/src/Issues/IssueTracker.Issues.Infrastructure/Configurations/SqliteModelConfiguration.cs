@@ -58,6 +58,7 @@ public sealed class SqliteModelConfiguration : IModelConfiguration
             .LogTo(message => _logger.LogInformation("{SQL}", message))
             .EnableSensitiveDataLogging(_isDevelopment);
 
+
         if (!_isDevelopment)
         {
             optionsBuilder.UseModel(IssuesDbContextModel.Instance);

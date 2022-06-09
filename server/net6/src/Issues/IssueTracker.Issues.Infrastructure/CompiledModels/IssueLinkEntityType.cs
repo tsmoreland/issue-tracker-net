@@ -70,11 +70,11 @@ namespace IssueTracker.Issues.Infrastructure.CompiledModels
                 propertyInfo: typeof(IssueLink).GetProperty("Left", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(IssueLink).GetField("<Left>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
-            var _relatedFrom = principalEntityType.AddNavigation("_relatedFrom",
+            var _relatedTo = principalEntityType.AddNavigation("_relatedTo",
                 runtimeForeignKey,
                 onDependent: false,
                 typeof(ICollection<IssueLink>),
-                fieldInfo: typeof(Issue).GetField("_relatedFrom", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                fieldInfo: typeof(Issue).GetField("_relatedTo", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
             return runtimeForeignKey;
         }
@@ -94,11 +94,11 @@ namespace IssueTracker.Issues.Infrastructure.CompiledModels
                 propertyInfo: typeof(IssueLink).GetProperty("Right", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(IssueLink).GetField("<Right>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
-            var _relatedTo = principalEntityType.AddNavigation("_relatedTo",
+            var _relatedFrom = principalEntityType.AddNavigation("_relatedFrom",
                 runtimeForeignKey,
                 onDependent: false,
                 typeof(ICollection<IssueLink>),
-                fieldInfo: typeof(Issue).GetField("_relatedTo", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                fieldInfo: typeof(Issue).GetField("_relatedFrom", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
             return runtimeForeignKey;
         }
