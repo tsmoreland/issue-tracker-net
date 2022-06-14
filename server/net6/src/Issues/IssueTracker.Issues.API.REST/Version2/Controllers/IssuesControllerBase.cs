@@ -15,6 +15,7 @@ using System.Net.Mime;
 using AutoMapper;
 using IssueTracker.Issues.API.Version2.Abstractions.Commands;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
 using IssueTracker.Issues.Domain.Services.Version2.Commands.StateChangeCommands;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -158,7 +159,7 @@ public abstract class IssuesControllerBase : ControllerBase
     [Filters.ValidateIssueIdServiceFilter]
     public async Task<IActionResult> CannotReproduce(string id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new ExecuteCannotReproduceStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
+        await Mediator.Send(new CannotReproduceStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
         return Ok();
     }
 

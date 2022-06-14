@@ -73,55 +73,29 @@ public sealed class IssueRepository : IIssueRepository
             .MaxAsync(cancellationToken);
     }
 
-    public ValueTask<Issue?> GetByIdOrDefault(IssueIdentifier id, bool track = true, CancellationToken cancellationToken = default)
+    public async ValueTask<Issue?> GetByIdOrDefault(IssueIdentifier id, bool track = true, CancellationToken cancellationToken = default)
     {
         if (!track)
         {
-            return new ValueTask<Issue?>(_dbContext.Issues
+            return await _dbContext.Issues
                 .AsNoTracking()
                 .Include("_relatedTo")
                 .Include("_relatedFrom")
-                .FirstOrDefaultAsync(i => i.Id == id, cancellationToken));
+                .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
         }
 
-        ValueTask<Issue?> issueTask = _dbContext.Issues.FindAsync(new object[] { id }, cancellationToken);
-        if (!issueTask.IsCompleted)
+        Issue? issue = await _dbContext.Issues.FindAsync(new object[] { id }, cancellationToken);
+        if (issue is null)
         {
-            return LoadRelatedWhenComplete(issueTask);
-        }
-
-        if (!issueTask.IsCompletedSuccessfully || issueTask.Result is null)
-        {
-            return issueTask;
-        }
-
-        return new ValueTask<Issue?>(LoadRelated(_dbContext, issueTask, cancellationToken)
-            .ContinueWith(_ => (Issue?)issueTask.Result, cancellationToken));
-
-        async ValueTask<Issue?> LoadRelatedWhenComplete(ValueTask<Issue?> task)
-        {
-            Issue? issue = await task;
-            if (issue is null)
-            {
-                return null;
-            }
-
-            await LoadRelated(_dbContext, task, cancellationToken);
             return issue;
         }
 
-        static Task LoadRelated(DbContext dbContext, ValueTask<Issue?> task, CancellationToken cancellationToken)
-        {
-            if (!task.IsCompletedSuccessfully || task.Result is null)
-            {
-                return Task.CompletedTask;
-            }
+        Task relatedToTask = _dbContext.Entry(issue).Collection("_relatedTo").LoadAsync(cancellationToken);
+        Task relatedFromTask = _dbContext.Entry(issue).Collection("_relatedFrom").LoadAsync(cancellationToken);
 
-            Task relatedToTask = dbContext.Entry(task.Result).Reference("_relatedTo").LoadAsync(cancellationToken);
-            Task relatedFromTask = dbContext.Entry(task.Result).Reference("_relatedFrom").LoadAsync(cancellationToken);
+        await Task.WhenAll(relatedToTask, relatedFromTask);
 
-            return Task.WhenAll(relatedToTask, relatedFromTask);
-        }
+        return issue;
     }
 
     public Task<Issue?> GetByFilter(IPredicateSpecification<Issue> filterExpression,
