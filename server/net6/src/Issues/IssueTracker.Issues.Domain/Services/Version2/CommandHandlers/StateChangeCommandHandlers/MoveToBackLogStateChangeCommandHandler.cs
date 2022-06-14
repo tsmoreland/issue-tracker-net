@@ -14,22 +14,21 @@
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Exceptions;
-using IssueTracker.Issues.Domain.Services.Version2.Commands.StateChangeCommands;
 using MediatR;
 
 namespace IssueTracker.Issues.Domain.Services.Version2.CommandHandlers.StateChangeCommandHandlers;
 
-public sealed class ExecuteMoveToBackLogStateChangeCommandHandler : IRequestHandler<ExecuteMoveToBackLogStateChangeCommand, Unit>
+public sealed class MoveToBackLogStateChangeCommandHandler : IRequestHandler<MoveToBackLogStateChangeCommand, Unit>
 {
     private readonly IIssueRepository _repository;
 
-    public ExecuteMoveToBackLogStateChangeCommandHandler(IIssueRepository repository)
+    public MoveToBackLogStateChangeCommandHandler(IIssueRepository repository)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
     /// <inheritdoc />
-    public async Task<Unit> Handle(ExecuteMoveToBackLogStateChangeCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(MoveToBackLogStateChangeCommand request, CancellationToken cancellationToken)
     {
         Issue? issue = await _repository.GetByIdOrDefault(request.Id, track: true, cancellationToken);
         if (issue is null)
@@ -37,7 +36,7 @@ public sealed class ExecuteMoveToBackLogStateChangeCommandHandler : IRequestHand
             throw new IssueNotFoundException(request.Id.ToString());
         }
 
-        if (!issue.Execute(new MoveToBackLogStateChangeCommand()))
+        if (!issue.Execute(request))
         {
             throw new InvalidStateChangeException(issue.State.Value, typeof(MoveToBackLogStateChangeCommand));
         }

@@ -13,10 +13,9 @@
 
 using System.Net.Mime;
 using AutoMapper;
-using IssueTracker.Issues.API.Version2.Abstractions.Commands;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
-using IssueTracker.Issues.Domain.Services.Version2.Commands.StateChangeCommands;
+using IssueTracker.Issues.Domain.Services.Version2.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -79,7 +78,7 @@ public abstract class IssuesControllerBase : ControllerBase
     [Filters.ValidateIssueIdServiceFilter]
     public async Task<IActionResult> MoveToBackLog(string id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new ExecuteMoveToBackLogStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
+        await Mediator.Send(new MoveToBackLogStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
         return Ok();
     }
 
@@ -99,7 +98,7 @@ public abstract class IssuesControllerBase : ControllerBase
     [Filters.ValidateIssueIdServiceFilter]
     public async Task<IActionResult> Close(string id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new ExecuteCloseStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
+        await Mediator.Send(new CloseStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
         return Ok();
     }
 
@@ -119,7 +118,7 @@ public abstract class IssuesControllerBase : ControllerBase
     [Filters.ValidateIssueIdServiceFilter]
     public async Task<IActionResult> WontDo(string id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new ExecuteWontDoStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
+        await Mediator.Send(new WontDoStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
         return Ok();
     }
 
@@ -139,7 +138,7 @@ public abstract class IssuesControllerBase : ControllerBase
     [Filters.ValidateIssueIdServiceFilter]
     public async Task<IActionResult> NotADefect(string id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new ExecuteNotADefectStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
+        await Mediator.Send(new NotADefectStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
         return Ok();
     }
 
@@ -179,7 +178,7 @@ public abstract class IssuesControllerBase : ControllerBase
     [Filters.ValidateIssueIdServiceFilter]
     public async Task<IActionResult> Open(string id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new ExecuteOpenStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
+        await Mediator.Send(new OpenStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
         return Ok();
     }
 
@@ -199,7 +198,7 @@ public abstract class IssuesControllerBase : ControllerBase
     [Filters.ValidateIssueIdServiceFilter]
     public async Task<IActionResult> MarkAsToDo(string id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new ExecuteToDoStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
+        await Mediator.Send(new ToDoStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
         return Ok();
     }
 
@@ -219,7 +218,7 @@ public abstract class IssuesControllerBase : ControllerBase
     [Filters.ValidateIssueIdServiceFilter]
     public async Task<IActionResult> ReadyForReview(string id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new ExecuteReadyForReviewStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
+        await Mediator.Send(new ReadyForReviewStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
         return Ok();
     }
 
@@ -239,7 +238,7 @@ public abstract class IssuesControllerBase : ControllerBase
     [Filters.ValidateIssueIdServiceFilter]
     public async Task<IActionResult> ReviewFailed(string id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new ExecuteReviewFailedStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
+        await Mediator.Send(new ReviewFailedStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
         return Ok();
     }
 
@@ -259,7 +258,7 @@ public abstract class IssuesControllerBase : ControllerBase
     [Filters.ValidateIssueIdServiceFilter]
     public async Task<IActionResult> ReadyForTest(string id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new ExecuteReadyForTestStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
+        await Mediator.Send(new ReadyForTestStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
         return Ok();
     }
 
@@ -279,7 +278,7 @@ public abstract class IssuesControllerBase : ControllerBase
     [Filters.ValidateIssueIdServiceFilter]
     public async Task<IActionResult> TestFailed(string id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new ExecuteTestFailedStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
+        await Mediator.Send(new TestFailedStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
         return Ok();
     }
 
@@ -299,7 +298,7 @@ public abstract class IssuesControllerBase : ControllerBase
     [Filters.ValidateIssueIdServiceFilter]
     public async Task<IActionResult> Complete(string id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new ExecuteCompletedStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
+        await Mediator.Send(new CompletedStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
         return Ok();
     }
 }

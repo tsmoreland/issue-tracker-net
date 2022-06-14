@@ -67,7 +67,7 @@ public sealed class IssueDataMigration : IIssueDataMigration
         {
             EpicId = new IssueIdentifier(epic.Id.Project, epic.Id.IssueNumber),
         };
-        task.Execute(new OpenStateChangeCommand(DateTimeOffset.UtcNow));
+        task.Execute(new OpenStateChangeCommand(task.Id, DateTimeOffset.UtcNow));
 
         Issue linkedIssueTask1 = new("APP", 4,
             "verify related to",
@@ -76,8 +76,8 @@ public sealed class IssueDataMigration : IIssueDataMigration
         {
             EpicId = new IssueIdentifier(epic.Id.Project, epic.Id.IssueNumber),
         };
-        linkedIssueTask1.Execute(new OpenStateChangeCommand(DateTimeOffset.UtcNow));
-        linkedIssueTask1.Execute(new ReadyForReviewStateChangeCommand());
+        linkedIssueTask1.Execute(new OpenStateChangeCommand(linkedIssueTask1.Id, DateTimeOffset.UtcNow));
+        linkedIssueTask1.Execute(new ReadyForReviewStateChangeCommand(linkedIssueTask1.Id));
 
         Issue linkedIssueTask2 = new("APP", 5,
             "verify related from",
@@ -87,9 +87,9 @@ public sealed class IssueDataMigration : IIssueDataMigration
             EpicId = new IssueIdentifier(epic.Id.Project, epic.Id.IssueNumber),
         };
 
-        linkedIssueTask2.Execute(new OpenStateChangeCommand(DateTimeOffset.UtcNow));
-        linkedIssueTask2.Execute(new ReadyForReviewStateChangeCommand());
-        linkedIssueTask2.Execute(new ReadyForTestStateChangeCommand());
+        linkedIssueTask2.Execute(new OpenStateChangeCommand(linkedIssueTask2.Id, DateTimeOffset.UtcNow));
+        linkedIssueTask2.Execute(new ReadyForReviewStateChangeCommand(linkedIssueTask2.Id));
+        linkedIssueTask2.Execute(new ReadyForTestStateChangeCommand(linkedIssueTask2.Id));
         linkedIssueTask1.AddRelatedTo(LinkType.Related, linkedIssueTask2);
 
         _repository.Add(task);

@@ -11,9 +11,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using MediatR;
+
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
 
-public abstract record class StateChangeCommand
+public abstract record class StateChangeCommand(IssueIdentifier Id)
 {
     /// <summary>
     /// Visitor function used to apply additional
@@ -25,11 +27,11 @@ public abstract record class StateChangeCommand
     }
 }
 
-public sealed record class MoveToBackLogStateChangeCommand : StateChangeCommand;
-public sealed record class CloseStateChangeCommand : StateChangeCommand;
+public sealed record class MoveToBackLogStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest<Unit>;
+public sealed record class CloseStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest<Unit>;
 
-public sealed record class ToDoStateChangeCommand : StateChangeCommand;
-public sealed record class ReadyForReviewStateChangeCommand : StateChangeCommand;
-public sealed record class ReviewFailedStateChangeCommand : StateChangeCommand;
-public sealed record class ReadyForTestStateChangeCommand : StateChangeCommand;
-public sealed record class TestFailedStateChangeCommand : StateChangeCommand;
+public sealed record class ToDoStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest<Unit>;
+public sealed record class ReadyForReviewStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest<Unit>;
+public sealed record class ReviewFailedStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest<Unit>;
+public sealed record class ReadyForTestStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest<Unit>;
+public sealed record class TestFailedStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest<Unit>;

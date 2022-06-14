@@ -14,6 +14,6 @@
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using MediatR;
 
-namespace IssueTracker.Issues.API.Version2.Abstractions.Commands;
+namespace IssueTracker.Issues.Domain.Services.Version2.Commands;
 
 public sealed record class DeleteIssueCommand(IssueIdentifier Id) : IRequest<bool>;
