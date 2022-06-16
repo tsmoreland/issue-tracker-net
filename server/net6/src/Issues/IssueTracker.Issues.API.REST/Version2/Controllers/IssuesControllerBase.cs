@@ -26,7 +26,6 @@ namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 /// <summary>
 /// Base class for Issue and specific issue type controllers
 /// </summary>
-[Route("{id}")]
 public abstract class IssuesControllerBase : ControllerBase
 {
 
@@ -48,7 +47,7 @@ public abstract class IssuesControllerBase : ControllerBase
     /// </summary>
     /// <param name="id" example="APP-1234">unique id of the issue to delete</param>
     /// <param name="cancellationToken">A cancellation token</param>
-    [HttpDelete]
+    [HttpDelete("{id}")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status204NoContent, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
@@ -69,7 +68,7 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("moveToBacklog")]
+    [HttpPut("{id}/moveToBacklog")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
@@ -89,7 +88,7 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("close")]
+    [HttpPut("{id}/close")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
@@ -109,7 +108,7 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("wontDo")]
+    [HttpPut("{id}/wontDo")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
@@ -129,7 +128,7 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("notADefect")]
+    [HttpPut("{id}/notADefect")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
@@ -149,7 +148,7 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("cannotReproduce")]
+    [HttpPut("{id}/cannotReproduce")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
@@ -169,7 +168,7 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("open")]
+    [HttpPut("{id}/open")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
@@ -189,7 +188,7 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("todo")]
+    [HttpPut("{id}/todo")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
@@ -209,7 +208,7 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("readyForReview")]
+    [HttpPut("{id}/readyForReview")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
@@ -229,7 +228,7 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("reviewFailed")]
+    [HttpPut("{id}/reviewFailed")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
@@ -249,7 +248,7 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("readyForTest")]
+    [HttpPut("{id}/readyForTest")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
@@ -269,7 +268,7 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("testFailed")]
+    [HttpPut("{id}/testFailed")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
@@ -289,7 +288,7 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("complete")]
+    [HttpPut("{id}/complete")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
