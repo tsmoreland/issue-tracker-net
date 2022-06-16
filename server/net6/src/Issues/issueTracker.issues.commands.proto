@@ -36,3 +36,63 @@ message EditIssueMessage {
 message ResetDatabaseMesssage {
 
 }
+
+message MoveToBackLogStateChangeMessage {
+    ResultCode Status = 1;
+    string Id = 2;
+}
+
+message CloseStateChangeMessage {
+    ResultCode Status = 1;
+    string Id = 2;
+}
+
+message ToDoStateChangeMessage {
+    ResultCode Status = 1;
+    string Id = 2;
+}
+
+message ReadyForReviewStateChangeMessage {
+    ResultCode Status = 1;
+    string Id = 2;
+}
+
+message ReviewFailedjStateChangeMessage {
+    ResultCode Status = 1;
+    string Id = 2;
+}
+
+message ReadyForTestStateChangeMessage {
+    ResultCode Status = 1;
+    string Id = 2;
+}
+
+message TestFailedjStateChangeMessage {
+    ResultCode Status = 1;
+    string Id = 2;
+}
+
+message CannotReproduceStateChangeMessage {
+    ResultCode Status = 1;
+    string Id = 2;
+}
+
+message NotADefectStateChangeMessage {
+    ResultCode Status = 1;
+    string Id = 2;
+}
+
+message OpenStateChangeMessage {
+    ResultCode Status = 1;
+    string Id = 2;
+}
+
+message WontDoStateChangeMessage {
+    ResultCode Status = 1;
+    string Id = 2;
+}
+
+message CompletedStateChangeMessage {
+    ResultCode Status = 1;
+    string Id = 2;
+}
