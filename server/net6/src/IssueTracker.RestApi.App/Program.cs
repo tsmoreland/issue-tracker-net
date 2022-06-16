@@ -24,7 +24,9 @@ using IssueTracker.ServiceDiscovery;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.Extensions.Options;
 using Serilog;
 using Tcell.Agent.AspNetCore;
 
@@ -34,7 +36,6 @@ if (maybeLocation is null)
     return;
 }
 AssemblyLocation location = maybeLocation.Value;
-
 
 HostingStartupDiscovery
     .DiscoverUnloadedAssembliesContainingHostingStartup(in location)
@@ -52,7 +53,11 @@ builder.WebHost
 builder.Services.AddProblemDetails();
 
 builder.Services
-    .AddControllers(options => options.RespectBrowserAcceptHeader = true)
+    .AddControllers(options =>
+    {
+        options.RespectBrowserAcceptHeader = true;
+        options.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
+    })
     .AddXmlSerializerFormatters()
     .ConfigureApiBehaviorOptions(apiBehaviourOptions =>
     {
@@ -161,3 +166,23 @@ app.MapDelete("/api/reset",
     });
 
 app.Run();
+
+static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
+{
+    // using second service provider to allow system.text.json to be used for the general case
+#pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
+    IServiceProvider builder = new ServiceCollection()
+        .AddLogging()
+        .AddMvc()
+        .AddNewtonsoftJson()
+        .Services
+        .BuildServiceProvider();
+#pragma warning restore ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
+
+    return builder
+        .GetRequiredService<IOptions<MvcOptions>>()
+        .Value
+        .InputFormatters
+        .OfType<NewtonsoftJsonPatchInputFormatter>()
+        .First();
+}
