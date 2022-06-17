@@ -54,6 +54,7 @@ public sealed class IssueCommandService : IssueTrackerCommandService.IssueTracke
         return new StatusMessage { Status = ResultCode.ResultSuccess, Message = dto.Id };
     }
 
+    /// <inheritdoc />
     public override async Task<StatusMessage> EditIssue(EditIssueMessage request, ServerCallContext context)
     {
         IssueDto? dto = await _mediator.Send(
@@ -65,5 +66,81 @@ public sealed class IssueCommandService : IssueTrackerCommandService.IssueTracke
         return dto is not null
             ? new StatusMessage { Status = ResultCode.ResultSuccess, Message = "" }
             : new StatusMessage { Status = ResultCode.ResultNotFound, Message = "" };
+    }
+
+    /// <inheritdoc />
+    public override async Task<StatusMessage> DeleteIssue(IssueCommandMessage request, ServerCallContext context)
+    {
+        return await _mediator.Send(new DeleteIssueCommand(IssueIdentifier.FromString(request.Id)))
+            ? new StatusMessage { Status = ResultCode.ResultSuccess, Message = "" }
+            : new StatusMessage { Status = ResultCode.ResultNotFound, Message = $"{request.Id} not found" };
+    }
+
+    /// <inheritdoc />
+    public override Task<StatusMessage> MoveToBackLogStateChange(IssueCommandMessage request, ServerCallContext context)
+    {
+
+
+        return base.MoveToBackLogStateChange(request, context);
+    }
+
+    /// <inheritdoc />
+    public override Task<StatusMessage> OpenStateChange(IssueCommandMessage request, ServerCallContext context)
+    {
+        return base.OpenStateChange(request, context);
+    }
+
+    /// <inheritdoc />
+    public override Task<StatusMessage> ReadyForReviewStateChange(IssueCommandMessage request, ServerCallContext context)
+    {
+        return base.ReadyForReviewStateChange(request, context);
+    }
+
+    /// <inheritdoc />
+    public override Task<StatusMessage> ReadyForTestStateChange(IssueCommandMessage request, ServerCallContext context)
+    {
+        return base.ReadyForTestStateChange(request, context);
+    }
+
+    /// <inheritdoc />
+    public override Task<StatusMessage> CompletedStateChange(IssueCommandMessage request, ServerCallContext context)
+    {
+        return base.CompletedStateChange(request, context);
+    }
+
+    /// <inheritdoc />
+    public override Task<StatusMessage> CloseStateChange(IssueCommandMessage request, ServerCallContext context)
+    {
+        return base.CloseStateChange(request, context);
+    }
+
+    /// <inheritdoc />
+    public override Task<StatusMessage> CannotReproduceStateChange(IssueCommandMessage request, ServerCallContext context)
+    {
+        return base.CannotReproduceStateChange(request, context);
+    }
+
+    /// <inheritdoc />
+    public override Task<StatusMessage> WontDoStateChange(IssueCommandMessage request, ServerCallContext context)
+    {
+        return base.WontDoStateChange(request, context);
+    }
+
+    /// <inheritdoc />
+    public override Task<StatusMessage> NotADefectStateChange(IssueCommandMessage request, ServerCallContext context)
+    {
+        return base.NotADefectStateChange(request, context);
+    }
+
+    /// <inheritdoc />
+    public override Task<StatusMessage> ReviewFailedStateChange(IssueCommandMessage request, ServerCallContext context)
+    {
+        return base.ReviewFailedStateChange(request, context);
+    }
+
+    /// <inheritdoc />
+    public override Task<StatusMessage> TestFailedStateChange(IssueCommandMessage request, ServerCallContext context)
+    {
+        return base.TestFailedStateChange(request, context);
     }
 }

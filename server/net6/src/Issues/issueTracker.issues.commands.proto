@@ -9,6 +9,19 @@ service IssueTrackerCommandService {
     rpc ResetDatabase(google.protobuf.Empty) returns (google.protobuf.Empty);
     rpc AddIssue(AddIssueMessage) returns (StatusMessage);
     rpc EditIssue(EditIssueMessage) returns (StatusMessage);
+    rpc DeleteIssue(IssueCommandMessage) returns (StatusMessage);
+    rpc MoveToBackLogStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc OpenStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc ReadyForReviewStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc ReadyForTestStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc CompletedStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc CloseStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc ReviewFailedStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc TestFailedStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc CannotReproduceStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc WontDoStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc NotADefectStateChange(IssueCommandMessage) returns (StatusMessage);
+
 }
 
 message AddIssueMessage {
@@ -37,62 +50,7 @@ message ResetDatabaseMesssage {
 
 }
 
-message MoveToBackLogStateChangeMessage {
-    ResultCode Status = 1;
+message IssueCommandMessage {
     string Id = 2;
 }
 
-message CloseStateChangeMessage {
-    ResultCode Status = 1;
-    string Id = 2;
-}
-
-message ToDoStateChangeMessage {
-    ResultCode Status = 1;
-    string Id = 2;
-}
-
-message ReadyForReviewStateChangeMessage {
-    ResultCode Status = 1;
-    string Id = 2;
-}
-
-message ReviewFailedjStateChangeMessage {
-    ResultCode Status = 1;
-    string Id = 2;
-}
-
-message ReadyForTestStateChangeMessage {
-    ResultCode Status = 1;
-    string Id = 2;
-}
-
-message TestFailedjStateChangeMessage {
-    ResultCode Status = 1;
-    string Id = 2;
-}
-
-message CannotReproduceStateChangeMessage {
-    ResultCode Status = 1;
-    string Id = 2;
-}
-
-message NotADefectStateChangeMessage {
-    ResultCode Status = 1;
-    string Id = 2;
-}
-
-message OpenStateChangeMessage {
-    ResultCode Status = 1;
-    string Id = 2;
-}
-
-message WontDoStateChangeMessage {
-    ResultCode Status = 1;
-    string Id = 2;
-}
-
-message CompletedStateChangeMessage {
-    ResultCode Status = 1;
-    string Id = 2;
-}
