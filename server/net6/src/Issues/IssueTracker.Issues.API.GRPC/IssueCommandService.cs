@@ -123,43 +123,46 @@ public sealed class IssueCommandService : IssueTrackerCommandService.IssueTracke
     /// <inheritdoc />
     public override Task<StatusMessage> CompletedStateChange(IssueCommandMessage request, ServerCallContext context)
     {
-        //return ChangeState(new StateChangeCommand(IssueIdentifier.FromString(request.Id)), context);
-        return base.CompletedStateChange(request, context);
+        return ChangeState(new CompletedStateChangeCommand(IssueIdentifier.FromString(request.Id), DateTimeOffset.UtcNow), context);
     }
 
     /// <inheritdoc />
     public override Task<StatusMessage> CloseStateChange(IssueCommandMessage request, ServerCallContext context)
     {
-        return base.CloseStateChange(request, context);
+        return ChangeState(new CloseStateChangeCommand(IssueIdentifier.FromString(request.Id)), context);
     }
 
     /// <inheritdoc />
     public override Task<StatusMessage> CannotReproduceStateChange(IssueCommandMessage request, ServerCallContext context)
     {
-        return base.CannotReproduceStateChange(request, context);
+        return ChangeState(new CannotReproduceStateChangeCommand(IssueIdentifier.FromString(request.Id), DateTimeOffset.UtcNow), context);
     }
 
     /// <inheritdoc />
     public override Task<StatusMessage> WontDoStateChange(IssueCommandMessage request, ServerCallContext context)
     {
-        return base.WontDoStateChange(request, context);
+        return ChangeState(new WontDoStateChangeCommand(IssueIdentifier.FromString(request.Id), DateTimeOffset.UtcNow), context);
     }
 
     /// <inheritdoc />
     public override Task<StatusMessage> NotADefectStateChange(IssueCommandMessage request, ServerCallContext context)
     {
-        return base.NotADefectStateChange(request, context);
+        return ChangeState(
+            new NotADefectStateChangeCommand(
+                IssueIdentifier.FromString(request.Id),
+                DateTimeOffset.UtcNow),
+            context);
     }
 
     /// <inheritdoc />
     public override Task<StatusMessage> ReviewFailedStateChange(IssueCommandMessage request, ServerCallContext context)
     {
-        return base.ReviewFailedStateChange(request, context);
+        return ChangeState(new ReviewFailedStateChangeCommand(IssueIdentifier.FromString(request.Id)), context);
     }
 
     /// <inheritdoc />
     public override Task<StatusMessage> TestFailedStateChange(IssueCommandMessage request, ServerCallContext context)
     {
-        return base.TestFailedStateChange(request, context);
+        return ChangeState(new TestFailedStateChangeCommand(IssueIdentifier.FromString(request.Id)), context);
     }
 }
