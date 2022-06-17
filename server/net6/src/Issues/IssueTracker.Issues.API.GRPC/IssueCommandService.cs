@@ -16,6 +16,8 @@ using Grpc.Core;
 using IssueTracker.Issues.API.GRPC.Proto;
 using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Exceptions;
 using IssueTracker.Issues.Domain.Services.Version2.Commands;
 using IssueTracker.Issues.Domain.Services.Version2.DataTransferObjects;
 using MediatR;
@@ -76,35 +78,52 @@ public sealed class IssueCommandService : IssueTrackerCommandService.IssueTracke
             : new StatusMessage { Status = ResultCode.ResultNotFound, Message = $"{request.Id} not found" };
     }
 
+    private async Task<StatusMessage> ChangeState(IRequest<Unit> statusChangeCommand, ServerCallContext context)
+    {
+        try
+        {
+            await _mediator.Send(statusChangeCommand, context.CancellationToken);
+            return new StatusMessage { Status = ResultCode.ResultSuccess, Message = "" };
+        }
+        catch (IssueNotFoundException ex)
+        {
+            return new StatusMessage { Status = ResultCode.ResultNotFound, Message = ex.Message };
+        }
+        catch (InvalidStateChangeException ex)
+        {
+            return new StatusMessage { Status = ResultCode.ResultInvalidArgument, Message = ex.Message };
+        }
+
+    }
+
     /// <inheritdoc />
     public override Task<StatusMessage> MoveToBackLogStateChange(IssueCommandMessage request, ServerCallContext context)
     {
-
-
-        return base.MoveToBackLogStateChange(request, context);
+        return ChangeState(new MoveToBackLogStateChangeCommand(IssueIdentifier.FromString(request.Id)), context);
     }
 
     /// <inheritdoc />
     public override Task<StatusMessage> OpenStateChange(IssueCommandMessage request, ServerCallContext context)
     {
-        return base.OpenStateChange(request, context);
+        return ChangeState(new OpenStateChangeCommand(IssueIdentifier.FromString(request.Id), DateTimeOffset.UtcNow), context);
     }
 
     /// <inheritdoc />
     public override Task<StatusMessage> ReadyForReviewStateChange(IssueCommandMessage request, ServerCallContext context)
     {
-        return base.ReadyForReviewStateChange(request, context);
+        return ChangeState(new ReadyForReviewStateChangeCommand(IssueIdentifier.FromString(request.Id)), context);
     }
 
     /// <inheritdoc />
     public override Task<StatusMessage> ReadyForTestStateChange(IssueCommandMessage request, ServerCallContext context)
     {
-        return base.ReadyForTestStateChange(request, context);
+        return ChangeState(new ReadyForTestStateChangeCommand(IssueIdentifier.FromString(request.Id)), context);
     }
 
     /// <inheritdoc />
     public override Task<StatusMessage> CompletedStateChange(IssueCommandMessage request, ServerCallContext context)
     {
+        //return ChangeState(new StateChangeCommand(IssueIdentifier.FromString(request.Id)), context);
         return base.CompletedStateChange(request, context);
     }
 
