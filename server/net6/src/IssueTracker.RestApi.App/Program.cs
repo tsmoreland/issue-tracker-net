@@ -116,7 +116,7 @@ builder.Services
 WebApplication app = builder.Build();
 using (IServiceScope scope = app.Services.CreateScope())
 {
-    IIssueDataMigration migration =  scope.ServiceProvider.GetRequiredService<IIssueDataMigration>();
+    IIssueDataMigration migration = scope.ServiceProvider.GetRequiredService<IIssueDataMigration>();
     await migration.MigrateAsync();
     await migration.ResetAndRepopultateAsync();
 }
@@ -128,7 +128,7 @@ app.UseIpRateLimiting();
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
-    IApiVersionDescriptionProvider provider = app.Services .GetRequiredService<IApiVersionDescriptionProvider>();
+    IApiVersionDescriptionProvider provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
     foreach (string groupName in provider.ApiVersionDescriptions.Select(d => d.GroupName))
     {
         options.SwaggerEndpoint($"/swagger/{groupName}/swagger.json", groupName.ToUpperInvariant());
@@ -156,7 +156,7 @@ app.MapGet("/about",
             });
     });
 app.MapGet("/serverTime", (bool utc) =>
-    Results.Json(new {time = utc ? DateTime.UtcNow.ToString("o") : DateTime.Now.ToString("o")}));
+    Results.Json(new { time = utc ? DateTime.UtcNow.ToString("o") : DateTime.Now.ToString("o") }));
 
 app.MapDelete("/api/reset",
     async ([FromServices] IIssueDataMigration migration) =>

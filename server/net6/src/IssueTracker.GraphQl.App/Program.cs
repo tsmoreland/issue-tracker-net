@@ -24,7 +24,7 @@ WebApplication app = builder.Build();
 
 using (IServiceScope scope = app.Services.CreateScope())
 {
-    IIssueDataMigration migration =  scope.ServiceProvider.GetRequiredService<IIssueDataMigration>();
+    IIssueDataMigration migration = scope.ServiceProvider.GetRequiredService<IIssueDataMigration>();
     await migration.MigrateAsync();
     await migration.ResetAndRepopultateAsync();
 }

@@ -37,7 +37,7 @@ public sealed class AggregateApiVersionReader : IApiVersionReader
     /// <inheritdoc />
     public void AddParameters(IApiVersionParameterDescriptionContext context)
     {
-        ArgumentNullException.ThrowIfNull(context, nameof(context)); 
+        ArgumentNullException.ThrowIfNull(context, nameof(context));
 
         _urlSegmentApiVersionReader.AddParameters(context);
         _headerApiVersionReader.AddParameters(context);

@@ -28,7 +28,7 @@ public sealed class IssueNotFoundException : Exception
     public IssueNotFoundException(string id)
         : this(id, null, null)
     {
-        
+
     }
 
     /// <summary>
@@ -76,5 +76,5 @@ public sealed class IssueNotFoundException : Exception
     /// <summary>
     /// Issue Display Id of the issue that wasn't found
     /// </summary>
-    public string Id { get; } 
+    public string Id { get; }
 }
