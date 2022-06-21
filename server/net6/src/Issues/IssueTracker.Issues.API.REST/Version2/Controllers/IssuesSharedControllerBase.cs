@@ -195,6 +195,8 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
             return BadRequest(ModelState);
         }
 
+        // TODO: persist the patched change. Ideally using some middleground basis for the patch doc, not the dto but not an entity either
+
         return new ObjectResult(issue);
     }
 }

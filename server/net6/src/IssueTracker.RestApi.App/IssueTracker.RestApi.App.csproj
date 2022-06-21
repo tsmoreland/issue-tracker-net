@@ -8,6 +8,7 @@
     <NoWarn>1591</NoWarn>
     <Product>Issue Tracker Sample REST API</Product>
     <Copyright>Copyright © 2022 Terry Moreland</Copyright>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -67,6 +68,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="runtimeconfig.template.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <!--
