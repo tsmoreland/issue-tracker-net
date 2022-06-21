@@ -21,6 +21,7 @@ using IssueTracker.Issues.Domain.Services.Version2.Commands;
 using IssueTracker.Issues.Domain.Services.Version2.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -153,4 +154,47 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
             : NotFound();
     }
 
+    /// <summary>
+    /// Updates existing issue given by <paramref name="id"/>
+    /// </summary>
+    /// <param name="id">unique id of the issue to update</param>
+    /// <param name="patchDoc">patch document containing details on changes to </param>
+    /// <param name="cancellationToken">A cancellation token</param>
+    /// <returns></returns>
+    [HttpPatch("{id}")]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
+    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    public async Task<IActionResult> Patch(string id, [FromBody] JsonPatchDocument<IssueDto>? patchDoc, CancellationToken cancellationToken)
+    {
+        IssueDto? issue = Mapper.Map<IssueDto?>(await Mediator
+            .Send(new FindIssueByIdQuery(IssueIdentifier.FromString(id)), cancellationToken));
+        if (issue is null)
+        {
+            return NotFound();
+        }
+
+        if (patchDoc is null)
+        {
+            return BadRequest(ModelState);
+        }
+
+        patchDoc.ApplyTo(issue,
+            error =>
+            {
+                ModelState
+                    .AddModelError(
+                        $"{error.Operation.op}:{error.Operation.path}",
+                        error.ErrorMessage);
+            });
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        return new ObjectResult(issue);
+    }
 }
