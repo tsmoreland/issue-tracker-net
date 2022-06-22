@@ -167,7 +167,7 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    public async Task<IActionResult> Patch(string id, [FromBody] JsonPatchDocument<IssueDto>? patchDoc, CancellationToken cancellationToken)
+    public async Task<IActionResult> Patch(string id, [FromBody] JsonPatchDocument<IssuePatch>? patchDoc, CancellationToken cancellationToken)
     {
         IssueDto? issue = Mapper.Map<IssueDto?>(await Mediator
             .Send(new FindIssueByIdQuery(IssueIdentifier.FromString(id)), cancellationToken));
