@@ -38,7 +38,7 @@ public sealed class IssueLinkPatch
     /// Initializes a new instance of the <see cref="IssueLinkPatch"/> class.
     /// copying values from <paramref name="issueLink"/>
     /// </summary>
-    public static IssueLinkPatch FromIssueLink(IssueLink issueLink)
+    public static IssueLinkPatch FromDomainService(IssueLink issueLink)
     {
         return new IssueLinkPatch
         {

@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Diagnostics.CodeAnalysis;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
 namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Request;
@@ -48,22 +49,50 @@ public sealed class IssuePatch
     /// Initializes a new instance of the <see cref="IssuePatch"/> class,
     /// copying values from <paramref name="issue"/>
     /// </summary>
-    public static IssuePatch FromIssue(Issue issue)
+    [return: NotNullIfNotNull(nameof(Issue))]
+    public static IssuePatch? FromIssue(Issue? issue)
     {
+        if (issue is null)
+        {
+            return null;
+        }
+
         return new IssuePatch
         {
             _title = issue.Title,
             _description = issue.Description,
             _epicId = issue.EpicId?.ToString(),
             _type = issue.Type,
-            _assignee = issue.Assignee == Maintainer.Unassigned ? null : issue.Assignee.UserId,
-            _reporter = issue.Reporter == TriageUser.Unassigned ? null : issue.Assignee.UserId,
+            _assignee = issue.Assignee != Maintainer.Unassigned ? issue.Assignee.UserId : null,
+            _reporter = issue.Reporter != TriageUser.Unassigned ? issue.Reporter.UserId : null,
             // TODO:
             //  need related to and from separately from issue, need new properties which are configured to be ignored
             //  by EF
             _startTime = issue.StartTime,
             _stopTime = issue.StopTime,
         };
+    }
+
+    public IReadOnlyDictionary<string, object?> GetChanges()
+    {
+        Dictionary<string, object?> changes = new();
+
+        foreach (string name in ModifiedFields)
+        {
+            changes[name] = name switch
+            {
+                nameof(Title) => Title,
+                nameof(Description) => Description,
+                nameof(EpicId) => EpicId,
+                nameof(Type) => Type,
+                nameof(Assignee) => Assignee,
+                nameof(Reporter) => Reporter,
+                nameof(StartTime) => StartTime,
+                nameof(StopTime) => StopTime,
+                _ => throw new InvalidOperationException($"unrecognized field name {name}"),
+            };
+        }
+        return changes;
     }
 
 
