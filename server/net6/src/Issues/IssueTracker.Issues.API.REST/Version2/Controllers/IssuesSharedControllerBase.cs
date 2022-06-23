@@ -87,7 +87,7 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
     public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
     {
         IssueDto? issue = Mapper.Map<IssueDto?>(await Mediator
-            .Send(new FindIssueByIdQuery(IssueIdentifier.FromString(id)), cancellationToken));
+            .Send(new FindIssueDtoByIdQuery(IssueIdentifier.FromString(id)), cancellationToken));
         return issue is not null
             ? Ok(issue)
             : NotFound();
@@ -169,8 +169,9 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     public async Task<IActionResult> Patch(string id, [FromBody] JsonPatchDocument<IssuePatch>? patchDoc, CancellationToken cancellationToken)
     {
-        IssueDto? issue = Mapper.Map<IssueDto?>(await Mediator
-            .Send(new FindIssueByIdQuery(IssueIdentifier.FromString(id)), cancellationToken));
+        IssueIdentifier issueId = IssueIdentifier.FromString(id);
+
+        Issue? issue = await Mediator.Send(new FindIssueByIdQuery(issueId, true), cancellationToken);
         if (issue is null)
         {
             return NotFound();
@@ -181,7 +182,9 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
             return BadRequest(ModelState);
         }
 
-        patchDoc.ApplyTo(issue,
+        IssuePatch patch = IssuePatch.FromIssue(issue)!;
+
+        patchDoc.ApplyTo(patch,
             error =>
             {
                 ModelState
@@ -195,8 +198,11 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
             return BadRequest(ModelState);
         }
 
-        // TODO: persist the patched change. Ideally using some middleground basis for the patch doc, not the dto but not an entity either
+        IssueDto? dto = Mapper.Map<IssueDto?>((await Mediator
+            .Send(new PatchIssueCommand(issueId, patch.GetChanges()), cancellationToken)));
 
-        return new ObjectResult(issue);
+        return dto != null
+            ? Ok(dto)
+            : NotFound();
     }
 }
