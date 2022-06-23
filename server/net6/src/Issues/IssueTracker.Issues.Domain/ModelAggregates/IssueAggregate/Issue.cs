@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Diagnostics.CodeAnalysis;
 using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
@@ -226,6 +227,49 @@ public sealed class Issue : Entity
 
     public IEnumerable<Issue> RelatedIssues => _relatedTo.Select(i => i.Right)
         .Union(_relatedFrom.Select(i => i.Left));
+
+    public void PatchOrThrow(string key, object? value)
+    {
+        switch (key)
+        {
+            case nameof(Title):
+                Title = GetValueOrThrow<string>(value);
+                break;
+            case nameof(Description):
+                Description = GetValueOrThrow<string>(value);
+                break;
+            case nameof(EpicId):
+                EpicId = GetValueOrThrow<IssueIdentifier?>(value);
+                break;
+            case nameof(Type):
+                Type = GetValueOrThrow<IssueType>(value);
+                break;
+            case nameof(Assignee):
+                Assignee = GetValueOrThrow<Maintainer>(value);
+                break;
+            case nameof(Reporter):
+                Reporter = GetValueOrThrow<TriageUser>(value);
+                break;
+            case nameof(StartTime):
+                StartTime = GetValueOrThrow<DateTimeOffset?>(value);
+                break;
+            case nameof(StopTime):
+                StopTime = GetValueOrThrow<DateTimeOffset?>(value);
+                break;
+            // TODO:
+            //case nameof(RelatedTo):
+            //case nameof(RelatedFrom):
+            default:
+                throw new ArgumentException($"Unrecognized property {key}", nameof(key));
+        }
+
+        static T GetValueOrThrow<T>(object? value)
+        {
+            return value is T typedValue
+                ? typedValue
+                : throw new ArgumentException("value does not have expected type", nameof(value));
+        }
+    }
 
     public string ConcurrencyToken { get; private set; } = Guid.NewGuid().ToString();
 
