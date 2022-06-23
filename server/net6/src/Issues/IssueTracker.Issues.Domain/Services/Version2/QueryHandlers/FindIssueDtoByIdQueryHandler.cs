@@ -12,8 +12,25 @@
 //
 
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Domain.Services.Version2.DataTransferObjects;
+using IssueTracker.Issues.Domain.Services.Version2.Extensions;
+using IssueTracker.Issues.Domain.Services.Version2.Queries;
 using MediatR;
 
-namespace IssueTracker.Issues.Domain.Services.Version2.Queries;
+namespace IssueTracker.Issues.Domain.Services.Version2.QueryHandlers;
 
-public sealed record class FindIssueByIdQuery(IssueIdentifier Id, bool Track) : IRequest<Issue?>;
+public sealed class FindIssueDtoByIdQueryHandler : IRequestHandler<FindIssueDtoByIdQuery, IssueDto?>
+{
+    private readonly IIssueRepository _repository;
+
+    public FindIssueDtoByIdQueryHandler(IIssueRepository repository)
+    {
+        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+    }
+
+    /// <inheritdoc />
+    public async Task<IssueDto?> Handle(FindIssueDtoByIdQuery request, CancellationToken cancellationToken)
+    {
+        return (await _repository.GetByIdOrDefault(request.Id, false, cancellationToken))?.ToDto();
+    }
+}

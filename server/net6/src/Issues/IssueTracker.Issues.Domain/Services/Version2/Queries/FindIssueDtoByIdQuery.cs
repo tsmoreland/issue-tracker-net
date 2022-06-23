@@ -12,8 +12,9 @@
 //
 
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Domain.Services.Version2.DataTransferObjects;
 using MediatR;
 
 namespace IssueTracker.Issues.Domain.Services.Version2.Queries;
 
-public sealed record class FindIssueByIdQuery(IssueIdentifier Id, bool Track) : IRequest<Issue?>;
+public sealed record class FindIssueDtoByIdQuery(IssueIdentifier Id) : IRequest<IssueDto?>;

@@ -12,14 +12,12 @@
 //
 
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.Services.Version2.DataTransferObjects;
-using IssueTracker.Issues.Domain.Services.Version2.Extensions;
 using IssueTracker.Issues.Domain.Services.Version2.Queries;
 using MediatR;
 
 namespace IssueTracker.Issues.Domain.Services.Version2.QueryHandlers;
 
-public sealed class FindIssueByIdQueryHandler : IRequestHandler<FindIssueByIdQuery, IssueDto?>
+public sealed class FindIssueByIdQueryHandler : IRequestHandler<FindIssueByIdQuery, Issue?>
 {
     private readonly IIssueRepository _repository;
 
@@ -29,8 +27,10 @@ public sealed class FindIssueByIdQueryHandler : IRequestHandler<FindIssueByIdQue
     }
 
     /// <inheritdoc />
-    public async Task<IssueDto?> Handle(FindIssueByIdQuery request, CancellationToken cancellationToken)
+    public Task<Issue?> Handle(FindIssueByIdQuery request, CancellationToken cancellationToken)
     {
-        return (await _repository.GetByIdOrDefault(request.Id, false, cancellationToken))?.ToDto();
+        (IssueIdentifier id, bool track) = request;
+
+        return _repository.GetByIdOrDefault(id, track, cancellationToken).AsTask();
     }
 }
