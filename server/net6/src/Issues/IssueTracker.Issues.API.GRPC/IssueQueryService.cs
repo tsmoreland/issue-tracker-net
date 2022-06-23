@@ -35,7 +35,7 @@ public sealed class IssueQueryService : IssueTrackerQueryService.IssueTrackerQue
     public override async Task<IssueMessage> GetIssueById(IssueByIdQueryMessage request, ServerCallContext context)
     {
         IssueDto? issue = await _mediator
-            .Send(new FindIssueByIdQuery(IssueIdentifier.FromString(request.Id)), context.CancellationToken);
+            .Send(new FindIssueDtoByIdQuery(IssueIdentifier.FromString(request.Id)), context.CancellationToken);
 
         return issue is not null
             ? issue.ToMessage()
