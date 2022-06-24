@@ -162,7 +162,7 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns></returns>
     [HttpPatch("{id}")]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
+    [Consumes("application/json-patch+json")]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
