@@ -15,11 +15,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace IssueTracker.Issues.API.REST.Filters;
 
 /// <summary/>
-public sealed class ValidateIssueIdServiceFilterAttribute : ServiceFilterAttribute
+public sealed class ValidateModelStateServiceFilterAttribute : ServiceFilterAttribute
 {
     /// <summary/>
-    public ValidateIssueIdServiceFilterAttribute()
-        : base(typeof(ValidateIssueIdActionFilterAttribute))
+    public ValidateModelStateServiceFilterAttribute()
+        : base(typeof(ValidateModelStateActionFilterAttribute))
     {
+        
     }
 }

@@ -11,7 +11,6 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -19,12 +18,11 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 namespace IssueTracker.Issues.API.REST.Filters;
 
 /// <summary/>
-public sealed class ValidateIssueIdActionFilterAttribute : ActionFilterAttribute
+public sealed class ValidateModelStateActionFilterAttribute : ActionFilterAttribute
 {
     private readonly ProblemDetailsFactory _problemDetailsFactory;
 
-    /// <inheritdoc />
-    public ValidateIssueIdActionFilterAttribute(ProblemDetailsFactory problemDetailsFactory)
+    public ValidateModelStateActionFilterAttribute(ProblemDetailsFactory problemDetailsFactory)
     {
         _problemDetailsFactory = problemDetailsFactory ?? throw new ArgumentNullException(nameof(problemDetailsFactory));
     }
@@ -32,18 +30,11 @@ public sealed class ValidateIssueIdActionFilterAttribute : ActionFilterAttribute
     /// <inheritdoc />
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-        if (!context.ActionArguments.ContainsKey("id"))
+        if (context.ModelState.IsValid)
         {
             return;
         }
 
-        string id = context.ActionArguments["id"]?.ToString() ?? string.Empty;
-        if (IssueIdentifier.TryConvert(id, out _))
-        {
-            return;
-        }
-
-        context.ModelState.AddModelError("id", "invalid project id");
         context.Result = new BadRequestObjectResult(
             _problemDetailsFactory.CreateValidationProblemDetails(context.HttpContext, context.ModelState));
     }
