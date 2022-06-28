@@ -52,6 +52,7 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueSummaryPage), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [Filters.ValidateModelStateServiceFilter]
     public async Task<IActionResult> GetAll(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
@@ -84,6 +85,7 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateIssueIdServiceFilter]
+    [Filters.ValidateModelStateServiceFilter]
     public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
     {
         IssueDto? issue = Mapper.Map<IssueDto?>(await Mediator
@@ -103,13 +105,9 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status201Created, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [Filters.ValidateModelStateServiceFilter]
     public async Task<IActionResult> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(new ValidationProblemDetails(ModelState));
-        }
-
         (string project, string title, string description, Priority priority, IssueType type, string? epicId) = model;
 
         IssueDto issue = Mapper.Map<IssueDto>(await Mediator
@@ -136,12 +134,9 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateIssueIdServiceFilter]
+    [Filters.ValidateModelStateServiceFilter]
     public async Task<IActionResult> Put(string id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(new ValidationProblemDetails(ModelState));
-        }
         (string? title, string? description, Priority? priority, IssueType type, string? epicId) = model;
         IssueDto? issue = Mapper.Map<IssueDto>(await Mediator.Send(
             new ModifyIssueCommand(IssueIdentifier.FromString(id),
@@ -167,6 +162,7 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [Filters.ValidateModelStateServiceFilter]
     public async Task<IActionResult> Patch(string id, [FromBody] JsonPatchDocument<IssuePatch>? patchDoc, CancellationToken cancellationToken)
     {
         IssueIdentifier issueId = IssueIdentifier.FromString(id);
