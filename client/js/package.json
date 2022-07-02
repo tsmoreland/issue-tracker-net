@@ -98,7 +98,7 @@
     "mime-db": "^1.52.0",
     "mimic-response": "^1.0.1",
     "minimatch": "^3.1.2",
-    "minipass": "^3.2.0",
+    "minipass": "^3.2.1",
     "minizlib": "^2.1.2",
     "mkdirp": "^1.0.4",
     "ms": "^2.1.3",
