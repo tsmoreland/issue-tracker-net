@@ -29,6 +29,8 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Tcell.Agent.AspNetCore;
+using TSMoreland.Text.Json.NamingStrategies;
+using TSMoreland.Text.Json.NamingStrategies.Strategies;
 
 AssemblyLocation? maybeLocation = AssemblyLocation.FromAssembly(Assembly.GetEntryAssembly());
 if (maybeLocation is null)
@@ -56,6 +58,7 @@ builder.Services
     .AddControllers(options =>
     {
         options.RespectBrowserAcceptHeader = true;
+        options.ModelBinderProviders.Insert(0, new EnumModelBinderProvider());
         options.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
     })
     .AddXmlSerializerFormatters()
@@ -68,9 +71,9 @@ builder.Services
     })
     .AddJsonOptions(jsonOptions =>
     {
-        jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+        jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = JsonStrategizedNamingPolicy.SnakeCase;
         jsonOptions.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-        jsonOptions.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        jsonOptions.JsonSerializerOptions.Converters.Add(new JsonStrategizedStringEnumConverterFactory(new SnakeCaseEnumNamingStrategy()));
         jsonOptions.JsonSerializerOptions.AddContext<SerializerContext>();
     });
 
