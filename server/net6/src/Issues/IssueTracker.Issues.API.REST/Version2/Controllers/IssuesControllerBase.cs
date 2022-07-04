@@ -13,6 +13,7 @@
 
 using System.Net.Mime;
 using AutoMapper;
+using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Request;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
 using IssueTracker.Issues.Domain.Services.Version2.Commands;
@@ -61,14 +62,14 @@ public abstract class IssuesControllerBase : ControllerBase
             : NotFound();
     }
 
-
     /// <summary>
-    /// execute move to backlog state change command
+    /// Execute state change
     /// </summary>
     /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
-    /// <param name="cancellationToken">A cancellation token</param>
+    /// <param name="stateChange" example="close">the state change command to run</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
     /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("{id}/moveToBacklog")]
+    [HttpPut("{id}/state/{stateChange}")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
@@ -76,229 +77,50 @@ public abstract class IssuesControllerBase : ControllerBase
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status409Conflict, "state change not possible", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> MoveToBackLog(string id, CancellationToken cancellationToken)
+    public async Task<IActionResult> ChangeState(string id, StateChangeRouteValue stateChange, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new MoveToBackLogStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
+        if (!ModelState.IsValid)
+        {
+            return NotFound(new ValidationProblemDetails(ModelState));
+        }
+        await ChangeStateTo(IssueIdentifier.FromString(id), stateChange, cancellationToken);
         return Ok();
     }
 
-    /// <summary>
-    /// close the issue given by <paramref name="id"/>
-    /// </summary>
-    /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("{id}/close")]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status409Conflict, "state change not possible", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> Close(string id, CancellationToken cancellationToken)
+    /// <remarks>
+    /// the enum should only contain state changes that match this endpoint style, as soon as an additional body or query parameter
+    /// is introduce that state should be remove and the end point added manually
+    /// </remarks>
+    private Task ChangeStateTo(IssueIdentifier id, StateChangeRouteValue state, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new CloseStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
-        return Ok();
-    }
-
-    /// <summary>
-    /// set state to won't do
-    /// </summary>
-    /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("{id}/wontDo")]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status409Conflict, "state change not possible", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> WontDo(string id, CancellationToken cancellationToken)
-    {
-        await Mediator.Send(new WontDoStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
-        return Ok();
-    }
-
-    /// <summary>
-    /// set state to not a defect
-    /// </summary>
-    /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("{id}/notADefect")]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status409Conflict, "state change not possible", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> NotADefect(string id, CancellationToken cancellationToken)
-    {
-        await Mediator.Send(new NotADefectStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
-        return Ok();
-    }
-
-    /// <summary>
-    /// set state to cannot reproduce
-    /// </summary>
-    /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("{id}/cannotReproduce")]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status409Conflict, "state change not possible", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> CannotReproduce(string id, CancellationToken cancellationToken)
-    {
-        await Mediator.Send(new CannotReproduceStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
-        return Ok();
-    }
-
-    /// <summary>
-    /// set state to open
-    /// </summary>
-    /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("{id}/open")]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status409Conflict, "state change not possible", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> Open(string id, CancellationToken cancellationToken)
-    {
-        await Mediator.Send(new OpenStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
-        return Ok();
-    }
-
-    /// <summary>
-    /// set state to to do
-    /// </summary>
-    /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("{id}/todo")]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status409Conflict, "state change not possible", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> MarkAsToDo(string id, CancellationToken cancellationToken)
-    {
-        await Mediator.Send(new ToDoStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
-        return Ok();
-    }
-
-    /// <summary>
-    /// set state to ready for review
-    /// </summary>
-    /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("{id}/readyForReview")]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status409Conflict, "state change not possible", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> ReadyForReview(string id, CancellationToken cancellationToken)
-    {
-        await Mediator.Send(new ReadyForReviewStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
-        return Ok();
-    }
-
-    /// <summary>
-    /// set state to review failed
-    /// </summary>
-    /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("{id}/reviewFailed")]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status409Conflict, "state change not possible", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> ReviewFailed(string id, CancellationToken cancellationToken)
-    {
-        await Mediator.Send(new ReviewFailedStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
-        return Ok();
-    }
-
-    /// <summary>
-    /// set state for ready for test
-    /// </summary>
-    /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("{id}/readyForTest")]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status409Conflict, "state change not possible", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> ReadyForTest(string id, CancellationToken cancellationToken)
-    {
-        await Mediator.Send(new ReadyForTestStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
-        return Ok();
-    }
-
-    /// <summary>
-    /// set state to test failed
-    /// </summary>
-    /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("{id}/testFailed")]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status409Conflict, "state change not possible", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> TestFailed(string id, CancellationToken cancellationToken)
-    {
-        await Mediator.Send(new TestFailedStateChangeCommand(IssueIdentifier.FromString(id)), cancellationToken);
-        return Ok();
-    }
-
-    /// <summary>
-    /// set state to complete
-    /// </summary>
-    /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("{id}/complete")]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status409Conflict, "state change not possible", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> Complete(string id, CancellationToken cancellationToken)
-    {
-        await Mediator.Send(new CompletedStateChangeCommand(IssueIdentifier.FromString(id), DateTimeOffset.UtcNow), cancellationToken);
-        return Ok();
+        return state switch
+        {
+            StateChangeRouteValue.MoveToBackLog =>
+                Mediator.Send(new MoveToBackLogStateChangeCommand(id), cancellationToken),
+            StateChangeRouteValue.ToDo =>
+                Mediator.Send(new ToDoStateChangeCommand(id), cancellationToken),
+            StateChangeRouteValue.Open =>
+                Mediator.Send(new OpenStateChangeCommand(id, DateTimeOffset.UtcNow), cancellationToken),
+            StateChangeRouteValue.Close =>
+                Mediator.Send(new CloseStateChangeCommand(id), cancellationToken),
+            StateChangeRouteValue.Completed =>
+                Mediator.Send(new CompletedStateChangeCommand(id, DateTimeOffset.UtcNow), cancellationToken),
+            StateChangeRouteValue.ReadyForReview =>
+                Mediator.Send(new ReadyForReviewStateChangeCommand(id), cancellationToken),
+            StateChangeRouteValue.ReviewFailed =>
+                Mediator.Send(new ReviewFailedStateChangeCommand(id), cancellationToken),
+            StateChangeRouteValue.ReadyForTest =>
+                Mediator.Send(new ReadyForTestStateChangeCommand(id), cancellationToken),
+            StateChangeRouteValue.TestFailed =>
+                Mediator.Send(new TestFailedStateChangeCommand(id), cancellationToken),
+            StateChangeRouteValue.NotADefect =>
+                Mediator.Send(new NotADefectStateChangeCommand(id, DateTimeOffset.UtcNow), cancellationToken),
+            StateChangeRouteValue.CannotReproduce =>
+                Mediator.Send(new CannotReproduceStateChangeCommand(id, DateTimeOffset.UtcNow), cancellationToken),
+            StateChangeRouteValue.WontDo =>
+                Mediator.Send(new WontDoStateChangeCommand(id, DateTimeOffset.UtcNow), cancellationToken),
+            _ =>
+                Task.FromException(new NotSupportedException()),
+        };
     }
 }
