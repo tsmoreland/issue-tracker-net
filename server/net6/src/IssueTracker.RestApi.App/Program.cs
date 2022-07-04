@@ -52,7 +52,9 @@ builder.WebHost
 
 // Add services to the container.
 
-builder.Services.AddProblemDetails();
+builder.Services
+    .AddProblemDetails()
+    .AddHealthChecks();
 
 builder.Services
     .AddControllers(options =>
@@ -167,6 +169,8 @@ app.MapDelete("/api/reset",
         await migration.ResetAndRepopultateAsync();
         return Results.StatusCode(StatusCodes.Status418ImATeapot);
     });
+
+app.MapHealthChecks("/health");
 
 app.Run();
 
