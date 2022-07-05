@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\IssueTracker.Shared\IssueTracker.Shared.csproj" />
     <ProjectReference Include="..\IssueTracker.Issues.Domain\IssueTracker.Issues.Domain.csproj" />
   </ItemGroup>
 

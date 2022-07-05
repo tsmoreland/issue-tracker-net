@@ -12,6 +12,8 @@
 //
 
 using System.Reflection;
+using IssueTracker.Shared.Contracts;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace IssueTracker.ServiceDiscovery;
 
@@ -30,6 +32,29 @@ public static class HostingStartupDiscovery
     public static IEnumerable<AssemblyName> DiscoverUnloadedAssembliesContainingHostingStartup(in AssemblyLocation location)
     {
         return location.GetHostingStartupAssemblies(RootNamespace);
+    }
+
+    public static IEnumerable<Type> DiscoverTypes<T>(in AssemblyLocation location)
+    {
+        return location.DiscoverTypes<T>(RootNamespace);
+    }
+
+    public static IHealthChecksBuilder AddNamedHealthChecks(this IHealthChecksBuilder builder, in AssemblyLocation location)
+    {
+        IEnumerable<Type> healthCheckVisitors = DiscoverTypes<IHealthCheckBuilderVisitor>(in location);
+        foreach (Type healthCheckVisitor in healthCheckVisitors)
+        {
+            // no support for structs, mostly trying to limit to something we can instantiate
+            if (!healthCheckVisitor.IsClass)
+            {
+                continue;
+            }
+
+            IHealthCheckBuilderVisitor? visitor =
+                (IHealthCheckBuilderVisitor?)Activator.CreateInstance(healthCheckVisitor, null);
+            visitor?.Visit(builder);
+        }
+        return builder;
     }
 
 }

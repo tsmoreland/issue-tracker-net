@@ -11,34 +11,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.Issues.Domain.DataContracts;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Infrastructure.Configurations;
-using IssueTracker.Issues.Infrastructure.Repositories;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-[assembly: HostingStartup(typeof(IssueTracker.Issues.Infrastructure.HostingStartup))]
+namespace IssueTracker.Shared.Contracts;
 
-namespace IssueTracker.Issues.Infrastructure;
-
-public sealed class HostingStartup : IHostingStartup
+public interface IHealthCheckBuilderVisitor 
 {
-    /// <inheritdoc />
-    public void Configure(IWebHostBuilder builder)
-    {
-        builder.ConfigureServices(Configure);
-    }
-
-    public static void Configure(IServiceCollection services)
-    {
-        // separated to highlight that it's not a common entry while the others would be
-        services.AddTransient<IIssueDataMigration, IssueDataMigration>();
-
-        services
-            .AddDbContext<IssuesDbContext>(optionsLifetime: ServiceLifetime.Singleton)
-            .AddDbContextFactory<IssuesDbContext>()
-            .AddSingleton<IModelConfiguration, SqliteModelConfiguration>()
-            .AddScoped<IIssueRepository, IssueRepository>();
-    }
+    public void Visit(IHealthChecksBuilder builder);
 }

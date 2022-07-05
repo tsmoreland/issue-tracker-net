@@ -21,6 +21,7 @@ using IssueTracker.Middelware.SecurityHeaders;
 using IssueTracker.RestApi.App;
 using IssueTracker.RestApi.App.Filters;
 using IssueTracker.ServiceDiscovery;
+using IssueTracker.Shared.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -54,7 +55,8 @@ builder.WebHost
 
 builder.Services
     .AddProblemDetails()
-    .AddHealthChecks();
+    .AddHealthChecks()
+    .AddNamedHealthChecks(in location);
 
 builder.Services
     .AddControllers(options =>
