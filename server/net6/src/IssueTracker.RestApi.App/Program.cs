@@ -32,6 +32,9 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
+using Polly;
+using Polly.Caching;
+using Polly.Registry;
 using Serilog;
 using Tcell.Agent.AspNetCore;
 using TSMoreland.Text.Json.NamingStrategies;
@@ -115,9 +118,28 @@ builder.Services
         tokenProviderOptions.TokenLifespan = TimeSpan.FromHours(1);
     });
 
-// Rate Limiting
 builder.Services
     .AddMemoryCache()
+    .AddSingleton<ISyncCacheProvider, Polly.Caching.Memory.MemoryCacheProvider>()
+    .AddSingleton<IAsyncCacheProvider, Polly.Caching.Memory.MemoryCacheProvider>()
+    .AddSingleton<IReadOnlyPolicyRegistry<string>, PolicyRegistry>(serviceProvider =>
+    {
+        PolicyRegistry registry = new()
+        {
+            {
+                nameof(HttpResponseMessage), Policy.CacheAsync(
+                    serviceProvider.GetRequiredService<IAsyncCacheProvider>().AsyncFor<HttpResponseMessage>(),
+                    TimeSpan.FromMinutes(5))
+            },
+            {
+                "health",
+                Policy.Cache(
+                    serviceProvider.GetRequiredService<ISyncCacheProvider>().For<string>(),
+                    TimeSpan.FromMinutes(2))
+            }
+        };
+        return registry;
+    })
     .Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"))
     .AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>()
     .AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>()
@@ -166,7 +188,7 @@ app.MapGet("/about",
                 copyright = versionInfo.LegalCopyright
             });
     });
-app.MapGet("/serverTime", (bool utc) =>
+app.MapGet("/server_time", (bool utc) =>
     Results.Json(new { time = utc ? DateTime.UtcNow.ToString("o") : DateTime.Now.ToString("o") }));
 
 app.MapDelete("/api/reset",
@@ -215,45 +237,55 @@ static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
 
 static Task WriteHealthResponse(HttpContext context, HealthReport report)
 {
+    ISyncPolicy<string> cachePolicy = context
+        .RequestServices.GetRequiredService<IReadOnlyPolicyRegistry<string>>()
+        .Get<ISyncPolicy<string>>("health");
+
     context.Response.ContentType = "application/json; charset=utf-8";
-
-    var options = new JsonWriterOptions { Indented = true };
-
-    using var memoryStream = new MemoryStream();
-    using (var jsonWriter = new Utf8JsonWriter(memoryStream, options))
-    {
-        jsonWriter.WriteStartObject();
-        jsonWriter.WriteString("status", report.Status.ToString());
-        jsonWriter.WriteStartObject("results");
-
-        foreach (KeyValuePair<string, HealthReportEntry> healthReportEntry in report.Entries)
+    string healthResponse = cachePolicy
+        .Execute(_ =>
         {
-            jsonWriter.WriteStartObject(healthReportEntry.Key.ToSnakeCase());
-            jsonWriter.WriteString("status",
-                healthReportEntry.Value.Status.ToString());
-            jsonWriter.WriteString("description",
-                healthReportEntry.Value.Description);
+            var options = new JsonWriterOptions { Indented = false };
 
-            if (healthReportEntry.Value.Data.Any())
+            using var memoryStream = new MemoryStream();
+            using (var jsonWriter = new Utf8JsonWriter(memoryStream, options))
             {
-                jsonWriter.WriteStartObject("data");
-                foreach (KeyValuePair<string, object> item in healthReportEntry.Value.Data)
-                {
-                    jsonWriter.WritePropertyName(item.Key.ToSnakeCase());
+                jsonWriter.WriteStartObject();
+                jsonWriter.WriteString("status", report.Status.ToString());
+                jsonWriter.WriteStartObject("results");
 
-                    JsonSerializer.Serialize(jsonWriter, item.Value,
-                        item.Value?.GetType() ?? typeof(object));
+                foreach (KeyValuePair<string, HealthReportEntry> healthReportEntry in report.Entries)
+                {
+                    jsonWriter.WriteStartObject(healthReportEntry.Key.ToSnakeCase());
+                    jsonWriter.WriteString("status",
+                        healthReportEntry.Value.Status.ToString());
+                    jsonWriter.WriteString("description",
+                        healthReportEntry.Value.Description);
+
+                    if (healthReportEntry.Value.Data.Any())
+                    {
+                        jsonWriter.WriteStartObject("data");
+                        foreach (KeyValuePair<string, object> item in healthReportEntry.Value.Data)
+                        {
+                            jsonWriter.WritePropertyName(item.Key.ToSnakeCase());
+
+                            JsonSerializer.Serialize(jsonWriter, item.Value,
+                                item.Value?.GetType() ?? typeof(object));
+                        }
+
+                        jsonWriter.WriteEndObject();
+                    }
+
+                    jsonWriter.WriteEndObject();
                 }
+
+                jsonWriter.WriteEndObject();
                 jsonWriter.WriteEndObject();
             }
 
-            jsonWriter.WriteEndObject();
-        }
+            return Encoding.UTF8.GetString(memoryStream.ToArray());
 
-        jsonWriter.WriteEndObject();
-        jsonWriter.WriteEndObject();
-    }
+        }, new Context("health-key"));
 
-    return context.Response.WriteAsync(
-        Encoding.UTF8.GetString(memoryStream.ToArray()));
+    return context.Response.WriteAsync(healthResponse);
 }
