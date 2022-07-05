@@ -13,6 +13,8 @@
 
 using System.IO.Compression;
 using System.Reflection;
+using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using AspNetCoreRateLimit;
 using Hellang.Middleware.ProblemDetails;
@@ -22,11 +24,13 @@ using IssueTracker.RestApi.App;
 using IssueTracker.RestApi.App.Filters;
 using IssueTracker.ServiceDiscovery;
 using IssueTracker.Shared.Contracts;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Tcell.Agent.AspNetCore;
@@ -172,13 +176,25 @@ app.MapDelete("/api/reset",
         return Results.StatusCode(StatusCodes.Status418ImATeapot);
     });
 
-app.MapHealthChecks("/health");
+app.MapHealthChecks("/health",
+    new HealthCheckOptions
+    {
+        AllowCachingResponses = false,
+        ResultStatusCodes =
+        {
+            [HealthStatus.Healthy] = StatusCodes.Status200OK,
+            [HealthStatus.Degraded] = StatusCodes.Status200OK,
+            [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+        },
+        ResponseWriter = WriteHealthResponse,
+    });
 
 app.Run();
 
 static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
 {
     // using second service provider to allow system.text.json to be used for the general case
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
     IServiceProvider builder = new ServiceCollection()
         .AddLogging()
@@ -194,4 +210,50 @@ static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
         .InputFormatters
         .OfType<NewtonsoftJsonPatchInputFormatter>()
         .First();
+#pragma warning restore IDE0079 // Remove unnecessary suppression
+}
+
+static Task WriteHealthResponse(HttpContext context, HealthReport report)
+{
+    context.Response.ContentType = "application/json; charset=utf-8";
+
+    var options = new JsonWriterOptions { Indented = true };
+
+    using var memoryStream = new MemoryStream();
+    using (var jsonWriter = new Utf8JsonWriter(memoryStream, options))
+    {
+        jsonWriter.WriteStartObject();
+        jsonWriter.WriteString("status", report.Status.ToString());
+        jsonWriter.WriteStartObject("results");
+
+        foreach (KeyValuePair<string, HealthReportEntry> healthReportEntry in report.Entries)
+        {
+            jsonWriter.WriteStartObject(healthReportEntry.Key.ToSnakeCase());
+            jsonWriter.WriteString("status",
+                healthReportEntry.Value.Status.ToString());
+            jsonWriter.WriteString("description",
+                healthReportEntry.Value.Description);
+
+            if (healthReportEntry.Value.Data.Any())
+            {
+                jsonWriter.WriteStartObject("data");
+                foreach (KeyValuePair<string, object> item in healthReportEntry.Value.Data)
+                {
+                    jsonWriter.WritePropertyName(item.Key.ToSnakeCase());
+
+                    JsonSerializer.Serialize(jsonWriter, item.Value,
+                        item.Value?.GetType() ?? typeof(object));
+                }
+                jsonWriter.WriteEndObject();
+            }
+
+            jsonWriter.WriteEndObject();
+        }
+
+        jsonWriter.WriteEndObject();
+        jsonWriter.WriteEndObject();
+    }
+
+    return context.Response.WriteAsync(
+        Encoding.UTF8.GetString(memoryStream.ToArray()));
 }
