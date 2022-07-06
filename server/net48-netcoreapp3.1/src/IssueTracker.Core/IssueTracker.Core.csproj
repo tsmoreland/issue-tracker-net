@@ -9,4 +9,8 @@
     <PackageReference Include="MediatR" Version="9.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\IssueTracker.Shared\IssueTracker.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

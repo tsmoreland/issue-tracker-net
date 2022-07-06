@@ -11,17 +11,25 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+namespace IssueTracker.Issues.Domain.ModelAggregates.IssuesAggregate;
 
-namespace IssueTracker.Core;
-
-public static class ArgumentGuard
+/// <summary>
+/// Issue Priorities
+/// </summary>
+public enum Priority 
 {
-    public static void ThrowIfNull(object parameter, string parameterName)
-    {
-        if (parameter is null)
-        {
-            throw new ArgumentNullException(parameterName);
-        }
-    }
+    /// <summary>
+    ///  Low Priority
+    /// </summary>
+    Low = 0,
+
+    /// <summary>
+    /// Medium Priority
+    /// </summary>
+    Medium,
+
+    /// <summary>
+    /// High Priority
+    /// </summary>
+    High,
 }
