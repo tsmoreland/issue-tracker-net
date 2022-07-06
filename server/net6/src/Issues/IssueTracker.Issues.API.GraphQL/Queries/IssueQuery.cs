@@ -70,7 +70,7 @@ public sealed class IssueQuery : ObjectGraphType<object>
                 new TriageUserDto(i.Reporter.UserId, i.Reporter.FullName),
                 new MaintainerDto(i.Reporter.UserId, i.Reporter.FullName),
                 i.EpicId?.ToString()))
-            .ToArrayAsync(cancellationToken)
+            .ToListAsync(cancellationToken)
             .AsTask()
             .ContinueWith(
                 t => (object?)t.Result,
