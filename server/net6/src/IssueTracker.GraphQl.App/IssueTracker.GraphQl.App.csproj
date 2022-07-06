@@ -10,9 +10,9 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-    <PackageReference Include="GraphQL" Version="5.3.0" />
-    <PackageReference Include="GraphQL.DataLoader" Version="5.3.0" />
-    <PackageReference Include="GraphQL.Relay" Version="0.6.2" />
+    <PackageReference Include="GraphQL" Version="5.3.2" />
+    <PackageReference Include="GraphQL.DataLoader" Version="5.3.2" />
+    <PackageReference Include="GraphQL.Relay" Version="0.8.0" />
     <PackageReference Include="GraphQL.Server.All" Version="6.1.0" />
 
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.6" />
