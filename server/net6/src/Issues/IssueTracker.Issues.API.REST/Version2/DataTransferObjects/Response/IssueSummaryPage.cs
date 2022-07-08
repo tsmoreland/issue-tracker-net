@@ -11,9 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.CodeDom.Compiler;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 using AutoMapper;
 using IssueTracker.Shared;
 
@@ -38,9 +36,9 @@ public sealed class IssueSummaryPage
     /// <summary>
     /// Instantiates a new instance of the <see cref="IssueSummaryPage"/> class.
     /// </summary>
-    public IssueSummaryPage()
+    internal IssueSummaryPage()
     {
-
+        // for serialization
     }
 
     /// <summary>

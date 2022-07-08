@@ -12,7 +12,6 @@
 //
 
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Shared;
 
@@ -27,6 +26,20 @@ public sealed record class IssueDto(string Id, string Title, string Description,
         TriageUserDto Reporter, MaintainerDto Assignee,
         string? EpicId)
 {
+    private IssueDto()
+        : this(string.Empty,
+            string.Empty,
+            string.Empty,
+            default,
+            default,
+            default,
+            new TriageUserDto(),
+            new MaintainerDto(),
+            null)
+    {
+        // for serialization
+    }
+
 
     /// <summary>
     /// Unique issue id

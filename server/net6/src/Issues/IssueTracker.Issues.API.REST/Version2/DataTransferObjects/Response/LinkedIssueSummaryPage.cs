@@ -12,7 +12,6 @@
 //
 
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 using IssueTracker.Shared;
 
 namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
@@ -36,9 +35,9 @@ public sealed class LinkedIssueSummaryPage
     /// <summary>
     /// Instantiates a new instance of the <see cref="LinkedIssueSummaryPage"/> class.
     /// </summary>
-    public LinkedIssueSummaryPage()
+    internal LinkedIssueSummaryPage()
     {
-
+        // for serialization
     }
 
     /// <summary>

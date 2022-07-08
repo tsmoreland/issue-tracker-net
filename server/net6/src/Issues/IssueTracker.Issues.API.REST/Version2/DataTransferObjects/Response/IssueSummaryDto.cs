@@ -37,9 +37,9 @@ public sealed class IssueSummaryDto
     /// <summary>
     /// Instantiates a new instance of the <see cref="IssueSummaryDto"/> class.
     /// </summary>
-    public IssueSummaryDto()
+    internal IssueSummaryDto()
     {
-
+        // for serialization
     }
 
     /// <summary>

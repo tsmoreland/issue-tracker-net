@@ -24,6 +24,12 @@ namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 [SwaggerSchemaName("Maintainer")]
 public sealed record class MaintainerDto(Guid Id, string FullName)
 {
+    internal MaintainerDto()
+        : this(Guid.Empty, string.Empty)
+    {
+        // for serialization
+    }
+
     /// <summary>
     /// Unique Identifier
     /// </summary>

@@ -12,7 +12,6 @@
 //
 
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 using IssueTracker.Shared;
 
 namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
@@ -25,6 +24,12 @@ namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 [SwaggerSchemaName("Triage User")]
 public sealed record class TriageUserDto(Guid Id, string FullName)
 {
+    internal TriageUserDto()
+        : this(Guid.Empty, string.Empty)
+    {
+        // for serialization
+    }
+
     /// <summary>
     /// Unique Identifier
     /// </summary>

@@ -12,7 +12,6 @@
 //
 
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Shared;
 
@@ -44,9 +43,9 @@ public sealed class LinkedIssueSummaryDto
     /// <summary>
     /// Instantiates a new instance of the <see cref="LinkedIssueSummaryDto"/> class.
     /// </summary>
-    public LinkedIssueSummaryDto()
+    internal LinkedIssueSummaryDto()
     {
-
+        // for serialization
     }
 
     /// <summary>
