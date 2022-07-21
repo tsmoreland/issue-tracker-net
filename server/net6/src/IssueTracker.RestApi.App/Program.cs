@@ -23,7 +23,6 @@ using IssueTracker.Middelware.SecurityHeaders;
 using IssueTracker.RestApi.App;
 using IssueTracker.RestApi.App.Filters;
 using IssueTracker.ServiceDiscovery;
-using IssueTracker.Shared.Contracts;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -119,27 +118,6 @@ builder.Services
     });
 
 builder.Services
-    .AddMemoryCache()
-    .AddSingleton<ISyncCacheProvider, Polly.Caching.Memory.MemoryCacheProvider>()
-    .AddSingleton<IAsyncCacheProvider, Polly.Caching.Memory.MemoryCacheProvider>()
-    .AddSingleton<IReadOnlyPolicyRegistry<string>, PolicyRegistry>(serviceProvider =>
-    {
-        PolicyRegistry registry = new()
-        {
-            {
-                nameof(HttpResponseMessage), Policy.CacheAsync(
-                    serviceProvider.GetRequiredService<IAsyncCacheProvider>().AsyncFor<HttpResponseMessage>(),
-                    TimeSpan.FromMinutes(5))
-            },
-            {
-                "health",
-                Policy.Cache(
-                    serviceProvider.GetRequiredService<ISyncCacheProvider>().For<string>(),
-                    TimeSpan.FromMinutes(2))
-            }
-        };
-        return registry;
-    })
     .Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"))
     .AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>()
     .AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>()
@@ -198,9 +176,21 @@ app.MapDelete("/api/reset",
         return Results.StatusCode(StatusCodes.Status418ImATeapot);
     });
 
-app.MapHealthChecks("/health",
-    new HealthCheckOptions
+app
+    .MapHealthChecks("/health", GetHealthCheckOptions())
+    .AllowAnonymous();
+
+app
+    .MapHealthChecks("/health/ready", GetHealthCheckOptions(registration => registration.Tags.Contains("ready")))
+    .AllowAnonymous();
+
+app.Run();
+
+static HealthCheckOptions GetHealthCheckOptions(Func<HealthCheckRegistration, bool>? predicate = null)
+{
+    return new HealthCheckOptions
     {
+        Predicate = predicate,
         AllowCachingResponses = false,
         ResultStatusCodes =
         {
@@ -209,9 +199,8 @@ app.MapHealthChecks("/health",
             [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
         },
         ResponseWriter = WriteHealthResponse,
-    });
-
-app.Run();
+    };
+}
 
 static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
 {
@@ -237,55 +226,59 @@ static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
 
 static Task WriteHealthResponse(HttpContext context, HealthReport report)
 {
-    ISyncPolicy<string> cachePolicy = context
-        .RequestServices.GetRequiredService<IReadOnlyPolicyRegistry<string>>()
-        .Get<ISyncPolicy<string>>("health");
+#if DEBUG
+    const bool authenticated = true;
+#else
+    bool authenticated = context.User.Identity?.IsAuthenticated == true;
+#endif
 
     context.Response.ContentType = "application/json; charset=utf-8";
-    string healthResponse = cachePolicy
-        .Execute(_ =>
+    var options = new JsonWriterOptions { Indented = false };
+
+    using var memoryStream = new MemoryStream();
+    using (var jsonWriter = new Utf8JsonWriter(memoryStream, options))
+    {
+        jsonWriter.WriteStartObject();
+        jsonWriter.WriteString("status", report.Status.ToString());
+        if (authenticated)
         {
-            var options = new JsonWriterOptions { Indented = false };
+            jsonWriter.WriteStartObject("results");
 
-            using var memoryStream = new MemoryStream();
-            using (var jsonWriter = new Utf8JsonWriter(memoryStream, options))
+            foreach (KeyValuePair<string, HealthReportEntry> healthReportEntry in report.Entries)
             {
-                jsonWriter.WriteStartObject();
-                jsonWriter.WriteString("status", report.Status.ToString());
-                jsonWriter.WriteStartObject("results");
+                jsonWriter.WriteStartObject(healthReportEntry.Key.ToSnakeCase());
 
-                foreach (KeyValuePair<string, HealthReportEntry> healthReportEntry in report.Entries)
+                jsonWriter.WriteString("status",
+                    healthReportEntry.Value.Status.ToString());
+                if (healthReportEntry.Value.Description is { Length: > 0 })
                 {
-                    jsonWriter.WriteStartObject(healthReportEntry.Key.ToSnakeCase());
-                    jsonWriter.WriteString("status",
-                        healthReportEntry.Value.Status.ToString());
                     jsonWriter.WriteString("description",
                         healthReportEntry.Value.Description);
+                }
 
-                    if (healthReportEntry.Value.Data.Any())
+                if (healthReportEntry.Value.Data.Any())
+                {
+                    jsonWriter.WriteStartObject("data");
+                    foreach (KeyValuePair<string, object> item in healthReportEntry.Value.Data)
                     {
-                        jsonWriter.WriteStartObject("data");
-                        foreach (KeyValuePair<string, object> item in healthReportEntry.Value.Data)
-                        {
-                            jsonWriter.WritePropertyName(item.Key.ToSnakeCase());
+                        jsonWriter.WritePropertyName(item.Key.ToSnakeCase());
 
-                            JsonSerializer.Serialize(jsonWriter, item.Value,
-                                item.Value?.GetType() ?? typeof(object));
-                        }
-
-                        jsonWriter.WriteEndObject();
+                        JsonSerializer.Serialize(jsonWriter, item.Value,
+                            item.Value?.GetType() ?? typeof(object));
                     }
 
                     jsonWriter.WriteEndObject();
                 }
 
                 jsonWriter.WriteEndObject();
-                jsonWriter.WriteEndObject();
             }
 
-            return Encoding.UTF8.GetString(memoryStream.ToArray());
+            jsonWriter.WriteEndObject();
+        }
+        jsonWriter.WriteEndObject();
+    }
 
-        }, new Context("health-key"));
+    string healthResponse = Encoding.UTF8.GetString(memoryStream.ToArray());
 
     return context.Response.WriteAsync(healthResponse);
 }
