@@ -11,9 +11,12 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
+using Polly;
+using Polly.Registry;
 
 namespace IssueTracker.Issues.Infrastructure;
 
@@ -21,35 +24,130 @@ public sealed class IssueDataHealthCheck : IHealthCheck
 {
     private readonly IDbContextFactory<IssuesDbContext> _dbContextFactory;
     private readonly ILogger<IssueDataHealthCheck> _logger;
+    private readonly IAsyncPolicy<HealthCheckResult> _policy;
 
-    public IssueDataHealthCheck(IDbContextFactory<IssuesDbContext> dbContextFactory, ILoggerFactory loggerFactory)
+    public IssueDataHealthCheck(
+        IDbContextFactory<IssuesDbContext> dbContextFactory,
+        IReadOnlyPolicyRegistry<string> registry,
+        ILoggerFactory loggerFactory)
     {
         _dbContextFactory = dbContextFactory ?? throw new ArgumentNullException(nameof(dbContextFactory));
+
+        ArgumentNullException.ThrowIfNull(registry, nameof(registry));
+        _policy = registry.Get<IAsyncPolicy<HealthCheckResult>>(CommonPollyPolicyNames.HealthCheckResultCacheAsyncPolicy);
+
+        ArgumentNullException.ThrowIfNull(registry, nameof(registry));
         _logger = loggerFactory.CreateLogger<IssueDataHealthCheck>();
     }
 
-    private async ValueTask<bool> CanConnect(CancellationToken cancellationToken)
-    {
-        try
-        {
-            await using IssuesDbContext context = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
-            return await context.Database.CanConnectAsync(cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Unexpected error occurred while testing connectivity");
-            return false;
-        }
-
-    }
+    public static string Name => "issues_db";
+    public static IEnumerable<string> Tags => new[] { "ready" };
 
     /// <inheritdoc />
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
-        bool canConnect = await CanConnect(cancellationToken);
+        bool canConnect = await CanConnect(_dbContextFactory, _logger, cancellationToken);
 
         return canConnect
             ? HealthCheckResult.Healthy("Issue database is connectable")
             : new HealthCheckResult(context.Registration.FailureStatus, "Unable to connection to Issue database");
     }
+
+    private sealed record class HealthContextArguments(HealthCheckContext Context,
+        IDbContextFactory<IssuesDbContext> DbContextFactory, ILogger Logger, CancellationToken CancellationToken);
+
+    public Task<HealthCheckResult> CheckHealthAsync2(HealthCheckContext context, CancellationToken cancellationToken = default)
+    {
+        const string operationKey = nameof(IssueDataHealthCheck) + "4F0D6308-818A-4791-9B6E-F65BCFB30485";
+
+        HealthContextArguments arguments = new(context, _dbContextFactory, _logger, cancellationToken);
+        return _policy.ExecuteAsync(static ctx =>
+        {
+            HealthContextArguments arguments = (HealthContextArguments)ctx["ctx"];
+
+            (HealthCheckContext context, IDbContextFactory<IssuesDbContext> dbContextFactory, ILogger logger,
+                CancellationToken cancellationToken) = arguments;
+            return GetHealthCheckResult(context, dbContextFactory, logger, cancellationToken);
+
+        }, new Context(operationKey, new Dictionary<string, object> { { "ctx", arguments } }));
+
+    }
+
+    private static Task<HealthCheckResult> GetHealthCheckResult(HealthCheckContext context, IDbContextFactory<IssuesDbContext> dbContextFactory, ILogger logger, CancellationToken cancellationToken)
+    {
+        Task<bool> task = CanConnect(dbContextFactory, logger, cancellationToken);
+        return task.IsCompletedSuccessfully
+            ? Task.FromResult(GetHealthCheckResult(context, task.Result))
+            : GetHealthCheckResult(context, task);
+    }
+
+    private static Task<HealthCheckResult> GetHealthCheckResult(HealthCheckContext context, Task<bool> valueTask)
+    {
+        return valueTask
+            .ContinueWith(static (t, state) =>
+            {
+                HealthCheckContext context = (HealthCheckContext)state!;
+                bool canConnect = t.Result;
+                return GetHealthCheckResult(null!, canConnect);
+            }, context);
+    }
+
+    private static HealthCheckResult GetHealthCheckResult(HealthCheckContext context, bool canConnect)
+    {
+        return canConnect
+            ? HealthCheckResult.Healthy("Issue database is connectable")
+            : new HealthCheckResult(context.Registration.FailureStatus, "Unable to connection to Issue database");
+    }
+
+    /// <remarks>
+    /// <para>
+    /// async/await is the far more simple way and in most cases the preferred  way to do this, I'm choosing the more complex method
+    /// in part to have a working example that shows that work, particularly one that has to deal with IDisposable's
+    /// </para>
+    /// <para>
+    /// While this way is more complex is done offer one benefit - no closures which could keep objects alive longer than intended.
+    /// </para>
+    /// </remarks>
+    private static Task<bool> CanConnect(IDbContextFactory<IssuesDbContext> dbContextFactory, ILogger logger, CancellationToken cancellationToken)
+    {
+        return dbContextFactory.CreateDbContextAsync(cancellationToken)
+            .ContinueWith(static (t, state) =>
+            {
+                (CancellationToken cancellationToken, ILogger logger) = ((CancellationToken, ILogger))state!;
+                IssuesDbContext context = t.Result;
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    if (t.IsFaulted)
+                    {
+                        logger.LogError(t.Exception, "Unexpected error occurred while testing connectivity");
+                    }
+
+                    context.Dispose();
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+
+                return context.Database.CanConnectAsync(cancellationToken)
+                    .ContinueWith(static (t, state) =>
+                    {
+                        (IDisposable disposable, ILogger logger) = ((IDisposable, ILogger))state!;
+                        disposable.Dispose();
+
+                        if (t.IsFaulted)
+                        {
+                            logger.LogError(t.Exception, "Unexpected error occurred while testing connectivity");
+                            throw t.Exception!;
+                        }
+
+                        if (t.IsCanceled)
+                        {
+                            throw new TaskCanceledException();
+                        }
+
+                        return t.Result;
+                    }, (context, logger), cancellationToken);
+
+            }, (cancellationToken, logger), TaskContinuationOptions.OnlyOnRanToCompletion)
+            .Unwrap();
+    }
+
 }

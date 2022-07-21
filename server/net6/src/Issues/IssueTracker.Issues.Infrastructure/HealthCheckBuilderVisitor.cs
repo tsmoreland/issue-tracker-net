@@ -13,6 +13,7 @@
 
 using IssueTracker.Shared.Contracts;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace IssueTracker.Issues.Infrastructure;
 
@@ -26,6 +27,7 @@ public sealed class HealthCheckBuilderVisitor : IHealthCheckBuilderVisitor
     /// <inheritdoc />
     public void Visit(IHealthChecksBuilder builder)
     {
-        builder.AddCheck<IssueDataHealthCheck>("IssueData");
+        builder
+            .AddCheck<IssueDataHealthCheck>(IssueDataHealthCheck.Name, HealthStatus.Unhealthy, IssueDataHealthCheck.Tags);
     }
 }
