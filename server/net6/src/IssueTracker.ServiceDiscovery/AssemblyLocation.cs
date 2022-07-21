@@ -47,12 +47,13 @@ public readonly record struct AssemblyLocation(Assembly Assembly, string Folder,
                     .Where(asm => asm.FullName.StartsWith(@namespace))
                     .Union(new[] { assembly.GetName() })
                     .ToImmutableArray();
-                return GetRelatedAssemblyFilenames(folder, @namespace)
+                HashSet<Assembly> referencedAssemblylSet = GetRelatedAssemblyFilenames(folder, @namespace)
                     .Select(AssemblyName.GetAssemblyName)
                     .Where(asm => referencedAssemblyNames.DoesNotContain(asm))
                     .Select(Assembly.Load)
                     .Union(referencedAssemblyNames.Select(Assembly.Load))
                     .ToHashSet();
+                return referencedAssemblylSet;
             });
     }
 
@@ -93,7 +94,12 @@ public readonly record struct AssemblyLocation(Assembly Assembly, string Folder,
 
     private static IEnumerable<string> GetRelatedAssemblyFilenames(string folder, string rootNamespace)
     {
+#if DEBUG
+        string[] files = Directory.GetFiles(folder, $"{rootNamespace}.*.dll");
+        return files;
+#else
         return Directory.GetFiles(folder, $"{rootNamespace}.*.dll");
+#endif
     }
 
     private static bool ContainsType<T>(Assembly assembly)
