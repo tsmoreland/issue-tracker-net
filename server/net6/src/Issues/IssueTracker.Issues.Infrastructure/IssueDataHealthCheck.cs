@@ -43,20 +43,11 @@ public sealed class IssueDataHealthCheck : IHealthCheck
     public static string Name => "issues_db";
     public static IEnumerable<string> Tags => new[] { "ready" };
 
-    /// <inheritdoc />
-    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
-    {
-        bool canConnect = await CanConnect(_dbContextFactory, _logger, cancellationToken);
-
-        return canConnect
-            ? HealthCheckResult.Healthy("Issue database is connectable")
-            : new HealthCheckResult(context.Registration.FailureStatus, "Unable to connection to Issue database");
-    }
-
     private sealed record class HealthContextArguments(HealthCheckContext Context,
         IDbContextFactory<IssuesDbContext> DbContextFactory, ILogger Logger, CancellationToken CancellationToken);
 
-    public Task<HealthCheckResult> CheckHealthAsync2(HealthCheckContext context, CancellationToken cancellationToken = default)
+    /// <inheritdoc />
+    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
         const string operationKey = nameof(IssueDataHealthCheck) + "4F0D6308-818A-4791-9B6E-F65BCFB30485";
 
@@ -117,20 +108,20 @@ public sealed class IssueDataHealthCheck : IHealthCheck
                 IssuesDbContext context = t.Result;
                 if (cancellationToken.IsCancellationRequested)
                 {
+                    context.Dispose();
                     if (t.IsFaulted)
                     {
                         logger.LogError(t.Exception, "Unexpected error occurred while testing connectivity");
                     }
 
-                    context.Dispose();
                     cancellationToken.ThrowIfCancellationRequested();
                 }
 
                 return context.Database.CanConnectAsync(cancellationToken)
                     .ContinueWith(static (t, state) =>
                     {
-                        (IDisposable disposable, ILogger logger) = ((IDisposable, ILogger))state!;
-                        disposable.Dispose();
+                        (IssuesDbContext context, ILogger logger) = ((IssuesDbContext, ILogger))state!;
+                        context.Dispose();
 
                         if (t.IsFaulted)
                         {
