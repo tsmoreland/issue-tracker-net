@@ -56,7 +56,7 @@ public sealed class EpicsController : IssuesControllerBase
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails),
         "application/problem+json", "application/problem+xml")]
     [Filters.ValidateModelStateServiceFilter]
-    public Task<IActionResult> GetAll(
+    public Task<ActionResult<IAsyncEnumerable<IssueSummaryDto>>> GetAll(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] string? orderBy = null,

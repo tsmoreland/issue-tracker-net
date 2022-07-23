@@ -26,7 +26,7 @@ namespace IssueTracker.Issues.API.REST.Version2.Extensions;
 internal static class ControllerBaseExtensions
 {
 
-    public static async Task<IActionResult> GetAllWithIssueType(
+    public static async Task<ActionResult<IAsyncEnumerable<IssueSummaryDto>>> GetAllWithIssueType(
         this ControllerBase controller,
         IMediator mediator,
         IssueType type,
@@ -48,7 +48,7 @@ internal static class ControllerBaseExtensions
         return controller.BadRequest(controller.ModelState);
     }
 
-    public static async Task<IActionResult> Post(
+    public static async Task<ActionResult<IssueDto>> Post(
         this ControllerBase controller,
         IMediator mediator,
         IMapper mapper,

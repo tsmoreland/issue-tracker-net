@@ -88,11 +88,11 @@ public abstract class IssuesControllerBase : ControllerBase
     [HttpGet("{id}")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> Get(
+    public async Task<ActionResult<IssueDto>> Get(
         [RegularExpression("[A-Z][A-Z][A-Z]-[1-9][0-9]*")] string id,
         CancellationToken cancellationToken)
     {
@@ -112,9 +112,9 @@ public abstract class IssuesControllerBase : ControllerBase
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status201Created, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status201Created, "Successful Response")]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    public async Task<IActionResult> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)
+    public async Task<ActionResult<IssueDto>> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
@@ -138,11 +138,11 @@ public abstract class IssuesControllerBase : ControllerBase
     [HttpPut("{id}")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> Put(
+    public async Task<ActionResult<IssueDto>> Put(
         [RegularExpression("[A-Z][A-Z][A-Z]-[1-9][0-9]*")] string id,
         [FromBody] EditIssueDto model,
         CancellationToken cancellationToken)
