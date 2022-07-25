@@ -35,3 +35,4 @@ public sealed record class ReadyForReviewStateChangeCommand(IssueIdentifier Id) 
 public sealed record class ReviewFailedStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest<Unit>;
 public sealed record class ReadyForTestStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest<Unit>;
 public sealed record class TestFailedStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest<Unit>;
+

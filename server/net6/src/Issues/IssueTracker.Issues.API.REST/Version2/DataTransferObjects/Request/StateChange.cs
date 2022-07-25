@@ -10,17 +10,20 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Microsoft.AspNetCore.Mvc;
+namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Request;
 
-namespace IssueTracker.Issues.API.REST.Filters;
-
-/// <summary/>
-public sealed class ValidateIssueIdServiceFilterAttribute : ServiceFilterAttribute
+public enum StateChange
 {
-    /// <summary/>
-    public ValidateIssueIdServiceFilterAttribute()
-        : base(typeof(ValidateIssueIdActionFilterAttribute))
-    {
-    }
+    MoveToBackLog,
+    ToDo,
+    Open,
+    Close,
+    Completed,
+    ReadyForReview,
+    ReviewFailed,
+    ReadyForTest,
+    TestFailed,
+    NotADefect,
+    CannotReproduce,
+    WontDo,
 }
-

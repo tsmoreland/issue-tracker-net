@@ -13,6 +13,7 @@
 
 using System.Net.Mime;
 using AutoMapper;
+using IssueTracker.Issues.API.REST.Version2.Converters;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Request;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
@@ -66,10 +67,10 @@ public abstract class IssuesControllerBase : ControllerBase
     /// Execute state change
     /// </summary>
     /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
-    /// <param name="stateChange" example="close">the state change command to run</param>
+    /// <param name="changeState">the state change to perform</param>
     /// <param name="cancellationToken">A cancellation token.</param>
     /// <returns>empty response on success; otherwise, problem details</returns>
-    [HttpPut("{id}/state/{stateChange}")]
+    [HttpPut("{id}/state")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
@@ -77,50 +78,20 @@ public abstract class IssuesControllerBase : ControllerBase
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status409Conflict, "state change not possible", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateIssueIdServiceFilter]
-    public async Task<IActionResult> ChangeState(string id, StateChangeRouteValue stateChange, CancellationToken cancellationToken)
+    [Filters.ValidateModelStateServiceFilter]
+    public Task<IActionResult> ChangeState(string id, ChangeIssueStateDto changeState, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
+        if (ChangeIssueStateDtoConverter.TryConvertToCommand(
+                IssueIdentifier.FromString(id),
+                changeState.State,
+                out StateChangeCommand? command))
         {
-            return NotFound(new ValidationProblemDetails(ModelState));
+            return Mediator.Send(command, cancellationToken)
+                .ContinueWith<IActionResult>(_ => Ok(), cancellationToken);
         }
-        await ChangeStateTo(IssueIdentifier.FromString(id), stateChange, cancellationToken);
-        return Ok();
-    }
 
-    /// <remarks>
-    /// the enum should only contain state changes that match this endpoint style, as soon as an additional body or query parameter
-    /// is introduce that state should be remove and the end point added manually
-    /// </remarks>
-    private Task ChangeStateTo(IssueIdentifier id, StateChangeRouteValue state, CancellationToken cancellationToken)
-    {
-        return state switch
-        {
-            StateChangeRouteValue.MoveToBackLog =>
-                Mediator.Send(new MoveToBackLogStateChangeCommand(id), cancellationToken),
-            StateChangeRouteValue.ToDo =>
-                Mediator.Send(new ToDoStateChangeCommand(id), cancellationToken),
-            StateChangeRouteValue.Open =>
-                Mediator.Send(new OpenStateChangeCommand(id, DateTimeOffset.UtcNow), cancellationToken),
-            StateChangeRouteValue.Close =>
-                Mediator.Send(new CloseStateChangeCommand(id), cancellationToken),
-            StateChangeRouteValue.Completed =>
-                Mediator.Send(new CompletedStateChangeCommand(id, DateTimeOffset.UtcNow), cancellationToken),
-            StateChangeRouteValue.ReadyForReview =>
-                Mediator.Send(new ReadyForReviewStateChangeCommand(id), cancellationToken),
-            StateChangeRouteValue.ReviewFailed =>
-                Mediator.Send(new ReviewFailedStateChangeCommand(id), cancellationToken),
-            StateChangeRouteValue.ReadyForTest =>
-                Mediator.Send(new ReadyForTestStateChangeCommand(id), cancellationToken),
-            StateChangeRouteValue.TestFailed =>
-                Mediator.Send(new TestFailedStateChangeCommand(id), cancellationToken),
-            StateChangeRouteValue.NotADefect =>
-                Mediator.Send(new NotADefectStateChangeCommand(id, DateTimeOffset.UtcNow), cancellationToken),
-            StateChangeRouteValue.CannotReproduce =>
-                Mediator.Send(new CannotReproduceStateChangeCommand(id, DateTimeOffset.UtcNow), cancellationToken),
-            StateChangeRouteValue.WontDo =>
-                Mediator.Send(new WontDoStateChangeCommand(id, DateTimeOffset.UtcNow), cancellationToken),
-            _ =>
-                Task.FromException(new NotSupportedException()),
-        };
+        ModelState.AddModelError("State", "unsupported state");
+        return Task.FromResult<IActionResult>(BadRequest(new ValidationProblemDetails(ModelState)));
+
     }
 }
