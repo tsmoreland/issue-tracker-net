@@ -98,7 +98,7 @@ public readonly record struct AssemblyLocation(Assembly Assembly, string Folder,
         string[] files = Directory.GetFiles(folder, $"{rootNamespace}.*.dll");
         return files;
 #else
-        return Directory.GetFiles(folder, $"{rootNamespace}.*.dll");
+    return Directory.GetFiles(folder, $"{rootNamespace}.*.dll");
 #endif
     }
 
