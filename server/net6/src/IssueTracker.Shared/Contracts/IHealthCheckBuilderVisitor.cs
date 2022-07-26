@@ -15,7 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace IssueTracker.Shared.Contracts;
 
-public interface IHealthCheckBuilderVisitor 
+public interface IHealthCheckBuilderVisitor
 {
     public void Visit(IHealthChecksBuilder builder);
 }

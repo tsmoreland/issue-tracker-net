@@ -22,88 +22,88 @@ public readonly record struct AssemblyLocation(Assembly Assembly, string Folder,
     // essentially violatile as it's not readonly 
     private readonly ConcurrentDictionary<string, HashSet<Assembly>> _assembliesByNamespace = new();
 
-    public static AssemblyLocation? FromAssembly(Assembly? assembly)
+public static AssemblyLocation? FromAssembly(Assembly? assembly)
+{
+    if (assembly is null)
     {
-        if (assembly is null)
+        return null;
+    }
+
+    string? appFolder = Path.GetDirectoryName(assembly.Location);
+    return appFolder is null
+        ? null
+        : new AssemblyLocation(assembly, appFolder, assembly.Location);
+}
+
+private readonly IEnumerable<Assembly> GetAssembliesForNamespace(string rootNameSspace)
+{
+    Assembly assembly = Assembly;
+    string folder = Folder;
+
+    return _assembliesByNamespace.GetOrAdd(rootNameSspace,
+        @namespace =>
         {
-            return null;
-        }
+            ImmutableArray<AssemblyName> referencedAssemblyNames = assembly.GetReferencedAssemblies()
+                .Where(asm => asm.FullName.StartsWith(@namespace))
+                .Union(new[] { assembly.GetName() })
+                .ToImmutableArray();
+            HashSet<Assembly> referencedAssemblylSet = GetRelatedAssemblyFilenames(folder, @namespace)
+                .Select(AssemblyName.GetAssemblyName)
+                .Where(asm => referencedAssemblyNames.DoesNotContain(asm))
+                .Select(Assembly.Load)
+                .Union(referencedAssemblyNames.Select(Assembly.Load))
+                .ToHashSet();
+            return referencedAssemblylSet;
+        });
+}
 
-        string? appFolder = Path.GetDirectoryName(assembly.Location);
-        return appFolder is null
-            ? null
-            : new AssemblyLocation(assembly, appFolder, assembly.Location);
-    }
+public IEnumerable<Type> DiscoverTypes<T>(string rootNamespace)
+{
+    return GetAssembliesForNamespace(rootNamespace)
+        .SelectMany(a => a.GetTypes())
+        .Where(t => typeof(T).IsAssignableFrom(t))
+        .Distinct()
+        .ToImmutableArray();
+}
 
-    private readonly IEnumerable<Assembly> GetAssembliesForNamespace(string rootNameSspace)
-    {
-        Assembly assembly = Assembly;
-        string folder = Folder;
+public readonly IEnumerable<Assembly> GetAssembliesContainingType<T>(string rootNamespace)
+{
+    return GetAssembliesForNamespace(rootNamespace).Where(ContainsType<T>);
+}
+public static IEnumerable<Assembly> GetAssembliesContainingType<T>(Assembly assembly, string folder, string rootNamespace)
+{
+    ImmutableArray<AssemblyName> referencedAssemblyNames = assembly.GetReferencedAssemblies()
+        .Where(asm => asm.FullName.StartsWith(rootNamespace))
+        .Union(new[] { assembly.GetName() })
+        .ToImmutableArray();
 
-        return _assembliesByNamespace.GetOrAdd(rootNameSspace,
-            @namespace =>
-            {
-                ImmutableArray<AssemblyName> referencedAssemblyNames = assembly.GetReferencedAssemblies()
-                    .Where(asm => asm.FullName.StartsWith(@namespace))
-                    .Union(new[] { assembly.GetName() })
-                    .ToImmutableArray();
-                HashSet<Assembly> referencedAssemblylSet = GetRelatedAssemblyFilenames(folder, @namespace)
-                    .Select(AssemblyName.GetAssemblyName)
-                    .Where(asm => referencedAssemblyNames.DoesNotContain(asm))
-                    .Select(Assembly.Load)
-                    .Union(referencedAssemblyNames.Select(Assembly.Load))
-                    .ToHashSet();
-                return referencedAssemblylSet;
-            });
-    }
+    HashSet<Assembly> assemblies = GetRelatedAssemblyFilenames(folder, rootNamespace)
+        .Select(AssemblyName.GetAssemblyName)
+        .Where(asm => referencedAssemblyNames.DoesNotContain(asm))
+        .Select(Assembly.Load)
+        .Union(referencedAssemblyNames.Select(Assembly.Load))
+        .ToHashSet();
 
-    public IEnumerable<Type> DiscoverTypes<T>(string rootNamespace)
-    {
-        return GetAssembliesForNamespace(rootNamespace)
-            .SelectMany(a => a.GetTypes())
-            .Where(t => typeof(T).IsAssignableFrom(t))
-            .Distinct()
-            .ToImmutableArray();
-    }
+    return assemblies
+        .Where(ContainsType<T>);
+}
 
-    public readonly IEnumerable<Assembly> GetAssembliesContainingType<T>(string rootNamespace)
-    {
-        return GetAssembliesForNamespace(rootNamespace).Where(ContainsType<T>);
-    }
-    public static IEnumerable<Assembly> GetAssembliesContainingType<T>(Assembly assembly, string folder, string rootNamespace)
-    {
-        ImmutableArray<AssemblyName> referencedAssemblyNames = assembly.GetReferencedAssemblies()
-            .Where(asm => asm.FullName.StartsWith(rootNamespace))
-            .Union(new[] { assembly.GetName() })
-            .ToImmutableArray();
+public readonly IEnumerable<AssemblyName> GetHostingStartupAssemblies(string rootNamespace) =>
+    GetAssembliesContainingType<IHostingStartup>(rootNamespace)
+        .Select(asm => asm.GetName());
 
-        HashSet<Assembly> assemblies = GetRelatedAssemblyFilenames(folder, rootNamespace)
-            .Select(AssemblyName.GetAssemblyName)
-            .Where(asm => referencedAssemblyNames.DoesNotContain(asm))
-            .Select(Assembly.Load)
-            .Union(referencedAssemblyNames.Select(Assembly.Load))
-            .ToHashSet();
-
-        return assemblies
-            .Where(ContainsType<T>);
-    }
-
-    public readonly IEnumerable<AssemblyName> GetHostingStartupAssemblies(string rootNamespace) =>
-        GetAssembliesContainingType<IHostingStartup>(rootNamespace)
-            .Select(asm => asm.GetName());
-
-    private static IEnumerable<string> GetRelatedAssemblyFilenames(string folder, string rootNamespace)
-    {
+private static IEnumerable<string> GetRelatedAssemblyFilenames(string folder, string rootNamespace)
+{
 #if DEBUG
-        string[] files = Directory.GetFiles(folder, $"{rootNamespace}.*.dll");
-        return files;
+    string[] files = Directory.GetFiles(folder, $"{rootNamespace}.*.dll");
+    return files;
 #else
         return Directory.GetFiles(folder, $"{rootNamespace}.*.dll");
 #endif
-    }
+}
 
-    private static bool ContainsType<T>(Assembly assembly)
-    {
-        return assembly.GetTypes().Any(type => typeof(T).IsAssignableFrom(type));
-    }
+private static bool ContainsType<T>(Assembly assembly)
+{
+    return assembly.GetTypes().Any(type => typeof(T).IsAssignableFrom(type));
+}
 }

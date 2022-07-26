@@ -16,6 +16,6 @@ namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 public abstract record class User(Guid UserId, string FullName)
 {
     protected static readonly string UnasignedFullname = "Unassigned";
-    protected static readonly Guid UnassignedId = Guid.Empty;
+protected static readonly Guid UnassignedId = Guid.Empty;
 
 }

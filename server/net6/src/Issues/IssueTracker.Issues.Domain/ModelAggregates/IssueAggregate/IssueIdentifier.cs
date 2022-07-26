@@ -19,68 +19,68 @@ public readonly record struct IssueIdentifier(string Project, int IssueNumber) :
 {
     public static IssueIdentifier Empty { get; } = new();
 
-    public string Project { get; init; } = (Project is { Length: > 0 } and { Length: <= 3 })
-        ? Project
-        : throw new ArgumentException("Invalid project id");
+public string Project { get; init; } = (Project is { Length: > 0 } and { Length: <= 3 })
+    ? Project
+    : throw new ArgumentException("Invalid project id");
 
-    public int IssueNumber { get; init; } = (IssueNumber >= 0)
-        ? IssueNumber
-        : throw new ArgumentException("issue number must be a positive integer");
+public int IssueNumber { get; init; } = (IssueNumber >= 0)
+    ? IssueNumber
+    : throw new ArgumentException("issue number must be a positive integer");
 
-    public void Deconstruct(out string projectId, out int issueNumber)
+public void Deconstruct(out string projectId, out int issueNumber)
+{
+    projectId = Project;
+    issueNumber = IssueNumber;
+}
+
+private static (string ProjectId, int Id) DeconstructId(string friendlyId)
+{
+    int dashIndex = friendlyId.IndexOf('-');
+    if (dashIndex == -1)
     {
-        projectId = Project;
-        issueNumber = IssueNumber;
+        throw new ArgumentException("Malformed friendly id");
     }
 
-    private static (string ProjectId, int Id) DeconstructId(string friendlyId)
+    if (!int.TryParse(friendlyId[(dashIndex + 1)..], out int id))
     {
-        int dashIndex = friendlyId.IndexOf('-');
-        if (dashIndex == -1)
-        {
-            throw new ArgumentException("Malformed friendly id");
-        }
-
-        if (!int.TryParse(friendlyId[(dashIndex + 1)..], out int id))
-        {
-            throw new ArgumentException("Malformed friendly id, invalid id component");
-        }
-
-        return (friendlyId[..dashIndex], id);
+        throw new ArgumentException("Malformed friendly id, invalid id component");
     }
 
-    /// <inheritdoc />
-    public override string ToString() =>
-        $"{Project}-{IssueNumber}";
+    return (friendlyId[..dashIndex], id);
+}
 
-    public static IssueIdentifier? FromStringIfNotNull(string? id)
-    {
-        if (id is null)
-        {
-            return null;
-        }
+/// <inheritdoc />
+public override string ToString() =>
+    $"{Project}-{IssueNumber}";
 
-        (string projectId, int issueNumber) = DeconstructId(id);
-        return new IssueIdentifier(projectId, issueNumber);
-    }
-    public static IssueIdentifier FromString(string id)
+public static IssueIdentifier? FromStringIfNotNull(string? id)
+{
+    if (id is null)
     {
-        (string projectId, int issueNumber) = DeconstructId(id);
-        return new IssueIdentifier(projectId, issueNumber);
+        return null;
     }
 
-    public static bool TryConvert(string id, [NotNullWhen(true)] out IssueIdentifier? issueId)
-    {
-        try
-        {
-            issueId = FromString(id);
-            return true;
-        }
-        catch (ArgumentException)
-        {
-            issueId = null;
-            return false;
-        }
+    (string projectId, int issueNumber) = DeconstructId(id);
+    return new IssueIdentifier(projectId, issueNumber);
+}
+public static IssueIdentifier FromString(string id)
+{
+    (string projectId, int issueNumber) = DeconstructId(id);
+    return new IssueIdentifier(projectId, issueNumber);
+}
 
+public static bool TryConvert(string id, [NotNullWhen(true)] out IssueIdentifier? issueId)
+{
+    try
+    {
+        issueId = FromString(id);
+        return true;
     }
+    catch (ArgumentException)
+    {
+        issueId = null;
+        return false;
+    }
+
+}
 }

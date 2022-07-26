@@ -23,7 +23,7 @@ internal class ChangeIssueStateDtoConverter
 
     public static bool TryConvertToCommand(IssueIdentifier id, StateChange state, [NotNullWhen(true)] out StateChangeCommand? command)
     {
-        command =  state switch
+        command = state switch
         {
             StateChange.MoveToBackLog => new MoveToBackLogStateChangeCommand(id),
             StateChange.ToDo => new ToDoStateChangeCommand(id),

@@ -22,7 +22,7 @@ public sealed record class IssueLink(
 
     private IssueLink()
         : this(LinkType.Related, IssueIdentifier.Empty, null!, IssueIdentifier.Empty, null!)
-    {
+{
 
-    }
+}
 }

@@ -21,5 +21,5 @@ public sealed record class Maintainer(Guid UserId, string FullName) : User(UserI
     /// <remarks>
     /// intentionally created on each request due to ef tracking
     /// </remarks>
-    public static Maintainer Unassigned => new(UnassignedId, UnasignedFullname);
+public static Maintainer Unassigned => new(UnassignedId, UnasignedFullname);
 }

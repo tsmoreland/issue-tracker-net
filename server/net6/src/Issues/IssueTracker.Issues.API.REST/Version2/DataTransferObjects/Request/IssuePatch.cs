@@ -42,7 +42,7 @@ public sealed class IssuePatch
     /// </summary>
     public IssuePatch()
     {
-        
+
     }
 
     /// <summary>

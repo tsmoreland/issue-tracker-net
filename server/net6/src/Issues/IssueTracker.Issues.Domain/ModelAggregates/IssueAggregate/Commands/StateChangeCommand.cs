@@ -23,8 +23,8 @@ public abstract record class StateChangeCommand(IssueIdentifier Id)
     /// </summary>
     /// <param name="issue"><see cref="Issue"/> to visit</param>
     public virtual void UpdateIssue(Issue issue)
-    {
-    }
+{
+}
 }
 
 public sealed record class MoveToBackLogStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest<Unit>;

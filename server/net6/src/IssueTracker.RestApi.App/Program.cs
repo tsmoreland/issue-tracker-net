@@ -170,11 +170,11 @@ app.MapGet("/server_time", (bool utc) =>
     Results.Json(new { time = utc ? DateTime.UtcNow.ToString("o") : DateTime.Now.ToString("o") }));
 
 app.MapDelete("/api/reset",
-    async ([FromServices] IIssueDataMigration migration) =>
+    async([FromServices] IIssueDataMigration migration) =>
     {
-        await migration.ResetAndRepopultateAsync();
-        return Results.StatusCode(StatusCodes.Status418ImATeapot);
-    });
+    await migration.ResetAndRepopultateAsync();
+    return Results.StatusCode(StatusCodes.Status418ImATeapot);
+});
 
 app
     .MapHealthChecks("/health", GetHealthCheckOptions())

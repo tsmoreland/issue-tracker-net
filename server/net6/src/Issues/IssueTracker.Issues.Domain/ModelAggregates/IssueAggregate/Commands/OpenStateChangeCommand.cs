@@ -19,10 +19,10 @@ public sealed record class OpenStateChangeCommand(IssueIdentifier Id, DateTimeOf
 {
     /// <inheritdoc />
     public override void UpdateIssue(Issue issue)
+{
+    if (issue.StartTime is null)
     {
-        if (issue.StartTime is null)
-        {
-            issue.StartTime = StartTime;
-        }
+        issue.StartTime = StartTime;
     }
+}
 }
