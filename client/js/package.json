@@ -26,7 +26,7 @@
     "cacheable-request": "^2.1.4",
     "chownr": "^2.0.0",
     "cliui": "^7.0.4",
-    "clone-response": "^1.0.2",
+    "clone-response": "^1.0.3",
     "color-convert": "^2.0.1",
     "color-name": "^1.1.4",
     "color-support": "^1.1.3",
