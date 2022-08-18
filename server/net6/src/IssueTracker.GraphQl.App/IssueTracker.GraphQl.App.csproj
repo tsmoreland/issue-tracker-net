@@ -10,16 +10,16 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-    <PackageReference Include="GraphQL" Version="5.3.2" />
-    <PackageReference Include="GraphQL.DataLoader" Version="5.3.2" />
+    <PackageReference Include="GraphQL" Version="7.0.1" />
+    <PackageReference Include="GraphQL.DataLoader" Version="7.0.1" />
     <PackageReference Include="GraphQL.Relay" Version="0.8.0" />
-    <PackageReference Include="GraphQL.Server.All" Version="6.1.0" />
+    <PackageReference Include="GraphQL.Server.All" Version="7.0.0" />
 
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.8" />
 
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Serilog" Version="2.11.0" />
-    <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
@@ -35,11 +35,11 @@
     with the missed dependency) but we shouldn't need that ideally, if this were a growing project not having these
     references would allow a more plugin approach
     -->
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.8" />
 
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
 
-    <PackageReference Include="Tcell.Agent" Version="3.1.0" />
+    <PackageReference Include="Tcell.Agent" Version="3.2.0" />
   </ItemGroup>
 
   <ItemGroup>

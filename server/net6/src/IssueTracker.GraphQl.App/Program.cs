@@ -89,5 +89,5 @@ static void ConfigurePipeline(WebApplication app)
     app.UseGraphQLWebSockets<IssueTrackerSchema>();
 #endif
     app.UseGraphQL<IssuesSchema>();
-    app.UseGraphQLPlayground(new PlaygroundOptions());
+    app.UseGraphQLPlayground("/ui/playground", new PlaygroundOptions());
 }
