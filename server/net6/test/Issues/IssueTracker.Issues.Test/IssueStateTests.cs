@@ -13,17 +13,15 @@
 
 namespace IssueTracker.Issues.Test;
 
-public sealed class IssueStateTests
+public sealed class IssueStateTests : IDisposable
 {
-    [SetUp]
-    public void SetUp()
+    public IssueStateTests()
     {
-        // ...
     }
 
-    [TearDown]
-    public void TearDown()
+    /// <inheritdoc />
+    public void Dispose()
     {
-        // ...
+        // per-test tear down
     }
 }
