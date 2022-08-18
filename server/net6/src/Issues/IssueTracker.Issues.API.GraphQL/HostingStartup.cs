@@ -45,16 +45,13 @@ public sealed class HostingStartup : IHostingStartup
     /// </summary>
     public static void Configure(IServiceCollection services, IHostEnvironment environment)
     {
-
-        services.AddGraphQL(builder =>
-            builder
-                .AddHttpMiddleware<IssuesSchema>()
-                .AddWebSocketsHttpMiddleware<IssuesSchema>()
-                .AddSchema<IssuesSchema>()
+        services
+            .AddGraphQL(builder => builder
                 .ConfigureExecutionOptions(options =>
                 {
                     options.EnableMetrics = true;
-                    ILogger<HostingStartup>? logger = options.RequestServices?.GetRequiredService<ILogger<HostingStartup>>();
+                    ILogger<HostingStartup>? logger =
+                        options.RequestServices?.GetRequiredService<ILogger<HostingStartup>>();
                     options.UnhandledExceptionDelegate = ctx =>
                     {
                         logger?.LogError("{Error} occurred", ctx.OriginalException.Message);
@@ -62,9 +59,9 @@ public sealed class HostingStartup : IHostingStartup
                     };
                 })
                 .AddSystemTextJson()
-                .AddErrorInfoProvider(options => options.ExposeExceptionStackTrace = environment.IsDevelopment())
-                .AddWebSockets()
+                .AddErrorInfoProvider(options => options.ExposeExceptionDetails = environment.IsDevelopment())
                 .AddDataLoader()
+                .AddSchema<IssuesSchema>()
                 .AddGraphTypes(typeof(IssuesSchema).Assembly));
     }
 }
