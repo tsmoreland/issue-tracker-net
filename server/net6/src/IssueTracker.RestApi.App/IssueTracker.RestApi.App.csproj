@@ -59,7 +59,7 @@
     references would allow a more plugin approach
     -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.8" />
-    <PackageReference Include="TSMoreland.Text.Json.NamingStrategies" Version="1.0.0" />
+    <PackageReference Include="TSMoreland.Text.Json.NamingStrategies" Version="1.0.1" />
 
   </ItemGroup>
 
