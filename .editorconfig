@@ -12,11 +12,8 @@ indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
 
-[project.json]
-indent_size = 2
-
 # Generated code
-[*{_AssemblyInfo.cs,.notsupported.cs}]
+[*{_AssemblyInfo.cs,.notsupported.cs,AsmOffsets.cs}]
 generated_code = true
 
 # C# files
@@ -154,11 +151,11 @@ csharp_space_between_method_declaration_parameter_list_parentheses = false
 csharp_space_between_parentheses = false
 csharp_space_between_square_brackets = false
 
-# S3903: Types should be defined in named namespaces - becasue sonarlint does not yet detect file scoped namespaces
-dotnet_diagnostic.S3903.severity = none
-
 # License header
 file_header_template = \nCopyright © 2022 Terry Moreland\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), \nto deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, \nand/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, \nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, \nWHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n
+
+[project.json]
+indent_size = 2
 
 # C++ Files
 [*.{cpp,h,in}]
@@ -196,3 +193,6 @@ end_of_line = crlf
 
 [*.csproj]
 indent_size = 2
+
+# S3903: Types should be defined in named namespaces - becasue sonarlint does not yet detect file scoped namespaces
+dotnet_diagnostic.S3903.severity = none
