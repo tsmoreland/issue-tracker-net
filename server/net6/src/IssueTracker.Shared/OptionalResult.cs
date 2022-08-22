@@ -12,6 +12,7 @@
 //
 
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace IssueTracker.Shared;
 
@@ -35,8 +36,12 @@ public static class OptionalResult
     /// </summary>
     /// <typeparam name="T">The value that would be stored in <see cref="OptionalResult{T}"/></typeparam>
     /// <param name="error">The reason why there is no value present</param>
+    /// <param name="callerMemberName"><see cref="CallerMemberNameAttribute"/></param>
+    /// <param name="callerFilePath"><see cref="CallerFilePathAttribute"/></param>
+    /// <param name="callerLinesNumber"><see cref="CallerLineNumberAttribute"/></param>
     /// <returns>A new instance of <see cref="OptionalResult{T}"/></returns>
-    public static OptionalResult<T> Failure<T>(Exception? error) =>
+    public static OptionalResult<T> Failure<T>(Exception? error,
+        [CallerMemberName]string callerMemberName = "", [CallerFilePath] string callerFilePath = "", [CallerLineNumber] int callerLinesNumber = 0) =>
         new(false, default, error);
 }
 
@@ -57,11 +62,13 @@ public readonly struct OptionalResult<T>
     /// error that represents why <paramref name="hasValue"/>
     /// is <see langword="false"/>
     /// </param>
-    internal OptionalResult(bool hasValue, T? value, Exception? error)
+    /// <param name="location"></param>
+    internal OptionalResult(bool hasValue, T? value, Exception? error, CallerLocation? location = null)
     {
         HasValue = hasValue;
         Value = value;
         _error = error;
+        Location = location ?? CallerLocation.None;
     }
 
     /// <summary>
@@ -75,6 +82,11 @@ public readonly struct OptionalResult<T>
     /// Result value if <see cref="HasValue"/>
     /// </summary>
     public T? Value { get; }
+
+    /// <summary>
+    /// Caller Location, only meaingfuil if <see cref="HasValue"/> is <see langword="false"/>
+    /// </summary>
+    public CallerLocation Location { get; }
 
     /// <summary>
     /// Returns an <see cref="Exception"/> which represents why
