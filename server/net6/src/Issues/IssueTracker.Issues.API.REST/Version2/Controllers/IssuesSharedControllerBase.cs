@@ -30,6 +30,7 @@ namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 /// <summary>
 /// Controller methods shared between <see cref="IssuesController"/> and <see cref="IssuesVersionHeaderOrQueryController"/>
 /// </summary>
+[ApiController]
 public abstract class IssuesSharedControllerBase : IssuesControllerBase
 {
     /// <summary/>
