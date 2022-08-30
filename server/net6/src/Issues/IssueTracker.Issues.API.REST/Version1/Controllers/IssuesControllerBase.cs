@@ -30,6 +30,7 @@ namespace IssueTracker.Issues.API.REST.Version1.Controllers;
 /// <summary>
 /// Issue Controller
 /// </summary>
+[ApiController]
 public abstract class IssuesControllerBase : ControllerBase
 {
 

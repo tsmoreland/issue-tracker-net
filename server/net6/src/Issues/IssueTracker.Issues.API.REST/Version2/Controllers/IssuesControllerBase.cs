@@ -28,6 +28,7 @@ namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 /// <summary>
 /// Base class for Issue and specific issue type controllers
 /// </summary>
+[ApiController]
 public abstract class IssuesControllerBase : ControllerBase
 {
 
