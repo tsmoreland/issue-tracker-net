@@ -17,44 +17,60 @@ using System.Runtime.CompilerServices;
 namespace IssueTracker.Shared;
 
 /// <summary>
-/// Factory methods for <see cref="OptionalResult{T}"/>
+/// Factory methods for <see cref="Expected"/>
 /// </summary>
-public static class OptionalResult
+public static class Expected
 {
     /// <summary>
-    /// Creates a new instance of <see cref="OptionalResult{T}"/> storing <paramref name="value"/>
+    /// Creates a new instance of <see cref="Expected"/> storing <paramref name="value"/>
     /// </summary>
-    /// <typeparam name="T">The value to be stored <see cref="OptionalResult{T}"/></typeparam>
-    /// <param name="value">The value to be stored in the <see cref="OptionalResult{T}"/></param>
-    /// <returns>A new instance of <see cref="OptionalResult{T}"/></returns>
-    public static OptionalResult<T> Ok<T>(T value) =>
+    /// <typeparam name="T">The value to be stored <see cref="Expected"/></typeparam>
+    /// <param name="value">The value to be stored in the <see cref="Expected"/></param>
+    /// <returns>A new instance of <see cref="Expected"/></returns>
+    public static Expected<T> Ok<T>(T value) =>
         new(true, value, null);
 
     /// <summary>
-    /// Creates a new instance of the <see cref="OptionalResult{T}"/> class which
+    /// Creates a new instance of <see cref="Expected"/> storing <paramref name="value"/>
+    /// </summary>
+    /// <typeparam name="T">The value to be stored <see cref="Expected"/></typeparam>
+    /// <typeparam name="TErrorEnum">enum representing why the value is not present</typeparam>
+    /// <param name="value">The value to be stored in the <see cref="Expected"/></param>
+    /// <returns>A new instance of <see cref="Expected"/></returns>
+    public static Expected<T, TErrorEnum> Ok<T, TErrorEnum>(T value) where TErrorEnum : struct, Enum =>
+        new(true, value, default);
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="Expected"/> class which
     /// does not contain a value, with <paramref name="error"/> as the reason why
     /// </summary>
-    /// <typeparam name="T">The value that would be stored in <see cref="OptionalResult{T}"/></typeparam>
+    /// <typeparam name="T">The value that would be stored in <see cref="Expected"/></typeparam>
     /// <param name="error">The reason why there is no value present</param>
     /// <param name="callerMemberName"><see cref="CallerMemberNameAttribute"/></param>
     /// <param name="callerFilePath"><see cref="CallerFilePathAttribute"/></param>
     /// <param name="callerLinesNumber"><see cref="CallerLineNumberAttribute"/></param>
-    /// <returns>A new instance of <see cref="OptionalResult{T}"/></returns>
-    public static OptionalResult<T> Failure<T>(Exception? error,
+    /// <returns>A new instance of <see cref="Expected"/></returns>
+    public static Expected<T> Failure<T>(Exception? error,
         [CallerMemberName]string callerMemberName = "", [CallerFilePath] string callerFilePath = "", [CallerLineNumber] int callerLinesNumber = 0) =>
-        new(false, default, error);
+        new(false, default, error, new CallerLocation(callerMemberName, callerFilePath, callerLinesNumber));
+
+    public static Expected<T, TErrorEnum> Failure<T, TErrorEnum>(TErrorEnum error,
+        [CallerMemberName]string callerMemberName = "", [CallerFilePath] string callerFilePath = "", [CallerLineNumber] int callerLinesNumber = 0)
+        where TErrorEnum : struct, Enum =>
+        new(false, default, error, new CallerLocation(callerMemberName, callerFilePath, callerLinesNumber));   
+
 }
 
 /// <summary>
 /// Represents a result that may or may not exist
 /// </summary>
 /// <typeparam name="T">The result value if present</typeparam>
-public readonly struct OptionalResult<T>
+public readonly struct Expected<T>
 {
     private readonly Exception? _error;
 
     /// <summary>
-    /// Instantiates a new instance of the <see cref="OptionalResult{T}"/> class
+    /// Instantiates a new instance of the <see cref="Expected"/> class
     /// </summary>
     /// <param name="hasValue"><see langword="true"/> if <see cref="HasValue"/></param>
     /// <param name="value">value</param>
@@ -63,7 +79,7 @@ public readonly struct OptionalResult<T>
     /// is <see langword="false"/>
     /// </param>
     /// <param name="location"></param>
-    internal OptionalResult(bool hasValue, T? value, Exception? error, CallerLocation? location = null)
+    internal Expected(bool hasValue, T? value, Exception? error, CallerLocation? location = null)
     {
         HasValue = hasValue;
         Value = value;
@@ -145,4 +161,43 @@ public readonly struct OptionalResult<T>
             ? map(Value)
             : throw Error;
     }
+}
+
+public readonly struct Expected<T, TErrorEnum>
+    where TErrorEnum : struct, Enum
+{
+    private readonly TErrorEnum _error;
+
+    internal Expected(bool hasValue, T? value, TErrorEnum error, CallerLocation? location = null)
+    {
+        HasValue = hasValue;
+        Value = value;
+        _error = error;
+        Location = location ?? CallerLocation.None;
+    }
+
+    /// <summary>
+    /// Returns <see langword="true"/>
+    /// </summary>
+    [MemberNotNullWhen(true, nameof(Value))]
+    [MemberNotNullWhen(false, nameof(Error))]
+    public bool HasValue { get; }
+
+    /// <summary>
+    /// Result value if <see cref="HasValue"/>
+    /// </summary>
+    public T? Value { get; }
+
+    /// <summary>
+    /// Caller Location, only meaingfuil if <see cref="HasValue"/> is <see langword="false"/>
+    /// </summary>
+    public CallerLocation Location { get; }
+
+    /// <summary>
+    /// Returns an <see cref="Exception"/> which represents why
+    /// the value <see cref="HasValue"/> is <see langword="false"/>
+    /// </summary>
+    public TErrorEnum ErrorOrDefault => !HasValue
+        ? _error
+        : default;
 }
