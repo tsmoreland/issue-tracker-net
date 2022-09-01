@@ -29,6 +29,7 @@ public sealed class IssueQuery : ObjectGraphType<object>
     public IssueQuery()
     {
         Name = "IssueQuery";
+
         FieldAsync<ListGraphType<IssueModelType>>("issues",
             resolve: context => ResolveIssues(
                 context.RequestServices?.GetService<IssuesDbContext>(),

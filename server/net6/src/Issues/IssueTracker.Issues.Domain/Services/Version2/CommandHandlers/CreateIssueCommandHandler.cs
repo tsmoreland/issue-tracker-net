@@ -31,14 +31,12 @@ public sealed class CreateIssueCommandHandler : IRequestHandler<CreateIssueComma
     /// <inheritdoc />
     public async Task<IssueDto> Handle(CreateIssueCommand request, CancellationToken cancellationToken)
     {
-        IssueBuilder builder = new();
 
-        (string project, string title, string description, Priority priority, IssueType type, IssueIdentifier? epicId) = request;
+        (string projectId, string title, string description, Priority priority, IssueType type, IssueIdentifier? epicId) = request;
+        int issueNumber = await _repository.MaxIssueNumber(projectId, cancellationToken) + 1;
 
-        int issueNumber = await _repository.MaxIssueNumber(project, cancellationToken) + 1;
-
-        Issue issue = builder
-            .WithProject(project)
+        Project project = new(projectId);
+        Issue issue = project.CreateIssue()
             .WithIssueNumber(issueNumber)
             .WithTitle(title)
             .WithDescription(description)

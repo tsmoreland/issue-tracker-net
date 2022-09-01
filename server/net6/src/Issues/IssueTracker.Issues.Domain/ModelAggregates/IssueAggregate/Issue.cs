@@ -56,6 +56,11 @@ public sealed class Issue : Entity
 
     public IssueIdentifier Id { get; private set; } = IssueIdentifier.Empty;
 
+    public static bool IsProjectValid(string project)
+    {
+        return project is { Length: > 0 and <= 3 };
+    }
+
     public string Project
     {
         get => _project;
