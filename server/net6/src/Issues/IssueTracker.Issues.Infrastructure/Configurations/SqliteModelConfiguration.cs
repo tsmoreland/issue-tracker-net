@@ -30,7 +30,7 @@ public sealed class SqliteModelConfiguration : IModelConfiguration
         IHostEnvironment environment,
         ILoggerFactory loggerFactory)
     {
-        ArgumentNullException.ThrowIfNull(loggerFactory, nameof(loggerFactory));
+        ArgumentNullException.ThrowIfNull(loggerFactory);
         _logger = loggerFactory.CreateLogger<SqliteModelConfiguration>();
 
         _connectionString = configuration.GetConnectionString("ApplicationConnection");
