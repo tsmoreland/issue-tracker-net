@@ -141,7 +141,7 @@ public readonly struct Expected<T>
     /// <returns>Mapped value if <see cref="HasValue"/> otherwise <paramref name="else"/></returns>
     public readonly TMapped MapOrElse<TMapped>(Func<T, TMapped> map, TMapped @else)
     {
-        ArgumentNullException.ThrowIfNull(map, nameof(map));
+        ArgumentNullException.ThrowIfNull(map);
         return HasValue
             ? map(Value)
             : @else;
@@ -156,7 +156,7 @@ public readonly struct Expected<T>
     /// <returns>Mapped value if <see cref="HasValue"/></returns> 
     public readonly TMapped MapOrThrow<TMapped>(Func<T, TMapped> map)
     {
-        ArgumentNullException.ThrowIfNull(map, nameof(map));
+        ArgumentNullException.ThrowIfNull(map);
         return HasValue
             ? map(Value)
             : throw Error;
@@ -180,7 +180,6 @@ public readonly struct Expected<T, TErrorEnum>
     /// Returns <see langword="true"/>
     /// </summary>
     [MemberNotNullWhen(true, nameof(Value))]
-    [MemberNotNullWhen(false, nameof(Error))]
     public bool HasValue { get; }
 
     /// <summary>
