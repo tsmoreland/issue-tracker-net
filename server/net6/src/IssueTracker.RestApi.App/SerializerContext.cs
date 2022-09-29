@@ -16,6 +16,7 @@ using ResponseV2 = IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Res
 namespace IssueTracker.RestApi.App;
 
 /// <summary/>
+[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default)]
 [JsonSerializable(typeof(ResponseV2.IssueDto))]
 [JsonSerializable(typeof(ResponseV2.IssueSummaryPage))]
 [JsonSerializable(typeof(ResponseV2.IssueSummaryDto))]
@@ -23,7 +24,6 @@ namespace IssueTracker.RestApi.App;
 [JsonSerializable(typeof(ResponseV2.LinkedIssueSummaryDto))]
 [JsonSerializable(typeof(ResponseV2.TriageUserDto))]
 [JsonSerializable(typeof(ResponseV2.MaintainerDto))]
-[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Serialization)]
 public partial class SerializerContext : JsonSerializerContext
 {
 }
