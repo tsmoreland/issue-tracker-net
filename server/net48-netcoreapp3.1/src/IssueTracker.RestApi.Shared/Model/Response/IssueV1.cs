@@ -78,8 +78,8 @@ public class IssueV1
     /// <returns></returns>
     public static IssueV1 From(Issue model)
     {
-        return model is null
-            ? null
+        return model == null!
+            ? null!
             : new IssueV1(model.Id, model.Title, model.Description, model.Priority);
     }
 }
