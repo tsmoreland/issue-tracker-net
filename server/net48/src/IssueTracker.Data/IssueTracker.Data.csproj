@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
     <LangVersion>10</LangVersion>
   </PropertyGroup>
 
