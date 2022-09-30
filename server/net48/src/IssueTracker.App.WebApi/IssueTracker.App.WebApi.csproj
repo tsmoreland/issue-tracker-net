@@ -48,15 +48,6 @@
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Castle.Core.4.4.1\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Composite, Version=6.11.7982.26191, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CompositeC1.Core.6.11\lib\net471\Composite.dll</HintPath>
-    </Reference>
-    <Reference Include="Composite.Workflows, Version=6.11.7982.26195, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CompositeC1.Core.6.11\lib\net471\Composite.Workflows.dll</HintPath>
-    </Reference>
-    <Reference Include="Composite.XmlSerializers, Version=1.3.3656.19656, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CompositeC1.Core.6.11\lib\net471\Composite.XmlSerializers.dll</HintPath>
-    </Reference>
     <Reference Include="MediatR, Version=9.0.0.0, Culture=neutral, PublicKeyToken=bb9a41a5e8aaa7e2, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MediatR.9.0.0\lib\net461\MediatR.dll</HintPath>
     </Reference>
@@ -219,15 +210,6 @@
       <Private>True</Private>
       <HintPath>..\..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="Tcell.AspNet.Agent, Version=3.0.1.0, Culture=neutral, PublicKeyToken=5bb055073045163c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Tcell.AspNet.Agent.3.0.1\lib\net45\Tcell.AspNet.Agent.dll</HintPath>
-    </Reference>
-    <Reference Include="Tcell.AspNet.Agent.AzureWebApp, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Tcell.AspNet.Agent.AzureWebApp.3.0.1\lib\net45\Tcell.AspNet.Agent.AzureWebApp.dll</HintPath>
-    </Reference>
-    <Reference Include="Tcell.AspNet.Agent.Hooks, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Tcell.AspNet.Agent.Hooks.1.0.0\lib\net48\Tcell.AspNet.Agent.Hooks.dll</HintPath>
-    </Reference>
     <Reference Include="TidyNet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CompositeC1.Core.6.11\lib\net471\TidyNet.dll</HintPath>
     </Reference>
@@ -345,12 +327,8 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.3.6.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.3.6.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets'))" />
-    <Error Condition="!Exists('..\..\packages\Tcell.Agent.Instrumentation.3.0.2\build\Tcell.Agent.Instrumentation.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Tcell.Agent.Instrumentation.3.0.2\build\Tcell.Agent.Instrumentation.targets'))" />
-    <Error Condition="!Exists('..\..\packages\Tcell.AspNet.Agent.AzureWebApp.3.0.1\build\Tcell.AspNet.Agent.AzureWebApp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Tcell.AspNet.Agent.AzureWebApp.3.0.1\build\Tcell.AspNet.Agent.AzureWebApp.targets'))" />
     <Error Condition="!Exists('..\..\packages\SQLitePCLRaw.lib.e_sqlite3.2.0.7\build\net461\SQLitePCLRaw.lib.e_sqlite3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\SQLitePCLRaw.lib.e_sqlite3.2.0.7\build\net461\SQLitePCLRaw.lib.e_sqlite3.targets'))" />
   </Target>
-  <Import Project="..\..\packages\Tcell.Agent.Instrumentation.3.0.2\build\Tcell.Agent.Instrumentation.targets" Condition="Exists('..\..\packages\Tcell.Agent.Instrumentation.3.0.2\build\Tcell.Agent.Instrumentation.targets')" />
-  <Import Project="..\..\packages\Tcell.AspNet.Agent.AzureWebApp.3.0.1\build\Tcell.AspNet.Agent.AzureWebApp.targets" Condition="Exists('..\..\packages\Tcell.AspNet.Agent.AzureWebApp.3.0.1\build\Tcell.AspNet.Agent.AzureWebApp.targets')" />
   <Import Project="..\..\packages\SQLitePCLRaw.lib.e_sqlite3.2.0.7\build\net461\SQLitePCLRaw.lib.e_sqlite3.targets" Condition="Exists('..\..\packages\SQLitePCLRaw.lib.e_sqlite3.2.0.7\build\net461\SQLitePCLRaw.lib.e_sqlite3.targets')" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetDir)\runtimes\win-x64\native\e_sqlite3.dll" "$(TargetDir)\e_sqlite3.dll"</PostBuildEvent>
