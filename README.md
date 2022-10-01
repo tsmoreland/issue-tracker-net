@@ -1,5 +1,7 @@
 # Sample API(s)
 
+[![CI dotnet](https://github.com/tsmoreland/issue-tracker-net/actions/workflows/ci-dotnet.yml/badge.svg)](https://github.com/tsmoreland/issue-tracker-net/actions/workflows/ci-dotnet.yml)
+
 Simple REST API(s) demonstrating swagger gen with an increasingly complex range of methods (eventually multiple apps to covert the different levels)
 
 ## Tech used
