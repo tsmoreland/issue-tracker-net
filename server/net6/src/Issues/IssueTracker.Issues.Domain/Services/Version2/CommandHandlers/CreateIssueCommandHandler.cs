@@ -35,7 +35,12 @@ public sealed class CreateIssueCommandHandler : IRequestHandler<CreateIssueComma
         (string projectId, string title, string description, Priority priority, IssueType type, IssueIdentifier? epicId) = request;
         int issueNumber = await _repository.MaxIssueNumber(projectId, cancellationToken) + 1;
 
-        Project project = new(projectId);
+        Project? project = await _repository.FindProjectById(projectId, cancellationToken);
+        if (project is null)
+        {
+            throw new ArgumentException("Project not found", nameof(request));
+        }
+
         Issue issue = project.CreateIssue()
             .WithIssueNumber(issueNumber)
             .WithTitle(title)
