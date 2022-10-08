@@ -20,9 +20,9 @@ namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 public sealed class Issue : Entity
 {
     private string _title = string.Empty;
+    private string _projectId = string.Empty;
     private string _description = string.Empty;
     private IssueIdentifier? _epicId;
-    private string _project = string.Empty;
     private int _issueNumber;
     private IssueType _type = IssueType.Defect;
     private Maintainer _assignee = Maintainer.Unassigned;
@@ -33,16 +33,19 @@ public sealed class Issue : Entity
     private DateTimeOffset? _startTime;
     private DateTimeOffset? _stopTime;
 
-    public Issue(string project, int issueNumber, string title, string description)
+    public Issue(Project project, int issueNumber, string title, string description)
     {
+        ArgumentNullException.ThrowIfNull(project);
+
         Title = title;
         Description = description;
-        Project = project.ToUpperInvariant();
+        ProjectId = project.Id.ToUpperInvariant();
+        Project = project;
         IssueNumber = issueNumber;
-        Id = new IssueIdentifier(Project, IssueNumber);
+        Id = new IssueIdentifier(ProjectId, IssueNumber);
     }
 
-    public Issue(string project, int issueNumber, string title, string description, Priority priority, IssueType type)
+    public Issue(Project project, int issueNumber, string title, string description, Priority priority, IssueType type)
         : this(project, issueNumber, title, description)
     {
         Priority = priority;
@@ -51,28 +54,20 @@ public sealed class Issue : Entity
 
     private Issue()
     {
-
+        Project = null!;
     }
 
     public IssueIdentifier Id { get; private set; } = IssueIdentifier.Empty;
 
-    public static bool IsProjectValid(string project)
+    public string ProjectId
     {
-        return project is { Length: > 0 and <= 3 };
+        get => _projectId;
+        init => _projectId = Project.IsProjectIdValid(value)
+            ? value
+            : throw new ArgumentException("invalid project id");
     }
 
-    public string Project
-    {
-        get => _project;
-        init
-        {
-            if (value is not { Length: > 0 } and { Length: <= 3 })
-            {
-                throw new ArgumentException("project must cannot be empty or greater than 3 characters", nameof(value));
-            }
-            _project = value;
-        }
-    }
+    public Project Project { get; init; }
 
     public int IssueNumber
     {

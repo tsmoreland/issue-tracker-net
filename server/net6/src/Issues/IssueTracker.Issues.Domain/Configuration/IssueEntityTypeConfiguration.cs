@@ -26,14 +26,16 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
         builder
             .HasKey(e => e.Id);
 
-
         builder.Property(e => e.Id)
             .HasConversion<IssueIdentifierValueConverter>()
             .IsRequired();
-        builder.Property<string>("_project")
+        builder.Property<string>("_projectId")
             .UsePropertyAccessMode(PropertyAccessMode.Field)
             .HasMaxLength(3)
             .IsUnicode(false)
+            .IsRequired();
+        builder
+            .Property(e => e.Project)
             .IsRequired();
         builder.Property<int>("_issueNumber")
             .UsePropertyAccessMode(PropertyAccessMode.Field)
