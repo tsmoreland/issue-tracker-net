@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace IssueTracker.Issues.Infrastructure.Configurations.ValueConverters;
+namespace IssueTracker.Issues.Infrastructure.Configurations;
 
 internal sealed class ProjectEntityTypeConfiguration : IEntityTypeConfiguration<Project>
 {

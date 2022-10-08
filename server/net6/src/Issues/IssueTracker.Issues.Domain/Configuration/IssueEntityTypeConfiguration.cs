@@ -34,9 +34,6 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
             .HasMaxLength(3)
             .IsUnicode(false)
             .IsRequired();
-        builder
-            .Property(e => e.Project)
-            .IsRequired();
         builder.Property<int>("_issueNumber")
             .UsePropertyAccessMode(PropertyAccessMode.Field)
             .IsRequired();

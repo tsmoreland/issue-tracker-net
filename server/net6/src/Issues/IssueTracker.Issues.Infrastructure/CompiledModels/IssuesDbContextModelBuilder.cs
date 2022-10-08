@@ -15,9 +15,11 @@ namespace IssueTracker.Issues.Infrastructure.CompiledModels
             var issue = IssueEntityType.Create(this);
             var issueLink = IssueLinkEntityType.Create(this);
             var maintainer = MaintainerEntityType.Create(this);
+            var project = ProjectEntityType.Create(this);
             var triageUser = TriageUserEntityType.Create(this);
 
             IssueEntityType.CreateForeignKey1(issue, issue);
+            IssueEntityType.CreateForeignKey2(issue, project);
             IssueLinkEntityType.CreateForeignKey1(issueLink, issue);
             IssueLinkEntityType.CreateForeignKey2(issueLink, issue);
             MaintainerEntityType.CreateForeignKey1(maintainer, issue);
@@ -26,9 +28,10 @@ namespace IssueTracker.Issues.Infrastructure.CompiledModels
             IssueEntityType.CreateAnnotations(issue);
             IssueLinkEntityType.CreateAnnotations(issueLink);
             MaintainerEntityType.CreateAnnotations(maintainer);
+            ProjectEntityType.CreateAnnotations(project);
             TriageUserEntityType.CreateAnnotations(triageUser);
 
-            AddAnnotation("ProductVersion", "6.0.5");
+            AddAnnotation("ProductVersion", "6.0.9");
         }
     }
 }
