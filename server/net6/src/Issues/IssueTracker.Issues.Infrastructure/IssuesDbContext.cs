@@ -29,6 +29,8 @@ public sealed class IssuesDbContext : DbContext, IUnitOfWork
         _modelConfiguration = modelConfiguration ?? throw new ArgumentNullException(nameof(modelConfiguration));
     }
 
+    public DbSet<Project> Projects { get; set; } = null!;
+
     public DbSet<Issue> Issues { get; set; } = null!;
 
     /// <inheritdoc />

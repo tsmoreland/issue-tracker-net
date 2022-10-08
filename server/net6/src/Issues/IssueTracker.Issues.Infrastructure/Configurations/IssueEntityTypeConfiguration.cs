@@ -30,7 +30,7 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
         builder.HasIndex("_project");
         builder.HasIndex("_issueNumber");
 
-        builder.Ignore(e => e.Project);
+        builder.Ignore(e => e.ProjectId);
         builder.Ignore(e => e.IssueNumber);
         builder.Ignore(e => e.Title);
         builder.Ignore(e => e.Description);
@@ -39,8 +39,16 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
         builder.Ignore(e => e.StartTime);
         builder.Ignore(e => e.StopTime);
 
-        builder.Property<string>("_project")
-            .HasColumnName("Project");
+        builder
+            .Property(e => e.ProjectId)
+            .IsRequired();
+        builder
+            .HasOne(e => e.Project)
+            .WithMany()
+            .HasForeignKey("_projectId");
+
+        builder.Property<int>("_projectId")
+            .HasColumnName("ProjectId");
         builder.Property<int>("_issueNumber")
             .HasColumnName("IssueNumber");
         builder.Property<string>("_title")

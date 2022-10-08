@@ -45,11 +45,14 @@ public sealed class IssueDataMigration : IIssueDataMigration
 
     private async ValueTask Seed(CancellationToken cancellationToken)
     {
-        Issue epic = new("APP", 1,
+        Project app = new("APP", "Sample Project");
+        _dbContext.Projects.Add(app);
+
+        Issue epic = new(app, 1,
             "Add Issue Context",
             "implement issue context with id-based references to project domain",
             Priority.High, IssueType.Epic);
-        Issue story = new("APP", 2,
+        Issue story = new(app, 2,
             "Add Issue Domain Layer",
             "implement issue domain layer",
             Priority.High, IssueType.Story)
@@ -60,7 +63,7 @@ public sealed class IssueDataMigration : IIssueDataMigration
         _repository.Add(epic);
         _repository.Add(story);
 
-        Issue task = new("APP", 3,
+        Issue task = new(app, 3,
             "Add commands to modify state",
             "add support for modifying issue state",
             Priority.Medium, IssueType.Task)
@@ -69,7 +72,7 @@ public sealed class IssueDataMigration : IIssueDataMigration
         };
         task.Execute(new OpenStateChangeCommand(task.Id, DateTimeOffset.UtcNow));
 
-        Issue linkedIssueTask1 = new("APP", 4,
+        Issue linkedIssueTask1 = new(app, 4,
             "verify related to",
             "add issue with related link to verify database adds it",
             Priority.Medium, IssueType.Task)
@@ -79,7 +82,7 @@ public sealed class IssueDataMigration : IIssueDataMigration
         linkedIssueTask1.Execute(new OpenStateChangeCommand(linkedIssueTask1.Id, DateTimeOffset.UtcNow));
         linkedIssueTask1.Execute(new ReadyForReviewStateChangeCommand(linkedIssueTask1.Id));
 
-        Issue linkedIssueTask2 = new("APP", 5,
+        Issue linkedIssueTask2 = new(app, 5,
             "verify related from",
             "add issue with related link to verify database adds it",
             Priority.Medium, IssueType.Task)
