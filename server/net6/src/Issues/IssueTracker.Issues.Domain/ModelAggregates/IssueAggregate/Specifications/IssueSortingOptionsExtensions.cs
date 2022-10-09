@@ -75,7 +75,7 @@ public static class IssueSortingOptionsExtensions
             "EPICID" =>
                 issue => EF.Property<IssueIdentifier>(issue, "_epicId"),
             "PROJECT" =>
-                issue => EF.Property<string>(issue, "_project"),
+                issue => EF.Property<string>(issue, "_projectId"),
             "ISSUENUMBER" =>
                 issue => EF.Property<int>(issue, "_issueNumber"),
             "TYPE" =>

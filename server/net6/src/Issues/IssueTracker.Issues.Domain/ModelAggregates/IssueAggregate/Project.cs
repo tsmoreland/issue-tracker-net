@@ -11,9 +11,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Issues.Domain.DataContracts;
+
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
-public sealed class Project : IEquatable<Project>
+public sealed class Project : Entity, IEquatable<Project>
 {
     private string _name = string.Empty;
 
@@ -26,7 +28,7 @@ public sealed class Project : IEquatable<Project>
     /// </exception>
     public Project(string id)
     {
-        if (id is not { Length: > 0 and < 3 })
+        if (!IsProjectIdValid(id))
         {
             throw new ArgumentException("id is not valid, must be between 1 and 3 characters", nameof(id));
         }
@@ -56,7 +58,7 @@ public sealed class Project : IEquatable<Project>
         // provided for entity framework
     }
 
-    public IIssueBuilder CreateIssue() => new IssueBuilder(Id);
+    public IIssueBuilder CreateIssue() => new IssueBuilder(this);
 
     /// <summary>
     /// Project Id
@@ -71,7 +73,7 @@ public sealed class Project : IEquatable<Project>
         get => _name;
         set
         {
-            if (_name is not { Length: > 0 })
+            if (value is not { Length: > 0 })
             {
                 throw new ArgumentException("name cannot be empty", nameof(value));
             }
@@ -103,32 +105,29 @@ public sealed class Project : IEquatable<Project>
     }
 
     /// <inheritdoc />
+    public override bool Equals(Entity? x, Entity? y)
+    {
+        return x switch
+        {
+            null when y is null => true,
+            Project projectX => projectX.Equals(y),
+            _ => y switch
+            {
+                null => false,
+                Project projectY => projectY.Equals(x),
+                _ => y.Equals(x)
+            }
+        };
+    }
+
+
+    /// <inheritdoc />
     public override bool Equals(object? obj) =>
         ReferenceEquals(this, obj) || obj is Project other && Equals(other);
 
-    /// <inheritdoc />
-    public override int GetHashCode() =>
-        HashCode.Combine(Id, Name);
-
-    public interface IIssueBuilder
-    {
-        void Reset();
-        IIssueBuilder WithIssueNumber(int issueNumber);
-        IIssueBuilder WithTitle(string title);
-        IIssueBuilder WithDescription(string? description);
-        IIssueBuilder WithPriority(Priority priority);
-        IIssueBuilder WithType(IssueType type);
-        IIssueBuilder WithRelatedFrom(IEnumerable<IssueLink> parentIssues);
-        IIssueBuilder WithChildIssues(IEnumerable<IssueLink> childIssues);
-        IIssueBuilder WithReporter(TriageUser reporter);
-        IIssueBuilder WithAssignee(Maintainer assignee);
-        IIssueBuilder WithEpic(IssueIdentifier? epic);
-        Issue Build();
-    }
-
     private sealed class IssueBuilder : IIssueBuilder
     {
-        private readonly string _project;
+        private readonly Project _project;
         private int? _issueNumber;
         private string? _title;
         private string? _description;
@@ -140,13 +139,9 @@ public sealed class Project : IEquatable<Project>
         private Maintainer? _assignee;
         private IssueIdentifier? _epicId;
 
-        public IssueBuilder(string project)
+        public IssueBuilder(Project project)
         {
-            if (Issue.IsProjectValid(project))
-            {
-                throw new ArgumentException("", nameof(project));
-            }
-
+            ArgumentNullException.ThrowIfNull(project);
             Reset();
             _project = project;
         }
@@ -230,7 +225,7 @@ public sealed class Project : IEquatable<Project>
                 throw new InvalidOperationException("description cannot be empty");
             }
 
-            if (_project is { Length: > 0 } && _issueNumber > 0)
+            if (_issueNumber > 0)
             {
                 issue = new Issue(_project, _issueNumber.Value, _title, _description);
             }
@@ -283,4 +278,42 @@ public sealed class Project : IEquatable<Project>
             return issue;
         }
     }
+
+    /// <summary>
+    /// Validates that the project id <paramref name="id"/> meets the required formatting
+    /// </summary>
+    /// <param name="id">the id to verify</param>
+    /// <returns><see langword="true"/> if the id is value</returns>
+    public static bool IsProjectIdValid(string id)
+    {
+        return (id is { Length: > 0 and <= 3 } && char.IsLetter(id[0]));
+    }
+
+
+    /// <inheritdoc />
+    public override int GetHashCode() =>
+        HashCode.Combine(Id, Name);
+
+    /// <inheritdoc />
+    public override int GetHashCode(Entity obj) => 
+        obj is Project project 
+            ? project.GetHashCode()
+            : 0;
+
+    public interface IIssueBuilder
+    {
+        void Reset();
+        IIssueBuilder WithIssueNumber(int issueNumber);
+        IIssueBuilder WithTitle(string title);
+        IIssueBuilder WithDescription(string? description);
+        IIssueBuilder WithPriority(Priority priority);
+        IIssueBuilder WithType(IssueType type);
+        IIssueBuilder WithRelatedFrom(IEnumerable<IssueLink> parentIssues);
+        IIssueBuilder WithChildIssues(IEnumerable<IssueLink> childIssues);
+        IIssueBuilder WithReporter(TriageUser reporter);
+        IIssueBuilder WithAssignee(Maintainer assignee);
+        IIssueBuilder WithEpic(IssueIdentifier? epic);
+        Issue Build();
+    }
+
 }

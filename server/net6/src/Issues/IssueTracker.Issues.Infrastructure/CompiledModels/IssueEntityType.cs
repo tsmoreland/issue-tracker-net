@@ -83,14 +83,14 @@ namespace IssueTracker.Issues.Infrastructure.CompiledModels
                 propertyAccessMode: PropertyAccessMode.Field);
             _issueNumber.AddAnnotation("Relational:ColumnName", "IssueNumber");
 
-            var _project = runtimeEntityType.AddProperty(
-                "_project",
+            var _projectId = runtimeEntityType.AddProperty(
+                "_projectId",
                 typeof(string),
-                fieldInfo: typeof(Issue).GetField("_project", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(Issue).GetField("_projectId", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 propertyAccessMode: PropertyAccessMode.Field,
                 maxLength: 3,
                 unicode: false);
-            _project.AddAnnotation("Relational:ColumnName", "Project");
+            _projectId.AddAnnotation("Relational:ColumnName", "ProjectId");
 
             var _startTime = runtimeEntityType.AddProperty(
                 "_startTime",
@@ -138,7 +138,7 @@ namespace IssueTracker.Issues.Infrastructure.CompiledModels
                 new[] { _issueNumber });
 
             var index2 = runtimeEntityType.AddIndex(
-                new[] { _project });
+                new[] { _projectId });
 
             var index3 = runtimeEntityType.AddIndex(
                 new[] { _title });
@@ -152,6 +152,24 @@ namespace IssueTracker.Issues.Infrastructure.CompiledModels
                 principalEntityType.FindKey(new[] { principalEntityType.FindProperty("Id")! })!,
                 principalEntityType,
                 deleteBehavior: DeleteBehavior.NoAction);
+
+            return runtimeForeignKey;
+        }
+
+        public static RuntimeForeignKey CreateForeignKey2(RuntimeEntityType declaringEntityType, RuntimeEntityType principalEntityType)
+        {
+            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("_projectId")! },
+                principalEntityType.FindKey(new[] { principalEntityType.FindProperty("Id")! })!,
+                principalEntityType,
+                deleteBehavior: DeleteBehavior.Cascade,
+                required: true);
+
+            var project = declaringEntityType.AddNavigation("Project",
+                runtimeForeignKey,
+                onDependent: true,
+                typeof(Project),
+                propertyInfo: typeof(Issue).GetProperty("Project", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(Issue).GetField("<Project>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
             return runtimeForeignKey;
         }

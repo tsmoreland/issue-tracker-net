@@ -34,7 +34,11 @@ public sealed class CreateIssueCommandHandler : IRequestHandler<CreateIssueComma
 
         (string projectId, string title, string description, Priority priority) = request;
 
-        Project project = new(projectId);
+        Project? project = await _repository.FindProjectById(projectId, cancellationToken);
+        if (project is null)
+        {
+            throw new ArgumentException("Project not found", nameof(request));
+        }
 
         int issueNumber = await _repository.MaxIssueNumber(projectId, cancellationToken) + 1;
         Issue issue = project.CreateIssue()

@@ -31,6 +31,12 @@ public sealed class IssueRepository : IIssueRepository
     public IUnitOfWork UnitOfWork => _dbContext;
 
     /// <inheritdoc />
+    public ValueTask<Project?> FindProjectById(string id, CancellationToken cancellationToken)
+    {
+        return _dbContext.Projects.FindAsync(new object?[] { id }, cancellationToken);
+    }
+
+    /// <inheritdoc />
     public Issue Add(Issue issue)
     {
         return _dbContext.Issues.Add(issue).Entity;

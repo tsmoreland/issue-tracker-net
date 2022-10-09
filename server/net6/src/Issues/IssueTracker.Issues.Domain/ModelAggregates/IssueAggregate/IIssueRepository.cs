@@ -16,6 +16,8 @@ namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
 public interface IIssueRepository : IRepository<IssueIdentifier, Issue>
 {
+    public ValueTask<Project?> FindProjectById(string id, CancellationToken cancellationToken);
+
     public Issue Add(Issue issue);
     public Issue Update(Issue issue);
 
