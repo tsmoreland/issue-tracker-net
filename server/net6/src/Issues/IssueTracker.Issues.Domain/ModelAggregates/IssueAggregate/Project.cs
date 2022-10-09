@@ -73,7 +73,7 @@ public sealed class Project : Entity, IEquatable<Project>
         get => _name;
         set
         {
-            if (_name is not { Length: > 0 })
+            if (value is not { Length: > 0 })
             {
                 throw new ArgumentException("name cannot be empty", nameof(value));
             }
@@ -286,7 +286,7 @@ public sealed class Project : Entity, IEquatable<Project>
     /// <returns><see langword="true"/> if the id is value</returns>
     public static bool IsProjectIdValid(string id)
     {
-        return (id is { Length: > 0 and < 3 } && char.IsLetter(id[0]));
+        return (id is { Length: > 0 and <= 3 } && char.IsLetter(id[0]));
     }
 
 

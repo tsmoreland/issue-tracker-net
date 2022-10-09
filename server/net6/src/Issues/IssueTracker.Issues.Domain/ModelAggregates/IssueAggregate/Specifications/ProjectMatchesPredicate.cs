@@ -26,6 +26,6 @@ public sealed class ProjectMatchesPredicate : IPredicateSpecification<Issue>
     public string Project { get; }
 
     /// <inheritdoc />
-    public Expression<Func<Issue, bool>> Filter => issue => EF.Property<string>(issue, "_project") == Project;
+    public Expression<Func<Issue, bool>> Filter => issue => EF.Property<string>(issue, "_projectId") == Project;
 
 }
