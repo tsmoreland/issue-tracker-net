@@ -21,6 +21,6 @@ public sealed record class TriageUser(Guid UserId, string FullName) : User(UserI
     /// <remarks>
     /// intentionally created on each request due to ef tracking
     /// </remarks>
-public static TriageUser Unassigned => new(UnassignedId, UnasignedFullname);
+    public static TriageUser Unassigned => new(UnassignedId, UnasignedFullname);
 
 }

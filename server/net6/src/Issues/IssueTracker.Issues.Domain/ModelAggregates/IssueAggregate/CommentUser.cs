@@ -13,13 +13,11 @@
 
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
-public sealed record class Maintainer(Guid UserId, string FullName) : User(UserId, FullName)
+public sealed record class CommentUser(Guid UserId, string FullName) : User(UserId, FullName)
 {
+
     /// <summary>
-    /// Unassigned maintainer
+    /// Anonymous User
     /// </summary>
-    /// <remarks>
-    /// intentionally created on each request due to ef tracking
-    /// </remarks>
-    public static Maintainer Unassigned => new(UnassignedId, UnasignedFullname);
+    public static CommentUser Anonymous => new(UnassignedId, "Anonymous");
 }

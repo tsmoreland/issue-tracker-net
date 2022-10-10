@@ -22,50 +22,50 @@ public sealed record class PagingOptions(int PageNumber, int PageSize)
     /// </summary>
     public int PageNumber { get; init; } = PageNumber;
 
-/// <summary>
-/// Number of items in a page, must be greater than 0
-/// </summary>
-public int PageSize { get; init; } = PageSize;
+    /// <summary>
+    /// Number of items in a page, must be greater than 0
+    /// </summary>
+    public int PageSize { get; init; } = PageSize;
 
 
-/// <summary>
-/// Returns the number of items to skip 
-/// </summary>
-public int Skip => (PageNumber - 1) * PageSize;
+    /// <summary>
+    /// Returns the number of items to skip 
+    /// </summary>
+    public int Skip => (PageNumber - 1) * PageSize;
 
-/// <summary>
-/// Snyonym of <see cref="PageSize"/>
-/// </summary>
-public int Take => PageSize;
+    /// <summary>
+    /// Snyonym of <see cref="PageSize"/>
+    /// </summary>
+    public int Take => PageSize;
 
-/// <summary>
-/// Validates <see cref="PageNumber"/> and <see cref="PageSize"/>
-/// </summary>
-/// <param name="invalidProperty">name of the property</param>
-/// <param name="errorMessage">description of what's wrong</param>
-/// <returns><see langword="true"/> if the parameters are valid</returns>
-public bool IsValid(
-    [NotNullWhen(false)] out string? invalidProperty,
-    [NotNullWhen(false)] out string? errorMessage)
-{
-    if (PageNumber < 1)
+    /// <summary>
+    /// Validates <see cref="PageNumber"/> and <see cref="PageSize"/>
+    /// </summary>
+    /// <param name="invalidProperty">name of the property</param>
+    /// <param name="errorMessage">description of what's wrong</param>
+    /// <returns><see langword="true"/> if the parameters are valid</returns>
+    public bool IsValid(
+        [NotNullWhen(false)] out string? invalidProperty,
+        [NotNullWhen(false)] out string? errorMessage)
     {
-        invalidProperty = "pageNumber"; // camel case until I can convert using nameof
-        errorMessage = "must be greater than or equal to 1";
-        return false;
+        if (PageNumber < 1)
+        {
+            invalidProperty = "pageNumber"; // camel case until I can convert using nameof
+            errorMessage = "must be greater than or equal to 1";
+            return false;
+        }
+        else if (PageSize < 1)
+        {
+            invalidProperty = "pageSize";
+            errorMessage = "must be greater than or equal to 1";
+            return false;
+        }
+        else
+        {
+            invalidProperty = null;
+            errorMessage = null;
+            return true;
+        }
     }
-    else if (PageSize < 1)
-    {
-        invalidProperty = "pageSize";
-        errorMessage = "must be greater than or equal to 1";
-        return false;
-    }
-    else
-    {
-        invalidProperty = null;
-        errorMessage = null;
-        return true;
-    }
-}
 
 }

@@ -20,58 +20,58 @@ public sealed record class SortingOptions(
 {
     public static SortingOptions Empty { get; } = new(string.Empty);
 
-public static SortingOptions OrderBy(string property)
-{
-    return new SortingOptions(property, Array.Empty<string>(), true);
-}
-public static SortingOptions OrderByDescending(string property)
-{
-    return new SortingOptions(property, Array.Empty<string>(), false);
-}
-
-public SortingOptions ThenBy(string property)
-{
-    if (ThenByProperty is null)
+    public static SortingOptions OrderBy(string property)
     {
-        return this with { ThenByProperty = new[] { property } };
+        return new SortingOptions(property, Array.Empty<string>(), true);
+    }
+    public static SortingOptions OrderByDescending(string property)
+    {
+        return new SortingOptions(property, Array.Empty<string>(), false);
     }
 
-    return this with { ThenByProperty = ThenByProperty.Union(new[] { property }) };
-}
-
-public static SortingOptions FromString(string? orderBy)
-{
-    try
+    public SortingOptions ThenBy(string property)
     {
-        if (orderBy is null)
+        if (ThenByProperty is null)
         {
-            return Empty;
+            return this with { ThenByProperty = new[] { property } };
         }
 
-        orderBy = orderBy.Trim();
-
-        bool ascending = true;
-        if (orderBy.EndsWith(" DESC", StringComparison.OrdinalIgnoreCase))
-        {
-            orderBy = orderBy[..^5].ToString();
-            ascending = false;
-        }
-
-        string[] properties = orderBy.Split(',').Select(s => s.Trim()).ToArray();
-        if (!properties.Any())
-        {
-            return Empty;
-        }
-
-        orderBy = properties[0];
-        string[] thenBy = properties[1..].ToArray();
-
-        return new SortingOptions(orderBy, thenBy, ascending);
+        return this with { ThenByProperty = ThenByProperty.Union(new[] { property }) };
     }
-    catch (Exception ex)
+
+    public static SortingOptions FromString(string? orderBy)
     {
-        throw new ArgumentException("Invalid order clause", nameof(orderBy), ex);
+        try
+        {
+            if (orderBy is null)
+            {
+                return Empty;
+            }
+
+            orderBy = orderBy.Trim();
+
+            bool ascending = true;
+            if (orderBy.EndsWith(" DESC", StringComparison.OrdinalIgnoreCase))
+            {
+                orderBy = orderBy[..^5].ToString();
+                ascending = false;
+            }
+
+            string[] properties = orderBy.Split(',').Select(s => s.Trim()).ToArray();
+            if (!properties.Any())
+            {
+                return Empty;
+            }
+
+            orderBy = properties[0];
+            string[] thenBy = properties[1..].ToArray();
+
+            return new SortingOptions(orderBy, thenBy, ascending);
+        }
+        catch (Exception ex)
+        {
+            throw new ArgumentException("Invalid order clause", nameof(orderBy), ex);
+        }
     }
-}
 
 }

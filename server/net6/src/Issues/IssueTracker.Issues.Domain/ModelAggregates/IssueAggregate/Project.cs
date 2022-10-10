@@ -295,8 +295,8 @@ public sealed class Project : Entity, IEquatable<Project>
         HashCode.Combine(Id, Name);
 
     /// <inheritdoc />
-    public override int GetHashCode(Entity obj) => 
-        obj is Project project 
+    public override int GetHashCode(Entity obj) =>
+        obj is Project project
             ? project.GetHashCode()
             : 0;
 
