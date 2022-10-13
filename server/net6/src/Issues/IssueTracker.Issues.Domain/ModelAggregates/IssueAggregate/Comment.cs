@@ -17,28 +17,37 @@ namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
 public sealed class Comment : Entity, IEquatable<Comment>
 {
+    private readonly Issue _issue;
+
     /// <summary>
     /// Instantiates a new instance of the <see cref="Comment"/> class.
     /// </summary>
+    /// <param name="issue"></param>
     /// <param name="author">comment author</param>
     /// <param name="content">comment content</param>
     /// <exception cref="ArgumentException">
     /// if <paramref name="content"/> is empty or more than <see cref="MaxContentLength"/> characters
     /// </exception>
-    public Comment(CommentUser author, string content)
+    public Comment(Issue issue, CommentUser author, string content)
     {
+        ArgumentNullException.ThrowIfNull(issue);
+        ArgumentNullException.ThrowIfNull(author);
+
         if (content is not { Length: > 0 } or { Length: > MaxContentLength })
         {
             throw new ArgumentException($"Content cannot be empty or exceed {MaxContentLength} characters");
         }
 
+        _issue = issue;
+        IssueId = issue.Id;
+
         Author = author;
         Content = content;
     }
 
-    /// <inheritdoc cref="Comment(CommentUser, string)"/>
-    public Comment(int id, CommentUser author, string content)
-        : this(author, content)
+    /// <inheritdoc cref="Comment(Issue, CommentUser, string)"/>
+    public Comment(int id, Issue issue, CommentUser author, string content)
+        : this(issue, author, content)
     {
         Id = id;
     }
@@ -48,6 +57,8 @@ public sealed class Comment : Entity, IEquatable<Comment>
         // used by entity framework
         Author = CommentUser.Anonymous;
         Content = string.Empty;
+        _issue = null!;
+        IssueId = string.Empty;
     }
 
     public const int MaxContentLength = 500;
@@ -58,15 +69,17 @@ public sealed class Comment : Entity, IEquatable<Comment>
     /// </summary>
     public int Id { get; init; }
 
+    public object IssueId { get; private set; }
+
     /// <summary>
     /// Comment Author
     /// </summary>
-    public CommentUser Author { get; init; }
+    public CommentUser Author { get; private set; }
 
     /// <summary>
     /// Comment Content
     /// </summary>
-    public string Content { get; init; }
+    public string Content { get; private set; }
 
     /// <inheritdoc />
     public bool Equals(Comment? other)
