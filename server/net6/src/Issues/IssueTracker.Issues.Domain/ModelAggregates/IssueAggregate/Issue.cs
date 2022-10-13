@@ -219,9 +219,26 @@ public sealed class Issue : Entity
 
     public void AddRelatedTo(LinkType link, Issue issue)
     {
-        ArgumentNullException.ThrowIfNull(issue, nameof(issue));
+        ArgumentNullException.ThrowIfNull(issue);
         IssueLink issueLink = new(link, Id, this, issue.Id, issue);
         _relatedTo.Add(issueLink);
+    }
+
+    /// <summary>
+    /// Add a new comment to the collection of comments associated with this issue
+    /// </summary>
+    /// <param name="author">comment author</param>
+    /// <param name="content">content to add</param>
+    /// <returns>
+    /// the Comment to be added
+    /// </returns>
+    public  Comment AddCommentOrThrow(CommentUser author, string content)
+    {
+        Comment comment = new(this, author, content);
+
+        // add to internal list
+
+        return comment;
     }
 
     public IEnumerable<Issue> RelatedIssues => _relatedTo.Select(i => i.Right)
