@@ -36,72 +36,72 @@ public sealed record class IssueDto(string Id, string Title, string Description,
             new TriageUserDto(),
             new MaintainerDto(),
             null)
-{
-    // for serialization
-}
+    {
+        // for serialization
+    }
 
 
-/// <summary>
-/// Unique issue id
-/// </summary>
-/// <example>APP-1</example>
-[Required]
-[RegularExpression("[A-Z][A-Z][A-Z]-[0-9]+")]
-public string Id { get; set; } = Id;
+    /// <summary>
+    /// Unique issue id
+    /// </summary>
+    /// <example>APP-1</example>
+    [Required]
+    [RegularExpression("[A-Z][A-Z][A-Z]-[0-9]+")]
+    public string Id { get; set; } = Id;
 
-/// <summary>
-/// Issue Title
-/// </summary>
-/// <example>Sample Title</example>
-[Required]
-public string Title { get; set; } = Title;
+    /// <summary>
+    /// Issue Title
+    /// </summary>
+    /// <example>Sample Title</example>
+    [Required]
+    public string Title { get; set; } = Title;
 
-/// <summary>
-/// Short description of the issue
-/// </summary>
-/// <example>Sample Description</example>
-[Required]
-public string? Description { get; set; } = Description;
+    /// <summary>
+    /// Short description of the issue
+    /// </summary>
+    /// <example>Sample Description</example>
+    [Required]
+    public string? Description { get; set; } = Description;
 
-/// <summary>
-/// Issue Priority
-/// </summary>
-/// <example>Low</example>
-[Required]
-public Priority Priority { get; set; } = Priority;
+    /// <summary>
+    /// Issue Priority
+    /// </summary>
+    /// <example>Low</example>
+    [Required]
+    public Priority Priority { get; set; } = Priority;
 
-/// <summary>
-/// Issue type
-/// </summary>
-/// <example>Defect</example>
-[Required]
-public IssueType Type { get; set; } = Type;
+    /// <summary>
+    /// Issue type
+    /// </summary>
+    /// <example>Defect</example>
+    [Required]
+    public IssueType Type { get; set; } = Type;
 
-/// <summary>
-/// Issue State
-/// </summary>
-/// <example>BackLog</example>
-[Required]
-public IssueStateValue State { get; set; } = State;
+    /// <summary>
+    /// Issue State
+    /// </summary>
+    /// <example>BackLog</example>
+    [Required]
+    public IssueStateValue State { get; set; } = State;
 
-/// <summary>
-/// Reporter
-/// </summary>
-[Required]
-public TriageUserDto Reporter { get; set; } = Reporter;
+    /// <summary>
+    /// Reporter
+    /// </summary>
+    [Required]
+    public TriageUserDto Reporter { get; set; } = Reporter;
 
-/// <summary>
-/// Assigned maintainer
-/// </summary>
-[Required]
-public MaintainerDto Assignee { get; set; } = Assignee;
+    /// <summary>
+    /// Assigned maintainer
+    /// </summary>
+    [Required]
+    public MaintainerDto Assignee { get; set; } = Assignee;
 
-/// <summary>
-/// Epic Id
-/// </summary>
-/// <example>APP-1</example>
-[RegularExpression("[A-Z][A-Z][A-Z]-[0-9]+")]
-public string? EpicId { get; set; } = EpicId;
+    /// <summary>
+    /// Epic Id
+    /// </summary>
+    /// <example>APP-1</example>
+    [RegularExpression("[A-Z][A-Z][A-Z]-[0-9]+")]
+    public string? EpicId { get; set; } = EpicId;
 
 }
 

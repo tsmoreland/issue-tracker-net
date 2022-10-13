@@ -26,23 +26,23 @@ public sealed record class TriageUserDto(Guid Id, string FullName)
 {
     internal TriageUserDto()
         : this(Guid.Empty, string.Empty)
-{
-    // for serialization
-}
+    {
+        // for serialization
+    }
 
-/// <summary>
-/// Unique Identifier
-/// </summary>
-/// <example>F3296326-A40A-4208-AE6F-055EE106AC85</example>
-[Required]
-public Guid Id { get; } = Id;
+    /// <summary>
+    /// Unique Identifier
+    /// </summary>
+    /// <example>F3296326-A40A-4208-AE6F-055EE106AC85</example>
+    [Required]
+    public Guid Id { get; } = Id;
 
-/// <summary>
-/// Full name
-/// </summary>
-/// <example>John Smith</example>
-[Required]
-public string FullName { get; } = FullName;
+    /// <summary>
+    /// Full name
+    /// </summary>
+    /// <example>John Smith</example>
+    [Required]
+    public string FullName { get; } = FullName;
 
 }
 
