@@ -43,6 +43,7 @@ public sealed class Comment : Entity, IEquatable<Comment>
 
         Author = author;
         Content = content;
+        CreatedAt = DateTimeOffset.UtcNow;
     }
 
     /// <inheritdoc cref="Comment(Issue, CommentUser, string)"/>
@@ -59,6 +60,7 @@ public sealed class Comment : Entity, IEquatable<Comment>
         Content = string.Empty;
         _issue = null!;
         IssueId = string.Empty;
+        CreatedAt = DateTimeOffset.UtcNow;
     }
 
     public const int MaxContentLength = 500;
@@ -80,6 +82,11 @@ public sealed class Comment : Entity, IEquatable<Comment>
     /// Comment Content
     /// </summary>
     public string Content { get; private set; }
+
+    /// <summary>
+    /// Creation Date
+    /// </summary>
+    public DateTimeOffset CreatedAt { get; private set; }
 
     /// <inheritdoc />
     public bool Equals(Comment? other)
