@@ -1,0 +1,9 @@
+{
+  "configProperties": {
+    "System.GC.Concurrent": true,
+    "System.Threading.ThreadPool.MinThreads": "4",
+    "System.GC.HeapHardLimit": 524288000.0,
+    "System.GC.LOHThreshold": 262144.0,
+    "System.Reflection.NullabilityInfoContext.IsSupported": true
+  }
+}

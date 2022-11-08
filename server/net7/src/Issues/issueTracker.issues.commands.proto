@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+import "issueTracker.issues.shared.proto";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "IssueTracker.Issues.API.GRPC.Proto";
+
+service IssueTrackerCommandService {
+    rpc ResetDatabase(google.protobuf.Empty) returns (google.protobuf.Empty);
+    rpc AddIssue(AddIssueMessage) returns (StatusMessage);
+    rpc EditIssue(EditIssueMessage) returns (StatusMessage);
+    rpc DeleteIssue(IssueCommandMessage) returns (StatusMessage);
+    rpc MoveToBackLogStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc OpenStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc ReadyForReviewStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc ReadyForTestStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc CompletedStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc CloseStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc ReviewFailedStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc TestFailedStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc CannotReproduceStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc WontDoStateChange(IssueCommandMessage) returns (StatusMessage);
+    rpc NotADefectStateChange(IssueCommandMessage) returns (StatusMessage);
+
+}
+
+message AddIssueMessage {
+    string Project = 1;
+    string Title = 2;
+    string Description = 3;
+    Priority Priority = 4;
+    IssueType Type = 5;
+    MaintainerMessage Assignee = 6;
+    TriageUserMessage Reporter = 7;
+    OptionalString EpicId = 8;
+}
+
+message EditIssueMessage {
+    string Id = 1;
+    string Title = 2;
+    string Description = 3;
+    Priority Priority = 4;
+    IssueType Type = 5;
+    MaintainerMessage Assignee = 6;
+    TriageUserMessage Reporter = 7;
+    OptionalString EpicId = 8;
+}
+
+message ResetDatabaseMesssage {
+
+}
+
+message IssueCommandMessage {
+    string Id = 2;
+}
+

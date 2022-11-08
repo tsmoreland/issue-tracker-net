@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+import "issueTracker.issues.shared.proto";
+
+option csharp_namespace = "IssueTracker.Issues.API.GRPC.Proto";
+
+service IssueTrackerQueryService {
+    rpc GetIssueById(IssueByIdQueryMessage) returns (IssueMessage);
+    rpc GetIssues(PagedIssueRequestMessage) returns (IssueSummariesMessage);
+    rpc GetAllIssues(IssueStreamRequestMessage) returns (stream IssueSummaryMessage);
+}
+
+message PagedIssueRequestMessage {
+    int32 PageNumber = 1;
+    int32 PageSize = 2;
+    string OrderBy = 3;
+}
+
+message IssueStreamRequestMessage {
+    string OrderBy = 1;
+}
+
+message IssueSummaryMessage {
+    string Id = 1;
+    string Title = 2;
+    Priority Priority = 3;
+    IssueType Type = 4;
+}
+
+message IssueSummariesMessage {
+    ResultCode Status = 1;
+    int32 PageNumber = 2;
+    int32 Total = 3;
+    repeated IssueSummaryMessage Summaries = 4;
+}
+
+message IssueByIdQueryMessage {
+    string Id = 1;
+}
+
+message IssueMessage {
+    ResultCode Status = 1;
+    string Id = 2;
+    string Title = 3;
+    string Description = 4;
+    Priority Priority = 5;
+    IssueType Type = 6;
+    IssueState State = 7;
+    MaintainerMessage Assignee = 8;
+    TriageUserMessage Reporter = 9;
+    OptionalString EpicId = 10;
+}
