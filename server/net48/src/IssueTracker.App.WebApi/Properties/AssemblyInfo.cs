@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Rapid7")]
 [assembly: AssemblyProduct("IssueTracker.App")]
-[assembly: AssemblyCopyright("Copyright © Rapid7 2022")]
+[assembly: AssemblyCopyright("Copyright (c) Rapid7 2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
