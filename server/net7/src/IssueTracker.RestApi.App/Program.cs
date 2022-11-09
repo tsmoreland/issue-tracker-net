@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
 using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Middelware.SecurityHeaders;
 using IssueTracker.RestApi.App;
@@ -26,9 +27,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using Serilog;
 using Tcell.Agent.AspNetCore;
 using TSMoreland.Text.Json.NamingStrategies;
@@ -112,15 +115,6 @@ builder.Services
         tokenProviderOptions.TokenLifespan = TimeSpan.FromHours(1);
     });
 
-/*
-builder.Services
-    .Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"))
-    .AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>()
-    .AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>()
-    .AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>()
-    .AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
-*/
-
 WebApplication app = builder.Build();
 using (IServiceScope scope = app.Services.CreateScope())
 {
@@ -131,7 +125,22 @@ using (IServiceScope scope = app.Services.CreateScope())
 
 app.UseSecurityHeaders();
 app.UseExceptionHandler();
-//app.UseIpRateLimiting();
+app.UseStatusCodePages();
+
+RateLimiterOptions rateLimitOptions = new RateLimiterOptions()
+    .AddConcurrencyLimiter(policyName: "get", options =>
+    {
+        options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        options.PermitLimit = 50;
+        options.QueueLimit = 50;
+    });
+rateLimitOptions.OnRejected = static (context, cancellationToken) =>
+{
+    context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+    return new ValueTask();
+};
+
+app.UseRateLimiter(rateLimitOptions);
 
 if (app.Environment.IsDevelopment())
 {
