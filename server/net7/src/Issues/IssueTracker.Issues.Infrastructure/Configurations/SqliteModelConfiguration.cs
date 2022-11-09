@@ -12,6 +12,7 @@
 //
 
 using IssueTracker.Issues.Infrastructure.CompiledModels;
+using IssueTracker.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -33,7 +34,7 @@ public sealed class SqliteModelConfiguration : IModelConfiguration
         ArgumentNullException.ThrowIfNull(loggerFactory);
         _logger = loggerFactory.CreateLogger<SqliteModelConfiguration>();
 
-        _connectionString = configuration.GetConnectionString("ApplicationConnection");
+        _connectionString = configuration.GetConnectionString("ApplicationConnection") ?? throw new InvalidConfigurationException("missing ApplicationConnection entry.");
         _isDevelopment = environment.IsDevelopment();
     }
 

@@ -16,8 +16,6 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using AspNetCoreRateLimit;
-using Hellang.Middleware.ProblemDetails;
 using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Middelware.SecurityHeaders;
 using IssueTracker.RestApi.App;
@@ -31,9 +29,6 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
-using Polly;
-using Polly.Caching;
-using Polly.Registry;
 using Serilog;
 using Tcell.Agent.AspNetCore;
 using TSMoreland.Text.Json.NamingStrategies;
@@ -117,12 +112,14 @@ builder.Services
         tokenProviderOptions.TokenLifespan = TimeSpan.FromHours(1);
     });
 
+/*
 builder.Services
     .Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"))
     .AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>()
     .AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>()
     .AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>()
     .AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+*/
 
 WebApplication app = builder.Build();
 using (IServiceScope scope = app.Services.CreateScope())
@@ -133,8 +130,13 @@ using (IServiceScope scope = app.Services.CreateScope())
 }
 
 app.UseSecurityHeaders();
-app.UseProblemDetails();
-app.UseIpRateLimiting();
+app.UseExceptionHandler();
+//app.UseIpRateLimiting();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>
@@ -152,7 +154,7 @@ app.UseMigrationsEndPoint();
 app.UseRouting();
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints => endpoints.MapControllers());
+app.MapControllers();
 
 app.MapGet("/about",
     () =>
