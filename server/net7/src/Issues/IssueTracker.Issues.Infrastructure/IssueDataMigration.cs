@@ -37,7 +37,11 @@ public sealed class IssueDataMigration : IIssueDataMigration
     /// <inheritdoc />
     public async ValueTask ResetAndRepopultateAsync(CancellationToken cancellationToken = default)
     {
+        // it's playing up again, we can re-enable the delete *if* we ensure the file exists after (at 0 bytes)
         await _dbContext.Database.EnsureDeletedAsync(cancellationToken);
+
+        byte[] content = Array.Empty<byte>();
+        await File.WriteAllBytesAsync("issueTracker.db", content, cancellationToken);
         await _dbContext.Database.MigrateAsync(cancellationToken);
 
         await Seed(cancellationToken);
