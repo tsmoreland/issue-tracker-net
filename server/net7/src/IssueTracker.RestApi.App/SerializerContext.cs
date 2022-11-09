@@ -24,6 +24,10 @@ namespace IssueTracker.RestApi.App;
 [JsonSerializable(typeof(ResponseV2.LinkedIssueSummaryDto))]
 [JsonSerializable(typeof(ResponseV2.TriageUserDto))]
 [JsonSerializable(typeof(ResponseV2.MaintainerDto))]
+//[JsonSerializable(typeof(Issues.API.REST.Version2.DataTransferObjects.Request.StateChange))]
+//[JsonSerializable(typeof(Microsoft.AspNetCore.JsonPatch.Operations.OperationType))]
+//[JsonSerializable(typeof(int))]
+//[JsonSerializable(typeof(object))]
 public partial class SerializerContext : JsonSerializerContext
 {
 }

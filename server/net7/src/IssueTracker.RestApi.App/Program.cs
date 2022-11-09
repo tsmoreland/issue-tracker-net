@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading.RateLimiting;
 using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Middelware.SecurityHeaders;
@@ -31,7 +32,6 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
 using Serilog;
 using Tcell.Agent.AspNetCore;
 using TSMoreland.Text.Json.NamingStrategies;
@@ -79,10 +79,23 @@ builder.Services
     })
     .AddJsonOptions(jsonOptions =>
     {
+        var reflectionOptions = new JsonSerializerOptions 
+        { 
+            TypeInfoResolver = new DefaultJsonTypeInfoResolver()
+        };
+
+        // configure to use source generated contracts
+        var sourceGenOptions = new JsonSerializerOptions 
+        { 
+            TypeInfoResolver = SerializerContext.Default 
+        };
+
         jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = JsonStrategizedNamingPolicy.SnakeCase;
         jsonOptions.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         jsonOptions.JsonSerializerOptions.Converters.Add(new JsonStrategizedStringEnumConverterFactory(new SnakeCaseEnumNamingStrategy()));
-        jsonOptions.JsonSerializerOptions.AddContext<SerializerContext>();
+        jsonOptions.JsonSerializerOptions.TypeInfoResolver = JsonTypeInfoResolver.Combine(
+            SerializerContext.Default,
+            new DefaultJsonTypeInfoResolver());
     });
 
 builder.Services.AddSecurityHeaders(builder.Configuration);
