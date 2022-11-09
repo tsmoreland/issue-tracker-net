@@ -1,5 +1,4 @@
 using System.IO.Compression;
-using Hellang.Middleware.ProblemDetails;
 using IssueTracker.Issues.API.GRPC;
 using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Middelware.SecurityHeaders;
@@ -70,7 +69,8 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 static void ConfigurePipeline(WebApplication app)
 {
     app.UseSecurityHeaders();
-    app.UseProblemDetails();
+    app.UseExceptionHandler();
+    app.UseStatusCodePages();
 
     if (app.Environment.IsDevelopment())
     {
