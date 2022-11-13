@@ -22,8 +22,8 @@ namespace IssueTracker.Issues.Infrastructure.Configurations;
 
 public sealed class SqliteModelConfiguration : IModelConfiguration
 {
+    private readonly IConfiguration _configuration;
     private readonly ILogger<SqliteModelConfiguration> _logger;
-    private readonly string _connectionString;
     private readonly bool _isDevelopment;
 
     public SqliteModelConfiguration(
@@ -31,10 +31,11 @@ public sealed class SqliteModelConfiguration : IModelConfiguration
         IHostEnvironment environment,
         ILoggerFactory loggerFactory)
     {
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         ArgumentNullException.ThrowIfNull(loggerFactory);
-        _logger = loggerFactory.CreateLogger<SqliteModelConfiguration>();
+        ArgumentNullException.ThrowIfNull(environment);
 
-        _connectionString = configuration.GetConnectionString("ApplicationConnection") ?? throw new InvalidConfigurationException("missing ApplicationConnection entry.");
+        _logger = loggerFactory.CreateLogger<SqliteModelConfiguration>();
         _isDevelopment = environment.IsDevelopment();
     }
 
@@ -52,9 +53,11 @@ public sealed class SqliteModelConfiguration : IModelConfiguration
             return;
         }
 
+        string connectionString = _configuration
+            .GetConnectionString("ApplicationConnection") ?? throw new InvalidConfigurationException("missing ApplicationConnection entry.");
         optionsBuilder
             .UseSqlite(
-                _connectionString,
+                connectionString,
                 options => options.MigrationsAssembly(typeof(SqliteModelConfiguration).Assembly.FullName))
             .LogTo(message => _logger.LogInformation("{SQL}", message))
             .EnableSensitiveDataLogging(_isDevelopment);

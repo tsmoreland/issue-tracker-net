@@ -59,7 +59,7 @@ public sealed class Comment : Entity, IEquatable<Comment>
         Author = CommentUser.Anonymous;
         Content = string.Empty;
         _issue = null!;
-        IssueId = string.Empty;
+        IssueId = IssueIdentifier.Empty;
         CreatedAt = DateTimeOffset.UtcNow;
     }
 
@@ -71,7 +71,7 @@ public sealed class Comment : Entity, IEquatable<Comment>
     /// </summary>
     public int Id { get; init; }
 
-    public object IssueId { get; private set; }
+    public IssueIdentifier IssueId { get; private set; }
 
     /// <summary>
     /// Comment Author
@@ -87,6 +87,8 @@ public sealed class Comment : Entity, IEquatable<Comment>
     /// Creation Date
     /// </summary>
     public DateTimeOffset CreatedAt { get; private set; }
+
+    public string ConcurrencyToken { get; private set; } = Guid.NewGuid().ToString();
 
     /// <inheritdoc />
     public bool Equals(Comment? other)

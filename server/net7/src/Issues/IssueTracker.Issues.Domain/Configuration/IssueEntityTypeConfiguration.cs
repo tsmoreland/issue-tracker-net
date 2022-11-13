@@ -27,7 +27,6 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
             .HasKey(e => e.Id);
 
         builder.Property(e => e.Id)
-            .HasConversion<IssueIdentifierValueConverter>()
             .IsRequired();
         builder.Property<string>("_projectId")
             .UsePropertyAccessMode(PropertyAccessMode.Field)
@@ -54,13 +53,11 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
 
         builder
             .Property<DateTimeOffset?>("_startTime")
-            .UsePropertyAccessMode(PropertyAccessMode.Field)
-            .HasConversion<NullableDateTimeOffsetValueConverter>();
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
 
         builder
             .Property<DateTimeOffset?>("_stopTime")
-            .UsePropertyAccessMode(PropertyAccessMode.Field)
-            .HasConversion<NullableDateTimeOffsetValueConverter>();
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
 
         builder
             .Property(e => e.State)
@@ -69,7 +66,6 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
 
         builder.Property<IssueIdentifier?>("_epicId")
             .UsePropertyAccessMode(PropertyAccessMode.Field)
-            .HasConversion<NullableIssueIdentifierValueConverter>()
             .IsRequired(false);
 
         builder
@@ -110,5 +106,10 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
         builder
             .HasMany("_relatedFrom")
             .WithOne();
+        builder
+            .HasMany<Comment>("_comments")
+            .WithOne("_issue")
+            .HasForeignKey(e => e.IssueId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -11,8 +11,10 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Issues.Domain.Configuration.ValueConverters;
 using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Issues.Infrastructure.Configurations;
+using IssueTracker.Issues.Infrastructure.Configurations.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 
 namespace IssueTracker.Issues.Infrastructure;
@@ -45,6 +47,23 @@ public sealed class IssuesDbContext : DbContext, IUnitOfWork
     {
         _modelConfiguration.ConfigureContext(optionsBuilder);
         base.OnConfiguring(optionsBuilder);
+    }
+
+    /// <inheritdoc />
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder
+            .Properties<IssueIdentifier>()
+            .HaveConversion<IssueIdentifierValueConverter>();
+        configurationBuilder
+            .Properties<IssueIdentifier?>()
+            .HaveConversion<NullableIssueIdentifierValueConverter>();
+        configurationBuilder
+            .Properties<DateTimeOffset?>()
+            .HaveConversion<NullableDateTimeOffsetValueConverter>();
+        configurationBuilder
+            .Properties<DateTimeOffset>()
+            .HaveConversion<DateTimeOffsetValueConverter>();
     }
 
     /// <inheritdoc />

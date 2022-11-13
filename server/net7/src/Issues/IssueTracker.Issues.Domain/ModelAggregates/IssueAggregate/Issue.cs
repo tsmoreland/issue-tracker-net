@@ -30,6 +30,7 @@ public sealed class Issue : Entity
     private readonly ICollection<IssueLink> _relatedTo = new HashSet<IssueLink>();
     // ReSharper disable once CollectionNeverUpdated.Local
     private readonly ICollection<IssueLink> _relatedFrom = new HashSet<IssueLink>();
+    private readonly ICollection<Comment> _comments = new HashSet<Comment>();
     private DateTimeOffset? _startTime;
     private DateTimeOffset? _stopTime;
 
@@ -232,17 +233,18 @@ public sealed class Issue : Entity
     /// <returns>
     /// the Comment to be added
     /// </returns>
-    public  Comment AddCommentOrThrow(CommentUser author, string content)
+    public void AddCommentOrThrow(CommentUser author, string content)
     {
+        ArgumentNullException.ThrowIfNull(author);
         Comment comment = new(this, author, content);
-
-        // add to internal list
-
-        return comment;
+        _comments.Add(comment);
     }
 
     public IEnumerable<Issue> RelatedIssues => _relatedTo.Select(i => i.Right)
         .Union(_relatedFrom.Select(i => i.Left));
+
+    public IEnumerable<Comment> Comments =>
+        _comments.ToList().AsReadOnly();
 
     public void PatchOrThrow(string key, object? value)
     {
