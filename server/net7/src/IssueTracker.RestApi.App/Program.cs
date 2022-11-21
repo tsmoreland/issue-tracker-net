@@ -141,13 +141,14 @@ app.UseExceptionHandler();
 app.UseStatusCodePages();
 
 RateLimiterOptions rateLimitOptions = new RateLimiterOptions()
-    .AddConcurrencyLimiter(policyName: "get", options =>
+    .AddConcurrencyLimiter(policyName: "global-rate-limit", options =>
     {
         options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
         options.PermitLimit = 50;
         options.QueueLimit = 50;
     });
-rateLimitOptions.OnRejected = static (context, cancellationToken) =>
+rateLimitOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+rateLimitOptions.OnRejected = static (context, _) =>
 {
     context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
     return new ValueTask();
@@ -176,7 +177,7 @@ app.UseMigrationsEndPoint();
 app.UseRouting();
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers().RequireRateLimiting("global-rate-limit");
 
 app.MapGet("/about",
     () =>
