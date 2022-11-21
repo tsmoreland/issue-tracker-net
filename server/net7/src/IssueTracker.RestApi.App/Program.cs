@@ -140,21 +140,22 @@ app.UseSecurityHeaders();
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 
-RateLimiterOptions rateLimitOptions = new RateLimiterOptions()
-    .AddConcurrencyLimiter(policyName: "global-rate-limit", options =>
+app
+    .UseRateLimiter(new RateLimiterOptions
     {
-        options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        options.PermitLimit = 50;
-        options.QueueLimit = 50;
-    });
-rateLimitOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-rateLimitOptions.OnRejected = static (context, _) =>
-{
-    context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
-    return new ValueTask();
-};
-
-app.UseRateLimiter(rateLimitOptions);
+        RejectionStatusCode = StatusCodes.Status429TooManyRequests,
+        OnRejected = static (context, _) =>
+        {
+            context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+            return new ValueTask();
+        }
+    }.AddConcurrencyLimiter(policyName: "global-rate-limit",
+        options =>
+        {
+            options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+            options.PermitLimit = 50;
+            options.QueueLimit = 50;
+        }));
 
 if (app.Environment.IsDevelopment())
 {
