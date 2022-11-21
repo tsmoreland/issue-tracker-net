@@ -149,11 +149,20 @@ app
             context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
             return new ValueTask();
         }
-    }.AddConcurrencyLimiter(policyName: "global-rate-limit",
+    }.AddConcurrencyLimiter(policyName: "concurrent-limit",
         options =>
         {
             options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
             options.PermitLimit = 50;
+            options.QueueLimit = 50;
+        })
+    .AddFixedWindowLimiter("fixed-limit",
+        options =>
+        {
+            options.Window = TimeSpan.FromMinutes(1);
+            options.PermitLimit = 50;
+
+            options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
             options.QueueLimit = 50;
         }));
 
@@ -178,7 +187,7 @@ app.UseMigrationsEndPoint();
 app.UseRouting();
 app.UseAuthorization();
 
-app.MapControllers().RequireRateLimiting("global-rate-limit");
+app.MapControllers().RequireRateLimiting("fixed-limit");
 
 app.MapGet("/about",
     () =>
