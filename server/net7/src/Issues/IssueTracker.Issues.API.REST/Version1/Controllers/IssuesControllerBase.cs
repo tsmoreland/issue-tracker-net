@@ -57,6 +57,7 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all issues in batches of <paramref name="pageSize"/></returns>
     [HttpGet]
+    [HttpHead]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]
@@ -87,6 +88,7 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
     [HttpGet("{id}")]
+    [HttpHead]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]

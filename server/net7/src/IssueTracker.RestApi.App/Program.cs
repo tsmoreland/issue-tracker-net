@@ -67,7 +67,7 @@ builder.Services
     {
         options.RespectBrowserAcceptHeader = true;
         options.ModelBinderProviders.Insert(0, new EnumModelBinderProvider());
-        options.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
+        options.InputFormatters.Insert(0, JsonPatchInputFormatterFactory.Build());
     })
     .AddXmlSerializerFormatters()
     .ConfigureApiBehaviorOptions(apiBehaviourOptions =>
@@ -235,28 +235,6 @@ static HealthCheckOptions GetHealthCheckOptions(Func<HealthCheckRegistration, bo
         },
         ResponseWriter = WriteHealthResponse,
     };
-}
-
-static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
-{
-    // using second service provider to allow system.text.json to be used for the general case
-#pragma warning disable IDE0079 // Remove unnecessary suppression
-#pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
-    IServiceProvider builder = new ServiceCollection()
-        .AddLogging()
-        .AddMvc()
-        .AddNewtonsoftJson()
-        .Services
-        .BuildServiceProvider();
-#pragma warning restore ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
-
-    return builder
-        .GetRequiredService<IOptions<MvcOptions>>()
-        .Value
-        .InputFormatters
-        .OfType<NewtonsoftJsonPatchInputFormatter>()
-        .First();
-#pragma warning restore IDE0079 // Remove unnecessary suppression
 }
 
 static Task WriteHealthResponse(HttpContext context, HealthReport report)
