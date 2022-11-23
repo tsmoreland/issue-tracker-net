@@ -14,6 +14,7 @@
 using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
+using Microsoft.Extensions.Logging;
 
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
@@ -25,11 +26,8 @@ public sealed class Issue : Entity
     private IssueIdentifier? _epicId;
     private int _issueNumber;
     private IssueType _type = IssueType.Defect;
-    private Maintainer _assignee = Maintainer.Unassigned;
-    private TriageUser _reporter = TriageUser.Unassigned;
-    private readonly ICollection<IssueLink> _relatedTo = new HashSet<IssueLink>();
-    // ReSharper disable once CollectionNeverUpdated.Local
-    private readonly ICollection<IssueLink> _relatedFrom = new HashSet<IssueLink>();
+    private readonly ICollection<IssueLink> _parents = new HashSet<IssueLink>();
+    private readonly ICollection<IssueLink> _children = new HashSet<IssueLink>();
     private readonly ICollection<Comment> _comments = new HashSet<Comment>();
     private DateTimeOffset? _startTime;
     private DateTimeOffset? _stopTime;
@@ -134,25 +132,9 @@ public sealed class Issue : Entity
     /// </summary>
     public IssueState State { get; private set; } = new BackLogState();
 
-    public TriageUser Reporter
-    {
-        get => _reporter;
-        set
-        {
-            ArgumentNullException.ThrowIfNull(value, nameof(value));
-            _reporter = value;
-        }
-    }
+    public User? Reporter { get; set; }
 
-    public Maintainer Assignee
-    {
-        get => _assignee;
-        set
-        {
-            ArgumentNullException.ThrowIfNull(value, nameof(value));
-            _assignee = value;
-        }
-    }
+    public User? Assignee { get; set; }
 
     /// <summary>
     /// Time when issues was first opened, can only be set once
@@ -218,11 +200,18 @@ public sealed class Issue : Entity
         return true;
     }
 
-    public void AddRelatedTo(LinkType link, Issue issue)
+    public void AddLinkToParent(LinkType link, Issue issue)
+    {
+        ArgumentNullException.ThrowIfNull(issue);
+        IssueLink issueLink = new(link, issue.Id, issue, Id, this);
+        _parents.Add(issueLink);
+    }
+
+    public void AddLinkToChild(LinkType link, Issue issue)
     {
         ArgumentNullException.ThrowIfNull(issue);
         IssueLink issueLink = new(link, Id, this, issue.Id, issue);
-        _relatedTo.Add(issueLink);
+        _children.Add(issueLink);
     }
 
     /// <summary>
@@ -233,15 +222,26 @@ public sealed class Issue : Entity
     /// <returns>
     /// the Comment to be added
     /// </returns>
-    public void AddCommentOrThrow(CommentUser author, string content)
+    public void AddCommentOrThrow(User author, string content)
     {
         ArgumentNullException.ThrowIfNull(author);
-        Comment comment = new(this, author, content);
+        Comment comment = new(Id, author, content);
         _comments.Add(comment);
     }
 
-    public IEnumerable<Issue> RelatedIssues => _relatedTo.Select(i => i.Right)
-        .Union(_relatedFrom.Select(i => i.Left));
+    public IEnumerable<(LinkType, Issue)> ChildLinks =>
+        _parents
+            .Where(e => e.ParentId == Id)
+            .Select(e => (e.LinkType, e.Child))
+            .ToList()
+            .AsReadOnly();
+
+    public IEnumerable<(LinkType, Issue)> Parents =>
+        _parents
+            .Where(e => e.ChildId == Id)
+            .Select(e => (e.LinkType, e.Parent))
+            .ToList()
+            .AsReadOnly();
 
     public IEnumerable<Comment> Comments =>
         _comments.ToList().AsReadOnly();
@@ -263,10 +263,10 @@ public sealed class Issue : Entity
                 Type = GetValueOrThrow<IssueType>(value);
                 break;
             case nameof(Assignee):
-                Assignee = GetValueOrThrow<Maintainer>(value);
+                Assignee = GetValueOrThrow<User>(value);
                 break;
             case nameof(Reporter):
-                Reporter = GetValueOrThrow<TriageUser>(value);
+                Reporter = GetValueOrThrow<User>(value);
                 break;
             case nameof(StartTime):
                 StartTime = GetValueOrThrow<DateTimeOffset?>(value);

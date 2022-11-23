@@ -27,7 +27,6 @@ internal static class JsonPatchInputFormatterFactory
             .AddNewtonsoftJson()
             .Services
             .BuildServiceProvider();
-    //#pragma warning restore ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
 
         return builder
             .GetRequiredService<IOptions<MvcOptions>>()

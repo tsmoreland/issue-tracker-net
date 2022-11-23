@@ -14,7 +14,7 @@
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
 /// <summary>
-/// Link type associating two issues, the left side of the joined is the parent entry which
+/// Child type associating two issues, the left side of the joined is the parent entry which
 /// is related many values such as <see cref="Blocking"/> is the case the left side
 /// would be the cause of the block while the right side is the one who is blocked
 /// </summary>

@@ -13,6 +13,7 @@
 
 using System.Linq.Expressions;
 using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
+using IssueTracker.Issues.Domain.Services.Version2.DataTransferObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Specifications;
@@ -83,7 +84,7 @@ public static class IssueSortingOptionsExtensions
             "PRIORITY" =>
                 issue => issue.Priority,
             "ASSIGNEE" =>
-                issue => issue.Assignee.FullName,
+                issue => issue.Assignee != null ? issue.Assignee.FullName : User.Unassigned.FullName,
             "REPORTER" =>
                 issue => EF.Property<string>(issue, "_reporter.FullName"),
             _ =>

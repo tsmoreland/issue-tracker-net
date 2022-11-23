@@ -46,8 +46,8 @@ public sealed class IssueQuery : ObjectGraphType<object>
 
         return dbContext.Issues
             .AsNoTracking()
-            .Include("_relatedTo")
-            .Include("_relatedFrom")
+            .Include("_children")
+            .Include("_parents")
             .Select(i => new
             {
                 i.Id,
@@ -68,8 +68,8 @@ public sealed class IssueQuery : ObjectGraphType<object>
                 i.Priority,
                 i.Type,
                 i.State.Value,
-                new TriageUserDto(i.Reporter.UserId, i.Reporter.FullName),
-                new MaintainerDto(i.Reporter.UserId, i.Reporter.FullName),
+                i.Assignee is not null ? new UserDto(i.Assignee.UserId, i.Assignee.FullName) : null,
+                i.Reporter is not null ? new UserDto(i.Reporter.UserId, i.Reporter.FullName) : null,
                 i.EpicId?.ToString()))
             .ToListAsync(cancellationToken)
             .AsTask()

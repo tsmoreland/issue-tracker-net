@@ -36,7 +36,7 @@ public sealed class IssueModelType : ObjectGraphType<IssueDto>
 }
 
 /// <summary/>
-public sealed class TriageUserModelType : ObjectGraphType<TriageUserDto>
+public sealed class TriageUserModelType : ObjectGraphType<UserDto>
 {
     /// <summary/>
     public TriageUserModelType()

@@ -101,15 +101,12 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
             });
 
         builder
-            .HasMany("_relatedTo")
-            .WithOne();
+            .HasMany<IssueLink>("_children")
+            .WithOne(e => e.Parent)
+            .HasForeignKey(e => e.ParentId);
         builder
-            .HasMany("_relatedFrom")
-            .WithOne();
-        builder
-            .HasMany<Comment>("_comments")
-            .WithOne("_issue")
-            .HasForeignKey(e => e.IssueId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasMany<IssueLink>("_parents")
+            .WithOne(e => e.Child)
+            .HasForeignKey(e => e.ChildId);
     }
 }

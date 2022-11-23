@@ -28,8 +28,8 @@ public sealed class IssuePatch
     private IssueType _type = IssueType.Defect;
     private Guid? _assignee;
     private Guid? _reporter;
-    private ICollection<IssueLinkPatch> _relatedTo = new HashSet<IssueLinkPatch>();
-    private ICollection<IssueLinkPatch> _relatedFrom = new HashSet<IssueLinkPatch>();
+    private ICollection<IssueLinkPatch> _children = new HashSet<IssueLinkPatch>();
+    private ICollection<IssueLinkPatch> _parents = new HashSet<IssueLinkPatch>();
     private DateTimeOffset? _startTime;
     private DateTimeOffset? _stopTime;
 
@@ -63,9 +63,9 @@ public sealed class IssuePatch
             _description = issue.Description,
             _epicId = issue.EpicId?.ToString(),
             _type = issue.Type,
-            _assignee = issue.Assignee != Maintainer.Unassigned ? issue.Assignee.UserId : null,
-            _reporter = issue.Reporter != TriageUser.Unassigned ? issue.Reporter.UserId : null,
-            // TODO:
+            _assignee = issue.Assignee is not null && issue.Assignee != User.Unassigned ? issue.Assignee.UserId : null,
+            _reporter = issue.Reporter is not null && issue.Reporter != User.Unassigned ? issue.Reporter.UserId : null,
+            // TODO
             //  need related to and from separately from issue, need new properties which are configured to be ignored
             //  by EF
             _startTime = issue.StartTime,
@@ -152,22 +152,22 @@ public sealed class IssuePatch
             _reporter = value;
         }
     }
-    public ICollection<IssueLinkPatch> RelatedTo
+    public ICollection<IssueLinkPatch> Children
     {
-        get => _relatedTo;
+        get => _children;
         set
         {
-            ModifiedFields.Add(nameof(RelatedTo));
-            _relatedTo = value;
+            ModifiedFields.Add(nameof(Children));
+            _children = value;
         }
     }
-    public ICollection<IssueLinkPatch> RelatedFrom
+    public ICollection<IssueLinkPatch> Parents
     {
-        get => _relatedFrom;
+        get => _parents;
         set
         {
-            ModifiedFields.Add(nameof(RelatedFrom));
-            _relatedFrom = value;
+            ModifiedFields.Add(nameof(Parents));
+            _parents = value;
         }
     }
 

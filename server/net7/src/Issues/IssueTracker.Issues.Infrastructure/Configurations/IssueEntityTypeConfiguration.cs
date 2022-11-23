@@ -37,6 +37,7 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
         builder.Ignore(e => e.EpicId);
         builder.Ignore(e => e.StartTime);
         builder.Ignore(e => e.StopTime);
+        builder.Ignore(e => e.Comments);
 
         builder
             .HasOne(e => e.Project)
@@ -63,20 +64,19 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
             (owned) =>
             {
                 owned.Property(e => e.UserId)
-                    .HasDefaultValue(TriageUser.Unassigned.UserId);
+                    .HasDefaultValue(User.Unassigned.UserId);
                 owned.Property(e => e.FullName)
-                    .HasDefaultValue(TriageUser.Unassigned.FullName);
+                    .HasDefaultValue(User.Unassigned.FullName);
             });
         builder.OwnsOne(e => e.Reporter,
             (owned) =>
             {
                 owned.Property(e => e.UserId)
-                    .HasDefaultValue(Maintainer.Unassigned.UserId);
+                    .HasDefaultValue(User.Unassigned.UserId);
                 owned.Property(e => e.FullName)
-                    .HasDefaultValue(Maintainer.Unassigned.FullName);
+                    .HasDefaultValue(User.Unassigned.FullName);
             });
 
-        builder.Ignore(e => e.RelatedIssues);
         builder.Ignore(e => e.Comments);
     }
 }

@@ -12,4 +12,4 @@
 
 namespace IssueTracker.Issues.API.GraphQL.DataTransferObjects;
 
-public sealed record class TriageUserDto(Guid Id, string FullName);
+public sealed record class UserDto(Guid Id, string FullName);

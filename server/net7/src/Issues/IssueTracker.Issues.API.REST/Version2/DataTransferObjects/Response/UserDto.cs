@@ -11,15 +11,38 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using System.ComponentModel.DataAnnotations;
+using IssueTracker.Shared;
 
-public sealed record class Maintainer(Guid UserId, string FullName) : User(UserId, FullName)
+namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
+
+/// <summary>
+/// Triage User
+/// </summary>
+/// <param name="Id">Unique Identifier</param>
+/// <param name="FullName">Full name</param>
+[SwaggerSchemaName("User Reference")]
+public sealed record class UserDto(Guid Id, string FullName)
 {
+    internal UserDto()
+        : this(Guid.Empty, string.Empty)
+    {
+        // for serialization
+    }
+
     /// <summary>
-    /// Unassigned maintainer
+    /// Unique Identifier
     /// </summary>
-    /// <remarks>
-    /// intentionally created on each request due to ef tracking
-    /// </remarks>
-    public static Maintainer Unassigned => new(UnassignedId, UnasignedFullname);
+    /// <example>F3296326-A40A-4208-AE6F-055EE106AC85</example>
+    [Required]
+    public Guid Id { get; } = Id;
+
+    /// <summary>
+    /// Full name
+    /// </summary>
+    /// <example>John Smith</example>
+    [Required]
+    public string FullName { get; } = FullName;
+
 }
+

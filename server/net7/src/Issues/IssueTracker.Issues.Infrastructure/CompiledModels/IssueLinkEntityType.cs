@@ -21,84 +21,84 @@ namespace IssueTracker.Issues.Infrastructure.CompiledModels
                 typeof(IssueLink),
                 baseEntityType);
 
-            var leftId = runtimeEntityType.AddProperty(
-                "LeftId",
+            var parentId = runtimeEntityType.AddProperty(
+                "ParentId",
                 typeof(IssueIdentifier),
-                propertyInfo: typeof(IssueLink).GetProperty("LeftId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(IssueLink).GetField("<LeftId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                propertyInfo: typeof(IssueLink).GetProperty("ParentId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(IssueLink).GetField("<ParentId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 afterSaveBehavior: PropertySaveBehavior.Throw,
                 valueConverter: new IssueIdentifierValueConverter());
 
-            var rightId = runtimeEntityType.AddProperty(
-                "RightId",
+            var childId = runtimeEntityType.AddProperty(
+                "ChildId",
                 typeof(IssueIdentifier),
-                propertyInfo: typeof(IssueLink).GetProperty("RightId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(IssueLink).GetField("<RightId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                propertyInfo: typeof(IssueLink).GetProperty("ChildId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(IssueLink).GetField("<ChildId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 afterSaveBehavior: PropertySaveBehavior.Throw,
                 valueConverter: new IssueIdentifierValueConverter());
 
-            var link = runtimeEntityType.AddProperty(
-                "Link",
+            var linkType = runtimeEntityType.AddProperty(
+                "LinkType",
                 typeof(LinkType),
-                propertyInfo: typeof(IssueLink).GetProperty("Link", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(IssueLink).GetField("<Link>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                propertyInfo: typeof(IssueLink).GetProperty("LinkType", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(IssueLink).GetField("<LinkType>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 valueGenerated: ValueGenerated.OnAdd);
-            link.AddAnnotation("Relational:DefaultValue", LinkType.Related);
+            linkType.AddAnnotation("Relational:DefaultValue", LinkType.Related);
 
             var key = runtimeEntityType.AddKey(
-                new[] { leftId, rightId });
+                new[] { parentId, childId });
             runtimeEntityType.SetPrimaryKey(key);
 
             var index = runtimeEntityType.AddIndex(
-                new[] { rightId });
+                new[] { childId });
 
             return runtimeEntityType;
         }
 
         public static RuntimeForeignKey CreateForeignKey1(RuntimeEntityType declaringEntityType, RuntimeEntityType principalEntityType)
         {
-            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("LeftId")! },
+            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("ChildId")! },
                 principalEntityType.FindKey(new[] { principalEntityType.FindProperty("Id")! })!,
                 principalEntityType,
                 deleteBehavior: DeleteBehavior.Cascade,
                 required: true);
 
-            var left = declaringEntityType.AddNavigation("Left",
+            var parent = declaringEntityType.AddNavigation("Parent",
                 runtimeForeignKey,
                 onDependent: true,
                 typeof(Issue),
-                propertyInfo: typeof(IssueLink).GetProperty("Left", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(IssueLink).GetField("<Left>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                propertyInfo: typeof(IssueLink).GetProperty("Parent", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(IssueLink).GetField("<Parent>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
-            var _relatedTo = principalEntityType.AddNavigation("_relatedTo",
+            var children = principalEntityType.AddNavigation("_children",
                 runtimeForeignKey,
                 onDependent: false,
                 typeof(ICollection<IssueLink>),
-                fieldInfo: typeof(Issue).GetField("_relatedTo", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                fieldInfo: typeof(Issue).GetField("_children", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
             return runtimeForeignKey;
         }
 
         public static RuntimeForeignKey CreateForeignKey2(RuntimeEntityType declaringEntityType, RuntimeEntityType principalEntityType)
         {
-            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("RightId")! },
+            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("ParentId")! },
                 principalEntityType.FindKey(new[] { principalEntityType.FindProperty("Id")! })!,
                 principalEntityType,
                 deleteBehavior: DeleteBehavior.Cascade,
                 required: true);
 
-            var right = declaringEntityType.AddNavigation("Right",
+            var child = declaringEntityType.AddNavigation("Child",
                 runtimeForeignKey,
                 onDependent: true,
                 typeof(Issue),
-                propertyInfo: typeof(IssueLink).GetProperty("Right", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(IssueLink).GetField("<Right>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                propertyInfo: typeof(IssueLink).GetProperty("Child", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(IssueLink).GetField("<Child>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
-            var _relatedFrom = principalEntityType.AddNavigation("_relatedFrom",
+            var parents = principalEntityType.AddNavigation("_parents",
                 runtimeForeignKey,
                 onDependent: false,
                 typeof(ICollection<IssueLink>),
-                fieldInfo: typeof(Issue).GetField("_relatedFrom", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                fieldInfo: typeof(Issue).GetField("_parents", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
             return runtimeForeignKey;
         }

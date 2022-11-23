@@ -13,11 +13,11 @@
 
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 public sealed record class IssueLink(
-    LinkType Link,
-    IssueIdentifier LeftId,
-    Issue Left,
-    IssueIdentifier RightId,
-    Issue Right)
+    LinkType LinkType,
+    IssueIdentifier ParentId,
+    Issue Parent,
+    IssueIdentifier ChildId,
+    Issue Child)
 {
 
     private IssueLink()

@@ -28,19 +28,15 @@ internal static class DtoExtensions
             source.Priority,
             source.Type,
             source.State.Value,
-            source.Reporter.ToDto(),
-            source.Assignee.ToDto(),
+            source.Reporter?.ToDto(),
+            source.Assignee?.ToDto(),
             source.EpicId?.ToString(),
             Array.Empty<LinkedIssueSummaryDto>());
     }
 
-    public static TriageUserDto ToDto(this TriageUser source)
+    public static UserDto ToDto(this User source)
     {
-        return new TriageUserDto(source.UserId, source.FullName);
-    }
-    public static MaintainerDto ToDto(this Maintainer source)
-    {
-        return new MaintainerDto(source.UserId, source.FullName);
+        return new UserDto(source.UserId, source.FullName);
     }
 
     public static IAsyncEnumerable<IssueSummaryDto> ToDto(this IAsyncEnumerable<IssueSummaryProjection> summaries)

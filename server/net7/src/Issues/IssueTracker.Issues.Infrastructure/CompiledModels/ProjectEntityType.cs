@@ -3,6 +3,7 @@ using System;
 using System.Reflection;
 using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Infrastructure.Configurations.ValueConverters;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 #pragma warning disable 219, 612, 618
@@ -30,7 +31,8 @@ namespace IssueTracker.Issues.Infrastructure.CompiledModels
                 "LastModifiedTime",
                 typeof(DateTimeOffset),
                 propertyInfo: typeof(Entity).GetProperty("LastModifiedTime", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(Entity).GetField("<LastModifiedTime>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                fieldInfo: typeof(Entity).GetField("<LastModifiedTime>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                valueConverter: new DateTimeOffsetValueConverter());
 
             var name = runtimeEntityType.AddProperty(
                 "Name",

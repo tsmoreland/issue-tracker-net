@@ -97,7 +97,7 @@ public sealed class IssueDataMigration : IIssueDataMigration
         linkedIssueTask2.Execute(new OpenStateChangeCommand(linkedIssueTask2.Id, DateTimeOffset.UtcNow));
         linkedIssueTask2.Execute(new ReadyForReviewStateChangeCommand(linkedIssueTask2.Id));
         linkedIssueTask2.Execute(new ReadyForTestStateChangeCommand(linkedIssueTask2.Id));
-        linkedIssueTask1.AddRelatedTo(LinkType.Related, linkedIssueTask2);
+        linkedIssueTask1.AddLinkToChild(LinkType.Related, linkedIssueTask2);
 
         _repository.Add(task);
         _repository.Add(linkedIssueTask1);

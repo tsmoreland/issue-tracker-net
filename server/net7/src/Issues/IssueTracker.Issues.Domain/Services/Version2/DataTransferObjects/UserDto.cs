@@ -11,16 +11,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+namespace IssueTracker.Issues.Domain.Services.Version2.DataTransferObjects;
 
-public sealed record class TriageUser(Guid UserId, string FullName) : User(UserId, FullName)
-{
-    /// <summary>
-    /// Unassigned user
-    /// </summary>
-    /// <remarks>
-    /// intentionally created on each request due to ef tracking
-    /// </remarks>
-    public static TriageUser Unassigned => new(UnassignedId, UnasignedFullname);
-
-}
+/// <summary>
+/// Triage User
+/// </summary>
+/// <param name="Id">Unique Identifier</param>
+/// <param name="FullName">Full name of the user</param>
+public sealed record class UserDto(Guid Id, string FullName);

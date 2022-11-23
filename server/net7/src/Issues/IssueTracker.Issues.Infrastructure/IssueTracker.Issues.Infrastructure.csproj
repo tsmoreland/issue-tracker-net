@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="CompiledModels\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 </Project>

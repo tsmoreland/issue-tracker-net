@@ -23,7 +23,7 @@ internal sealed class IssueLinkEntityTypeConfiguration : IEntityTypeConfiguratio
         builder.ToTable("IssueLinks");
 
         builder
-            .Property(e => e.Link)
+            .Property(e => e.LinkType)
             .HasDefaultValue(LinkType.Related);
     }
 }

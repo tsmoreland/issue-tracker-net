@@ -22,32 +22,32 @@ internal sealed class IssueLinkEntityTypeConfiguration : IEntityTypeConfiguratio
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<IssueLink> builder)
     {
-        builder.HasKey(e => new { e.LeftId, e.RightId });
+        builder.HasKey(e => new { e.ParentId, e.ChildId });
 
         builder
-            .Property(e => e.Link)
+            .Property(e => e.ChildId)
             .IsRequired();
 
         builder
-            .Property(e => e.LeftId)
+            .Property(e => e.ParentId)
             .HasConversion<IssueIdentifierValueConverter>()
             .IsRequired();
         builder
-            .Property(e => e.RightId)
+            .Property(e => e.ChildId)
             .HasConversion<IssueIdentifierValueConverter>()
             .IsRequired();
 
         builder
-            .HasOne(e => e.Left)
-            .WithMany("_relatedTo")
+            .HasOne(e => e.Parent)
+            .WithMany("_children")
             .HasPrincipalKey(e => e.Id)
-            .HasForeignKey(e => e.LeftId)
+            .HasForeignKey(e => e.ChildId)
             .OnDelete(DeleteBehavior.Cascade);
         builder
-            .HasOne(e => e.Right)
-            .WithMany("_relatedFrom")
+            .HasOne(e => e.Child)
+            .WithMany("_parents")
             .HasPrincipalKey(e => e.Id)
-            .HasForeignKey(e => e.RightId)
+            .HasForeignKey(e => e.ParentId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

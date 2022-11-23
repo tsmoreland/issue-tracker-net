@@ -13,8 +13,8 @@
 
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
-public abstract record class User(Guid UserId, string FullName)
+public sealed record class User(Guid UserId, string FullName)
 {
-    protected static readonly string UnasignedFullname = "Unassigned";
-    protected static readonly Guid UnassignedId = Guid.Empty;
+    public static User Unassigned => new(Guid.Empty, "Unassigned");
+
 }

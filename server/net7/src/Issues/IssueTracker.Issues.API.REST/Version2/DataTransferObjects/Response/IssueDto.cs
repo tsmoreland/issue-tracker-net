@@ -23,7 +23,7 @@ namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 [SwaggerSchemaName("Issue (v2)")]
 public sealed record class IssueDto(string Id, string Title, string Description,
         Priority Priority, IssueType Type, IssueStateValue State,
-        TriageUserDto Reporter, MaintainerDto Assignee,
+        UserDto Reporter, UserDto Assignee,
         string? EpicId)
 {
     private IssueDto()
@@ -33,8 +33,8 @@ public sealed record class IssueDto(string Id, string Title, string Description,
             default,
             default,
             default,
-            new TriageUserDto(),
-            new MaintainerDto(),
+            new UserDto(),
+            new UserDto(),
             null)
     {
         // for serialization
@@ -88,13 +88,13 @@ public sealed record class IssueDto(string Id, string Title, string Description,
     /// Reporter
     /// </summary>
     [Required]
-    public TriageUserDto Reporter { get; set; } = Reporter;
+    public UserDto Reporter { get; set; } = Reporter;
 
     /// <summary>
     /// Assigned maintainer
     /// </summary>
     [Required]
-    public MaintainerDto Assignee { get; set; } = Assignee;
+    public UserDto Assignee { get; set; } = Assignee;
 
     /// <summary>
     /// Epic Id

@@ -15,7 +15,7 @@ using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Request;
 
 /// <summary>
-/// Issue Link DTO used for patch requests
+/// Issue Child DTO used for patch requests
 /// </summary>
 public sealed class IssueLinkPatch
 {
@@ -42,14 +42,14 @@ public sealed class IssueLinkPatch
     {
         return new IssueLinkPatch
         {
-            _linkType = issueLink.Link,
-            _sourceId = issueLink.LeftId.ToString(),
-            _destinationId = issueLink.RightId.ToString(),
+            _linkType = issueLink.LinkType,
+            _sourceId = issueLink.ParentId.ToString(),
+            _destinationId = issueLink.ChildId.ToString(),
         };
     }
 
     /// <summary>
-    /// Link Type
+    /// Child Type
     /// </summary>
     /// <example>Related</example>
     public LinkType LinkType

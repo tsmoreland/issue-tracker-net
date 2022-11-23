@@ -71,7 +71,7 @@ internal static class IssueMessageFunctions
         return FlyweightWithResult(ResultCode.ResultNotFound);
     }
 
-    public static TriageUserMessage ToMessage(this TriageUserDto user)
+    public static TriageUserMessage ToMessage(this UserDto user)
     {
         return new TriageUserMessage { UserId = user.Id.ToString(), FullName = user.FullName };
     }

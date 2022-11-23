@@ -133,10 +133,10 @@ public sealed class Project : Entity, IEquatable<Project>
         private string? _description;
         private Priority? _priority = null;
         private IssueType? _type;
-        private IEnumerable<IssueLink>? _relatedTo;
-        private IEnumerable<IssueLink>? _relatedFrom;
-        private TriageUser? _reporter;
-        private Maintainer? _assignee;
+        private IEnumerable<IssueLink>? _children;
+        private IEnumerable<IssueLink>? _parents;
+        private User? _reporter;
+        private User? _assignee;
         private IssueIdentifier? _epicId;
 
         public IssueBuilder(Project project)
@@ -155,8 +155,8 @@ public sealed class Project : Entity, IEquatable<Project>
             _reporter = null;
             _assignee = null;
             _epicId = null;
-            _relatedFrom = null;
-            _relatedTo = null;
+            _children = null;
+            _parents = null;
         }
 
         public IIssueBuilder WithIssueNumber(int issueNumber)
@@ -184,22 +184,22 @@ public sealed class Project : Entity, IEquatable<Project>
             _type = type;
             return this;
         }
-        public IIssueBuilder WithRelatedFrom(IEnumerable<IssueLink> parentIssues)
+        public IIssueBuilder WithParentIssues(IEnumerable<IssueLink> parentIssues)
         {
-            _relatedFrom = parentIssues.ToHashSet();
+            _parents = parentIssues.ToHashSet();
             return this;
         }
         public IIssueBuilder WithChildIssues(IEnumerable<IssueLink> childIssues)
         {
-            _relatedTo = childIssues.ToHashSet();
+            _children = childIssues.ToHashSet();
             return this;
         }
-        public IIssueBuilder WithReporter(TriageUser reporter)
+        public IIssueBuilder WithReporter(User reporter)
         {
             _reporter = reporter;
             return this;
         }
-        public IIssueBuilder WithAssignee(Maintainer assignee)
+        public IIssueBuilder WithAssignee(User assignee)
         {
             _assignee = assignee;
             return this;
@@ -244,19 +244,19 @@ public sealed class Project : Entity, IEquatable<Project>
                 issue.Type = _type.Value;
             }
 
-            if (_relatedFrom is not null)
+            if (_children is not null)
             {
-                foreach (IssueLink related in _relatedFrom)
+                foreach (IssueLink related in _children)
                 {
-                    related.Left.AddRelatedTo(related.Link, issue);
+                    related.Parent.AddLinkToChild(related.LinkType, issue);
                 }
             }
 
-            if (_relatedTo is not null)
+            if (_parents is not null)
             {
-                foreach (IssueLink related in _relatedTo)
+                foreach (IssueLink related in _parents)
                 {
-                    issue.AddRelatedTo(related.Link, related.Left);
+                    issue.AddLinkToChild(related.LinkType, related.Parent);
                 }
             }
 
@@ -308,10 +308,10 @@ public sealed class Project : Entity, IEquatable<Project>
         IIssueBuilder WithDescription(string? description);
         IIssueBuilder WithPriority(Priority priority);
         IIssueBuilder WithType(IssueType type);
-        IIssueBuilder WithRelatedFrom(IEnumerable<IssueLink> parentIssues);
+        IIssueBuilder WithParentIssues(IEnumerable<IssueLink> parentIssues);
         IIssueBuilder WithChildIssues(IEnumerable<IssueLink> childIssues);
-        IIssueBuilder WithReporter(TriageUser reporter);
-        IIssueBuilder WithAssignee(Maintainer assignee);
+        IIssueBuilder WithReporter(User reporter);
+        IIssueBuilder WithAssignee(User assignee);
         IIssueBuilder WithEpic(IssueIdentifier? epic);
         Issue Build();
     }

@@ -22,7 +22,7 @@ public sealed record class IssueDto(
     Priority Priority,
     IssueType Type,
     IssueStateValue State,
-    TriageUserDto Reporter,
-    MaintainerDto Assignee,
+    UserDto? Reporter,
+    UserDto? Assignee,
     string? EpicId);
 

@@ -22,8 +22,7 @@ namespace IssueTracker.RestApi.App;
 [JsonSerializable(typeof(ResponseV2.IssueSummaryDto))]
 [JsonSerializable(typeof(ResponseV2.LinkedIssueSummaryPage))]
 [JsonSerializable(typeof(ResponseV2.LinkedIssueSummaryDto))]
-[JsonSerializable(typeof(ResponseV2.TriageUserDto))]
-[JsonSerializable(typeof(ResponseV2.MaintainerDto))]
+[JsonSerializable(typeof(ResponseV2.UserDto))]
 public partial class SerializerContext : JsonSerializerContext
 {
 }

@@ -58,41 +58,41 @@ namespace IssueTracker.Issues.Infrastructure.CompiledModels
                 fieldInfo: typeof(Issue).GetField("<State>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 valueConverter: new IssueStateValueConverter());
 
-            var _description = runtimeEntityType.AddProperty(
+            var description = runtimeEntityType.AddProperty(
                 "_description",
                 typeof(string),
                 fieldInfo: typeof(Issue).GetField("_description", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 propertyAccessMode: PropertyAccessMode.Field,
                 maxLength: 500,
                 unicode: true);
-            _description.AddAnnotation("Relational:ColumnName", "Description");
+            description.AddAnnotation("Relational:ColumnName", "Description");
 
-            var _epicId = runtimeEntityType.AddProperty(
+            var epicId = runtimeEntityType.AddProperty(
                 "_epicId",
                 typeof(IssueIdentifier?),
                 fieldInfo: typeof(Issue).GetField("_epicId", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 propertyAccessMode: PropertyAccessMode.Field,
                 nullable: true,
                 valueConverter: new NullableIssueIdentifierValueConverter());
-            _epicId.AddAnnotation("Relational:ColumnName", "EpicId");
+            epicId.AddAnnotation("Relational:ColumnName", "EpicId");
 
-            var _issueNumber = runtimeEntityType.AddProperty(
+            var issueNumber = runtimeEntityType.AddProperty(
                 "_issueNumber",
                 typeof(int),
                 fieldInfo: typeof(Issue).GetField("_issueNumber", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 propertyAccessMode: PropertyAccessMode.Field);
-            _issueNumber.AddAnnotation("Relational:ColumnName", "IssueNumber");
+            issueNumber.AddAnnotation("Relational:ColumnName", "IssueNumber");
 
-            var _projectId = runtimeEntityType.AddProperty(
+            var projectId = runtimeEntityType.AddProperty(
                 "_projectId",
                 typeof(string),
                 fieldInfo: typeof(Issue).GetField("_projectId", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 propertyAccessMode: PropertyAccessMode.Field,
                 maxLength: 3,
                 unicode: false);
-            _projectId.AddAnnotation("Relational:ColumnName", "ProjectId");
+            projectId.AddAnnotation("Relational:ColumnName", "ProjectId");
 
-            var _startTime = runtimeEntityType.AddProperty(
+            var startTime = runtimeEntityType.AddProperty(
                 "_startTime",
                 typeof(DateTimeOffset?),
                 fieldInfo: typeof(Issue).GetField("_startTime", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
@@ -100,7 +100,7 @@ namespace IssueTracker.Issues.Infrastructure.CompiledModels
                 nullable: true,
                 valueConverter: new NullableDateTimeOffsetValueConverter());
 
-            var _stopTime = runtimeEntityType.AddProperty(
+            var stopTime = runtimeEntityType.AddProperty(
                 "_stopTime",
                 typeof(DateTimeOffset?),
                 fieldInfo: typeof(Issue).GetField("_stopTime", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
@@ -108,21 +108,21 @@ namespace IssueTracker.Issues.Infrastructure.CompiledModels
                 nullable: true,
                 valueConverter: new NullableDateTimeOffsetValueConverter());
 
-            var _title = runtimeEntityType.AddProperty(
+            var title = runtimeEntityType.AddProperty(
                 "_title",
                 typeof(string),
                 fieldInfo: typeof(Issue).GetField("_title", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 propertyAccessMode: PropertyAccessMode.Field,
                 maxLength: 200,
                 unicode: true);
-            _title.AddAnnotation("Relational:ColumnName", "Title");
+            title.AddAnnotation("Relational:ColumnName", "Title");
 
-            var _type = runtimeEntityType.AddProperty(
+            var type = runtimeEntityType.AddProperty(
                 "_type",
                 typeof(IssueType),
                 fieldInfo: typeof(Issue).GetField("_type", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 propertyAccessMode: PropertyAccessMode.Field);
-            _type.AddAnnotation("Relational:ColumnName", "Type");
+            type.AddAnnotation("Relational:ColumnName", "Type");
 
             var key = runtimeEntityType.AddKey(
                 new[] { id });
@@ -132,16 +132,16 @@ namespace IssueTracker.Issues.Infrastructure.CompiledModels
                 new[] { priority });
 
             var index0 = runtimeEntityType.AddIndex(
-                new[] { _epicId });
+                new[] { epicId });
 
             var index1 = runtimeEntityType.AddIndex(
-                new[] { _issueNumber });
+                new[] { issueNumber });
 
             var index2 = runtimeEntityType.AddIndex(
-                new[] { _projectId });
+                new[] { projectId });
 
             var index3 = runtimeEntityType.AddIndex(
-                new[] { _title });
+                new[] { title });
 
             return runtimeEntityType;
         }
