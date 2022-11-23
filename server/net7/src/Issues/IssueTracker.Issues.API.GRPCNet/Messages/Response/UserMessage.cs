@@ -16,14 +16,14 @@ using ProtoBuf;
 namespace IssueTracker.Issues.API.GRPCNet.Messages.Response;
 
 [ProtoContract]
-public sealed class MaintainerMessage
+public sealed class UserMessage
 {
     [ProtoMember(1)]
-    public string Id { get; set; } = Maintainer.Unassigned.UserId.ToString();
+    public string Id { get; set; } = User.Unassigned.UserId.ToString();
 
     [ProtoMember(2)]
-    public string FullName { get; set; } = Maintainer.Unassigned.FullName;
+    public string FullName { get; set; } = User.Unassigned.FullName;
 
-    public static MaintainerMessage Unassigned { get; } =
-        new() { Id = Maintainer.Unassigned.UserId.ToString(), FullName = Maintainer.Unassigned.FullName };
+    public static UserMessage Unassigned { get; } =
+        new() { Id = User.Unassigned.UserId.ToString(), FullName = User.Unassigned.FullName };
 }

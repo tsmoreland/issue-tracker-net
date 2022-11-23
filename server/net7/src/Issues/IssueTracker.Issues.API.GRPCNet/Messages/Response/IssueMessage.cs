@@ -59,13 +59,13 @@ public sealed class IssueMessage
     /// Reporter
     /// </summary>
     [ProtoMember(8)]
-    public TriageUserMessage Reporter { get; set; } = TriageUserMessage.Unassigned;
+    public UserMessage? Reporter { get; set; } 
 
     /// <summary>
     /// Assigned maintainer
     /// </summary>
     [ProtoMember(9)]
-    public MaintainerMessage Assignee { get; set; } = MaintainerMessage.Unassigned;
+    public UserMessage? Assignee { get; set; } 
 
     /// <summary>
     /// Epic Id

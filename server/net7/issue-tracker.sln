@@ -33,7 +33,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.GraphQl.App", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Issues", "Issues", "{85C789BA-B097-45BB-9FA1-4B3E584236E4}"
 	ProjectSection(SolutionItems) = preProject
-		src\Issues\issueTracker.issues.proto = src\Issues\issueTracker.issues.proto
+		src\Issues\issueTracker.issues.commands.proto = src\Issues\issueTracker.issues.commands.proto
+		src\Issues\issueTracker.issues.queries.proto = src\Issues\issueTracker.issues.queries.proto
+		src\Issues\issueTracker.issues.shared.proto = src\Issues\issueTracker.issues.shared.proto
 		src\Issues\Readme.md = src\Issues\Readme.md
 	EndProjectSection
 EndProject
@@ -55,7 +57,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Shared", "src\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{8FFE5A54-8C80-4415-A089-6E226C96EE59}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Infrastructure", "src\IssueTracker.Infrastructure\IssueTracker.Infrastructure.csproj", "{D4A58876-DC1E-4DE5-9C38-D50B89F5241F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Infrastructure", "src\IssueTracker.Infrastructure\IssueTracker.Infrastructure.csproj", "{D4A58876-DC1E-4DE5-9C38-D50B89F5241F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

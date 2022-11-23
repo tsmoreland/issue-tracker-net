@@ -54,11 +54,7 @@ message StatusMessage {
     string Message = 2;
 }
 
-message TriageUserMessage {
-    string UserId = 1;   
-    string FullName = 2;
-}
-message MaintainerMessage {
+message UserMessage {
     string UserId = 1;   
     string FullName = 2;
 }

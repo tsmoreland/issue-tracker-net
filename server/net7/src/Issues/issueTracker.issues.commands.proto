@@ -30,8 +30,8 @@ message AddIssueMessage {
     string Description = 3;
     Priority Priority = 4;
     IssueType Type = 5;
-    MaintainerMessage Assignee = 6;
-    TriageUserMessage Reporter = 7;
+    UserMessage Assignee = 6;
+    UserMessage Reporter = 7;
     OptionalString EpicId = 8;
 }
 
@@ -41,8 +41,8 @@ message EditIssueMessage {
     string Description = 3;
     Priority Priority = 4;
     IssueType Type = 5;
-    MaintainerMessage Assignee = 6;
-    TriageUserMessage Reporter = 7;
+    UserMessage Assignee = 6;
+    UserMessage Reporter = 7;
     OptionalString EpicId = 8;
 }
 

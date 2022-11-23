@@ -46,7 +46,7 @@ message IssueMessage {
     Priority Priority = 5;
     IssueType Type = 6;
     IssueState State = 7;
-    MaintainerMessage Assignee = 8;
-    TriageUserMessage Reporter = 9;
+    UserMessage Assignee = 8;
+    UserMessage Reporter = 9;
     OptionalString EpicId = 10;
 }

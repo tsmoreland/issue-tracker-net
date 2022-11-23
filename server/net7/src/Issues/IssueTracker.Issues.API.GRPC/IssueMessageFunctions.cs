@@ -19,15 +19,10 @@ namespace IssueTracker.Issues.API.GRPC;
 
 internal static class IssueMessageFunctions
 {
-    private static readonly TriageUserMessage s_triageUserFlyweight = new()
+    private static readonly UserMessage s_userFlyweight = new()
     {
-        UserId = TriageUser.Unassigned.UserId.ToString(),
-        FullName = TriageUser.Unassigned.FullName,
-    };
-    private static readonly MaintainerMessage s_maintainerFlyweight = new()
-    {
-        UserId = TriageUser.Unassigned.UserId.ToString(),
-        FullName = TriageUser.Unassigned.FullName,
+        UserId = User.Unassigned.UserId.ToString(),
+        FullName = User.Unassigned.FullName,
     };
 
     private static readonly IssueMessage s_flyweight = new()
@@ -38,8 +33,8 @@ internal static class IssueMessageFunctions
         State = default,
         Priority = default,
         Type = default,
-        Assignee = s_maintainerFlyweight,
-        Reporter = s_triageUserFlyweight,
+        Assignee = s_userFlyweight,
+        Reporter = s_userFlyweight,
         EpicId = EmptyOptionalString(),
     };
 
@@ -54,8 +49,8 @@ internal static class IssueMessageFunctions
             Priority = s_flyweight.Priority,
             Type = s_flyweight.Type,
             State = s_flyweight.State,
-            Assignee = s_maintainerFlyweight,
-            Reporter = s_triageUserFlyweight,
+            Assignee = s_userFlyweight,
+            Reporter = s_userFlyweight,
             EpicId = s_flyweight.EpicId,
         };
     }
@@ -71,13 +66,11 @@ internal static class IssueMessageFunctions
         return FlyweightWithResult(ResultCode.ResultNotFound);
     }
 
-    public static TriageUserMessage ToMessage(this UserDto user)
+    public static UserMessage ToMessage(this UserDto? user)
     {
-        return new TriageUserMessage { UserId = user.Id.ToString(), FullName = user.FullName };
-    }
-    public static MaintainerMessage ToMessage(this MaintainerDto user)
-    {
-        return new MaintainerMessage { UserId = user.Id.ToString(), FullName = user.FullName };
+        return user is not null
+            ? new UserMessage { UserId = user.Id.ToString(), FullName = user.FullName }
+            : new UserMessage { UserId = User.Unassigned.UserId.ToString(), FullName = User.Unassigned.FullName };
     }
 
     public static IssueMessage ToMessage(this IssueDto issue)
@@ -96,12 +89,8 @@ internal static class IssueMessageFunctions
         };
     }
 
-    public static TriageUser ToTriageUser(this TriageUserMessage message)
+    public static User ToUser(this UserMessage message)
     {
-        return new TriageUser(Guid.Parse(message.UserId), message.FullName);
-    }
-    public static Maintainer ToMaintainer(this MaintainerMessage message)
-    {
-        return new Maintainer(Guid.Parse(message.UserId), message.FullName);
+        return new User(Guid.Parse(message.UserId), message.FullName);
     }
 }
