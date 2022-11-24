@@ -14,7 +14,6 @@
 using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
-using Microsoft.Extensions.Logging;
 
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
@@ -181,6 +180,12 @@ public sealed class Issue : Entity
             {
                 throw new ArgumentException("Cannot assign epic to an epic", nameof(value));
             }
+
+            if (value is not null && value.Value.Equals(Id))
+            {
+                throw new ArgumentException("Issue cannot be it's own epic", nameof(value));
+            }
+
             _epicId = value;
         }
     }
@@ -230,7 +235,7 @@ public sealed class Issue : Entity
     }
 
     public IEnumerable<(LinkType, Issue)> ChildLinks =>
-        _parents
+        _children
             .Where(e => e.ParentId == Id)
             .Select(e => (e.LinkType, e.Child))
             .ToList()

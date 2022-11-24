@@ -31,7 +31,7 @@ public enum LinkType
     Duplicate,
 
     /// <summary>
-    /// Blockes or blocked by depending on which side of the join
+    /// Blocks or blocked by depending on which side of the join
     /// </summary>
     Blocking,
 

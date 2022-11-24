@@ -15,7 +15,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
-public readonly record struct IssueIdentifier(string Project, int IssueNumber) : IEquatable<IssueIdentifier>
+public readonly record struct IssueIdentifier(string Project, int IssueNumber) 
 {
     public static IssueIdentifier Empty { get; } = new();
 
