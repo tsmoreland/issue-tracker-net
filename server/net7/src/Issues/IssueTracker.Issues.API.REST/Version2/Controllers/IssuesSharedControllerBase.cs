@@ -107,7 +107,7 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
                 IssueIdentifier.FromStringIfNotNull(epicId)),
             cancellationToken));
         return issue is not null
-            ? Ok(issue)
+            ? NoContent()
             : NotFound();
     }
 
@@ -160,7 +160,7 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
             .Send(new PatchIssueCommand(issueId, patch.GetChanges()), cancellationToken)));
 
         return dto != null
-            ? Ok(dto)
+            ? NoContent()
             : NotFound();
     }
 }
