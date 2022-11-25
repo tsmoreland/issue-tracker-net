@@ -147,6 +147,12 @@ public sealed class Issue : Entity
             {
                 throw new ArgumentException("Start time cannot be set to null", nameof(value));
             }
+
+            if (_startTime > _stopTime)
+            {
+                _stopTime = null;
+            }
+
             _startTime = value;
         }
     }
@@ -227,7 +233,7 @@ public sealed class Issue : Entity
     /// <returns>
     /// the Comment to be added
     /// </returns>
-    public void AddCommentOrThrow(User author, string content)
+    public void AddComment(User author, string content)
     {
         ArgumentNullException.ThrowIfNull(author);
         Comment comment = new(Id, author, content);

@@ -59,6 +59,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{8FFE5A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueTracker.Infrastructure", "src\IssueTracker.Infrastructure\IssueTracker.Infrastructure.csproj", "{D4A58876-DC1E-4DE5-9C38-D50B89F5241F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Shared.AspNetCore", "src\IssueTracker.Shared.AspNetCore\IssueTracker.Shared.AspNetCore.csproj", "{C469CD1C-5845-4B6D-A5BF-CAB9ADB3264B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -125,6 +127,10 @@ Global
 		{D4A58876-DC1E-4DE5-9C38-D50B89F5241F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4A58876-DC1E-4DE5-9C38-D50B89F5241F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4A58876-DC1E-4DE5-9C38-D50B89F5241F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C469CD1C-5845-4B6D-A5BF-CAB9ADB3264B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C469CD1C-5845-4B6D-A5BF-CAB9ADB3264B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C469CD1C-5845-4B6D-A5BF-CAB9ADB3264B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C469CD1C-5845-4B6D-A5BF-CAB9ADB3264B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -148,6 +154,7 @@ Global
 		{BECB0B0E-7EC8-4A85-9160-679E6F2933F1} = {85C789BA-B097-45BB-9FA1-4B3E584236E4}
 		{40B05131-CD97-4763-B56A-619318C10B7B} = {8FFE5A54-8C80-4415-A089-6E226C96EE59}
 		{D4A58876-DC1E-4DE5-9C38-D50B89F5241F} = {F6FAAA63-3594-4FFD-884A-390055066734}
+		{C469CD1C-5845-4B6D-A5BF-CAB9ADB3264B} = {8FFE5A54-8C80-4415-A089-6E226C96EE59}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8421BB6A-BA23-402F-AC65-8492F4641EA7}

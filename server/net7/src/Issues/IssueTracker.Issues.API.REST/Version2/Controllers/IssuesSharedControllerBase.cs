@@ -19,6 +19,7 @@ using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
 using IssueTracker.Issues.Domain.Services.Version2.Commands;
 using IssueTracker.Issues.Domain.Services.Version2.Queries;
+using IssueTracker.Shared.AspNetCore.ModelBinders;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
@@ -74,6 +75,20 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
         return BadRequest(ModelState);
     }
 
+    [HttpGet("{issueIds}")]
+    [HttpHead("{issueIds}")]
+    public async Task<ActionResult<IEnumerable<IssueDto>>> GetMultipleIssues(
+        [ModelBinder(BinderType = typeof(ArrayModelBinder))]
+        [FromRoute] IEnumerable<IssueIdentifier> issueIds)
+    {
+        await Task.CompletedTask;
+
+        _ = issueIds;
+
+
+        return NotFound();
+    }
+
     /// <summary>
     /// Returns issue matching <paramref name="id"/> if found
     /// </summary>
@@ -81,7 +96,7 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
     [HttpGet("{id}")]
-    [HttpHead]
+    [HttpHead("{id}")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]

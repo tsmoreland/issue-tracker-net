@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\IssueTracker.Shared.AspNetCore\IssueTracker.Shared.AspNetCore.csproj" />
     <ProjectReference Include="..\..\IssueTracker.Shared\IssueTracker.Shared.csproj" />
     <ProjectReference Include="..\..\IssueTracker.SwashbuckleExtensions\IssueTracker.SwashbuckleExtensions.csproj" />
     <ProjectReference Include="..\IssueTracker.Issues.Domain\IssueTracker.Issues.Domain.csproj" />
