@@ -18,7 +18,7 @@ using IssueTracker.Issues.Domain.Configuration.TypeConverters;
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
 [TypeConverter(typeof(IssueIdentifierTypeConverter))]
-public readonly record struct IssueIdentifier(string Project, int IssueNumber) 
+public readonly record struct IssueIdentifier(string Project, int IssueNumber)
 {
     public static IssueIdentifier Empty { get; } = new();
 

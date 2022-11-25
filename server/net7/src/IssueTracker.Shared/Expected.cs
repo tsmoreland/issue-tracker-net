@@ -51,13 +51,13 @@ public static class Expected
     /// <param name="callerLinesNumber"><see cref="CallerLineNumberAttribute"/></param>
     /// <returns>A new instance of <see cref="Expected"/></returns>
     public static Expected<T> Failure<T>(Exception? error,
-        [CallerMemberName]string callerMemberName = "", [CallerFilePath] string callerFilePath = "", [CallerLineNumber] int callerLinesNumber = 0) =>
+        [CallerMemberName] string callerMemberName = "", [CallerFilePath] string callerFilePath = "", [CallerLineNumber] int callerLinesNumber = 0) =>
         new(false, default, error, new CallerLocation(callerMemberName, callerFilePath, callerLinesNumber));
 
     public static Expected<T, TErrorEnum> Failure<T, TErrorEnum>(TErrorEnum error,
-        [CallerMemberName]string callerMemberName = "", [CallerFilePath] string callerFilePath = "", [CallerLineNumber] int callerLinesNumber = 0)
+        [CallerMemberName] string callerMemberName = "", [CallerFilePath] string callerFilePath = "", [CallerLineNumber] int callerLinesNumber = 0)
         where TErrorEnum : struct, Enum =>
-        new(false, default, error, new CallerLocation(callerMemberName, callerFilePath, callerLinesNumber));   
+        new(false, default, error, new CallerLocation(callerMemberName, callerFilePath, callerLinesNumber));
 
 }
 

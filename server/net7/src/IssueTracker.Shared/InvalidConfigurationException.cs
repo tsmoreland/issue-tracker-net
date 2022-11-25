@@ -26,7 +26,7 @@ public sealed class InvalidConfigurationException : Exception
     public InvalidConfigurationException()
         : this(null, null)
     {
-        
+
     }
 
     /// <summary>

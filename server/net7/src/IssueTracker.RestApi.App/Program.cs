@@ -79,15 +79,15 @@ builder.Services
     })
     .AddJsonOptions(jsonOptions =>
     {
-        var reflectionOptions = new JsonSerializerOptions 
-        { 
+        var reflectionOptions = new JsonSerializerOptions
+        {
             TypeInfoResolver = new DefaultJsonTypeInfoResolver()
         };
 
         // configure to use source generated contracts
-        var sourceGenOptions = new JsonSerializerOptions 
-        { 
-            TypeInfoResolver = SerializerContext.Default 
+        var sourceGenOptions = new JsonSerializerOptions
+        {
+            TypeInfoResolver = SerializerContext.Default
         };
 
         jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = JsonStrategizedNamingPolicy.SnakeCase;
@@ -205,11 +205,11 @@ app.MapGet("/server_time", (bool utc) =>
     Results.Json(new { time = utc ? DateTime.UtcNow.ToString("o") : DateTime.Now.ToString("o") }));
 
 app.MapDelete("/api/reset",
-    async([FromServices] IIssueDataMigration migration) =>
+    async ([FromServices] IIssueDataMigration migration) =>
     {
-    await migration.ResetAndRepopultateAsync();
-    return Results.StatusCode(StatusCodes.Status418ImATeapot);
-});
+        await migration.ResetAndRepopultateAsync();
+        return Results.StatusCode(StatusCodes.Status418ImATeapot);
+    });
 
 app
     .MapHealthChecks("/health", GetHealthCheckOptions())

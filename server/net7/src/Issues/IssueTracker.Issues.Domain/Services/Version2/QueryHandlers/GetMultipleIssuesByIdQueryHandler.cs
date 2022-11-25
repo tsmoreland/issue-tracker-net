@@ -13,8 +13,8 @@
 
 using System.Runtime.CompilerServices;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.Services.Version2.Extensions;
 using IssueTracker.Issues.Domain.Services.Version2.DataTransferObjects;
+using IssueTracker.Issues.Domain.Services.Version2.Extensions;
 using IssueTracker.Issues.Domain.Services.Version2.Queries;
 using MediatR;
 

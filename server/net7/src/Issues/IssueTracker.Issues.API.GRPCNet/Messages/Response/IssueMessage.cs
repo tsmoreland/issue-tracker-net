@@ -59,13 +59,13 @@ public sealed class IssueMessage
     /// Reporter
     /// </summary>
     [ProtoMember(8)]
-    public UserMessage? Reporter { get; set; } 
+    public UserMessage? Reporter { get; set; }
 
     /// <summary>
     /// Assigned maintainer
     /// </summary>
     [ProtoMember(9)]
-    public UserMessage? Assignee { get; set; } 
+    public UserMessage? Assignee { get; set; }
 
     /// <summary>
     /// Epic Id
