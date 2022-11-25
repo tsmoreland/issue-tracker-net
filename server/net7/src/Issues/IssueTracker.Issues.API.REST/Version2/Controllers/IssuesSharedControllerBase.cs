@@ -79,14 +79,22 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
     [HttpHead("{issueIds}")]
     public async Task<ActionResult<IEnumerable<IssueDto>>> GetMultipleIssues(
         [ModelBinder(BinderType = typeof(ArrayModelBinder))]
-        [FromRoute] IEnumerable<IssueIdentifier> issueIds)
+        [FromRoute] IEnumerable<IssueIdentifier> issueIds, CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
+        List<IssueIdentifier> ids = new(issueIds);
+        if (!ids.Any())
+        {
+            return NotFound();
+        }
 
-        _ = issueIds;
+        GetMultipleIssuesByIdQuery query = new(ids);
+        List<IssueDto> matches = await (await Mediator
+            .Send(query, cancellationToken)).Select(i => Mapper.Map<IssueDto>(i))
+            .ToListAsync(cancellationToken);
 
-
-        return NotFound();
+        return matches.Any()
+            ? Ok(matches)
+            : NotFound();
     }
 
     /// <summary>
