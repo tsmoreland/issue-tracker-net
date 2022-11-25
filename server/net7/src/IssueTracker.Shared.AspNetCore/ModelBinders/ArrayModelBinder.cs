@@ -20,7 +20,7 @@ public sealed class ArrayModelBinder : IModelBinder
 
         string value = bindingContext.ValueProvider.GetValue(bindingContext.ModelName).ToString();
 
-        if (!string.IsNullOrWhiteSpace(value))
+        if (string.IsNullOrWhiteSpace(value))
         {
             bindingContext.Result = ModelBindingResult.Success(null);
             return Task.CompletedTask;

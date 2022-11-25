@@ -68,8 +68,8 @@ public sealed class IssueRepository : IIssueRepository
     {
         return _dbContext.Issues.AsNoTracking()
             .AsNoTracking()
-            .Include("_relatedTo")
-            .Include("_relatedFrom")
+            .Include("_children")
+            .Include("_parents")
             .Where(filterExpression)
             .Select(selectExpression)
             .DefaultIfEmpty(default)
@@ -82,8 +82,8 @@ public sealed class IssueRepository : IIssueRepository
         {
             return await _dbContext.Issues
                 .AsNoTracking()
-                .Include("_relatedTo")
-                .Include("_relatedFrom")
+                .Include("_children")
+                .Include("_parents")
                 .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
         }
 
@@ -93,8 +93,8 @@ public sealed class IssueRepository : IIssueRepository
             return issue;
         }
 
-        Task relatedToTask = _dbContext.Entry(issue).Collection("_relatedTo").LoadAsync(cancellationToken);
-        Task relatedFromTask = _dbContext.Entry(issue).Collection("_relatedFrom").LoadAsync(cancellationToken);
+        Task relatedToTask = _dbContext.Entry(issue).Collection("_children").LoadAsync(cancellationToken);
+        Task relatedFromTask = _dbContext.Entry(issue).Collection("_parents").LoadAsync(cancellationToken);
 
         await Task.WhenAll(relatedToTask, relatedFromTask);
 
@@ -136,8 +136,8 @@ public sealed class IssueRepository : IIssueRepository
             .CountAsync(cancellationToken);
 
         return (total, _dbContext.Issues.AsNoTracking()
-            .Include("_relatedTo")
-            .Include("_relatedFrom")
+            .Include("_children")
+            .Include("_parents")
             .Where(filterExpression)
             .OrderUsing(sorting)
             .Select(selectExpression)

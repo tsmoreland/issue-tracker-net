@@ -19,7 +19,6 @@ using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
 using IssueTracker.Issues.Domain.Services.Version2.Commands;
 using IssueTracker.Issues.Domain.Services.Version2.Queries;
-using IssueTracker.Shared.AspNetCore.ModelBinders;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
@@ -41,26 +40,8 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
 
     }
 
-    /// <summary>
-    /// Returns all issues 
-    /// </summary>
-    /// <param name="pageNumber" example="1" >current page number to return</param>
-    /// <param name="pageSize" example="10">maximum number of items to return</param>
-    /// <param name="orderBy" example="Priority, Type, Title DESC" >order by spec</param>
-    /// <param name="cancellationToken">a cancellation token.</param>
-    /// <returns>all issues</returns>
-    [HttpGet]
-    [HttpHead]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateModelStateServiceFilter]
-    public async Task<ActionResult<IssueSummaryPage>> GetAll(
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10,
-        [FromQuery] string? orderBy = null,
-        CancellationToken cancellationToken = default)
+    /// <inheritdoc cref="IssuesController.GetAll(int, int, string?, CancellationToken)"/>
+    protected async Task<ActionResult<IssueSummaryPage>> GetAllIssues(int pageNumber, int pageSize, string? orderBy, CancellationToken cancellationToken = default)
     {
         PagingOptions paging = new(pageNumber, pageSize);
         SortingOptions sorting = SortingOptions.FromString(orderBy);
@@ -75,44 +56,8 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
         return BadRequest(ModelState);
     }
 
-    [HttpGet("{issueIds}")]
-    [HttpHead("{issueIds}")]
-    public async Task<ActionResult<IEnumerable<IssueDto>>> GetMultipleIssues(
-        [ModelBinder(BinderType = typeof(ArrayModelBinder))]
-        [FromRoute] IEnumerable<IssueIdentifier> issueIds, CancellationToken cancellationToken)
-    {
-        List<IssueIdentifier> ids = new(issueIds);
-        if (!ids.Any())
-        {
-            return NotFound();
-        }
-
-        GetMultipleIssuesByIdQuery query = new(ids);
-        List<IssueDto> matches = await (await Mediator
-            .Send(query, cancellationToken)).Select(i => Mapper.Map<IssueDto>(i))
-            .ToListAsync(cancellationToken);
-
-        return matches.Any()
-            ? Ok(matches)
-            : NotFound();
-    }
-
-    /// <summary>
-    /// Returns issue matching <paramref name="id"/> if found
-    /// </summary>
-    /// <param name="id" example="APP-1234">unique id of issue</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
-    [HttpGet("{id}")]
-    [HttpHead("{id}")]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateIssueIdServiceFilter]
-    [Filters.ValidateModelStateServiceFilter]
-    public async Task<ActionResult<IssueDto>> Get(string id, CancellationToken cancellationToken)
+    /// <inheritdoc cref="IssuesController.Get(string, CancellationToken)"/>
+    protected async Task<ActionResult<IssueDto>> GetIssueById(string id, CancellationToken cancellationToken)
     {
         IssueDto? issue = Mapper.Map<IssueDto?>(await Mediator
             .Send(new FindIssueDtoByIdQuery(IssueIdentifier.FromString(id)), cancellationToken));
@@ -121,18 +66,8 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
             : NotFound();
     }
 
-    /// <summary>
-    /// Adds a new issue 
-    /// </summary>
-    /// <param name="model">the issue to add</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns>newly created <see cref="IssueDto"/></returns>
-    [HttpPost]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status201Created, "Successful Response")]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateModelStateServiceFilter]
-    public async Task<ActionResult<IssueDto>> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)
+    /// <inheritdoc cref="IssuesController.Post(AddIssueDto, CancellationToken)"/>
+    protected async Task<ActionResult<IssueDto>> Create(string routeName, AddIssueDto model, CancellationToken cancellationToken)
     {
         (string project, string title, string description, Priority priority, IssueType type, string? epicId) = model;
 
@@ -143,7 +78,8 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
                 priority, type,
                 IssueIdentifier.FromStringIfNotNull(epicId)),
                 cancellationToken));
-        return new ObjectResult(issue) { StatusCode = StatusCodes.Status201Created };
+
+        return CreatedAtRoute(routeName, new { id = issue.Id }, issue);
     }
 
     /// <summary>

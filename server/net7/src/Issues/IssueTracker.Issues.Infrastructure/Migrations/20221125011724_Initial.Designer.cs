@@ -11,13 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IssueTracker.Issues.Infrastructure.Migrations
 {
     [DbContext(typeof(IssuesDbContext))]
-    [Migration("20220609225609_RelatedLinkFix")]
-    partial class RelatedLinkFix
+    [Migration("20221125011724_Initial")]
+    partial class Initial
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.5");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.0");
 
             modelBuilder.Entity("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Issue", b =>
                 {
@@ -53,12 +54,12 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("IssueNumber");
 
-                    b.Property<string>("_project")
+                    b.Property<string>("_projectId")
                         .IsRequired()
                         .HasMaxLength(3)
                         .IsUnicode(false)
                         .HasColumnType("TEXT")
-                        .HasColumnName("Project");
+                        .HasColumnName("ProjectId");
 
                     b.Property<long?>("_startTime")
                         .HasColumnType("INTEGER");
@@ -85,7 +86,7 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
 
                     b.HasIndex("_issueNumber");
 
-                    b.HasIndex("_project");
+                    b.HasIndex("_projectId");
 
                     b.HasIndex("_title");
 
@@ -94,22 +95,45 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
 
             modelBuilder.Entity("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.IssueLink", b =>
                 {
-                    b.Property<string>("LeftId")
+                    b.Property<string>("ParentId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("RightId")
+                    b.Property<string>("ChildId")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Link")
+                    b.Property<int>("LinkType")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(0);
 
-                    b.HasKey("LeftId", "RightId");
+                    b.HasKey("ParentId", "ChildId");
 
-                    b.HasIndex("RightId");
+                    b.HasIndex("ChildId");
 
                     b.ToTable("IssueLinks", (string)null);
+                });
+
+            modelBuilder.Entity("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Project", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("LastModifiedTime")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(true)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id");
+
+                    b.HasIndex("Name");
+
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Issue", b =>
@@ -119,7 +143,13 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                         .HasForeignKey("_epicId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.OwnsOne("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Maintainer", "Assignee", b1 =>
+                    b.HasOne("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("_projectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.User", "Assignee", b1 =>
                         {
                             b1.Property<string>("IssueId")
                                 .HasColumnType("TEXT");
@@ -145,7 +175,7 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                                 .HasForeignKey("IssueId");
                         });
 
-                    b.OwnsOne("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.TriageUser", "Reporter", b1 =>
+                    b.OwnsOne("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.User", "Reporter", b1 =>
                         {
                             b1.Property<string>("IssueId")
                                 .HasColumnType("TEXT");
@@ -171,37 +201,37 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                                 .HasForeignKey("IssueId");
                         });
 
-                    b.Navigation("Assignee")
-                        .IsRequired();
+                    b.Navigation("Assignee");
 
-                    b.Navigation("Reporter")
-                        .IsRequired();
+                    b.Navigation("Project");
+
+                    b.Navigation("Reporter");
                 });
 
             modelBuilder.Entity("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.IssueLink", b =>
                 {
-                    b.HasOne("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Issue", "Left")
-                        .WithMany("_relatedTo")
-                        .HasForeignKey("LeftId")
+                    b.HasOne("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Issue", "Parent")
+                        .WithMany("_children")
+                        .HasForeignKey("ChildId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Issue", "Right")
-                        .WithMany("_relatedFrom")
-                        .HasForeignKey("RightId")
+                    b.HasOne("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Issue", "Child")
+                        .WithMany("_parents")
+                        .HasForeignKey("ParentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Left");
+                    b.Navigation("Child");
 
-                    b.Navigation("Right");
+                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Issue", b =>
                 {
-                    b.Navigation("_relatedFrom");
+                    b.Navigation("_children");
 
-                    b.Navigation("_relatedTo");
+                    b.Navigation("_parents");
                 });
 #pragma warning restore 612, 618
         }

@@ -11,10 +11,13 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using IssueTracker.Issues.Domain.Configuration.TypeConverters;
 
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
+[TypeConverter(typeof(IssueIdentifierTypeConverter))]
 public readonly record struct IssueIdentifier(string Project, int IssueNumber) 
 {
     public static IssueIdentifier Empty { get; } = new();
