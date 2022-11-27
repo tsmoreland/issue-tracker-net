@@ -15,8 +15,10 @@ using System.Net.Mime;
 using AutoMapper;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Request;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -31,6 +33,15 @@ namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 [ApiVersion("2")]
 public sealed class IssuesController : IssuesSharedControllerBase
 {
+    private static class RouteNames
+    {
+        public const string Get = "GetIssueById";
+        public const string GetPagedIssues = "GetIssuesInPages";
+        public const string Create = "CreateIssue";
+        public const string Update = "UpdateIssue";
+        public const string Patch = "PatchIssue";
+    }
+
     /// <summary>
     /// Instantiates a new instance of the <see cref="IssuesController"/> class.
     /// </summary>
@@ -46,7 +57,7 @@ public sealed class IssuesController : IssuesSharedControllerBase
     /// <param name="id" example="APP-1234">unique id of issue</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
-    [HttpGet("{id}", Name = nameof(Get))]
+    [HttpGet("{id}", Name = RouteNames.Get)]
     [HttpHead("{id}")]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
@@ -57,7 +68,7 @@ public sealed class IssuesController : IssuesSharedControllerBase
         "application/problem+json", "application/problem+xml")]
     [Filters.ValidateIssueIdServiceFilter]
     [Filters.ValidateModelStateServiceFilter]
-    public Task<ActionResult<IssueDto>> Get(string id, CancellationToken cancellationToken)
+    public Task<ActionResult<IssueDto>> Get(IssueIdentifier id, CancellationToken cancellationToken)
     {
         return base.GetIssueById(id, cancellationToken);
     }
@@ -70,7 +81,7 @@ public sealed class IssuesController : IssuesSharedControllerBase
     /// <param name="orderBy" example="Priority, Type, Title DESC" >order by spec</param>
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all issues</returns>
-    [HttpGet]
+    [HttpGet(Name = RouteNames.GetPagedIssues)]
     [HttpHead]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
@@ -93,7 +104,7 @@ public sealed class IssuesController : IssuesSharedControllerBase
     /// <param name="model">the issue to add</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>newly created <see cref="IssueDto"/></returns>
-    [HttpPost]
+    [HttpPost(Name = RouteNames.Create)]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status201Created, "Successful Response")]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails),
@@ -101,6 +112,52 @@ public sealed class IssuesController : IssuesSharedControllerBase
     [Filters.ValidateModelStateServiceFilter]
     public Task<ActionResult<IssueDto>> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
-        return base.Create(nameof(Get), model, cancellationToken);
+        return base.Create(RouteNames.Get, model, cancellationToken);
+    }
+
+    /// <summary>
+    /// Updates existing issue given by <paramref name="id"/>
+    /// </summary>
+    /// <param name="id">unique id of the issue to update</param>
+    /// <param name="model">new values for the issue</param>
+    /// <param name="cancellationToken">A cancellation token</param>
+    /// <returns>updated <see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
+    [HttpPut("{id}", Name = RouteNames.Update)]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
+    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [Filters.ValidateIssueIdServiceFilter]
+    [Filters.ValidateModelStateServiceFilter]
+    public Task<ActionResult<IssueDto>> Put(IssueIdentifier id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
+    {
+        return base.UpdateIssue(id, model, cancellationToken);
+    }
+
+    /// <summary>
+    /// Updates existing issue given by <paramref name="id"/>
+    /// </summary>
+    /// <param name="id">unique id of the issue to update</param>
+    /// <param name="patchDoc">patch document containing details on changes to </param>
+    /// <param name="cancellationToken">A cancellation token</param>
+    /// <returns></returns>
+    [HttpPatch("{id}", Name = RouteNames.Patch)]
+    [Consumes("application/json-patch+json")]
+    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [Filters.ValidateModelStateServiceFilter]
+    public Task<ActionResult<IssueDto>> Patch(IssueIdentifier id, [FromBody] JsonPatchDocument<IssuePatch>? patchDoc, CancellationToken cancellationToken)
+    {
+        return base.PatchIssue(id, patchDoc, cancellationToken);
+    }
+
+    [HttpOptions]
+    public IActionResult GetIssuesOptions()
+    {
+        Response.Headers.Add("Allow", "GET,HEAD,POST,OPTIONS");
+        return Ok();
     }
 }

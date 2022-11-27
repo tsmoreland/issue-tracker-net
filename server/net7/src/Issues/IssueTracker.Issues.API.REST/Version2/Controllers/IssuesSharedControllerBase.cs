@@ -11,7 +11,6 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Net.Mime;
 using AutoMapper;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Request;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
@@ -20,10 +19,8 @@ using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
 using IssueTracker.Issues.Domain.Services.Version2.Commands;
 using IssueTracker.Issues.Domain.Services.Version2.Queries;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 
@@ -56,11 +53,11 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
         return BadRequest(ModelState);
     }
 
-    /// <inheritdoc cref="IssuesController.Get(string, CancellationToken)"/>
-    protected async Task<ActionResult<IssueDto>> GetIssueById(string id, CancellationToken cancellationToken)
+    /// <inheritdoc cref="IssuesController.Get(IssueIdentifier, CancellationToken)"/>
+    protected async Task<ActionResult<IssueDto>> GetIssueById(IssueIdentifier id, CancellationToken cancellationToken)
     {
         IssueDto? issue = Mapper.Map<IssueDto?>(await Mediator
-            .Send(new FindIssueDtoByIdQuery(IssueIdentifier.FromString(id)), cancellationToken));
+            .Send(new FindIssueDtoByIdQuery(id), cancellationToken));
         return issue is not null
             ? Ok(issue)
             : NotFound();
@@ -82,26 +79,12 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
         return CreatedAtRoute(routeName, new { id = issue.Id }, issue);
     }
 
-    /// <summary>
-    /// Updates existing issue given by <paramref name="id"/>
-    /// </summary>
-    /// <param name="id">unique id of the issue to update</param>
-    /// <param name="model">new values for the issue</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns>updated <see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
-    [HttpPut("{id}")]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateIssueIdServiceFilter]
-    [Filters.ValidateModelStateServiceFilter]
-    public async Task<ActionResult<IssueDto>> Put(string id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
+    /// <inheritdoc cref="IssuesController.Put(IssueIdentifier, EditIssueDto, CancellationToken)"/>
+    protected async Task<ActionResult<IssueDto>> UpdateIssue(IssueIdentifier id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
     {
         (string? title, string? description, Priority? priority, IssueType type, string? epicId) = model;
         IssueDto? issue = Mapper.Map<IssueDto>(await Mediator.Send(
-            new ModifyIssueCommand(IssueIdentifier.FromString(id),
+            new ModifyIssueCommand(id,
                 title, description,
                 priority, type,
                 IssueIdentifier.FromStringIfNotNull(epicId)),
@@ -111,25 +94,10 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
             : NotFound();
     }
 
-    /// <summary>
-    /// Updates existing issue given by <paramref name="id"/>
-    /// </summary>
-    /// <param name="id">unique id of the issue to update</param>
-    /// <param name="patchDoc">patch document containing details on changes to </param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns></returns>
-    [HttpPatch("{id}")]
-    [Consumes("application/json-patch+json")]
-    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateModelStateServiceFilter]
-    public async Task<ActionResult<IssueDto>> Patch(string id, [FromBody] JsonPatchDocument<IssuePatch>? patchDoc, CancellationToken cancellationToken)
+    /// <inheritdoc cref="IssuesController.Patch(IssueIdentifier, JsonPatchDocument{IssuePatch}?, CancellationToken)"/>
+    protected async Task<ActionResult<IssueDto>> PatchIssue(IssueIdentifier id, [FromBody] JsonPatchDocument<IssuePatch>? patchDoc, CancellationToken cancellationToken)
     {
-        IssueIdentifier issueId = IssueIdentifier.FromString(id);
-
-        Issue? issue = await Mediator.Send(new FindIssueByIdQuery(issueId, true), cancellationToken);
+        Issue? issue = await Mediator.Send(new FindIssueByIdQuery(id, true), cancellationToken);
         if (issue is null)
         {
             return NotFound();
@@ -157,7 +125,7 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
         }
 
         IssueDto? dto = Mapper.Map<IssueDto?>((await Mediator
-            .Send(new PatchIssueCommand(issueId, patch.GetChanges()), cancellationToken)));
+            .Send(new PatchIssueCommand(id, patch.GetChanges()), cancellationToken)));
 
         return dto != null
             ? NoContent()

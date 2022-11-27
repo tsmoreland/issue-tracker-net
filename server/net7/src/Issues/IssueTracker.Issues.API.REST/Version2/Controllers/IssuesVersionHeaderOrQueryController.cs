@@ -11,10 +11,14 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Net.Mime;
 using AutoMapper;
+using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 
@@ -30,5 +34,27 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesSharedControlle
     public IssuesVersionHeaderOrQueryController(IMediator mediator, IMapper mapper)
         : base(mediator, mapper)
     {
+    }
+
+    /// <summary>
+    /// Returns issue matching <paramref name="id"/> if found
+    /// </summary>
+    /// <param name="id" example="APP-1234">unique id of issue</param>
+    /// <param name="cancellationToken">A cancellation token</param>
+    /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
+    [HttpGet("{id}", Name = "GetIssueById-usingHeaderOrQueryForVersion")]
+    [HttpHead("{id}")]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
+    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails),
+        "application/problem+json", "application/problem+xml")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails),
+        "application/problem+json", "application/problem+xml")]
+    [Filters.ValidateIssueIdServiceFilter]
+    [Filters.ValidateModelStateServiceFilter]
+    public Task<ActionResult<IssueDto>> Get(IssueIdentifier id, CancellationToken cancellationToken)
+    {
+        return base.GetIssueById(id, cancellationToken);
     }
 }
