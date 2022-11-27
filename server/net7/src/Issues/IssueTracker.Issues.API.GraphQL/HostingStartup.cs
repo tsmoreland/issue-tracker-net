@@ -12,10 +12,6 @@
 //
 
 using GraphQL;
-using GraphQL.DataLoader;
-using GraphQL.MicrosoftDI;
-using GraphQL.Server;
-using GraphQL.SystemTextJson;
 using IssueTracker.Issues.API.GraphQL;
 using IssueTracker.Issues.API.GraphQL.Schemas;
 using Microsoft.AspNetCore.Hosting;

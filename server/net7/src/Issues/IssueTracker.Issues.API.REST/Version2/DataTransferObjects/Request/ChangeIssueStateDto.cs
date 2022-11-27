@@ -11,10 +11,6 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Diagnostics.CodeAnalysis;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
-
 namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Request;
 
 /// <summary>

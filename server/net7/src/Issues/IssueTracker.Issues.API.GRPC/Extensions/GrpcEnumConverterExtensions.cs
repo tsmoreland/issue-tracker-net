@@ -12,7 +12,6 @@
 //
 
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.State;
 
 namespace IssueTracker.Issues.API.GRPC.Extensions;
 
