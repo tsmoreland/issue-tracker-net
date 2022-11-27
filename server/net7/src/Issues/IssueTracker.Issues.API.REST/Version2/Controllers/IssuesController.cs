@@ -68,9 +68,9 @@ public sealed class IssuesController : IssuesSharedControllerBase
         "application/problem+json", "application/problem+xml")]
     [Filters.ValidateIssueIdServiceFilter]
     [Filters.ValidateModelStateServiceFilter]
-    public Task<ActionResult<IssueDto>> Get(IssueIdentifier id, CancellationToken cancellationToken)
+    public Task<ActionResult<IssueDto>> Get(string id, CancellationToken cancellationToken)
     {
-        return base.GetIssueById(id, cancellationToken);
+        return base.GetIssueById(IssueIdentifier.FromString(id), cancellationToken);
     }
 
     /// <summary>
@@ -130,9 +130,9 @@ public sealed class IssuesController : IssuesSharedControllerBase
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateIssueIdServiceFilter]
     [Filters.ValidateModelStateServiceFilter]
-    public Task<ActionResult<IssueDto>> Put(IssueIdentifier id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
+    public Task<ActionResult<IssueDto>> Put(string id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
     {
-        return base.UpdateIssue(id, model, cancellationToken);
+        return base.UpdateIssue(IssueIdentifier.FromString(id), model, cancellationToken);
     }
 
     /// <summary>
@@ -149,9 +149,9 @@ public sealed class IssuesController : IssuesSharedControllerBase
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateModelStateServiceFilter]
-    public Task<ActionResult<IssueDto>> Patch(IssueIdentifier id, [FromBody] JsonPatchDocument<IssuePatch>? patchDoc, CancellationToken cancellationToken)
+    public Task<ActionResult<IssueDto>> Patch(string id, [FromBody] JsonPatchDocument<IssuePatch>? patchDoc, CancellationToken cancellationToken)
     {
-        return base.PatchIssue(id, patchDoc, cancellationToken);
+        return base.PatchIssue(IssueIdentifier.FromString(id), patchDoc, cancellationToken);
     }
 
     [HttpOptions]

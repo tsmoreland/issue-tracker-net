@@ -15,34 +15,39 @@ using System.ComponentModel;
 using System.Globalization;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 
-namespace IssueTracker.Issues.Domain.Configuration.TypeConverters;
+    namespace IssueTracker.Issues.Domain.Configuration.TypeConverters;
 
 public sealed class IssueIdentifierTypeConverter : TypeConverter
 {
     /// <inheritdoc />
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
     {
-        return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
+        return sourceType == typeof(string) || sourceType == typeof(IssueIdentifier) || base.CanConvertFrom(context, sourceType);
     }
 
     /// <inheritdoc />
     public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
     {
-        if (value is not string @string || !IssueIdentifier.TryConvert(@string, out IssueIdentifier? id))
+        return value switch
         {
-            return base.ConvertFrom(context, culture, value);
-        }
-
-        return id;
+            string @string => IssueIdentifier.TryConvert(@string, out IssueIdentifier? id) ? id : base.ConvertFrom(context, culture, value),
+            IssueIdentifier issueId => issueId.ToString(),
+            _ => base.ConvertFrom(context, culture, value)
+        };
     }
+
+    
 
     /// <inheritdoc />
     public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
     {
-        if (value is not IssueIdentifier id || destinationType != typeof(string))
+        return value switch
         {
-            return base.ConvertTo(context, culture, value, destinationType);
-        }
-        return id.ToString();
+            string @string when destinationType == typeof(IssueIdentifier) =>
+                IssueIdentifier.TryConvert(@string, out IssueIdentifier? id) ? id : base.ConvertTo(context, culture, value, destinationType),
+            IssueIdentifier issueId when destinationType == typeof(string) =>
+                issueId.ToString(),
+            _ => base.ConvertTo(context, culture, value, destinationType),
+        };
     }
 }

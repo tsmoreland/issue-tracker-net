@@ -53,7 +53,7 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
         return BadRequest(ModelState);
     }
 
-    /// <inheritdoc cref="IssuesController.Get(IssueIdentifier, CancellationToken)"/>
+    /// <inheritdoc cref="IssuesController.Get(string, CancellationToken)"/>
     protected async Task<ActionResult<IssueDto>> GetIssueById(IssueIdentifier id, CancellationToken cancellationToken)
     {
         IssueDto? issue = Mapper.Map<IssueDto?>(await Mediator
@@ -79,7 +79,7 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
         return CreatedAtRoute(routeName, new { id = issue.Id }, issue);
     }
 
-    /// <inheritdoc cref="IssuesController.Put(IssueIdentifier, EditIssueDto, CancellationToken)"/>
+    /// <inheritdoc cref="IssuesController.Put(string, EditIssueDto, CancellationToken)"/>
     protected async Task<ActionResult<IssueDto>> UpdateIssue(IssueIdentifier id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
     {
         (string? title, string? description, Priority? priority, IssueType type, string? epicId) = model;
@@ -94,7 +94,7 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
             : NotFound();
     }
 
-    /// <inheritdoc cref="IssuesController.Patch(IssueIdentifier, JsonPatchDocument{IssuePatch}?, CancellationToken)"/>
+    /// <inheritdoc cref="IssuesController.Patch(string, JsonPatchDocument{IssuePatch}?, CancellationToken)"/>
     protected async Task<ActionResult<IssueDto>> PatchIssue(IssueIdentifier id, [FromBody] JsonPatchDocument<IssuePatch>? patchDoc, CancellationToken cancellationToken)
     {
         Issue? issue = await Mediator.Send(new FindIssueByIdQuery(id, true), cancellationToken);
