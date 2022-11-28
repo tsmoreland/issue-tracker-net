@@ -12,6 +12,7 @@
 //
 
 using System.IO.Compression;
+using System.Net.Mime;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -27,6 +28,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -74,6 +76,18 @@ builder.Services
         apiBehaviourOptions.SuppressInferBindingSourcesForParameters = true;
         apiBehaviourOptions.SuppressMapClientErrors = true;
         apiBehaviourOptions.SuppressModelStateInvalidFilter = true;
+        apiBehaviourOptions.InvalidModelStateResponseFactory = context =>
+        {
+            ProblemDetailsFactory factory = context.HttpContext.RequestServices.GetRequiredService<ProblemDetailsFactory>();
+            ValidationProblemDetails validationProblems = factory.CreateValidationProblemDetails(context.HttpContext, context.ModelState);
+            validationProblems.Detail = "See the errors for details.";
+            validationProblems.Instance = context.HttpContext.Request.Path;
+            validationProblems.Status = StatusCodes.Status422UnprocessableEntity;
+            validationProblems.Title = "One or more validation errors occurred.";
+            // use Type to specify URL if we have one - something that would shed more light on the proble
+
+            return new UnprocessableEntityObjectResult(validationProblems) { ContentTypes = { "application/problem+json" } };
+        };
     })
     .AddJsonOptions(jsonOptions =>
     {

@@ -12,7 +12,6 @@
 //
 
 using System.Net.Mime;
-using AutoMapper;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 using IssueTracker.Issues.API.REST.Version2.Extensions;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
@@ -30,14 +29,16 @@ namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 [Route("api/v{version:apiVersion}/defects")]
 [Tags("Defects (URL versioning)")]
 [ApiVersion("2")]
-public sealed class DefectsController : IssuesControllerBase
+public sealed class DefectsController : ControllerBase
 {
+    private readonly IMediator _mediator;
+
     /// <summary>
     /// Instantiates a new instance of the <see cref="TasksController"/> class.
     /// </summary>
-    public DefectsController(IMediator mediator, IMapper mapper)
-        : base(mediator, mapper)
+    public DefectsController(IMediator mediator)
     {
+        _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }
 
     /// <summary>
@@ -65,7 +66,7 @@ public sealed class DefectsController : IssuesControllerBase
     {
         // extension method so 'this' is required
         return this.GetAllWithIssueType(
-            Mediator,
+            _mediator,
             IssueType.Defect,
             pageNumber,
             pageSize,

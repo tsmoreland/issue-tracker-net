@@ -12,13 +12,16 @@
 //
 
 using AutoMapper;
+using IssueTracker.Issues.API.REST.Version2.Converters;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Request;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
 using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
 using IssueTracker.Issues.Domain.Services.Version2.Commands;
 using IssueTracker.Issues.Domain.Services.Version2.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,14 +31,20 @@ namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 /// Controller methods shared between <see cref="IssuesController"/> and <see cref="IssuesVersionHeaderOrQueryController"/>
 /// </summary>
 [ApiController]
-public abstract class IssuesSharedControllerBase : IssuesControllerBase
+public abstract class IssuesSharedControllerBase : ControllerBase
 {
     /// <summary/>
     protected IssuesSharedControllerBase(IMediator mediator, IMapper mapper)
-        : base(mediator, mapper)
     {
-
+        Mediator = mediator;
+        Mapper = mapper;
     }
+
+    /// <summary/>
+    protected IMediator Mediator { get; }
+
+    /// <summary/>
+    protected IMapper Mapper { get; }
 
     /// <inheritdoc cref="IssuesController.GetAll(int, int, string?, CancellationToken)"/>
     protected async Task<ActionResult<IssueSummaryPage>> GetAllIssues(int pageNumber, int pageSize, string? orderBy, CancellationToken cancellationToken = default)
@@ -130,5 +139,26 @@ public abstract class IssuesSharedControllerBase : IssuesControllerBase
         return dto != null
             ? NoContent()
             : NotFound();
+    }
+
+    /// <inheritdoc cref="IssuesController.Delete(string, CancellationToken)"/>
+    protected async Task<IActionResult> DeleteIssue(IssueIdentifier id, CancellationToken cancellationToken)
+    {
+        return await Mediator.Send(new DeleteIssueCommand(id), cancellationToken)
+            ? new StatusCodeResult(StatusCodes.Status204NoContent)
+            : NotFound();
+    }
+
+    /// <inheritdoc cref="IssuesController.ChangeState(string, ChangeIssueStateDto, CancellationToken)"/>
+    protected Task<IActionResult> ChangeIssueState(IssueIdentifier id, ChangeIssueStateDto changeState, CancellationToken cancellationToken)
+    {
+        if (ChangeIssueStateDtoConverter.TryConvertToCommand(id, changeState.State, out StateChangeCommand? command))
+        {
+            return Mediator.Send(command, cancellationToken)
+                .ContinueWith<IActionResult>(_ => Ok(), cancellationToken);
+        }
+
+        ModelState.AddModelError("State", "unsupported state");
+        return Task.FromResult<IActionResult>(BadRequest(new ValidationProblemDetails(ModelState)));
     }
 }

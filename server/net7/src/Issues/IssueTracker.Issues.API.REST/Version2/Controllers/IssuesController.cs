@@ -13,9 +13,12 @@
 
 using System.Net.Mime;
 using AutoMapper;
+using IssueTracker.Issues.API.REST.Version2.Converters;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Request;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
+using IssueTracker.Issues.Domain.Services.Version2.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
@@ -40,6 +43,8 @@ public sealed class IssuesController : IssuesSharedControllerBase
         public const string Create = "CreateIssue";
         public const string Update = "UpdateIssue";
         public const string Patch = "PatchIssue";
+        public const string Delete = "DeleteIssue";
+        public const string UpdateState = "UpdateIssueState";
     }
 
     /// <summary>
@@ -109,6 +114,7 @@ public sealed class IssuesController : IssuesSharedControllerBase
     [SwaggerResponse(StatusCodes.Status201Created, "Successful Response")]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails),
         "application/problem+json", "application/problem+xml")]
+    [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateModelStateServiceFilter]
     public Task<ActionResult<IssueDto>> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
@@ -127,6 +133,7 @@ public sealed class IssuesController : IssuesSharedControllerBase
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateIssueIdServiceFilter]
     [Filters.ValidateModelStateServiceFilter]
@@ -147,6 +154,7 @@ public sealed class IssuesController : IssuesSharedControllerBase
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateModelStateServiceFilter]
     public Task<ActionResult<IssueDto>> Patch(string id, [FromBody] JsonPatchDocument<IssuePatch>? patchDoc, CancellationToken cancellationToken)
@@ -159,5 +167,44 @@ public sealed class IssuesController : IssuesSharedControllerBase
     {
         Response.Headers.Add("Allow", "GET,HEAD,POST,OPTIONS");
         return Ok();
+    }
+
+    /// <summary>
+    /// Deletes the issue given by <paramref name="id"/> 
+    /// </summary>
+    /// <param name="id" example="APP-1234">unique id of the issue to delete</param>
+    /// <param name="cancellationToken">A cancellation token</param>
+    [HttpDelete("{id}", Name = RouteNames.Delete)]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
+    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [Filters.ValidateIssueIdServiceFilter]
+    public Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
+    {
+        return base.DeleteIssue(IssueIdentifier.FromString(id), cancellationToken);
+    }
+
+    /// <summary>
+    /// Execute state change
+    /// </summary>
+    /// <param name="id" example="APP-1234">unique id of the issue to act upon</param>
+    /// <param name="changeState">the state change to perform</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>empty response on success; otherwise, problem details</returns>
+    [HttpPut("{id}/state", Name = RouteNames.UpdateState)]
+    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
+    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [SwaggerResponse(StatusCodes.Status409Conflict, "state change not possible", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [Filters.ValidateIssueIdServiceFilter]
+    [Filters.ValidateModelStateServiceFilter]
+    public Task<IActionResult> ChangeState(string id, ChangeIssueStateDto changeState, CancellationToken cancellationToken)
+    {
+        return base.ChangeIssueState(IssueIdentifier.FromString(id), changeState, cancellationToken);
     }
 }
