@@ -31,9 +31,9 @@ public sealed class IssuesDbContext : DbContext, IUnitOfWork
         _modelConfiguration = modelConfiguration ?? throw new ArgumentNullException(nameof(modelConfiguration));
     }
 
-    public DbSet<Project> Projects { get; set; } = null!;
+    public DbSet<Project> Projects => Set<Project>();
 
-    public DbSet<Issue> Issues { get; set; } = null!;
+    public DbSet<Issue> Issues => Set<Issue>();
 
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
