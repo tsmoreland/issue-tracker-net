@@ -29,7 +29,7 @@ namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 [Route("api/issues")]
 [Tags("issues v2 (header or query versioning)")]
 [ApiVersion("2")]
-public sealed class IssuesVersionHeaderOrQueryController : IssuesSharedControllerBase
+public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
 {
     private static class RouteNames
     {
@@ -150,7 +150,7 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesSharedControlle
     [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateModelStateServiceFilter]
-    public Task<ActionResult<IssueDto>> Patch(string id, [FromBody] JsonPatchDocument<IssuePatch>? patchDoc, CancellationToken cancellationToken)
+    public Task<ActionResult<IssueDto>> Patch(string id, [FromBody] JsonPatchDocument<IssuePatch> patchDoc, CancellationToken cancellationToken)
     {
         return base.PatchIssue(IssueIdentifier.FromString(id), patchDoc, cancellationToken);
     }

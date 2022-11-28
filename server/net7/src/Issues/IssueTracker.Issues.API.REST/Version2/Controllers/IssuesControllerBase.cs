@@ -24,6 +24,10 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 
@@ -31,10 +35,10 @@ namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 /// Controller methods shared between <see cref="IssuesController"/> and <see cref="IssuesVersionHeaderOrQueryController"/>
 /// </summary>
 [ApiController]
-public abstract class IssuesSharedControllerBase : ControllerBase
+public abstract class IssuesControllerBase : ControllerBase
 {
     /// <summary/>
-    protected IssuesSharedControllerBase(IMediator mediator, IMapper mapper)
+    protected IssuesControllerBase(IMediator mediator, IMapper mapper)
     {
         Mediator = mediator;
         Mapper = mapper;
@@ -104,17 +108,12 @@ public abstract class IssuesSharedControllerBase : ControllerBase
     }
 
     /// <inheritdoc cref="IssuesController.Patch(string, JsonPatchDocument{IssuePatch}?, CancellationToken)"/>
-    protected async Task<ActionResult<IssueDto>> PatchIssue(IssueIdentifier id, [FromBody] JsonPatchDocument<IssuePatch>? patchDoc, CancellationToken cancellationToken)
+    protected async Task<ActionResult<IssueDto>> PatchIssue(IssueIdentifier id, [FromBody] JsonPatchDocument<IssuePatch> patchDoc, CancellationToken cancellationToken)
     {
         Issue? issue = await Mediator.Send(new FindIssueByIdQuery(id, true), cancellationToken);
         if (issue is null)
         {
             return NotFound();
-        }
-
-        if (patchDoc is null)
-        {
-            return BadRequest(ModelState);
         }
 
         IssuePatch patch = IssuePatch.FromIssue(issue)!;
@@ -160,5 +159,16 @@ public abstract class IssuesSharedControllerBase : ControllerBase
 
         ModelState.AddModelError("State", "unsupported state");
         return Task.FromResult<IActionResult>(BadRequest(new ValidationProblemDetails(ModelState)));
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// Without this Validation Problems would ignore any customization done by ConfigureApiOptions as that only applies to
+    /// Model Binding, so in this case using the InvalidModelStateResponseFactory ensures we get the 422 response as configured there.
+    /// </remarks>
+    public override ActionResult ValidationProblem([ActionResultObjectValue] ModelStateDictionary modelStateDictionary)
+    {
+        IOptions<ApiBehaviorOptions> options = HttpContext.RequestServices.GetRequiredService<IOptions<ApiBehaviorOptions>>();
+        return (ActionResult)options.Value.InvalidModelStateResponseFactory(ControllerContext);
     }
 }
