@@ -50,11 +50,14 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <summary/>
     protected IMapper Mapper { get; }
 
-    /// <inheritdoc cref="IssuesController.GetAll(int, int, string?, CancellationToken)"/>
-    protected async Task<ActionResult<IssueSummaryPage>> GetAllIssues(int pageNumber, int pageSize, string? orderBy, CancellationToken cancellationToken = default)
+    /// <inheritdoc cref="IssuesController.GetAll(int, int, string?, string?[], string?, CancellationToken)"/>
+    protected async Task<ActionResult<IssueSummaryPage>> GetIssues(int pageNumber, int pageSize, string? orderBy, string?[]? priority, string? searchQuery, CancellationToken cancellationToken = default)
     {
         PagingOptions paging = new(pageNumber, pageSize);
         SortingOptions sorting = SortingOptions.FromString(orderBy);
+        FilterOptions filter = FilterOptions.FromNullableStringArray(priority);
+        _ = filter; // TODO
+        _ = searchQuery; // TODO
         GetAllSortedAndPagedSummaryQuery summaryQuery = new(paging, sorting);
 
         if (paging.IsValid(out string? invalidProperty, out string? errorMessage))

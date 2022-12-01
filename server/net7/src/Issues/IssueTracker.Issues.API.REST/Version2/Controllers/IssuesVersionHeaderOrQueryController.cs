@@ -77,6 +77,8 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
     /// <param name="pageNumber" example="1" >current page number to return</param>
     /// <param name="pageSize" example="10">maximum number of items to return</param>
     /// <param name="orderBy" example="Priority, Type, Title DESC" >order by spec</param>
+    /// <param name="priority" exmaple="High">filter returned issues by one or more priorities</param>
+    /// <param name="searchQuery" example="pending">query used to further limit the results returned</param>
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>all issues</returns>
     [HttpGet(Name = RouteNames.GetPagedIssues)]
@@ -91,9 +93,11 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] string? orderBy = null,
+        [FromQuery] string?[]? priority = null,
+        [FromQuery] string? searchQuery = null,
         CancellationToken cancellationToken = default)
     {
-        return base.GetAllIssues(pageNumber, pageSize, orderBy, cancellationToken);
+        return base.GetIssues(pageNumber, pageSize, orderBy, priority, searchQuery, cancellationToken);
     }
 
     /// <summary>
