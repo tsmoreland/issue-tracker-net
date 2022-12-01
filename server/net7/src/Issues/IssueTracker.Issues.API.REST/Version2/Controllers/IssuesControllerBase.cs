@@ -14,6 +14,7 @@
 using AutoMapper;
 using IssueTracker.Issues.API.REST.Version2.Converters;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Request;
+using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.ResourceParameters;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
@@ -50,9 +51,10 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <summary/>
     protected IMapper Mapper { get; }
 
-    /// <inheritdoc cref="IssuesController.GetAll(int, int, string?, string?[], string?, CancellationToken)"/>
-    protected async Task<ActionResult<IssueSummaryPage>> GetIssues(int pageNumber, int pageSize, string? orderBy, string?[]? priority, string? searchQuery, CancellationToken cancellationToken = default)
+    /// <inheritdoc cref="IssuesController.GetAll(IssuesResourceParameters, CancellationToken)"/>
+    protected async Task<ActionResult<IssueSummaryPage>> GetIssues(IssuesResourceParameters issuesResourceParameters, CancellationToken cancellationToken = default)
     {
+        (int pageNumber, int pageSize, string? orderBy, string?[]? priority, string? searchQuery) = issuesResourceParameters;
         PagingOptions paging = new(pageNumber, pageSize);
         SortingOptions sorting = SortingOptions.FromString(orderBy);
         FilterOptions filter = FilterOptions.FromNullableStringArray(priority);

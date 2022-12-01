@@ -15,6 +15,7 @@ using System.Net.Mime;
 using AutoMapper;
 using IssueTracker.Issues.API.REST.Version2.Converters;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Request;
+using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.ResourceParameters;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
@@ -81,16 +82,9 @@ public sealed class IssuesController : IssuesControllerBase
     /// <summary>
     /// Returns issues in paginges with optional sorting, paging and filtering
     /// </summary>
-    /// <param name="pageNumber" example="1" >current page number to return</param>
-    /// <param name="pageSize" example="10">maximum number of items to return</param>
-    /// <param name="orderBy" example="Priority, Type, Title DESC" >order by spec</param>
-    /// <param name="priority" exmaple="High">filter returned issues by one or more priorities</param>
-    /// <param name="searchQuery" example="pending">query used to further limit the results returned</param>
+    /// <param name="issuesResourceParameters"></param>
     /// <param name="cancellationToken">a cancellation token.</param>
-    /// <returns>
-    /// at most <paramref name="pageSize"/> issues ordered by <paramref name="orderBy"/>
-    /// and filtered by <paramref name="priority"/>
-    /// </returns>
+    /// <returns>issues filtered based on the provided query parameters</returns>
     [HttpGet(Name = RouteNames.GetPagedIssues)]
     [HttpHead]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
@@ -100,14 +94,10 @@ public sealed class IssuesController : IssuesControllerBase
         "application/problem+json", "application/problem+xml")]
     [Filters.ValidateModelStateServiceFilter]
     public Task<ActionResult<IssueSummaryPage>> GetAll(
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10,
-        [FromQuery] string? orderBy = null,
-        [FromQuery] string?[]? priority = null,
-        [FromQuery] string? searchQuery = null,
+        [FromQuery] IssuesResourceParameters issuesResourceParameters,
         CancellationToken cancellationToken = default)
     {
-        return base.GetIssues(pageNumber, pageSize, orderBy, priority, searchQuery, cancellationToken);
+        return base.GetIssues(issuesResourceParameters, cancellationToken);
     }
 
     /// <summary>
