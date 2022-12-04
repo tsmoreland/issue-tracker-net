@@ -55,4 +55,16 @@ public sealed record class IssuesResourceParameters
         priorities = Priorities;
         searchQuery = SearchQuery;
     }
+
+    public object? ToRouteParameters(int? pageNumber = null)
+    {
+        return new
+        {
+            pageNumber = pageNumber ?? PageNumber,
+            pageSize = PageSize,
+            orderBy = OrderBy,
+            priorities = Priorities,
+            searchQuery =  SearchQuery,
+        };
+    }
 }

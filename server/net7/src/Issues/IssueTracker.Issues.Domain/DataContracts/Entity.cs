@@ -22,6 +22,9 @@ public abstract class Entity : IEqualityComparer<Entity>
         LastModifiedTime = DateTimeOffset.UtcNow;
     }
 
+    public ulong ConcurrencyToken { get; init; } = 0ul;
+
+
     /// <inheritdoc />
     public abstract bool Equals(Entity? x, Entity? y);
 

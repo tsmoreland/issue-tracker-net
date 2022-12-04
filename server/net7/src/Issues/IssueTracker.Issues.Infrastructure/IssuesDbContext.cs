@@ -67,6 +67,20 @@ public sealed class IssuesDbContext : DbContext, IUnitOfWork
     }
 
     /// <inheritdoc />
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        _modelConfiguration.SaveChangesVisitor(this);
+        return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
+
+    /// <inheritdoc />
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    {
+        _modelConfiguration.SaveChangesVisitor(this);
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    /// <inheritdoc />
     public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
     {
         // raise events here, likely through MediatR, those event may contain entities tracked by this

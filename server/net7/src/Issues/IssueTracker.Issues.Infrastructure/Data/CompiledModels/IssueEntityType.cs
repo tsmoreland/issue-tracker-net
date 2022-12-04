@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 #pragma warning disable 219, 612, 618
 #nullable enable
 
-namespace IssueTracker.Issues.Infrastructure.CompiledModels
+namespace IssueTracker.Issues.Infrastructure.Data.CompiledModels
 {
     internal partial class IssueEntityType
     {
@@ -33,10 +33,12 @@ namespace IssueTracker.Issues.Infrastructure.CompiledModels
 
             var concurrencyToken = runtimeEntityType.AddProperty(
                 "ConcurrencyToken",
-                typeof(string),
-                propertyInfo: typeof(Issue).GetProperty("ConcurrencyToken", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(Issue).GetField("<ConcurrencyToken>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                concurrencyToken: true);
+                typeof(ulong),
+                propertyInfo: typeof(Entity).GetProperty("ConcurrencyToken", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(Entity).GetField("<ConcurrencyToken>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                concurrencyToken: true,
+                valueGenerated: ValueGenerated.OnAdd);
+            concurrencyToken.AddAnnotation("Relational:DefaultValue", 0ul);
 
             var lastModifiedTime = runtimeEntityType.AddProperty(
                 "LastModifiedTime",

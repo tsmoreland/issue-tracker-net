@@ -20,10 +20,10 @@ namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 public sealed class Issue : Entity
 {
     private string _title = string.Empty;
-    private string _projectId = string.Empty;
+    private readonly string _projectId = string.Empty;
     private string _description = string.Empty;
     private IssueIdentifier? _epicId;
-    private int _issueNumber;
+    private readonly int _issueNumber;
     private IssueType _type = IssueType.Defect;
     private readonly ICollection<IssueLink> _parents = new HashSet<IssueLink>();
     private readonly ICollection<IssueLink> _children = new HashSet<IssueLink>();
@@ -299,8 +299,6 @@ public sealed class Issue : Entity
                 : throw new ArgumentException("value does not have expected type", nameof(value));
         }
     }
-
-    public string ConcurrencyToken { get; private set; } = Guid.NewGuid().ToString();
 
     /// <inheritdoc />
     public override bool Equals(Entity? x, Entity? y)

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 #pragma warning disable 219, 612, 618
 #nullable enable
 
-namespace IssueTracker.Issues.Infrastructure.CompiledModels
+namespace IssueTracker.Issues.Infrastructure.Data.CompiledModels
 {
     internal partial class User0EntityType
     {

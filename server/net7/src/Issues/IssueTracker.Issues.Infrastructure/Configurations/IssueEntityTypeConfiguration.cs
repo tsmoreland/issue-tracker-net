@@ -58,7 +58,10 @@ internal sealed class IssueEntityTypeConfiguration : IEntityTypeConfiguration<Is
         builder.Property<IssueIdentifier?>("_epicId")
             .HasColumnName("EpicId");
 
-        builder.Property(e => e.ConcurrencyToken).IsConcurrencyToken();
+        builder
+            .Property(e => e.ConcurrencyToken)
+            .IsConcurrencyToken()
+            .HasDefaultValue(0ul);
 
         builder.OwnsOne(e => e.Assignee,
             (owned) =>

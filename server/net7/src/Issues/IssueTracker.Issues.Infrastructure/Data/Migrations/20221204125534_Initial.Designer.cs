@@ -3,16 +3,19 @@ using System;
 using IssueTracker.Issues.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace IssueTracker.Issues.Infrastructure.Migrations
+namespace IssueTracker.Issues.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(IssuesDbContext))]
-    partial class IssuesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221204125534_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.0");
@@ -22,10 +25,11 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ConcurrencyToken")
+                    b.Property<ulong>("ConcurrencyToken")
                         .IsConcurrencyToken()
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(0ul);
 
                     b.Property<long>("LastModifiedTime")
                         .HasColumnType("INTEGER");
@@ -114,6 +118,12 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
+
+                    b.Property<ulong>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(0ul);
 
                     b.Property<long>("LastModifiedTime")
                         .HasColumnType("INTEGER");

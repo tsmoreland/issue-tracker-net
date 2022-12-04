@@ -20,6 +20,7 @@ using IssueTracker.Issues.Domain.Services.Version2.Commands;
 using IssueTracker.Issues.Domain.Services.Version2.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 
 namespace IssueTracker.Issues.API.REST.Version2.Extensions;
 
@@ -68,4 +69,5 @@ internal static class ControllerBaseExtensions
                 cancellationToken));
         return controller.Created($"/api/v2/issues/{issue.Id}", issue);
     }
+    
 }

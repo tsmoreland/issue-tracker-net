@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -64,9 +65,26 @@ public sealed class SqliteModelConfiguration : IModelConfiguration
 
         if (!_isDevelopment)
         {
-            optionsBuilder.UseModel(CompiledModels.IssuesDbContextModel.Instance);
+            optionsBuilder.UseModel(Data.CompiledModels.IssuesDbContextModel.Instance);
         }
 
 
+    }
+
+    /// <inheritdoc />
+    public void SaveChangesVisitor(DbContext dbContext)
+    {
+        ArgumentNullException.ThrowIfNull(dbContext);
+
+        IEnumerable<Entity> entries = dbContext.ChangeTracker
+            .Entries()
+            .Where(e => e.State is EntityState.Modified or EntityState.Added)
+            .Select(e => e.Entity)
+            .OfType<Entity>();
+
+        foreach (Entity entity in entries)
+        {
+            entity.UpdateLastModifiedTime();
+        }
     }
 }

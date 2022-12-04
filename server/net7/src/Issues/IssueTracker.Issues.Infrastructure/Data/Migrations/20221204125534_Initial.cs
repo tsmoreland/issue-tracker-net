@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace IssueTracker.Issues.Infrastructure.Migrations
+namespace IssueTracker.Issues.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -17,7 +17,8 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    LastModifiedTime = table.Column<long>(type: "INTEGER", nullable: false)
+                    LastModifiedTime = table.Column<long>(type: "INTEGER", nullable: false),
+                    ConcurrencyToken = table.Column<ulong>(type: "INTEGER", nullable: false, defaultValue: 0ul)
                 },
                 constraints: table =>
                 {
@@ -36,7 +37,6 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                     ReporterFullName = table.Column<string>(name: "Reporter_FullName", type: "TEXT", maxLength: 200, nullable: true, defaultValue: "Unassigned"),
                     AssigneeUserId = table.Column<Guid>(name: "Assignee_UserId", type: "TEXT", nullable: true, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
                     AssigneeFullName = table.Column<string>(name: "Assignee_FullName", type: "TEXT", maxLength: 200, nullable: true, defaultValue: "Unassigned"),
-                    ConcurrencyToken = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
                     EpicId = table.Column<string>(type: "TEXT", nullable: true),
                     IssueNumber = table.Column<int>(type: "INTEGER", nullable: false),
@@ -44,7 +44,8 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                     stopTime = table.Column<long>(name: "_stopTime", type: "INTEGER", nullable: true),
                     Title = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
                     Type = table.Column<int>(type: "INTEGER", nullable: false),
-                    LastModifiedTime = table.Column<long>(type: "INTEGER", nullable: false)
+                    LastModifiedTime = table.Column<long>(type: "INTEGER", nullable: false),
+                    ConcurrencyToken = table.Column<ulong>(type: "INTEGER", nullable: false, defaultValue: 0ul)
                 },
                 constraints: table =>
                 {
@@ -126,6 +127,23 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
                 name: "IX_Projects_Name",
                 table: "Projects",
                 column: "Name");
+
+            const string triggerFormat = """
+                CREATE TRIGGER Set{0}RowVersion{1}
+                AFTER {1} ON {0}
+                BEGIN
+                    UPDATE {0}
+                    SET ConcurrencyToken = CAST(ROUND((julianday('now') - 2440587.5)*86400000) AS INT)
+                    WHERE rowid = NEW.rowid;
+                END
+                """;
+
+            migrationBuilder.Sql(string.Format(triggerFormat, "Issues", "INSERT"));
+            migrationBuilder.Sql(string.Format(triggerFormat, "Issues", "UPDATE"));
+
+            migrationBuilder.Sql(string.Format(triggerFormat, "Projects", "INSERT"));
+            migrationBuilder.Sql(string.Format(triggerFormat, "Projects", "UPDATE"));
+            
         }
 
         /// <inheritdoc />
@@ -139,6 +157,14 @@ namespace IssueTracker.Issues.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Projects");
+
+            const string triggerFormat = "DROP TRIGGER Set{0}RowVersion{1}";
+
+            migrationBuilder.Sql(string.Format(triggerFormat, "Issues", "INSERT"));
+            migrationBuilder.Sql(string.Format(triggerFormat, "Issues", "UPDATE"));
+
+            migrationBuilder.Sql(string.Format(triggerFormat, "Projects", "INSERT"));
+            migrationBuilder.Sql(string.Format(triggerFormat, "Projects", "UPDATE"));
         }
     }
 }

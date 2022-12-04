@@ -97,7 +97,7 @@ public sealed class IssuesController : IssuesControllerBase
         [FromQuery] IssuesResourceParameters issuesResourceParameters,
         CancellationToken cancellationToken = default)
     {
-        return base.GetIssues(issuesResourceParameters, cancellationToken);
+        return base.GetIssues(RouteNames.GetPagedIssues, issuesResourceParameters, cancellationToken);
     }
 
     /// <summary>

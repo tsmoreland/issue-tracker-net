@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Text.Json;
 using AutoMapper;
 using IssueTracker.Issues.API.REST.Version2.Converters;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Request;
@@ -21,6 +22,7 @@ using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
 using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
 using IssueTracker.Issues.Domain.Services.Version2.Commands;
 using IssueTracker.Issues.Domain.Services.Version2.Queries;
+using IssueTracker.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
@@ -52,7 +54,7 @@ public abstract class IssuesControllerBase : ControllerBase
     protected IMapper Mapper { get; }
 
     /// <inheritdoc cref="IssuesController.GetAll(IssuesResourceParameters, CancellationToken)"/>
-    protected async Task<ActionResult<IssueSummaryPage>> GetIssues(IssuesResourceParameters issuesResourceParameters, CancellationToken cancellationToken = default)
+    protected async Task<ActionResult<IssueSummaryPage>> GetIssues(string routeName, IssuesResourceParameters issuesResourceParameters, CancellationToken cancellationToken = default)
     {
         (int pageNumber, int pageSize, string? orderBy, string?[]? priority, string? searchQuery) = issuesResourceParameters;
         PagingOptions paging = new(pageNumber, pageSize);
@@ -62,13 +64,49 @@ public abstract class IssuesControllerBase : ControllerBase
         _ = searchQuery; // TODO
         GetAllSortedAndPagedSummaryQuery summaryQuery = new(paging, sorting);
 
-        if (paging.IsValid(out string? invalidProperty, out string? errorMessage))
+        if (!paging.IsValid(out string? invalidProperty, out string? errorMessage))
         {
-            return Ok(IssueSummaryPage.Convert(await Mediator.Send(summaryQuery, cancellationToken), Mapper));
+            ModelState.AddModelError(invalidProperty, errorMessage);
+            return BadRequest(ModelState);
         }
 
-        ModelState.AddModelError(invalidProperty, errorMessage);
-        return BadRequest(ModelState);
+        IssueSummaryPage page = IssueSummaryPage.Convert(await Mediator.Send(summaryQuery, cancellationToken), Mapper);
+
+        // TODO: move this calculation into a property of Page (and the domain Page, dto Page should just get the value)
+        // TODO: add total pages too that'll simplify these calculations
+        string? previousPageLink = issuesResourceParameters.PageNumber > 1
+            ? CreateIssuesResourceUri(routeName, issuesResourceParameters, ResourceUriType.PreviousPage)
+            : null;
+        string? nextPageLink = (issuesResourceParameters.PageNumber * issuesResourceParameters.PageSize) <= page.Total
+            ? CreateIssuesResourceUri(routeName, issuesResourceParameters, ResourceUriType.NextPage)
+            : null;
+
+        var paginationMetaData = new
+        {
+            totalCount = page.Total,
+            pageSize = issuesResourceParameters.PageSize,
+            currentPage = issuesResourceParameters.PageNumber,
+            totalPages = (int)Math.Ceiling(page.Total / (double)issuesResourceParameters.PageSize),
+            previousPageLink,
+            nextPageLink,
+        };
+
+        JsonSerializerOptions jsonSerializerOptions = HttpContext.RequestServices.GetRequiredService<IOptions<JsonOptions>>()
+            .Value
+            .JsonSerializerOptions;
+
+        Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetaData, paginationMetaData.GetType(), jsonSerializerOptions));
+        return Ok(page);
+    }
+
+    private string? CreateIssuesResourceUri(string routeName, IssuesResourceParameters issuesResourceParameters, ResourceUriType uriType)
+    {
+        return uriType switch
+        {
+            ResourceUriType.PreviousPage => Url.Link(routeName, issuesResourceParameters.ToRouteParameters(issuesResourceParameters.PageNumber - 1)),
+            ResourceUriType.NextPage => Url.Link(routeName, issuesResourceParameters.ToRouteParameters(issuesResourceParameters.PageNumber + 1)),
+            _ => Url.Link(routeName, issuesResourceParameters.ToRouteParameters(issuesResourceParameters.PageNumber + 1)),
+        };
     }
 
     /// <inheritdoc cref="IssuesController.Get(string, CancellationToken)"/>

@@ -11,25 +11,10 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+namespace IssueTracker.Shared;
 
-namespace IssueTracker.Issues.Infrastructure.Configurations;
-
-internal sealed class ProjectEntityTypeConfiguration : IEntityTypeConfiguration<Project>
+public enum ResourceUriType
 {
-    /// <inheritdoc />
-    public void Configure(EntityTypeBuilder<Project> builder)
-    {
-        builder.ToTable("Projects");
-
-        builder.HasIndex(e => e.Id);
-        builder.HasIndex(e => e.Name);
-
-        builder
-            .Property(e => e.ConcurrencyToken)
-            .IsConcurrencyToken()
-            .HasDefaultValue(0ul);
-
-    }
+    PreviousPage,
+    NextPage,
 }
