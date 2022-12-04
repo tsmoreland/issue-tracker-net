@@ -69,5 +69,5 @@ internal static class ControllerBaseExtensions
                 cancellationToken));
         return controller.Created($"/api/v2/issues/{issue.Id}", issue);
     }
-    
+
 }

@@ -64,7 +64,7 @@ public sealed record class IssuesResourceParameters
             pageSize = PageSize,
             orderBy = OrderBy,
             priorities = Priorities,
-            searchQuery =  SearchQuery,
+            searchQuery = SearchQuery,
         };
     }
 }

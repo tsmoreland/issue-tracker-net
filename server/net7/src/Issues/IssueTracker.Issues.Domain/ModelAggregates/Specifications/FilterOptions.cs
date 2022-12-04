@@ -26,7 +26,7 @@ public sealed record class FilterOptions(IEnumerable<Priority> Priorities)
     {
         if (filter is null)
         {
-            return Array.Empty<Priority>(); 
+            return Array.Empty<Priority>();
         }
         return filter
             .Select(p => Enum.TryParse(p, out Priority priority) ? (Priority?)priority : null)

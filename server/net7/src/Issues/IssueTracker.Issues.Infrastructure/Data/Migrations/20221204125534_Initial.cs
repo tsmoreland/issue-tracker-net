@@ -143,7 +143,7 @@ namespace IssueTracker.Issues.Infrastructure.Data.Migrations
 
             migrationBuilder.Sql(string.Format(triggerFormat, "Projects", "INSERT"));
             migrationBuilder.Sql(string.Format(triggerFormat, "Projects", "UPDATE"));
-            
+
         }
 
         /// <inheritdoc />
