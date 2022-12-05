@@ -14,6 +14,7 @@
 using System.Reflection;
 using IssueTracker.ServiceDiscovery;
 using IssueTracker.Shared;
+using IssueTracker.SwashbuckleExtensions.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -86,6 +87,7 @@ public class SwashbuckleConfiguration : ConfigureNamedOptions<SwaggerGenOptions,
             }
         }
 
+        options.OperationFilter<AddResponseHeaderOperationFilter>();
         options.CustomSchemaIds(SetSchemaName);
 
         static void AddSwaggerDocsPerVersion(SwaggerGenOptions options, IEnumerable<ApiVersionDescription> versionDescriptions)

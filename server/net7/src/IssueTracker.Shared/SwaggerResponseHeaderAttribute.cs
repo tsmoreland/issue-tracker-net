@@ -11,32 +11,29 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using IssueTracker.SwashbuckleExtensions.Filters;
-using IssueTracker.SwashBuckleExtensions;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.SwaggerGen;
+namespace IssueTracker.Shared;
 
-[assembly: HostingStartup(typeof(IssueTracker.SwashbuckleExtensions.HostingStartup))]
-
-namespace IssueTracker.SwashbuckleExtensions;
-
-public sealed class HostingStartup : IHostingStartup
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
+public sealed class SwaggerResponseHeaderAttribute : Attribute
 {
-    /// <inheritdoc />
-    public void Configure(IWebHostBuilder builder)
-    {
-        builder.ConfigureServices(ConfigureServices);
-    }
+    /// <summary>
+    /// Header Name
+    /// </summary>
+    public string Name { get; }
 
-    private static void ConfigureServices(IServiceCollection services)
+    public IReadOnlyList<int> StatusCodes { get; }
+
+    public string Description { get; }
+    public string Type { get; }
+    public string Format { get; }
+
+    /// <inheritdoc />
+    public SwaggerResponseHeaderAttribute(string name, IEnumerable<int> statusCodes, string description, string type, string format)
     {
-        services
-            .AddSwaggerGen()
-            .AddSingleton<AddResponseHeaderOperationFilter>()
-            .AddSingleton<IConfigureOptions<SwaggerGenOptions>>(p =>
-                new SwashbuckleConfiguration(p.GetRequiredService<IApiVersionDescriptionProvider>(), p));
+        Name = name;
+        StatusCodes = statusCodes.ToList().AsReadOnly();
+        Description = description;
+        Type = type;
+        Format = format;
     }
 }
