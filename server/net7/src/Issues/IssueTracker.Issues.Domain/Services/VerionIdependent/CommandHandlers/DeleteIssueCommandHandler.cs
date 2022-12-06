@@ -12,12 +12,13 @@
 //
 
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
-using IssueTracker.Issues.Domain.Services.Version1.Commands;
 using MediatR;
 
-namespace IssueTracker.Issues.Domain.Services.Version2.CommandHandlers;
+namespace IssueTracker.Issues.Domain.Services.VerionIdependent.CommandHandlers;
 
-public sealed class DeleteIssueCommandHandler : IRequestHandler<DeleteIssueCommand, bool>
+public sealed class DeleteIssueCommandHandler
+    : IRequestHandler<Version1.Commands.DeleteIssueCommand, bool>
+    , IRequestHandler<Version2.Commands.DeleteIssueCommand, bool>
 {
     private readonly IIssueRepository _repository;
 
@@ -27,9 +28,21 @@ public sealed class DeleteIssueCommandHandler : IRequestHandler<DeleteIssueComma
     }
 
     /// <inheritdoc />
-    public Task<bool> Handle(DeleteIssueCommand request, CancellationToken cancellationToken)
+    public Task<bool> Handle(Version1.Commands.DeleteIssueCommand request, CancellationToken cancellationToken)
     {
         IssueIdentifier id = request.Id;
+        return _repository.DeleteById(id, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public Task<bool> Handle(Version2.Commands.DeleteIssueCommand request, CancellationToken cancellationToken)
+    {
+        IssueIdentifier id = request.Id;
+        return _repository.DeleteById(id, cancellationToken);
+    }
+
+    private Task<bool> Handle(IssueIdentifier id, CancellationToken cancellation)
+    {
         return _repository.DeleteById(id, cancellationToken);
     }
 }
