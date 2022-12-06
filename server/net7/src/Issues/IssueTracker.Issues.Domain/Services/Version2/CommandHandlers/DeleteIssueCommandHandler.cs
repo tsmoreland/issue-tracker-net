@@ -11,8 +11,25 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace IssueTracker.Issues.API.Version2.CommandHandlers;
+using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
+using IssueTracker.Issues.Domain.Services.Version1.Commands;
+using MediatR;
 
-public sealed class DeleteIssueCommandHandler
+namespace IssueTracker.Issues.Domain.Services.Version2.CommandHandlers;
+
+public sealed class DeleteIssueCommandHandler : IRequestHandler<DeleteIssueCommand, bool>
 {
+    private readonly IIssueRepository _repository;
+
+    public DeleteIssueCommandHandler(IIssueRepository repository)
+    {
+        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+    }
+
+    /// <inheritdoc />
+    public Task<bool> Handle(DeleteIssueCommand request, CancellationToken cancellationToken)
+    {
+        IssueIdentifier id = request.Id;
+        return _repository.DeleteById(id, cancellationToken);
+    }
 }
