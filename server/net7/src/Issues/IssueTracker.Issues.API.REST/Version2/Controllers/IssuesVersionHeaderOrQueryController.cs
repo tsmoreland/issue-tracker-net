@@ -207,4 +207,21 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
         yield return new LinkDto(Url.Link(RouteNames.Update, new { issueId }), "update-issue", "PUT");
         yield return new LinkDto(Url.Link(RouteNames.Patch, new { issueId }), "patch-issue", "PATCH");
     }
+
+    /// <inheritdoc/>
+    /// <remarks>
+    /// would be used on GetPagedIssues method, may need previous, next links but for that IssueResourceParameters should
+    /// expose has next, has previous
+    ///
+    /// we could go further and change the response to return a enumerable of ValueWithLinks{IssueSummaryDto} which itself
+    /// is wrapped in ValueWithLinks
+    /// </remarks>
+    protected override IEnumerable<LinkDto> GetLinksForIssueCollection(
+        IssuesResourceParameters issuesResourceParameters)
+    {
+        yield return new LinkDto(
+            CreateIssuesResourceUri(RouteNames.GetPagedIssues, issuesResourceParameters,
+                Shared.ResourceUriType.Current), "self", "GET");
+
+    }
 }

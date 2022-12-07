@@ -100,16 +100,6 @@ public abstract class IssuesControllerBase : ControllerBase
         return Ok(page);
     }
 
-    private string? CreateIssuesResourceUri(string routeName, IssuesResourceParameters issuesResourceParameters, ResourceUriType uriType)
-    {
-        return uriType switch
-        {
-            ResourceUriType.PreviousPage => Url.Link(routeName, issuesResourceParameters.ToRouteParameters(issuesResourceParameters.PageNumber - 1)),
-            ResourceUriType.NextPage => Url.Link(routeName, issuesResourceParameters.ToRouteParameters(issuesResourceParameters.PageNumber + 1)),
-            _ => Url.Link(routeName, issuesResourceParameters.ToRouteParameters(issuesResourceParameters.PageNumber + 1)),
-        };
-    }
-
     /// <inheritdoc cref="IssuesController.Get(string, CancellationToken)"/>
     protected async Task<ActionResult<IssueDto>> GetIssueById(IssueIdentifier id, CancellationToken cancellationToken)
     {
@@ -223,5 +213,28 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <param name="issueId">id of the issue to display links for</param>
     /// <returns>Collection of <see cref="LinkDto"/></returns>
     protected abstract IEnumerable<LinkDto> GetLinksForIssue(string issueId);
+
+    /// <summary>
+    /// Returns HATEOAS links to be included in response
+    /// </summary>
+    /// <returns>Collection of <see cref="LinkDto"/></returns>
+    protected abstract IEnumerable<LinkDto> GetLinksForIssueCollection(IssuesResourceParameters issuesResourceParameters);
+
+    /// <summary>
+    /// Returns Resource URI for current, next or previous page with provided query parameters
+    /// </summary>
+    /// <param name="routeName">route to navigate to</param>
+    /// <param name="issuesResourceParameters">parameters used in that route</param>
+    /// <param name="uriType"><see cref="ResourceUriType"/></param>
+    /// <returns>link to current, previous or next page</returns>
+    protected string? CreateIssuesResourceUri(string routeName, IssuesResourceParameters issuesResourceParameters, ResourceUriType uriType)
+    {
+        return uriType switch
+        {
+            ResourceUriType.PreviousPage => Url.Link(routeName, issuesResourceParameters.ToRouteParameters(issuesResourceParameters.PageNumber - 1)),
+            ResourceUriType.NextPage => Url.Link(routeName, issuesResourceParameters.ToRouteParameters(issuesResourceParameters.PageNumber + 1)),
+            _ => Url.Link(routeName, issuesResourceParameters.ToRouteParameters(issuesResourceParameters.PageNumber + 1)),
+        };
+    }
 
 }
