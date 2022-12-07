@@ -16,6 +16,7 @@ using AutoMapper;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Request;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.ResourceParameters;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
+using IssueTracker.Issues.API.REST.VersionIndependent.DataTransferObjects.Response;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -196,5 +197,14 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
     public Task<IActionResult> ChangeState(string id, ChangeIssueStateDto changeState, CancellationToken cancellationToken)
     {
         return base.ChangeIssueState(IssueIdentifier.FromString(id), changeState, cancellationToken);
+    }
+
+    /// <inheritdoc/>
+    protected override IEnumerable<LinkDto> GetLinksForIssue(string issueId)
+    {
+        yield return new LinkDto(Url.Link(RouteNames.Get, new { issueId }), "self", "GET");
+        yield return new LinkDto(Url.Link(RouteNames.Create, new { issueId }), "create-issue", "POST");
+        yield return new LinkDto(Url.Link(RouteNames.Update, new { issueId }), "update-issue", "PUT");
+        yield return new LinkDto(Url.Link(RouteNames.Patch, new { issueId }), "patch-issue", "PATCH");
     }
 }

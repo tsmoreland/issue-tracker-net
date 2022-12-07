@@ -17,6 +17,7 @@ using IssueTracker.Issues.API.REST.Version2.Converters;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Request;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.ResourceParameters;
 using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
+using IssueTracker.Issues.API.REST.VersionIndependent.DataTransferObjects.Response;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
 using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
@@ -132,6 +133,7 @@ public abstract class IssuesControllerBase : ControllerBase
                 IssueIdentifier.FromStringIfNotNull(epicId)),
                 cancellationToken));
 
+        issue.Links = GetLinksForIssue(issue.Id);
         return CreatedAtRoute(routeName, new { id = issue.Id }, issue);
     }
 
@@ -214,4 +216,12 @@ public abstract class IssuesControllerBase : ControllerBase
         IOptions<ApiBehaviorOptions> options = HttpContext.RequestServices.GetRequiredService<IOptions<ApiBehaviorOptions>>();
         return (ActionResult)options.Value.InvalidModelStateResponseFactory(ControllerContext);
     }
+
+    /// <summary>
+    /// Returns HATEOAS links to be included in response
+    /// </summary>
+    /// <param name="issueId">id of the issue to display links for</param>
+    /// <returns>Collection of <see cref="LinkDto"/></returns>
+    protected abstract IEnumerable<LinkDto> GetLinksForIssue(string issueId);
+
 }

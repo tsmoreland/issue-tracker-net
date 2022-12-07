@@ -12,6 +12,7 @@
 //
 
 using System.ComponentModel.DataAnnotations;
+using IssueTracker.Issues.API.REST.VersionIndependent.DataTransferObjects.Response;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Shared;
 
@@ -103,5 +104,10 @@ public sealed record class IssueDto(string Id, string Title, string Description,
     [RegularExpression("[A-Z][A-Z][A-Z]-[0-9]+")]
     public string? EpicId { get; set; } = EpicId;
 
+
+    /// <summary>
+    /// HATEOAS Links
+    /// </summary>
+    public IEnumerable<LinkDto> Links { get; set; }
 }
 
