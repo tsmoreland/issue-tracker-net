@@ -54,8 +54,8 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <summary/>
     protected IMapper Mapper { get; }
 
-    /// <inheritdoc cref="IssuesController.GetAll(IssuesResourceParameters, CancellationToken)"/>
-    protected async Task<ActionResult<IssueSummaryPage>> GetIssues(string routeName, IssuesResourceParameters issuesResourceParameters, CancellationToken cancellationToken = default)
+    /// <inheritdoc cref="IssuesController.GetPagedIssues"/>
+    protected async Task<ActionResult<IssueSummaryPageWithLinks>> GetIssuesWithLinks(string routeName, IssuesResourceParameters issuesResourceParameters, CancellationToken cancellationToken = default)
     {
         (int pageNumber, int pageSize, string? orderBy, string?[]? priority, string? searchQuery) = issuesResourceParameters;
         PagingOptions paging = new(pageNumber, pageSize);
@@ -96,8 +96,11 @@ public abstract class IssuesControllerBase : ControllerBase
             .Value
             .JsonSerializerOptions;
 
+        IssueSummaryPageWithLinks value = new(page,
+            GetLinksForIssueCollection(issuesResourceParameters, previousPageLink, nextPageLink));
+
         Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetaData, paginationMetaData.GetType(), jsonSerializerOptions));
-        return Ok(page);
+        return Ok(value);
     }
 
     /// <inheritdoc cref="IssuesController.Get(string, CancellationToken)"/>
@@ -111,7 +114,7 @@ public abstract class IssuesControllerBase : ControllerBase
     }
 
     /// <inheritdoc cref="IssuesController.Post(AddIssueDto, CancellationToken)"/>
-    protected async Task<ActionResult<ValueWithLinksDto<IssueDto>>> Create(string routeName, AddIssueDto model, CancellationToken cancellationToken)
+    protected async Task<ActionResult<IssueDtoWithLinks>> Create(string routeName, AddIssueDto model, CancellationToken cancellationToken)
     {
         (string project, string title, string description, Priority priority, IssueType type, string? epicId) = model;
 
@@ -123,7 +126,7 @@ public abstract class IssuesControllerBase : ControllerBase
                 IssueIdentifier.FromStringIfNotNull(epicId)),
                 cancellationToken));
 
-        ValueWithLinksDto<IssueDto> value = new(issue, GetLinksForIssue(issue.Id));
+        IssueDtoWithLinks value = new(issue, GetLinksForIssue(issue.Id));
         return CreatedAtRoute(routeName, new { id = issue.Id }, value);
     }
 
@@ -218,7 +221,8 @@ public abstract class IssuesControllerBase : ControllerBase
     /// Returns HATEOAS links to be included in response
     /// </summary>
     /// <returns>Collection of <see cref="LinkDto"/></returns>
-    protected abstract IEnumerable<LinkDto> GetLinksForIssueCollection(IssuesResourceParameters issuesResourceParameters);
+    protected abstract IEnumerable<LinkDto> GetLinksForIssueCollection(
+        IssuesResourceParameters issuesResourceParameters, string? previousPageLink, string? nextPageLink);
 
     /// <summary>
     /// Returns Resource URI for current, next or previous page with provided query parameters

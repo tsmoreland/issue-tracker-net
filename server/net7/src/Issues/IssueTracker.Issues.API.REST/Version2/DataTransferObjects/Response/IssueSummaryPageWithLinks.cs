@@ -11,23 +11,16 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace IssueTracker.Issues.API.REST.VersionIndependent.DataTransferObjects.Response;
+using IssueTracker.Issues.API.REST.VersionIndependent.DataTransferObjects.Response;
 
-public abstract class ValueWithLinksDto<T>
+namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
+
+/// <inheritdoc />
+public sealed class IssueSummaryPageWithLinks : ValueWithLinksDto<IssueSummaryPage>
 {
-    /// <summary>
-    /// Response Content
-    /// </summary>
-    public T Value { get; init; }
-
-    /// <summary>
-    /// ZATEOAS Links for the Value
-    /// </summary>
-    public IEnumerable<LinkDto> Links { get; init; }
-
-    protected ValueWithLinksDto(T value, IEnumerable<LinkDto> links)
+    /// <inheritdoc />
+    public IssueSummaryPageWithLinks(IssueSummaryPage value, IEnumerable<LinkDto> links)
+        : base(value, links)
     {
-        Value = value;
-        Links = links;
     }
 }

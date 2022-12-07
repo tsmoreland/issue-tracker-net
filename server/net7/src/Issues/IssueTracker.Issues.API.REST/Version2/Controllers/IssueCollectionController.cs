@@ -38,13 +38,18 @@ public sealed class IssueCollectionController : ControllerBase
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
+    private static class RouteNames
+    {
+        public const string GetIssueCollectionByIds = nameof(GetIssueCollectionByIds);
+    }
+
     /// <summary>
     /// Returns issues matching <paramref name="issueIds"/> or not found if any are not found
     /// </summary>
-    /// <param name="issueIds" example="(ABC-0001, ABC-0002, ABC-0005)">the ids of issues to locate and return</param>
+    /// <param name="issueIds">the ids of issues to locate and return; e.g. (ABC-0001, ABC-0002)</param>
     /// <param name="cancellationToken">A cancellation Token</param>
     /// <returns>issues matching <paramref name="issueIds"/></returns>
-    [HttpGet("({issueIds})", Name = nameof(GetIssueCollection))]
+    [HttpGet("({issueIds})", Name = RouteNames.GetIssueCollectionByIds)]
     [HttpHead("({issueIds})")]
     public async Task<ActionResult<IEnumerable<IssueDto>>> GetIssueCollection(
         [ModelBinder(BinderType = typeof(ArrayModelBinder))] [FromRoute]

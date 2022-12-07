@@ -87,15 +87,15 @@ public sealed class IssuesController : IssuesControllerBase
     [HttpHead]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueSummaryPageWithLinks))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails),
         "application/problem+json", "application/problem+xml")]
     [Filters.ValidateModelStateServiceFilter]
-    public Task<ActionResult<IssueSummaryPage>> GetAll(
+    public Task<ActionResult<IssueSummaryPageWithLinks>> GetPagedIssues(
         [FromQuery] IssuesResourceParameters issuesResourceParameters,
         CancellationToken cancellationToken = default)
     {
-        return base.GetIssues(RouteNames.GetPagedIssues, issuesResourceParameters, cancellationToken);
+        return base.GetIssuesWithLinks("Experimental", issuesResourceParameters, cancellationToken);
     }
 
     /// <summary>
@@ -111,7 +111,7 @@ public sealed class IssuesController : IssuesControllerBase
         "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateModelStateServiceFilter]
-    public Task<ActionResult<ValueWithLinksDto<IssueDto>>> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)
+    public Task<ActionResult<IssueDtoWithLinks>> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
         return base.Create(RouteNames.Get, model, cancellationToken);
     }
@@ -221,11 +221,20 @@ public sealed class IssuesController : IssuesControllerBase
     /// is wrapped in ValueWithLinks
     /// </remarks>
     protected override IEnumerable<LinkDto> GetLinksForIssueCollection(
-        IssuesResourceParameters issuesResourceParameters)
+        IssuesResourceParameters issuesResourceParameters, string? previousPageLink, string? nextPageLink)
     {
+        if (previousPageLink is not null)
+        {
+            yield return new LinkDto(previousPageLink, "previous-page", "GET");
+        }
+
         yield return new LinkDto(
             CreateIssuesResourceUri(RouteNames.GetPagedIssues, issuesResourceParameters,
                 Shared.ResourceUriType.Current), "self", "GET");
 
+        if (nextPageLink is not null)
+        {
+            yield return new LinkDto(nextPageLink, "next-page", "GET");
+        }
     }
 }

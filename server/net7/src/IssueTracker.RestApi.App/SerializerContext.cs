@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System.Text.Json.Serialization;
+using IssueTracker.Issues.API.REST.VersionIndependent.DataTransferObjects.Response;
 using ResponseV2 = IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 
 namespace IssueTracker.RestApi.App;
@@ -23,6 +24,9 @@ namespace IssueTracker.RestApi.App;
 [JsonSerializable(typeof(ResponseV2.LinkedIssueSummaryPage))]
 [JsonSerializable(typeof(ResponseV2.LinkedIssueSummaryDto))]
 [JsonSerializable(typeof(ResponseV2.UserDto))]
+[JsonSerializable(typeof(ResponseV2.IssueSummaryPageWithLinks))]
+[JsonSerializable(typeof(ResponseV2.IssueDtoWithLinks))]
+[JsonSerializable(typeof(LinkDto))]
 public partial class SerializerContext : JsonSerializerContext
 {
 }
