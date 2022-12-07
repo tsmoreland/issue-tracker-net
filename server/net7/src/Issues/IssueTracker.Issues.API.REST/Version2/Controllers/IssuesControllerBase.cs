@@ -121,7 +121,7 @@ public abstract class IssuesControllerBase : ControllerBase
     }
 
     /// <inheritdoc cref="IssuesController.Post(AddIssueDto, CancellationToken)"/>
-    protected async Task<ActionResult<IssueDto>> Create(string routeName, AddIssueDto model, CancellationToken cancellationToken)
+    protected async Task<ActionResult<ValueWithLinksDto<IssueDto>>> Create(string routeName, AddIssueDto model, CancellationToken cancellationToken)
     {
         (string project, string title, string description, Priority priority, IssueType type, string? epicId) = model;
 
@@ -133,8 +133,8 @@ public abstract class IssuesControllerBase : ControllerBase
                 IssueIdentifier.FromStringIfNotNull(epicId)),
                 cancellationToken));
 
-        issue.Links = GetLinksForIssue(issue.Id);
-        return CreatedAtRoute(routeName, new { id = issue.Id }, issue);
+        ValueWithLinksDto<IssueDto> value = new(issue, GetLinksForIssue(issue.Id));
+        return CreatedAtRoute(routeName, new { id = issue.Id }, value);
     }
 
     /// <inheritdoc cref="IssuesController.Put(string, EditIssueDto, CancellationToken)"/>

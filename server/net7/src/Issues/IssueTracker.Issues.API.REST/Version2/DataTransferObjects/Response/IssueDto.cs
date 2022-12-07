@@ -103,11 +103,5 @@ public sealed record class IssueDto(string Id, string Title, string Description,
     /// <example>APP-1</example>
     [RegularExpression("[A-Z][A-Z][A-Z]-[0-9]+")]
     public string? EpicId { get; set; } = EpicId;
-
-
-    /// <summary>
-    /// HATEOAS Links
-    /// </summary>
-    public IEnumerable<LinkDto> Links { get; set; }
 }
 

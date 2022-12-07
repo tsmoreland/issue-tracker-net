@@ -13,28 +13,21 @@
 
 namespace IssueTracker.Issues.API.REST.VersionIndependent.DataTransferObjects.Response;
 
-public sealed class LinkDto
+public sealed class ValueWithLinksDto<T>
 {
     /// <summary>
-    /// Link to resource
+    /// Response Content
     /// </summary>
-    /// <example>https://example.com/issues/v2/issues/APP-1</example>
-    public string? Href { get; init; }
-    /// <summary>
-    /// Relative Link description
-    /// </summary>
-    /// <example>self</example>
-    public string? Rel { get; init; }
-    /// <summary>
-    /// HTTP Method
-    /// </summary>
-    /// <example>GET</example>
-    public string Method { get; init; }
+    public T Value { get; init; }
 
-    public LinkDto(string? href, string? rel, string method)
+    /// <summary>
+    /// HATEOAS Links for the Value
+    /// </summary>
+    public IEnumerable<LinkDto> Links { get; init; }
+
+    public ValueWithLinksDto(T value, IEnumerable<LinkDto> links)
     {
-        Href = href;
-        Rel = rel;
-        Method = method;
+        Value = value;
+        Links = links;
     }
 }

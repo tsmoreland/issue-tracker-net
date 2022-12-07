@@ -106,12 +106,12 @@ public sealed class IssuesController : IssuesControllerBase
     /// <returns>newly created <see cref="IssueDto"/></returns>
     [HttpPost(Name = RouteNames.Create)]
     [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status201Created, "Successful Response")]
+    [SwaggerResponse(StatusCodes.Status201Created, "Successful Response", typeof(ValueWithLinksDto<IssueDto>))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails),
         "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateModelStateServiceFilter]
-    public Task<ActionResult<IssueDto>> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)
+    public Task<ActionResult<ValueWithLinksDto<IssueDto>>> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
         return base.Create(RouteNames.Get, model, cancellationToken);
     }

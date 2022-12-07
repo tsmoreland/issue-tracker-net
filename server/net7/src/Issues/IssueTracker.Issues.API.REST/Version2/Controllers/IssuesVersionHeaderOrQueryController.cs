@@ -107,7 +107,7 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
         "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateModelStateServiceFilter]
-    public Task<ActionResult<IssueDto>> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)
+    public Task<ActionResult<ValueWithLinksDto<IssueDto>>> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
         return base.Create(RouteNames.Get, model, cancellationToken);
     }
