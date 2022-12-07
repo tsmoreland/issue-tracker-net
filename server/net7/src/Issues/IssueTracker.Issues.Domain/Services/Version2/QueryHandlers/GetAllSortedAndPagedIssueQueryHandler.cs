@@ -39,10 +39,10 @@ public sealed class GetAllSortedAndPagedIssueQueryHandler : IRequestHandler<GetA
             ? new IssueTypeMatchesPredicate(type.Value)
             : new NoFilterPredicateSpecification<Issue>();
 
-        (int total, IAsyncEnumerable<Issue> items) = await _repository
+        (int totalPages, int totalCount, IAsyncEnumerable<Issue> items) = await _repository
             .GetPagedAndSortedProjections(predicate, new SelectIssue(),
                 paging, sorting, cancellationToken);
 
-        return new IssuePage(paging.PageNumber, total, items.ToDto());
+        return new IssuePage(paging.PageNumber, totalPages, totalCount, items.ToDto());
     }
 }

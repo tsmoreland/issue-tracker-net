@@ -39,11 +39,11 @@ public sealed class GetSortedAndPagedIssueSummariesByProjectQueryHandler
 
         IPredicateSpecification<Issue> predicate = new ProjectMatchesPredicate(project);
 
-        (int total, IAsyncEnumerable<IssueSummaryProjection> items) = await _repository
+        (int totalPages, int totalCount, IAsyncEnumerable<IssueSummaryProjection> items) = await _repository
             .GetPagedAndSortedProjections(predicate, new SelectIssueSummaryProjection(),
                 paging, sorting, cancellationToken);
 
-        return new IssueSummaryPage(paging.PageNumber, total, items.ToDto());
+        return new IssueSummaryPage(paging.PageNumber, totalPages, totalCount, items.ToDto());
 
     }
 }

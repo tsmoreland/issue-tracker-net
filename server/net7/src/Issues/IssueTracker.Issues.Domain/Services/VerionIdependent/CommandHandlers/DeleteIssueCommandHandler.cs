@@ -30,18 +30,16 @@ public sealed class DeleteIssueCommandHandler
     /// <inheritdoc />
     public Task<bool> Handle(Version1.Commands.DeleteIssueCommand request, CancellationToken cancellationToken)
     {
-        IssueIdentifier id = request.Id;
-        return _repository.DeleteById(id, cancellationToken);
+        return Handle(request.Id, cancellationToken);
     }
 
     /// <inheritdoc />
     public Task<bool> Handle(Version2.Commands.DeleteIssueCommand request, CancellationToken cancellationToken)
     {
-        IssueIdentifier id = request.Id;
-        return _repository.DeleteById(id, cancellationToken);
+        return Handle(request.Id, cancellationToken);
     }
 
-    private Task<bool> Handle(IssueIdentifier id, CancellationToken cancellation)
+    private Task<bool> Handle(IssueIdentifier id, CancellationToken cancellationToken)
     {
         return _repository.DeleteById(id, cancellationToken);
     }

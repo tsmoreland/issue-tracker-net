@@ -77,16 +77,16 @@ public abstract class IssuesControllerBase : ControllerBase
         string? previousPageLink = issuesResourceParameters.PageNumber > 1
             ? CreateIssuesResourceUri(routeName, issuesResourceParameters, ResourceUriType.PreviousPage)
             : null;
-        string? nextPageLink = (issuesResourceParameters.PageNumber * issuesResourceParameters.PageSize) <= page.Total
+        string? nextPageLink = (issuesResourceParameters.PageNumber * issuesResourceParameters.PageSize) <= page.TotalCount
             ? CreateIssuesResourceUri(routeName, issuesResourceParameters, ResourceUriType.NextPage)
             : null;
 
         var paginationMetaData = new
         {
-            totalCount = page.Total,
+            totalCount = page.TotalCount,
             pageSize = issuesResourceParameters.PageSize,
-            currentPage = issuesResourceParameters.PageNumber,
-            totalPages = (int)Math.Ceiling(page.Total / (double)issuesResourceParameters.PageSize),
+            currentPage = page.PageNumber,
+            totalPages = page.TotalPages,
             previousPageLink,
             nextPageLink,
         };

@@ -125,17 +125,19 @@ public sealed class IssueRepository : IIssueRepository
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<(int Total, IAsyncEnumerable<T> Collection)> GetPagedAndSortedProjections<T>(
+    public async Task<(int TotalPages, int TotalCount, IAsyncEnumerable<T> Collection)> GetPagedAndSortedProjections<T>(
         IPredicateSpecification<Issue> filterExpression,
         ISelectorSpecification<Issue, T> selectExpression,
         PagingOptions paging, SortingOptions sorting,
         CancellationToken cancellationToken = default)
     {
-        int total = await _dbContext.Issues.AsNoTracking()
+
+        int totalCount = await _dbContext.Issues.AsNoTracking()
             .Where(filterExpression)
             .CountAsync(cancellationToken);
+        int totalPages = (int)Math.Ceiling(totalCount / (double)paging.PageSize);
 
-        return (total, _dbContext.Issues.AsNoTracking()
+        return (totalPages, totalCount, _dbContext.Issues.AsNoTracking()
             .Include("_children")
             .Include("_parents")
             .Where(filterExpression)

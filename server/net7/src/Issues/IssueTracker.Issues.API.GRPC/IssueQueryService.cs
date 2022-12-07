@@ -53,7 +53,7 @@ public sealed class IssueQueryService : IssueTrackerQueryService.IssueTrackerQue
         IssueSummaryPage page = await _mediator.Send(request.ToMediatorRequest(), context.CancellationToken);
 
 
-        IssueSummariesMessage summaries = new() { PageNumber = page.PageNumber, Total = page.Total };
+        IssueSummariesMessage summaries = new() { PageNumber = page.PageNumber, Total = page.TotalCount };
         await foreach (IssueSummaryDto summary in page.Items)
         {
             summaries.Summaries.Add(summary.ToMessage());

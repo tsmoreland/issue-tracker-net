@@ -42,7 +42,7 @@ public interface IRepository<in TIdentity, TEntity> where TEntity : Entity
         ISelectorSpecification<TEntity, T> selectExpression,
         CancellationToken cancellationToken = default);
 
-    public Task<(int Total, IAsyncEnumerable<T> Collection)> GetPagedAndSortedProjections<T>(
+    public Task<(int TotalPages, int TotalCount, IAsyncEnumerable<T> Collection)> GetPagedAndSortedProjections<T>(
         ISelectorSpecification<TEntity, T> selectExpression,
         PagingOptions paging, SortingOptions sorting,
         CancellationToken cancellationToken = default) =>
@@ -52,7 +52,7 @@ public interface IRepository<in TIdentity, TEntity> where TEntity : Entity
             paging, sorting,
             cancellationToken);
 
-    Task<(int Total, IAsyncEnumerable<T> Collection)> GetPagedAndSortedProjections<T>(
+    Task<(int TotalPages, int TotalCount, IAsyncEnumerable<T> Collection)> GetPagedAndSortedProjections<T>(
         IPredicateSpecification<TEntity> filterExpression,
         ISelectorSpecification<TEntity, T> selectExpression,
         PagingOptions paging, SortingOptions sorting,

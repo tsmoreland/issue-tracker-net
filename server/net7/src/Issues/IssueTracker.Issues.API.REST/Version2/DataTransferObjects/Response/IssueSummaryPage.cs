@@ -26,10 +26,11 @@ public sealed class IssueSummaryPage
     /// <summary>
     /// Instantiates a new instance of the <see cref="IssueSummaryPage"/> class.
     /// </summary>
-    public IssueSummaryPage(int pageNumber, int total, IAsyncEnumerable<IssueSummaryDto> items)
+    public IssueSummaryPage(int pageNumber, int totalPages, int totalCount, IAsyncEnumerable<IssueSummaryDto> items)
     {
         PageNumber = pageNumber;
-        Total = total;
+        TotalPages = totalPages;
+        TotalCount = totalCount;
         Items = items;
     }
 
@@ -48,7 +49,8 @@ public sealed class IssueSummaryPage
     {
         return new IssueSummaryPage(
             page.PageNumber,
-            page.Total,
+            page.TotalPages,
+            page.TotalCount,
             page.Items.Select(mapper.Map<IssueSummaryDto>));
     }
 
@@ -61,12 +63,20 @@ public sealed class IssueSummaryPage
     public int PageNumber { get; set; } = 1;
 
     /// <summary>
+    /// Total number of pages
+    /// </summary>
+    /// <example>1</example>
+    [Required]
+    [Range(0, int.MaxValue)]
+    public int TotalPages { get; set; } = 1;
+
+    /// <summary>
     /// Total number of issues
     /// </summary>
     /// <example>10</example>
     [Required]
     [Range(0, int.MaxValue)]
-    public int Total { get; set; } = 0;
+    public int TotalCount { get; set; } = 0;
 
     /// <summary>
     /// Issues

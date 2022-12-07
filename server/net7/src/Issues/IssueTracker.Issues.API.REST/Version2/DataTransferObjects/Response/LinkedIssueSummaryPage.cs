@@ -25,10 +25,11 @@ public sealed class LinkedIssueSummaryPage
     /// <summary>
     /// Instantiates a new instance of the <see cref="LinkedIssueSummaryPage"/> class.
     /// </summary>
-    public LinkedIssueSummaryPage(int pageNumber, int total, IAsyncEnumerable<LinkedIssueSummaryDto> items)
+    public LinkedIssueSummaryPage(int pageNumber, int totalPages, int totalCount, IAsyncEnumerable<LinkedIssueSummaryDto> items)
     {
         PageNumber = pageNumber;
-        Total = total;
+        TotalPages = totalPages;
+        TotalCount = totalCount;
         Items = items;
     }
 
@@ -49,12 +50,19 @@ public sealed class LinkedIssueSummaryPage
     public int PageNumber { get; set; } = 1;
 
     /// <summary>
-    /// Total number of issues
+    /// Total Number of Pages
+    /// </summary>
+    [Required]
+    [Range(1, int.MaxValue)]
+    public int TotalPages { get; set; } = 1;
+
+    /// <summary>
+    /// TotalCount number of issues
     /// </summary>
     /// <example>10</example>
     [Required]
     [Range(0, int.MaxValue)]
-    public int Total { get; set; } = 0;
+    public int TotalCount { get; set; } = 0;
 
     /// <summary>
     /// Issues

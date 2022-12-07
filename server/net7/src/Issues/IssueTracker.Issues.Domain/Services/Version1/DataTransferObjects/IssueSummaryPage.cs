@@ -13,5 +13,5 @@
 
 namespace IssueTracker.Issues.Domain.Services.Version1.DataTransferObjects;
 
-public sealed record class IssueSummaryPage(int PageNumber, int Total, IAsyncEnumerable<IssueSummaryDto> Items)
-    : Page<IssueSummaryDto>(PageNumber, Total, Items);
+public sealed record class IssueSummaryPage(int PageNumber, int TotalPages, int TotalCount, IAsyncEnumerable<IssueSummaryDto> Items)
+    : Page<IssueSummaryDto>(PageNumber, TotalPages, TotalCount, Items);

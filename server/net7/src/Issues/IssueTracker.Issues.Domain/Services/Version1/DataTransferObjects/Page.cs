@@ -13,4 +13,4 @@
 
 namespace IssueTracker.Issues.Domain.Services.Version1.DataTransferObjects;
 
-public abstract record class Page<TItem>(int PageNumber, int Total, IAsyncEnumerable<TItem> Items);
+public abstract record class Page<TItem>(int PageNumber, int TotalPages, int TotalCount, IAsyncEnumerable<TItem> Items);
