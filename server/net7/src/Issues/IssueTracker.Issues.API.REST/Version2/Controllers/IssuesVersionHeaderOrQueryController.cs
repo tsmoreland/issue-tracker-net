@@ -60,7 +60,7 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
     /// <summary>
     /// Returns issue matching <paramref name="id"/> if found
     /// </summary>
-    /// <param name="mediaType">Accept Header Media Type</param>
+    /// <param name="mediaType" example="applicaton/vnd.issue_tracker+json">Accept Header Media Type</param>
     /// <param name="id" example="APP-1234">unique id of issue</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
