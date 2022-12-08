@@ -12,7 +12,6 @@
 //
 
 using System.IO.Compression;
-using System.Net.Mime;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -67,6 +66,7 @@ builder.Services
 builder.Services
     .AddControllers(options =>
     {
+        options.ReturnHttpNotAcceptable = true;
         options.RespectBrowserAcceptHeader = true;
         options.ModelBinderProviders.Insert(0, new EnumModelBinderProvider());
         options.InputFormatters.Insert(0, JsonPatchInputFormatterFactory.Build());
