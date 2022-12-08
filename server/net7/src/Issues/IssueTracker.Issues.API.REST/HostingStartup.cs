@@ -38,8 +38,7 @@ public sealed class HostingStartup : IHostingStartup
         services.AddAutoMapper(typeof(HostingStartup).Assembly);
 
         services
-            .AddScoped<ValidateIssueIdActionFilterAttribute>()
-            .AddScoped<ValidateModelStateActionFilterAttribute>();
+            .AddScoped<ValidateIssueIdActionFilterAttribute>();
 
     }
 }

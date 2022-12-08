@@ -12,7 +12,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace IssueTracker.Issues.API.REST.Filters;
+namespace IssueTracker.Shared.AspNetCore.Filters;
 
 /// <summary/>
 public sealed class ValidateModelStateServiceFilterAttribute : ServiceFilterAttribute

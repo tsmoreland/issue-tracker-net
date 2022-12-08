@@ -55,7 +55,7 @@ public abstract class IssuesControllerBase : ControllerBase
     protected IMapper Mapper { get; }
 
     /// <inheritdoc cref="IssuesController.GetPagedIssues"/>
-    protected async Task<ActionResult<IssueSummaryPageWithLinks>> GetIssuesWithLinks(string routeName, IssuesResourceParameters issuesResourceParameters, CancellationToken cancellationToken = default)
+    protected async Task<IActionResult> GetIssuesWithLinks(string routeName, IssuesResourceParameters issuesResourceParameters, bool includeLinks, CancellationToken cancellationToken = default)
     {
         (int pageNumber, int pageSize, string? orderBy, string?[]? priority, string? searchQuery) = issuesResourceParameters;
         PagingOptions paging = new(pageNumber, pageSize);
@@ -92,15 +92,22 @@ public abstract class IssuesControllerBase : ControllerBase
             nextPageLink,
         };
 
+
         JsonSerializerOptions jsonSerializerOptions = HttpContext.RequestServices.GetRequiredService<IOptions<JsonOptions>>()
             .Value
             .JsonSerializerOptions;
+        Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetaData, paginationMetaData.GetType(), jsonSerializerOptions));
+
+        if (!includeLinks)
+        {
+            return Ok(page);
+        }
 
         IssueSummaryPageWithLinks value = new(page,
             GetLinksForIssueCollection(issuesResourceParameters, previousPageLink, nextPageLink));
 
-        Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetaData, paginationMetaData.GetType(), jsonSerializerOptions));
         return Ok(value);
+
     }
 
     /// <inheritdoc cref="IssuesController.Get(string, CancellationToken)"/>
@@ -120,7 +127,7 @@ public abstract class IssuesControllerBase : ControllerBase
     }
 
     /// <inheritdoc cref="IssuesController.Post(AddIssueDto, CancellationToken)"/>
-    protected async Task<ActionResult<IssueDtoWithLinks>> Create(string routeName, AddIssueDto model, CancellationToken cancellationToken)
+    protected async Task<IActionResult> Create(string routeName, AddIssueDto model, bool includeLinks, CancellationToken cancellationToken)
     {
         (string project, string title, string description, Priority priority, IssueType type, string? epicId) = model;
 
@@ -132,12 +139,18 @@ public abstract class IssuesControllerBase : ControllerBase
                 IssueIdentifier.FromStringIfNotNull(epicId)),
                 cancellationToken));
 
+        if (!includeLinks)
+        {
+            return CreatedAtRoute(routeName, new { id = issue.Id }, issue);
+        }
+
         IssueDtoWithLinks value = new(issue, GetLinksForIssue(issue.Id));
         return CreatedAtRoute(routeName, new { id = issue.Id }, value);
+
     }
 
     /// <inheritdoc cref="IssuesController.Put(string, EditIssueDto, CancellationToken)"/>
-    protected async Task<ActionResult<IssueDto>> UpdateIssue(IssueIdentifier id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
+    protected async Task<IActionResult> UpdateIssue(IssueIdentifier id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
     {
         (string? title, string? description, Priority? priority, IssueType type, string? epicId) = model;
         IssueDto? issue = Mapper.Map<IssueDto>(await Mediator.Send(
@@ -152,7 +165,7 @@ public abstract class IssuesControllerBase : ControllerBase
     }
 
     /// <inheritdoc cref="IssuesController.Patch(string, JsonPatchDocument{IssuePatch}?, CancellationToken)"/>
-    protected async Task<ActionResult<IssueDto>> PatchIssue(IssueIdentifier id, [FromBody] JsonPatchDocument<IssuePatch> patchDoc, CancellationToken cancellationToken)
+    protected async Task<IActionResult> PatchIssue(IssueIdentifier id, [FromBody] JsonPatchDocument<IssuePatch> patchDoc, CancellationToken cancellationToken)
     {
         Issue? issue = await Mediator.Send(new FindIssueByIdQuery(id, true), cancellationToken);
         if (issue is null)

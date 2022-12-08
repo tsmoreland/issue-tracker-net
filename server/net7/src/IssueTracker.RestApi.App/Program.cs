@@ -24,6 +24,7 @@ using IssueTracker.RestApi.App;
 using IssueTracker.RestApi.App.Filters;
 using IssueTracker.ServiceDiscovery;
 using IssueTracker.Shared;
+using IssueTracker.Shared.AspNetCore.Filters;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -62,6 +63,9 @@ builder.Services
     .AddProblemDetails()
     .AddHealthChecks()
     .AddNamedHealthChecks(in location);
+
+builder.Services
+    .AddScoped<ValidateModelStateActionFilterAttribute>();
 
 builder.Services
     .AddControllers(options =>

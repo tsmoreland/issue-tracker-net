@@ -11,11 +11,12 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
-namespace IssueTracker.Issues.API.REST.Filters;
+namespace IssueTracker.Shared.AspNetCore.Filters;
 
 /// <summary/>
 public sealed class ValidateModelStateActionFilterAttribute : ActionFilterAttribute
@@ -39,3 +40,4 @@ public sealed class ValidateModelStateActionFilterAttribute : ActionFilterAttrib
             _problemDetailsFactory.CreateValidationProblemDetails(context.HttpContext, context.ModelState));
     }
 }
+

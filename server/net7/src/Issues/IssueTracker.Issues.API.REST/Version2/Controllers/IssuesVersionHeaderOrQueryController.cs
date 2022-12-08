@@ -19,12 +19,13 @@ using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 using IssueTracker.Issues.API.REST.VersionIndependent.DataTransferObjects.Response;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Shared;
+using IssueTracker.Shared.AspNetCore.ActionContraints;
+using IssueTracker.Shared.AspNetCore.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.Net.Http.Headers;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace IssueTracker.Issues.API.REST.Version2.Controllers;
@@ -47,6 +48,13 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
         public const string Patch = "PatchIssueUsingHeaderOrQueryVersion";
         public const string Delete = "DeleteIssueUsingHeaderOrQueryVersion";
         public const string UpdateState = "UpdateIssueStateUsingHeaderOrQueryVersion";
+
+        public const string GetWithLinks = "GetIssueByIdWithLinksUsingHeaderOrQueryVersion";
+        public const string GetPagedIssuesWithLinks = "GetIssuesInPagesWithLinksUsingHeaderOrQueryVersion";
+        public const string CreateWithLinks = "CreateIssueWithLinksUsingHeaderOrQueryVersion";
+        public const string UpdateWithLinks = "UpdateIssueWithLinksUsingHeaderOrQueryVersion";
+        public const string PatchWithLinks = "PatchIssueWithLinksUsingHeaderOrQueryVersion";
+        public const string UpdateStateWithLinks = "UpdateIssueStateWithLinksUsingHeaderOrQueryVersion";
     }
 
 
@@ -60,12 +68,12 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
     /// <summary>
     /// Returns issue matching <paramref name="id"/> if found
     /// </summary>
-    /// <param name="mediaType" example="applicaton/vnd.issue_tracker+json">Accept Header Media Type</param>
     /// <param name="id" example="APP-1234">unique id of issue</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
     [HttpGet("{id}", Name = RouteNames.Get)]
     [HttpHead("{id}")]
+    [RequestMatchesMediaType("Accept", "*/*", MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDtoWithLinks), VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
@@ -74,16 +82,33 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails),
         "application/problem+json", "application/problem+xml")]
     [Filters.ValidateIssueIdServiceFilter]
-    [Filters.ValidateModelStateServiceFilter]
-    public Task<IActionResult> Get([FromHeader(Name = "Accept")] string? mediaType, [FromRoute] string id, CancellationToken cancellationToken)
+    [ValidateModelStateServiceFilter]
+    public Task<IActionResult> Get([FromRoute] string id, CancellationToken cancellationToken)
     {
-        // move to filter
-        if (!MediaTypeHeaderValue.TryParse(mediaType, out MediaTypeHeaderValue? parsedMediaType))
-        {
-            return Task.FromResult<IActionResult>(BadRequest(_problemDetailsFactory.CreateProblemDetails(HttpContext,
-                statusCode: StatusCodes.Status400BadRequest, detail: "Accept header media type is not a valid media type")));
-        }
-        return base.GetIssueById(IssueIdentifier.FromString(id), parsedMediaType.MediaType.IsHateoas(), cancellationToken);
+        return base.GetIssueById(IssueIdentifier.FromString(id), false, cancellationToken);
+    }
+
+    /// <summary>
+    /// Returns issue matching <paramref name="id"/> if found
+    /// </summary>
+    /// <param name="id" example="APP-1234">unique id of issue</param>
+    /// <param name="cancellationToken">A cancellation token</param>
+    /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
+    [HttpGet("{id}", Name = RouteNames.GetWithLinks)]
+    [HttpHead("{id}")]
+    [RequestMatchesMediaType("Accept", VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
+    [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDtoWithLinks), VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails),
+        "application/problem+json", "application/problem+xml")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails),
+        "application/problem+json", "application/problem+xml")]
+    [Filters.ValidateIssueIdServiceFilter]
+    [ValidateModelStateServiceFilter]
+    public Task<IActionResult> GetWithLinks([FromRoute] string id, CancellationToken cancellationToken)
+    {
+        return base.GetIssueById(IssueIdentifier.FromString(id), true, cancellationToken);
     }
 
     /// <summary>
@@ -94,17 +119,18 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
     /// <returns>issues filtered based on the provided query parameters</returns>
     [HttpGet(Name = RouteNames.GetPagedIssues)]
     [HttpHead]
+    [RequestMatchesMediaType("Accept", "*/*", MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueSummaryPageWithLinks))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails),
         "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateModelStateServiceFilter]
-    public Task<ActionResult<IssueSummaryPageWithLinks>> GetAll(
+    [ValidateModelStateServiceFilter]
+    public Task<IActionResult> GetPagedIssues(
         [FromQuery] IssuesResourceParameters issuesResourceParameters,
         CancellationToken cancellationToken = default)
     {
-        return base.GetIssuesWithLinks(RouteNames.GetPagedIssues, issuesResourceParameters, cancellationToken);
+        return base.GetIssuesWithLinks(RouteNames.GetPagedIssues, issuesResourceParameters, false, cancellationToken);
     }
 
     /// <summary>
@@ -115,14 +141,15 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
     /// <returns>newly created <see cref="IssueDto"/></returns>
     [HttpPost(Name = RouteNames.Create)]
     [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [RequestMatchesMediaType("Accept", "*/*", MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status201Created, "Successful Response")]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails),
         "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateModelStateServiceFilter]
-    public Task<ActionResult<IssueDtoWithLinks>> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)
+    [ValidateModelStateServiceFilter]
+    public Task<IActionResult> Post([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
-        return base.Create(RouteNames.Get, model, cancellationToken);
+        return base.Create(RouteNames.Get, model, false, cancellationToken);
     }
 
     /// <summary>
@@ -133,6 +160,7 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>updated <see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
     [HttpPut("{id}", Name = RouteNames.Update)]
+    [RequestMatchesMediaType("Accept", "*/*", MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]
@@ -140,8 +168,8 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
     [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateIssueIdServiceFilter]
-    [Filters.ValidateModelStateServiceFilter]
-    public Task<ActionResult<IssueDto>> Put(string id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
+    [ValidateModelStateServiceFilter]
+    public Task<IActionResult> Put(string id, [FromBody] EditIssueDto model, CancellationToken cancellationToken)
     {
         return base.UpdateIssue(IssueIdentifier.FromString(id), model, cancellationToken);
     }
@@ -152,16 +180,16 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
     /// <param name="id">unique id of the issue to update</param>
     /// <param name="patchDoc">patch document containing details on changes to </param>
     /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns></returns>
     [HttpPatch("{id}", Name = RouteNames.Patch)]
+    [RequestMatchesMediaType("Accept", "*/*", MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Consumes("application/json-patch+json")]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [Filters.ValidateModelStateServiceFilter]
-    public Task<ActionResult<IssueDto>> Patch(string id, [FromBody] JsonPatchDocument<IssuePatch> patchDoc, CancellationToken cancellationToken)
+    [ValidateModelStateServiceFilter]
+    public Task<IActionResult> Patch(string id, [FromBody] JsonPatchDocument<IssuePatch> patchDoc, CancellationToken cancellationToken)
     {
         return base.PatchIssue(IssueIdentifier.FromString(id), patchDoc, cancellationToken);
     }
@@ -198,6 +226,7 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
     /// <param name="cancellationToken">A cancellation token.</param>
     /// <returns>empty response on success; otherwise, problem details</returns>
     [HttpPut("{id}/state", Name = RouteNames.UpdateState)]
+    [RequestMatchesMediaType("Accept", "*/*", MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
@@ -206,7 +235,7 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status409Conflict, "state change not possible", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateIssueIdServiceFilter]
-    [Filters.ValidateModelStateServiceFilter]
+    [ValidateModelStateServiceFilter]
     public Task<IActionResult> ChangeState(string id, ChangeIssueStateDto changeState, CancellationToken cancellationToken)
     {
         return base.ChangeIssueState(IssueIdentifier.FromString(id), changeState, cancellationToken);
