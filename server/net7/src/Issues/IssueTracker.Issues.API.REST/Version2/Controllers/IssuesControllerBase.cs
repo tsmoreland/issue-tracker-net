@@ -104,13 +104,19 @@ public abstract class IssuesControllerBase : ControllerBase
     }
 
     /// <inheritdoc cref="IssuesController.Get(string, CancellationToken)"/>
-    protected async Task<ActionResult<IssueDto>> GetIssueById(IssueIdentifier id, CancellationToken cancellationToken)
+    protected async Task<IActionResult> GetIssueById(IssueIdentifier id, bool includeLinks, CancellationToken cancellationToken)
     {
         IssueDto? issue = Mapper.Map<IssueDto?>(await Mediator
             .Send(new FindIssueDtoByIdQuery(id), cancellationToken));
-        return issue is not null
-            ? Ok(issue)
-            : NotFound();
+
+        if (issue is null)
+        {
+            return NotFound();
+        }
+
+        return includeLinks
+            ? Ok(new IssueDtoWithLinks(issue, GetLinksForIssue(issue.Id)))
+            : Ok(issue);
     }
 
     /// <inheritdoc cref="IssuesController.Post(AddIssueDto, CancellationToken)"/>

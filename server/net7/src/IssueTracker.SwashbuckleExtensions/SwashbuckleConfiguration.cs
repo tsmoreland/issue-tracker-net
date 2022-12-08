@@ -43,6 +43,8 @@ public class SwashbuckleConfiguration : ConfigureNamedOptions<SwaggerGenOptions,
     {
         _ = provider; // unused for now
 
+        options.EnableAnnotations();
+
         AddSwaggerDocsPerVersion(options, apiVersionDescriptionProvider.ApiVersionDescriptions);
         options.DocInclusionPredicate(
             (documentName, apiDescription) =>

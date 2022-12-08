@@ -51,7 +51,7 @@ public sealed class EpicsController : ControllerBase
     /// <returns>all issues with type <see cref="Task"/></returns>
     [HttpGet]
     [HttpHead]
-    [Consumes(MediaTypeNames.Application.Json, "text/json", "application/*+json", MediaTypeNames.Application.Xml)]
+    [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IAsyncEnumerable<IssueSummaryDto>),
         MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]

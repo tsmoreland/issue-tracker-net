@@ -24,10 +24,12 @@ using IssueTracker.Middelware.SecurityHeaders;
 using IssueTracker.RestApi.App;
 using IssueTracker.RestApi.App.Filters;
 using IssueTracker.ServiceDiscovery;
+using IssueTracker.Shared;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -111,6 +113,18 @@ builder.Services
     });
 
 builder.Services.AddSecurityHeaders(builder.Configuration);
+builder.Services
+    .Configure<MvcOptions>(config =>
+    {
+        SystemTextJsonOutputFormatter? jsonOutputFormatter = config.OutputFormatters.OfType<SystemTextJsonOutputFormatter>().FirstOrDefault();
+        jsonOutputFormatter?.SupportedMediaTypes?.Add(VendorMediaTypeNames.Application.HateoasPlusJson);
+
+        XmlSerializerOutputFormatter? xmlOutputFormatter =
+            config.OutputFormatters.OfType<XmlSerializerOutputFormatter>().FirstOrDefault();
+        xmlOutputFormatter?.SupportedMediaTypes?.Add(VendorMediaTypeNames.Application.HateoasPlusXml);
+
+
+    });
 builder.Services
     .AddVersionedApiExplorer(options =>
     {
