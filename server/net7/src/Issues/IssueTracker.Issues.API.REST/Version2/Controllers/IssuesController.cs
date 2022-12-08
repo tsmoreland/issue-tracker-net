@@ -19,6 +19,7 @@ using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 using IssueTracker.Issues.API.REST.VersionIndependent.DataTransferObjects.Response;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Shared;
+using IssueTracker.Shared.AspNetCore.ActionContraints;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
@@ -43,6 +44,7 @@ public sealed class IssuesController : IssuesControllerBase
     private static class RouteNames
     {
         public const string Get = "GetIssueById";
+        public const string GetWithLinks = "GetIssueByIdWithLinks";
         public const string GetPagedIssues = "GetIssuesInPages";
         public const string Create = "CreateIssue";
         public const string Update = "UpdateIssue";
@@ -64,15 +66,15 @@ public sealed class IssuesController : IssuesControllerBase
     /// <summary>
     /// Returns issue matching <paramref name="id"/> if found
     /// </summary>
-    /// <param name="mediaType" example="applicaton/vnd.issue_tracker+json">Accept Header Media Type</param>
+    /// <param name="mediaType" example="applicaton/json">Accept Header Media Type</param>
     /// <param name="id" example="APP-1234">unique id of issue</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
     [HttpGet("{id}", Name = RouteNames.Get)]
     [HttpHead("{id}")]
+    [RequestMatchesMediaType("Accept", "*/*", MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Consumes(MediaTypeNames.Application.Json,MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDtoWithLinks), VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [Filters.ValidateIssueIdServiceFilter]
@@ -86,7 +88,35 @@ public sealed class IssuesController : IssuesControllerBase
                 statusCode: StatusCodes.Status400BadRequest, detail: "Accept header media type is not a valid media type")));
         }
 
-        return base.GetIssueById(IssueIdentifier.FromString(id), parsedMediaType.MediaType.IsHateoasPlusJson(), cancellationToken);
+        return base.GetIssueById(IssueIdentifier.FromString(id), false, cancellationToken);
+    }
+
+    /// <summary>
+    /// Returns issue matching <paramref name="id"/> if found
+    /// </summary>
+    /// <param name="mediaType" example="applicaton/vnd.issue_tracker+json">Accept Header Media Type</param>
+    /// <param name="id" example="APP-1234">unique id of issue</param>
+    /// <param name="cancellationToken">A cancellation token</param>
+    /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
+    [HttpGet("{id}", Name = RouteNames.GetWithLinks)]
+    [HttpHead("{id}")]
+    [RequestMatchesMediaType("Accept", VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
+    [Consumes(MediaTypeNames.Application.Json,MediaTypeNames.Application.Xml)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDtoWithLinks), VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
+    [Filters.ValidateIssueIdServiceFilter]
+    [Filters.ValidateModelStateServiceFilter]
+    public Task<IActionResult> GetWithLinks([FromHeader(Name = "Accept")] string? mediaType, [FromRoute] string id, CancellationToken cancellationToken)
+    {
+        // move to filter
+        if (!MediaTypeHeaderValue.TryParse(mediaType, out MediaTypeHeaderValue? parsedMediaType))
+        {
+            return Task.FromResult<IActionResult>(BadRequest(_problemDetailsFactory.CreateProblemDetails(HttpContext,
+                statusCode: StatusCodes.Status400BadRequest, detail: "Accept header media type is not a valid media type")));
+        }
+
+        return base.GetIssueById(IssueIdentifier.FromString(id), parsedMediaType.MediaType.IsHateoas(), cancellationToken);
     }
 
     /// <summary>

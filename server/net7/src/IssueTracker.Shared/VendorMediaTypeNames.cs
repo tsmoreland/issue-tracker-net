@@ -30,6 +30,9 @@ public static class VendorMediaTypeNames
         public const string Xml = "application/problem+xml";
     }
 
+    public static bool IsHateoas(this StringSegment mediaTypeName) =>
+        mediaTypeName == Application.HateoasPlusJson || mediaTypeName == Application.HateoasPlusXml;
+
     public static bool IsHateoasPlusJson(this StringSegment mediaTypeName) =>
         mediaTypeName == Application.HateoasPlusJson;
     public static bool IsHateoasPlusXml(this StringSegment mediaTypeName) =>

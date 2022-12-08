@@ -43,6 +43,7 @@ public class SwashbuckleConfiguration : ConfigureNamedOptions<SwaggerGenOptions,
     {
         _ = provider; // unused for now
 
+        options.ResolveConflictingActions(ResolveConflicts);
         options.EnableAnnotations();
 
         AddSwaggerDocsPerVersion(options, apiVersionDescriptionProvider.ApiVersionDescriptions);
@@ -110,5 +111,11 @@ public class SwashbuckleConfiguration : ConfigureNamedOptions<SwaggerGenOptions,
         return attribute is not null
             ? attribute.Name
             : type.Name;
+    }
+
+    private static ApiDescription ResolveConflicts(IEnumerable<ApiDescription> descriptions)
+    {
+        // TODO: inspect the enumerable to determine which one to return, based on accept type for vendor specific cases
+        return descriptions.First()!;
     }
 }

@@ -83,7 +83,7 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
             return Task.FromResult<IActionResult>(BadRequest(_problemDetailsFactory.CreateProblemDetails(HttpContext,
                 statusCode: StatusCodes.Status400BadRequest, detail: "Accept header media type is not a valid media type")));
         }
-        return base.GetIssueById(IssueIdentifier.FromString(id), parsedMediaType.MediaType.IsHateoasPlusJson(), cancellationToken);
+        return base.GetIssueById(IssueIdentifier.FromString(id), parsedMediaType.MediaType.IsHateoas(), cancellationToken);
     }
 
     /// <summary>
