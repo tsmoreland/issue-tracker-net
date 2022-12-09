@@ -49,12 +49,12 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
         public const string Delete = "DeleteIssueUsingHeaderOrQueryVersion";
         public const string UpdateState = "UpdateIssueStateUsingHeaderOrQueryVersion";
 
-        public const string GetWithLinks = "GetIssueByIdWithLinksUsingHeaderOrQueryVersion";
-        public const string GetPagedIssuesWithLinks = "GetIssuesInPagesWithLinksUsingHeaderOrQueryVersion";
-        public const string CreateWithLinks = "CreateIssueWithLinksUsingHeaderOrQueryVersion";
-        public const string UpdateWithLinks = "UpdateIssueWithLinksUsingHeaderOrQueryVersion";
-        public const string PatchWithLinks = "PatchIssueWithLinksUsingHeaderOrQueryVersion";
-        public const string UpdateStateWithLinks = "UpdateIssueStateWithLinksUsingHeaderOrQueryVersion";
+        public const string GetWithHateoasResponse = "GetIssueByIdWithHateoasResponseUsingHeaderOrQueryVersion";
+        public const string GetPagedIssuesWithHateoasResponse = "GetIssuesInPagesWithHateoasResponseUsingHeaderOrQueryVersion";
+        public const string CreateWithHateoasResponse = "CreateIssueWithHateoasResponseUsingHeaderOrQueryVersion";
+        public const string UpdateWithHateoasResponse = "UpdateIssueWithHateoasResponseUsingHeaderOrQueryVersion";
+        public const string PatchWithHateoasResponse = "PatchIssueWithHateoasResponseUsingHeaderOrQueryVersion";
+        public const string UpdateStateWithHateoasResponse = "UpdateIssueStateWithHateoasResponseUsingHeaderOrQueryVersion";
     }
 
 
@@ -94,7 +94,7 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
     /// <param name="id" example="APP-1234">unique id of issue</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
-    [HttpGet("{id}", Name = RouteNames.GetWithLinks)]
+    [HttpGet("{id}", Name = RouteNames.GetWithHateoasResponse)]
     [HttpHead("{id}")]
     [RequestMatchesMediaType("Accept", VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
     [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]

@@ -115,7 +115,6 @@ public class SwashbuckleConfiguration : ConfigureNamedOptions<SwaggerGenOptions,
 
     private static ApiDescription ResolveConflicts(IEnumerable<ApiDescription> descriptions)
     {
-        // TODO: inspect the enumerable to determine which one to return, based on accept type for vendor specific cases
-        return descriptions.First()!;
+        return descriptions.Last()!;
     }
 }

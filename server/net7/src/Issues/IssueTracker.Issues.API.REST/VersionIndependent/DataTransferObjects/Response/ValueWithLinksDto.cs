@@ -23,11 +23,11 @@ public abstract class ValueWithLinksDto<T>
     /// <summary>
     /// ZATEOAS Links for the Value
     /// </summary>
-    public IEnumerable<LinkDto> Links { get; init; }
+    public IReadOnlyList<LinkDto> Links { get; init; }
 
     protected ValueWithLinksDto(T value, IEnumerable<LinkDto> links)
     {
         Value = value;
-        Links = links;
+        Links = links.ToList().AsReadOnly();
     }
 }
