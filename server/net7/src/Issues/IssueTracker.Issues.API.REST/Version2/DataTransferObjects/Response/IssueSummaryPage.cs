@@ -13,7 +13,9 @@
 
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
+using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.ResourceParameters;
 using IssueTracker.Shared;
+using Microsoft.AspNetCore.Mvc;
 
 namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 
@@ -83,5 +85,24 @@ public sealed class IssueSummaryPage
     /// </summary>
     [Required]
     public IAsyncEnumerable<IssueSummaryDto> Items { get; set; } = AsyncEnumerable.Empty<IssueSummaryDto>();
+
+    public string? GeneratePreviousPageLinkOrNull(string routeName, IssuesResourceParameters resourceParameters, IUrlHelper urlHelper)
+    {
+        return PageNumber > 1
+            ? urlHelper.Link(routeName, resourceParameters.ToRouteParameters(pageNumber: resourceParameters.PageNumber - 1))
+            : null;
+    }
+
+    public string? GenerateNextPageLinkOrNull(string routeName, IssuesResourceParameters resourceParameters, IUrlHelper urlHelper)
+    {
+        return PageNumber <= TotalCount
+            ? urlHelper.Link(routeName, resourceParameters.ToRouteParameters(pageNumber: resourceParameters.PageNumber + 1))
+            : null;
+    }
+
+    public string? GenerateCurrentPageLinkOrNull(string routeName, IssuesResourceParameters resourceParameters, IUrlHelper urlHelper)
+    {
+        return urlHelper.Link(routeName, resourceParameters.ToRouteParameters(pageNumber: resourceParameters.PageNumber + 1));
+    }
 }
 
