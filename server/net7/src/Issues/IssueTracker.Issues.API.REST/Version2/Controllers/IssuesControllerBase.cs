@@ -73,14 +73,8 @@ public abstract class IssuesControllerBase : ControllerBase
 
         IssueSummaryPage page = IssueSummaryPage.Convert(await Mediator.Send(summaryQuery, cancellationToken), Mapper);
 
-        // TODO: move this calculation into a property of Page (and the domain Page, dto Page should just get the value)
-        // TODO: add total pages too that'll simplify these calculations
-        string? previousPageLink = issuesResourceParameters.PageNumber > 1
-            ? CreateIssuesResourceUri(routeName, issuesResourceParameters, ResourceUriType.PreviousPage)
-            : null;
-        string? nextPageLink = (issuesResourceParameters.PageNumber * issuesResourceParameters.PageSize) <= page.TotalCount
-            ? CreateIssuesResourceUri(routeName, issuesResourceParameters, ResourceUriType.NextPage)
-            : null;
+        string? previousPageLink = issuesResourceParameters.GeneratePreviousPageLinkOrNull(routeName, Url);
+        string? nextPageLink = issuesResourceParameters.GenerateNextPageLinkOrNull(page.TotalPages, routeName, Url);
 
         var paginationMetaData = new
         {
@@ -89,9 +83,8 @@ public abstract class IssuesControllerBase : ControllerBase
             currentPage = page.PageNumber,
             totalPages = page.TotalPages,
             previousPageLink,
-            nextPageLink,
+            nextPageLink
         };
-
 
         JsonSerializerOptions jsonSerializerOptions = HttpContext.RequestServices.GetRequiredService<IOptions<JsonOptions>>()
             .Value
@@ -104,7 +97,7 @@ public abstract class IssuesControllerBase : ControllerBase
         }
 
         IssueSummaryPageWithLinks value = new(page,
-            GetLinksForIssueCollection(issuesResourceParameters, previousPageLink, nextPageLink));
+            GetLinksForIssueCollection(issuesResourceParameters, routeName, page.TotalPages));
 
         return Ok(value);
 
@@ -240,25 +233,26 @@ public abstract class IssuesControllerBase : ControllerBase
     /// Returns HATEOAS links to be included in response
     /// </summary>
     /// <returns>Collection of <see cref="LinkDto"/></returns>
-    protected abstract IEnumerable<LinkDto> GetLinksForIssueCollection(
-        IssuesResourceParameters issuesResourceParameters, string? previousPageLink, string? nextPageLink);
-
-    /// <summary>
-    /// Returns Resource URI for current, next or previous page with provided query parameters
-    /// </summary>
-    /// <param name="routeName">route to navigate to</param>
-    /// <param name="issuesResourceParameters">parameters used in that route</param>
-    /// <param name="uriType"><see cref="ResourceUriType"/></param>
-    /// <returns>link to current, previous or next page</returns>
-    protected string? CreateIssuesResourceUri(string routeName, IssuesResourceParameters issuesResourceParameters, ResourceUriType uriType)
+    protected IEnumerable<LinkDto> GetLinksForIssueCollection(
+        IssuesResourceParameters issuesResourceParameters, string routeName, int totalPages)
     {
-        return uriType switch
+        if (issuesResourceParameters.HasPreviousPage())
         {
-            ResourceUriType.PreviousPage => Url.Link(routeName, issuesResourceParameters.ToRouteParameters(issuesResourceParameters.PageNumber - 1)),
-            ResourceUriType.NextPage => Url.Link(routeName, issuesResourceParameters.ToRouteParameters(issuesResourceParameters.PageNumber + 1)),
-            ResourceUriType.Current => Url.Link(routeName, issuesResourceParameters.ToRouteParameters(issuesResourceParameters.PageNumber)),
-            _ => Url.Link(routeName, issuesResourceParameters.ToRouteParameters(issuesResourceParameters.PageNumber + 1)),
-        };
+            yield return new LinkDto(issuesResourceParameters
+                    .GeneratePreviousPageLinkOrNull(routeName, Url),
+                "previous-page", "GET");
+        }
+
+        yield return new LinkDto(issuesResourceParameters
+                .GenerateCurrentPageLinkOrNull(routeName, Url),
+            "self", "GET");
+
+        if (issuesResourceParameters.HasNextPage(totalPages))
+        {
+            yield return new LinkDto(issuesResourceParameters
+                    .GenerateNextPageLinkOrNull(totalPages, routeName, Url),
+                "next-page", "GET");
+        }
     }
 
 }

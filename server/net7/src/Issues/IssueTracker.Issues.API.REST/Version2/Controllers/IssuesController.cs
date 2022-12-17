@@ -278,32 +278,6 @@ public sealed class IssuesController : IssuesControllerBase
         yield return new LinkDto(Url.Link(RouteNames.CreateWithHateoasResponse, null), "create-issue", "POST");
         yield return new LinkDto(Url.Link(RouteNames.Update, new { id = issueId }), "update-issue", "PUT");
         yield return new LinkDto(Url.Link(RouteNames.Patch, new { id = issueId }), "patch-issue", "PATCH");
-        yield return new LinkDto(Url.Link(RouteNames.Delete, new { id = issueId }), "patch-issue", "DELETE");
-    }
-
-    /// <inheritdoc/>
-    /// <remarks>
-    /// would be used on GetPagedIssues method, may need previous, next links but for that IssueResourceParameters should
-    /// expose has next, has previous
-    ///
-    /// we could go further and change the response to return a enumerable of ValueWithLinks{IssueSummaryDto} which itself
-    /// is wrapped in ValueWithLinks
-    /// </remarks>
-    protected override IEnumerable<LinkDto> GetLinksForIssueCollection(
-        IssuesResourceParameters issuesResourceParameters, string? previousPageLink, string? nextPageLink)
-    {
-        if (previousPageLink is not null)
-        {
-            yield return new LinkDto(previousPageLink, "previous-page", "GET");
-        }
-
-        yield return new LinkDto(
-            CreateIssuesResourceUri(RouteNames.GetPagedIssues, issuesResourceParameters,
-                Shared.ResourceUriType.Current), "self", "GET");
-
-        if (nextPageLink is not null)
-        {
-            yield return new LinkDto(nextPageLink, "next-page", "GET");
-        }
+        yield return new LinkDto(Url.Link(RouteNames.Delete, new { id = issueId }), "delete-issue", "DELETE");
     }
 }
