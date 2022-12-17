@@ -256,6 +256,7 @@ public abstract class IssuesControllerBase : ControllerBase
         {
             ResourceUriType.PreviousPage => Url.Link(routeName, issuesResourceParameters.ToRouteParameters(issuesResourceParameters.PageNumber - 1)),
             ResourceUriType.NextPage => Url.Link(routeName, issuesResourceParameters.ToRouteParameters(issuesResourceParameters.PageNumber + 1)),
+            ResourceUriType.Current => Url.Link(routeName, issuesResourceParameters.ToRouteParameters(issuesResourceParameters.PageNumber)),
             _ => Url.Link(routeName, issuesResourceParameters.ToRouteParameters(issuesResourceParameters.PageNumber + 1)),
         };
     }
