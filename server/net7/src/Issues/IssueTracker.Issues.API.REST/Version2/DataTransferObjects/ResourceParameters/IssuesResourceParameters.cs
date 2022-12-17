@@ -11,6 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using Microsoft.AspNetCore.Mvc;
+
 namespace IssueTracker.Issues.API.REST.Version2.DataTransferObjects.ResourceParameters;
 
 /// <summary>
@@ -66,5 +68,34 @@ public sealed record class IssuesResourceParameters
             priorities = Priorities,
             searchQuery = SearchQuery,
         };
+    }
+
+    public bool HasPreviousPage()
+    {
+        return PageNumber > 1;
+    }
+
+    public bool HasNextPage(int totalPages)
+    {
+        return PageNumber <= totalPages;
+    }
+
+    public string? GeneratePreviousPageLinkOrNull(string routeName, IUrlHelper urlHelper)
+    {
+        return HasPreviousPage()
+            ? urlHelper.Link(routeName, ToRouteParameters(pageNumber: PageNumber - 1))
+            : null;
+    }
+
+    public string? GenerateNextPageLinkOrNull(int totalPages, string routeName, IUrlHelper urlHelper)
+    {
+        return HasNextPage(totalPages)
+            ? urlHelper.Link(routeName, ToRouteParameters(pageNumber: PageNumber + 1))
+            : null;
+    }
+
+    public string? GenerateCurrentPageLinkOrNull(string routeName, IUrlHelper urlHelper)
+    {
+        return urlHelper.Link(routeName, ToRouteParameters());
     }
 }
