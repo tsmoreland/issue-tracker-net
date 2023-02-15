@@ -27,12 +27,12 @@ public abstract record class StateChangeCommand(IssueIdentifier Id)
     }
 }
 
-public sealed record class MoveToBackLogStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest<Unit>;
-public sealed record class CloseStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest<Unit>;
+public sealed record class MoveToBackLogStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest;
+public sealed record class CloseStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest;
 
-public sealed record class ToDoStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest<Unit>;
-public sealed record class ReadyForReviewStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest<Unit>;
-public sealed record class ReviewFailedStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest<Unit>;
-public sealed record class ReadyForTestStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest<Unit>;
-public sealed record class TestFailedStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest<Unit>;
+public sealed record class ToDoStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest;
+public sealed record class ReadyForReviewStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest;
+public sealed record class ReviewFailedStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest;
+public sealed record class ReadyForTestStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest;
+public sealed record class TestFailedStateChangeCommand(IssueIdentifier Id) : StateChangeCommand(Id), IRequest;
 

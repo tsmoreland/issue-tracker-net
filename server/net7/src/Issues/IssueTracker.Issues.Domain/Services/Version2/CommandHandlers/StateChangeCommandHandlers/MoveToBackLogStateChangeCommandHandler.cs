@@ -18,7 +18,7 @@ using MediatR;
 
 namespace IssueTracker.Issues.Domain.Services.Version2.CommandHandlers.StateChangeCommandHandlers;
 
-public sealed class MoveToBackLogStateChangeCommandHandler : IRequestHandler<MoveToBackLogStateChangeCommand, Unit>
+public sealed class MoveToBackLogStateChangeCommandHandler : IRequestHandler<MoveToBackLogStateChangeCommand>
 {
     private readonly IIssueRepository _repository;
 
@@ -28,7 +28,7 @@ public sealed class MoveToBackLogStateChangeCommandHandler : IRequestHandler<Mov
     }
 
     /// <inheritdoc />
-    public async Task<Unit> Handle(MoveToBackLogStateChangeCommand request, CancellationToken cancellationToken)
+    public async Task Handle(MoveToBackLogStateChangeCommand request, CancellationToken cancellationToken)
     {
         Issue? issue = await _repository.GetByIdOrDefault(request.Id, track: true, cancellationToken);
         if (issue is null)
@@ -42,7 +42,5 @@ public sealed class MoveToBackLogStateChangeCommandHandler : IRequestHandler<Mov
         }
 
         await _repository.UnitOfWork.SaveChangesAsync(cancellationToken);
-
-        return Unit.Value;
     }
 }

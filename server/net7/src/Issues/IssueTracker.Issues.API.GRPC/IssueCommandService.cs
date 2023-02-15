@@ -78,7 +78,7 @@ public sealed class IssueCommandService : IssueTrackerCommandService.IssueTracke
             : new StatusMessage { Status = ResultCode.ResultNotFound, Message = $"{request.Id} not found" };
     }
 
-    private async Task<StatusMessage> ChangeState(IRequest<Unit> statusChangeCommand, ServerCallContext context)
+    private async Task<StatusMessage> ChangeState(IRequest statusChangeCommand, ServerCallContext context)
     {
         try
         {

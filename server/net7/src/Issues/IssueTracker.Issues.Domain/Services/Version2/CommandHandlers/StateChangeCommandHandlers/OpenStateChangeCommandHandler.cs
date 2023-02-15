@@ -5,7 +5,7 @@ using MediatR;
 
 namespace IssueTracker.Issues.Domain.Services.Version2.CommandHandlers.StateChangeCommandHandlers;
 
-public sealed class OpenStateChangeCommandHandler : IRequestHandler<OpenStateChangeCommand, Unit>
+public sealed class OpenStateChangeCommandHandler : IRequestHandler<OpenStateChangeCommand>
 {
     private readonly IIssueRepository _repository;
 
@@ -15,7 +15,7 @@ public sealed class OpenStateChangeCommandHandler : IRequestHandler<OpenStateCha
     }
 
     /// <inheritdoc />
-    public async Task<Unit> Handle(OpenStateChangeCommand request, CancellationToken cancellationToken)
+    public async Task Handle(OpenStateChangeCommand request, CancellationToken cancellationToken)
     {
         Issue? issue = await _repository.GetByIdOrDefault(request.Id, track: true, cancellationToken);
         if (issue is null)
@@ -27,6 +27,5 @@ public sealed class OpenStateChangeCommandHandler : IRequestHandler<OpenStateCha
             throw new InvalidStateChangeException(issue.State.Value, typeof(CannotReproduceStateChangeCommand));
         }
         await _repository.UnitOfWork.SaveChangesAsync(cancellationToken);
-        return Unit.Value;
     }
 }

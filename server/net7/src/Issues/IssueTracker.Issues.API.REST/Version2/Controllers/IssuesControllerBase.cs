@@ -119,7 +119,7 @@ public abstract class IssuesControllerBase : ControllerBase
             : Ok(issue);
     }
 
-    /// <inheritdoc cref="IssuesController.Post(AddIssueDto, CancellationToken)"/>
+    /// <inheritdoc cref="IssuesController.CreateIssue(AddIssueDto, CancellationToken)"/>
     protected async Task<IActionResult> Create(string routeName, AddIssueDto model, bool includeLinks, CancellationToken cancellationToken)
     {
         (string project, string title, string description, Priority priority, IssueType type, string? epicId) = model;

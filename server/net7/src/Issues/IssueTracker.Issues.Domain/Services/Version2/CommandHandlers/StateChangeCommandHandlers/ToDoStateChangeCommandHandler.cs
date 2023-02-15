@@ -5,7 +5,7 @@ using MediatR;
 
 namespace IssueTracker.Issues.Domain.Services.Version2.CommandHandlers.StateChangeCommandHandlers;
 
-public sealed class ToDoStateChangeCommandHandler : IRequestHandler<ToDoStateChangeCommand, Unit>
+public sealed class ToDoStateChangeCommandHandler : IRequestHandler<ToDoStateChangeCommand>
 {
     private readonly IIssueRepository _repository;
 
@@ -15,7 +15,7 @@ public sealed class ToDoStateChangeCommandHandler : IRequestHandler<ToDoStateCha
     }
 
     /// <inheritdoc />
-    public async Task<Unit> Handle(ToDoStateChangeCommand request, CancellationToken cancellationToken)
+    public async Task Handle(ToDoStateChangeCommand request, CancellationToken cancellationToken)
     {
         Issue? issue = await _repository.GetByIdOrDefault(request.Id, track: true, cancellationToken);
         if (issue is null)
@@ -28,6 +28,5 @@ public sealed class ToDoStateChangeCommandHandler : IRequestHandler<ToDoStateCha
             throw new InvalidStateChangeException(issue.State.Value, typeof(CannotReproduceStateChangeCommand));
         }
         await _repository.UnitOfWork.SaveChangesAsync(cancellationToken);
-        return Unit.Value;
     }
 }

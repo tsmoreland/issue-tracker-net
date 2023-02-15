@@ -15,7 +15,7 @@ using MediatR;
 namespace IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
 
 public sealed record class CannotReproduceStateChangeCommand(IssueIdentifier Id, DateTimeOffset StopTime)
-    : StateChangeCommand(Id), IRequest<Unit>
+    : StateChangeCommand(Id), IRequest
 {
     /// <inheritdoc />
     public override void UpdateIssue(Issue issue) =>
