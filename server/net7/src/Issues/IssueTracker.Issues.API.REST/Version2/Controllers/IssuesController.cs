@@ -19,6 +19,7 @@ using IssueTracker.Issues.API.REST.Version2.DataTransferObjects.Response;
 using IssueTracker.Issues.API.REST.VersionIndependent.DataTransferObjects.Response;
 using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Shared;
+using IssueTracker.Shared.AspNetCore;
 using IssueTracker.Shared.AspNetCore.ActionContraints;
 using IssueTracker.Shared.AspNetCore.Filters;
 using MediatR;
@@ -76,6 +77,7 @@ public sealed class IssuesController : IssuesControllerBase
     [HttpHead("{id}")]
     [RequestMatchesMediaType("Accept", "*/*", MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Consumes(MediaTypeNames.Application.Json,MediaTypeNames.Application.Xml)]
+    [SwaggerOperation(OperationId = RouteNames.Get)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
@@ -96,6 +98,7 @@ public sealed class IssuesController : IssuesControllerBase
     [HttpHead("{id}")]
     [RequestMatchesMediaType("Accept", VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
     [Consumes(MediaTypeNames.Application.Json,MediaTypeNames.Application.Xml)]
+    [SwaggerOperation(OperationId = RouteNames.GetWithHateoasResponse)]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDtoWithLinks), VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
@@ -155,10 +158,13 @@ public sealed class IssuesController : IssuesControllerBase
     [HttpPost(Name = RouteNames.Create)]
     [RequestMatchesMediaType("Accept", "*/*", MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerOperation(OperationId = RouteNames.Create)]
     [SwaggerResponse(StatusCodes.Status201Created, "Successful Response", typeof(IssueDtoWithLinks), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
     [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
     [ValidateModelStateServiceFilter]
+    [OpenApiLink(RouteNames.Get, StatusCodes.Status201Created)]
+    [OpenApiLink(RouteNames.GetWithHateoasResponse, StatusCodes.Status201Created)]
     public Task<IActionResult> CreateIssue([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
         return base.Create(RouteNames.Get, model, false, cancellationToken);
@@ -173,13 +179,16 @@ public sealed class IssuesController : IssuesControllerBase
     [HttpPost(Name = RouteNames.CreateWithHateoasResponse)]
     [RequestMatchesMediaType("Accept",VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
     [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [SwaggerOperation(OperationId = RouteNames.CreateWithHateoasResponse)]
     [SwaggerResponse(StatusCodes.Status201Created, "Successful Response", typeof(IssueDtoWithLinks), VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
     [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
     [ValidateModelStateServiceFilter]
+    [OpenApiLink(RouteNames.Get, StatusCodes.Status201Created)]
+    [OpenApiLink(RouteNames.GetWithHateoasResponse, StatusCodes.Status201Created)]
     public Task<IActionResult> CreateIssueWithHateoasResponse([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
-        return base.Create(RouteNames.Get, model, false, cancellationToken);
+        return base.Create(RouteNames.GetWithHateoasResponse, model, false, cancellationToken);
     }
 
     /// <summary>

@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\IssueTracker.ServiceDiscovery\IssueTracker.ServiceDiscovery.csproj" />
+    <ProjectReference Include="..\IssueTracker.Shared.AspNetCore\IssueTracker.Shared.AspNetCore.csproj" />
     <ProjectReference Include="..\IssueTracker.Shared\IssueTracker.Shared.csproj" />
   </ItemGroup>
 
