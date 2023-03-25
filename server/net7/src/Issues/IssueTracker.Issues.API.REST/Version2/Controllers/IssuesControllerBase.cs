@@ -137,7 +137,7 @@ public abstract class IssuesControllerBase : ControllerBase
             return CreatedAtRoute(routeName, new { id = issue.Id }, issue);
         }
 
-        IssueDtoWithLinks value = new(issue, GetLinksForIssue(issue.Id));
+        IssueDtoWithLinks value = new(issue, GetTrimmedLinksForIssue(issue.Id, "create-issue"));
         return CreatedAtRoute(routeName, new { id = issue.Id }, value);
 
     }
@@ -228,6 +228,15 @@ public abstract class IssuesControllerBase : ControllerBase
     /// <param name="issueId">id of the issue to display links for</param>
     /// <returns>Collection of <see cref="LinkDto"/></returns>
     protected abstract IEnumerable<LinkDto> GetLinksForIssue(string issueId);
+
+
+    /// <summary>
+    /// Returns HATEOAS links to be included in response except for link matching <paramref name="ignoredLink"/>
+    /// </summary>
+    /// <param name="issueId">id of the issue to display links for</param>
+    /// <param name="ignoredLink">link to be excluded from returned collection</param>
+    /// <returns>Collection of <see cref="LinkDto"/></returns>
+    protected abstract IEnumerable<LinkDto> GetTrimmedLinksForIssue(string issueId, string ignoredLink);
 
     /// <summary>
     /// Returns HATEOAS links to be included in response

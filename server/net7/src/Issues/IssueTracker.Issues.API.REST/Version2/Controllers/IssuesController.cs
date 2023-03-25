@@ -130,7 +130,7 @@ public sealed class IssuesController : IssuesControllerBase
     }
 
     /// <summary>
-    /// Returns issues in paginges with optional sorting, paging and filtering
+    /// Returns issues in pages with optional sorting, paging and filtering
     /// </summary>
     /// <param name="issuesResourceParameters"></param>
     /// <param name="cancellationToken">a cancellation token.</param>
@@ -163,8 +163,7 @@ public sealed class IssuesController : IssuesControllerBase
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
     [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
     [ValidateModelStateServiceFilter]
-    [OpenApiLink(RouteNames.Get, StatusCodes.Status201Created)]
-    [OpenApiLink(RouteNames.GetWithHateoasResponse, StatusCodes.Status201Created)]
+    [OpenApiLink(RouteNames.Get, StatusCodes.Status201Created, "id, $request.path.id", Description = "Returns issue matching id")]
     public Task<IActionResult> CreateIssue([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
         return base.Create(RouteNames.Get, model, false, cancellationToken);
@@ -184,11 +183,10 @@ public sealed class IssuesController : IssuesControllerBase
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
     [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
     [ValidateModelStateServiceFilter]
-    [OpenApiLink(RouteNames.Get, StatusCodes.Status201Created)]
-    [OpenApiLink(RouteNames.GetWithHateoasResponse, StatusCodes.Status201Created)]
+    [OpenApiLink(RouteNames.GetWithHateoasResponse, StatusCodes.Status201Created, "id, $request.path.id", Description = "Returns issue matching id")]
     public Task<IActionResult> CreateIssueWithHateoasResponse([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
-        return base.Create(RouteNames.GetWithHateoasResponse, model, false, cancellationToken);
+        return base.Create(RouteNames.GetWithHateoasResponse, model, true, cancellationToken);
     }
 
     /// <summary>
@@ -283,10 +281,40 @@ public sealed class IssuesController : IssuesControllerBase
     /// <inheritdoc/>
     protected override IEnumerable<LinkDto> GetLinksForIssue(string issueId)
     {
-        yield return new LinkDto(Url.Link(RouteNames.GetWithHateoasResponse, new { id = issueId }), "self", "GET");
-        yield return new LinkDto(Url.Link(RouteNames.CreateWithHateoasResponse, null), "create-issue", "POST");
-        yield return new LinkDto(Url.Link(RouteNames.Update, new { id = issueId }), "update-issue", "PUT");
-        yield return new LinkDto(Url.Link(RouteNames.Patch, new { id = issueId }), "patch-issue", "PATCH");
-        yield return new LinkDto(Url.Link(RouteNames.Delete, new { id = issueId }), "delete-issue", "DELETE");
+        return GetTrimmedLinksForIssue(issueId, string.Empty);
+    }
+
+    /// <inheritdoc/>
+    protected override IEnumerable<LinkDto> GetTrimmedLinksForIssue(string issueId, string ignoredLInk)
+    {
+        if (ignoredLInk != "self")
+        {
+            string rel = "self";
+            if (ignoredLInk == "create-issue")
+            {
+                rel = "get-issue";
+            }
+            yield return new LinkDto(Url.Link(RouteNames.GetWithHateoasResponse, new { id = issueId }), rel, "GET");
+        }
+
+        if (ignoredLInk != "create-issue")
+        {
+            yield return new LinkDto(Url.Link(RouteNames.CreateWithHateoasResponse, null), "create-issue", "POST");
+        }
+
+        if (ignoredLInk != "update-issue")
+        {
+            yield return new LinkDto(Url.Link(RouteNames.Update, new { id = issueId }), "update-issue", "PUT");
+        }
+
+        if (ignoredLInk != "patch-issue")
+        {
+            yield return new LinkDto(Url.Link(RouteNames.Patch, new { id = issueId }), "patch-issue", "PATCH");
+        }
+
+        if (ignoredLInk != "delete-issue")
+        {
+            yield return new LinkDto(Url.Link(RouteNames.Delete, new { id = issueId }), "delete-issue", "DELETE");
+        }
     }
 }

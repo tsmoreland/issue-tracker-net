@@ -91,8 +91,7 @@ public class SwashbuckleConfiguration : ConfigureNamedOptions<SwaggerGenOptions,
         }
 
         options.OperationFilter<AddResponseHeaderOperationFilter>();
-        options.OperationFilter<LinksOperationDocumentFilter>();
-        options.DocumentFilter<LinksOperationDocumentFilter>();
+        options.OperationFilter<LinksOperationFilter>();
         options.CustomSchemaIds(SetSchemaName);
 
         static void AddSwaggerDocsPerVersion(SwaggerGenOptions options, IEnumerable<ApiVersionDescription> versionDescriptions)

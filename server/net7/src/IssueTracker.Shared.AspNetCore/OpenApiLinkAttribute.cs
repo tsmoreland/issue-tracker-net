@@ -16,13 +16,32 @@ namespace IssueTracker.Shared.AspNetCore;
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public sealed class OpenApiLinkAttribute : Attribute
 {
+    private readonly string[] _parameterNameValuePairCsv;
     public string OperationId { get; }
     public int ResponseCode { get; }
 
-    /// <inheritdoc />
-    public OpenApiLinkAttribute(string operationId, int responseCode)
+    public string? Description { get; init; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OpenApiLinkAttribute"/> class.
+    /// </summary>
+    /// <param name="operationId">The operation id of the linked operation</param>
+    /// <param name="responseCode">The response code used to determine which response the link is associated with</param>
+    /// <param name="parameterNameValuePairCsv">
+    /// an array of comma separated name, expression values returned using <see cref="GetParameters"/>
+    /// </param>
+    public OpenApiLinkAttribute(string operationId, int responseCode, params string[] parameterNameValuePairCsv)
     {
+        _parameterNameValuePairCsv = parameterNameValuePairCsv;
         OperationId = operationId;
         ResponseCode = responseCode;
+    }
+
+    public IEnumerable<(string Name, string Expression)> GetParameters()
+    {
+        return _parameterNameValuePairCsv
+            .Select(csvPair => csvPair.Split(','))
+            .Where(pair => pair is { Length: 2 })
+            .Select(pair => (pair[0], pair[1]));
     }
 }

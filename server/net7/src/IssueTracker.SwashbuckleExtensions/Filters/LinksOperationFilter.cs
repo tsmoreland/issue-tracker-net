@@ -20,7 +20,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace IssueTracker.SwashbuckleExtensions.Filters;
 
-public sealed class LinksOperationDocumentFilter : IOperationFilter, IDocumentFilter
+public sealed class LinksOperationFilter : IOperationFilter
 {
     private static readonly ConcurrentDictionary<(string Document, string OperationId), (OpenApiOperation Operation, List<(string OperationId, string ResponseCode)> LinkIds)> s_operations = new();
 
@@ -41,21 +41,17 @@ public sealed class LinksOperationDocumentFilter : IOperationFilter, IDocumentFi
 
         foreach (OpenApiLinkAttribute attribute in attributes)
         {
-            string linkedOperationId = attribute.OperationId;
-            string responseCode = attribute.ResponseCode.ToString();
-
-            if (!operation.Responses.TryGetValue(responseCode, out OpenApiResponse? response))
+            if (!operation.Responses.TryGetValue(attribute.ResponseCode.ToString(), out OpenApiResponse? response))
             {
                 continue;
             }
 
             response.Links ??= new Dictionary<string, OpenApiLink>();
-            response.Links[linkedOperationId] = new OpenApiLink
+            if (!response.Links.ContainsKey(attribute.OperationId))
             {
-                OperationId = linkedOperationId,
-                Description = "No Description",
-                Parameters = new Dictionary<string, RuntimeExpressionAnyWrapper>() { { "id", new RuntimeExpressionAnyWrapper { Any = new OpenApiString("$request.path.id") } } }
-            };
+                response.Links[attribute.OperationId] = BuildResponseLink(attribute);
+            }
+
         }
 
 
@@ -63,40 +59,25 @@ public sealed class LinksOperationDocumentFilter : IOperationFilter, IDocumentFi
             (operation, attributes.Select(a => (a.OperationId, a.ResponseCode.ToString())).ToList()), static (_, existing) => existing);
     }
 
-    /// <inheritdoc />
-    public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+    private static OpenApiLink BuildResponseLink(OpenApiLinkAttribute attribute)
     {
-        Dictionary<string, (OpenApiOperation Operation, List<(string OperationId, string ResponseCode)> LinkIds)> operationsById = s_operations
-            .ToList()
-            .Where(kvp => kvp.Key.Document == context.DocumentName)
-            .ToDictionary(kvp => kvp.Key.OperationId, kvp => kvp.Value);
-
-        if (!operationsById.Any())
+        OpenApiLink link = new()
         {
-            return;
-        }
-
-        foreach (string operationId in operationsById.Keys)
-        {
-            (OpenApiOperation operation, List<(string OperationId, string ResponseCode)> linkIds) = operationsById[operationId];
-
-            foreach ((string linkedOperationId, string responseCode) in linkIds.Where(pair => operationsById.ContainsKey(pair.OperationId)))
-            {
-                if (!operation.Responses.TryGetValue(responseCode, out OpenApiResponse? response))
-                {
-                    continue;
-                }
-
-                OpenApiOperation linkedOperation = operationsById[linkedOperationId].Operation;
-                response.Links ??= new Dictionary<string, OpenApiLink>();
-                response.Links[linkedOperationId] = new OpenApiLink
-                {
-                    OperationId = linkedOperationId,
-                    Description = linkedOperation.Description ?? "No Description",
-                };
-            }
-        }
-
+            OperationId = attribute.OperationId,
+            Description = attribute.Description,
+            Parameters = BuildParametersByName(attribute.GetParameters()),
+        };
+        return link;
     }
 
+    private static Dictionary<string, RuntimeExpressionAnyWrapper> BuildParametersByName(IEnumerable<(string Name, string Expression)> parameters)
+    {
+        Dictionary<string, RuntimeExpressionAnyWrapper> parametersByName = new();
+        foreach ((string name, string expression) in parameters)
+        {
+            parametersByName[name] = new RuntimeExpressionAnyWrapper() { Any = new OpenApiString(expression), };
+        }
+
+        return parametersByName;
+    }
 }

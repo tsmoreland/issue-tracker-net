@@ -244,9 +244,30 @@ public sealed class IssuesVersionHeaderOrQueryController : IssuesControllerBase
     /// <inheritdoc/>
     protected override IEnumerable<LinkDto> GetLinksForIssue(string issueId)
     {
-        yield return new LinkDto(Url.Link(RouteNames.Get, new { issueId }), "self", "GET");
-        yield return new LinkDto(Url.Link(RouteNames.Create, new { issueId }), "create-issue", "POST");
-        yield return new LinkDto(Url.Link(RouteNames.Update, new { issueId }), "update-issue", "PUT");
-        yield return new LinkDto(Url.Link(RouteNames.Patch, new { issueId }), "patch-issue", "PATCH");
+        return GetTrimmedLinksForIssue(issueId, string.Empty);
+    }
+
+    /// <inheritdoc />
+    protected override IEnumerable<LinkDto> GetTrimmedLinksForIssue(string issueId, string ignoredLink)
+    {
+        if (ignoredLink != "self")
+        {
+            yield return new LinkDto(Url.Link(RouteNames.Get, new { issueId }), "self", "GET");
+        }
+
+        if (ignoredLink != "create-issue")
+        {
+            yield return new LinkDto(Url.Link(RouteNames.Create, new { issueId }), "create-issue", "POST");
+        }
+
+        if (ignoredLink != "update-issue")
+        {
+            yield return new LinkDto(Url.Link(RouteNames.Update, new { issueId }), "update-issue", "PUT");
+        }
+
+        if (ignoredLink != "patch-issue")
+        {
+            yield return new LinkDto(Url.Link(RouteNames.Patch, new { issueId }), "patch-issue", "PATCH");
+        }
     }
 }
