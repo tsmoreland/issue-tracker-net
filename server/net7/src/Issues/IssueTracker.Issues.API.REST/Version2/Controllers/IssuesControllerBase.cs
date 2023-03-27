@@ -23,7 +23,6 @@ using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate.Commands;
 using IssueTracker.Issues.Domain.ModelAggregates.Specifications;
 using IssueTracker.Issues.Domain.Services.Version2.Commands;
 using IssueTracker.Issues.Domain.Services.Version2.Queries;
-using IssueTracker.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;

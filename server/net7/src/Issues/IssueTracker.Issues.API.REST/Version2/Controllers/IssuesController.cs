@@ -124,6 +124,10 @@ public sealed class IssuesController : IssuesControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
     [ProducesHateoasResponseTypes(StatusCodes.Status200OK, VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml, typeof(IssueSummaryPage), typeof(IssueSummaryPageWithLinks))]
     [ValidateModelStateServiceFilter]
+    [OpenApiLink(RouteNames.GetWithHateoasResponse, StatusCodes.Status200OK, "id, $request.path.id", Description = "get existing issue matching id")]
+    [OpenApiLink(RouteNames.Update, StatusCodes.Status200OK, "id, $request.path.id", Description = "update existing issue matching id")]
+    [OpenApiLink(RouteNames.Patch, StatusCodes.Status200OK, "id, $request.path.id", Description = "partial update existing issue matching id")]
+    [OpenApiLink(RouteNames.Delete, StatusCodes.Status200OK, "id, $request.path.id", Description = "delete existing issue matching id")]
     public Task<IActionResult> GetPagedIssues(
         [FromQuery] IssuesResourceParameters issuesResourceParameters,
         CancellationToken cancellationToken = default)
@@ -150,6 +154,7 @@ public sealed class IssuesController : IssuesControllerBase
     [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
     [ValidateModelStateServiceFilter]
     [OpenApiLink(RouteNames.Get, StatusCodes.Status201Created, "id, $request.path.id", Description = "Returns issue matching id")]
+    [OpenApiLink(RouteNames.Delete, StatusCodes.Status201Created, "id, $request.path.id", Description = "delete issue matching id")]
     public Task<IActionResult> CreateIssue([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
         return base.Create(RouteNames.Get, model, false, cancellationToken);
@@ -170,6 +175,8 @@ public sealed class IssuesController : IssuesControllerBase
     [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
     [ValidateModelStateServiceFilter]
     [OpenApiLink(RouteNames.GetWithHateoasResponse, StatusCodes.Status201Created, "id, $request.path.id", Description = "Returns issue matching id")]
+    [OpenApiLink(RouteNames.Delete, StatusCodes.Status201Created, "id, $request.path.id", Description = "delete issue matching id")]
+
     public Task<IActionResult> CreateIssueWithHateoasResponse([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
         return base.Create(RouteNames.GetWithHateoasResponse, model, true, cancellationToken);
