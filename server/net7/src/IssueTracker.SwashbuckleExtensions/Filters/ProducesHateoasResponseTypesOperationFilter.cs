@@ -17,7 +17,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace IssueTracker.SwashbuckleExtensions.Filters;
 
-public sealed class ProducesResponseTypesOperationFilter : IOperationFilter
+public sealed class ProducesHateoasResponseTypesOperationFilter : IOperationFilter
 {
     /// <inheritdoc />
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
