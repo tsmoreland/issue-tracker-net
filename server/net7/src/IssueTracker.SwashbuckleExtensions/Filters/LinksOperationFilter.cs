@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Reflection;
 using IssueTracker.Shared.AspNetCore;
@@ -32,13 +33,7 @@ public sealed class LinksOperationFilter : IOperationFilter
             return;
         }
 
-        if (!context.ApiDescription.TryGetMethodInfo(out MethodInfo? methodInfo))
-        {
-            return;
-        }
-
-        IEnumerable<OpenApiLinkAttribute> attributes = methodInfo.GetCustomAttributes<OpenApiLinkAttribute>().ToList();
-
+        IEnumerable<OpenApiLinkAttribute> attributes = context.ApiDescription.ActionDescriptor.EndpointMetadata.OfType<OpenApiLinkAttribute>().ToList();
         foreach (OpenApiLinkAttribute attribute in attributes)
         {
             if (!operation.Responses.TryGetValue(attribute.ResponseCode.ToString(), out OpenApiResponse? response))
@@ -51,9 +46,7 @@ public sealed class LinksOperationFilter : IOperationFilter
             {
                 response.Links[attribute.OperationId] = BuildResponseLink(attribute);
             }
-
         }
-
 
         s_operations.AddOrUpdate((context.DocumentName, operation.OperationId),
             (operation, attributes.Select(a => (a.OperationId, a.ResponseCode.ToString())).ToList()), static (_, existing) => existing);
