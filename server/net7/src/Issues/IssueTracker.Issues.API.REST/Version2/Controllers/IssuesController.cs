@@ -21,6 +21,7 @@ using IssueTracker.Issues.Domain.ModelAggregates.IssueAggregate;
 using IssueTracker.Shared;
 using IssueTracker.Shared.AspNetCore;
 using IssueTracker.Shared.AspNetCore.ActionContraints;
+using IssueTracker.Shared.AspNetCore.Extensions;
 using IssueTracker.Shared.AspNetCore.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -53,7 +54,6 @@ public sealed class IssuesController : IssuesControllerBase
         public const string UpdateState = "UpdateIssueState";
 
         public const string GetWithHateoasResponse = "GetIssueByIdWithLinks";
-        public const string GetPagedIssuesWithHateoasResponse = "GetPagedIssuesWithHateoasResponse";
         public const string CreateWithHateoasResponse = "CreateWithHateoasResponse";
     }
 
@@ -110,43 +110,29 @@ public sealed class IssuesController : IssuesControllerBase
     }
 
     /// <summary>
-    /// Returns issues in paginges with optional sorting, paging and filtering
+    /// Returns issues in pages with optional sorting, paging and filtering
     /// </summary>
     /// <param name="issuesResourceParameters"></param>
     /// <param name="cancellationToken">a cancellation token.</param>
     /// <returns>issues filtered based on the provided query parameters</returns>
     [HttpGet(Name = RouteNames.GetPagedIssues)]
     [HttpHead]
-    [RequestMatchesMediaType("Accept", "*/*", MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [RequestMatchesMediaType("Accept", "*/*", MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml, VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
     [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueSummaryPage), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
+    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml, VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IssueSummaryPage))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+    [ProducesHateoasResponseTypes(StatusCodes.Status200OK, VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml, typeof(IssueSummaryPage), typeof(IssueSummaryPageWithLinks))]
     [ValidateModelStateServiceFilter]
     public Task<IActionResult> GetPagedIssues(
         [FromQuery] IssuesResourceParameters issuesResourceParameters,
         CancellationToken cancellationToken = default)
     {
-        return base.GetIssuesWithLinks(RouteNames.GetPagedIssues, issuesResourceParameters, false, cancellationToken);
-    }
+        bool includeLinks = HttpContext.Request.Accepts(
+            VendorMediaTypeNames.Application.HateoasPlusJson,
+            VendorMediaTypeNames.Application.HateoasPlusXml);
 
-    /// <summary>
-    /// Returns issues in pages with optional sorting, paging and filtering
-    /// </summary>
-    /// <param name="issuesResourceParameters"></param>
-    /// <param name="cancellationToken">a cancellation token.</param>
-    /// <returns>issues filtered based on the provided query parameters</returns>
-    [HttpGet(Name = RouteNames.GetPagedIssuesWithHateoasResponse)]
-    [HttpHead]
-    [RequestMatchesMediaType("Accept", VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
-    [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueSummaryPageWithLinks), VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
-    [ValidateModelStateServiceFilter]
-    public Task<IActionResult> GetPagedIssuesWithHateoasResponse(
-        [FromQuery] IssuesResourceParameters issuesResourceParameters,
-        CancellationToken cancellationToken = default)
-    {
-        return base.GetIssuesWithLinks(RouteNames.GetPagedIssues, issuesResourceParameters, false, cancellationToken);
+        return base.GetIssuesWithLinks(RouteNames.GetPagedIssues, issuesResourceParameters, includeLinks, cancellationToken);
     }
 
     /// <summary>
