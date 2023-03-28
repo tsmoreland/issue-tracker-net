@@ -27,7 +27,6 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace IssueTracker.Issues.API.REST.Version2.Controllers;
@@ -41,8 +40,6 @@ namespace IssueTracker.Issues.API.REST.Version2.Controllers;
 [ApiVersion("2")]
 public sealed class IssuesController : IssuesControllerBase
 {
-    private readonly ProblemDetailsFactory _problemDetailsFactory;
-
     private static class RouteNames
     {
         public const string Get = "GetIssueById";
@@ -53,18 +50,15 @@ public sealed class IssuesController : IssuesControllerBase
         public const string Delete = "DeleteIssue";
         public const string UpdateState = "UpdateIssueState";
 
-        public const string GetWithHateoasResponse = "GetIssueByIdWithLinks";
         public const string CreateWithHateoasResponse = "CreateWithHateoasResponse";
     }
 
     /// <summary>
     /// Instantiates a new instance of the <see cref="IssuesController"/> class.
     /// </summary>
-    public IssuesController(IMediator mediator, IMapper mapper, ProblemDetailsFactory problemDetailsFactory)
+    public IssuesController(IMediator mediator, IMapper mapper)
         : base(mediator, mapper)
     {
-        // move to filter
-        _problemDetailsFactory = problemDetailsFactory ?? throw new ArgumentNullException(nameof(problemDetailsFactory));
     }
 
     /// <summary>
@@ -75,38 +69,24 @@ public sealed class IssuesController : IssuesControllerBase
     /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
     [HttpGet("{id}", Name = RouteNames.Get)]
     [HttpHead("{id}")]
-    [RequestMatchesMediaType("Accept", "*/*", MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [RequestMatchesMediaType("Accept", "*/*", MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml, VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
     [Consumes(MediaTypeNames.Application.Json,MediaTypeNames.Application.Xml)]
-    [SwaggerOperation(OperationId = RouteNames.Get)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDto), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
+    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml, VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IssueDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ProblemDetails))]
     [Filters.ValidateIssueIdServiceFilter]
     [ValidateModelStateServiceFilter]
-    public Task<IActionResult> Get([FromRoute] string id, CancellationToken cancellationToken)
-    {
-        return base.GetIssueById(IssueIdentifier.FromString(id), false, cancellationToken);
-    }
-
-    /// <summary>
-    /// Returns issue matching <paramref name="id"/> if found
-    /// </summary>
-    /// <param name="id" example="APP-1234">unique id of issue</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns><see cref="IssueDto"/> matching <paramref name="id"/> if found</returns>
-    [HttpGet("{id}", Name = RouteNames.GetWithHateoasResponse)]
-    [HttpHead("{id}")]
-    [RequestMatchesMediaType("Accept", VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
-    [Consumes(MediaTypeNames.Application.Json,MediaTypeNames.Application.Xml)]
-    [SwaggerOperation(OperationId = RouteNames.GetWithHateoasResponse)]
-    [SwaggerResponse(StatusCodes.Status200OK, "Successful Response", typeof(IssueDtoWithLinks), VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
-    [Filters.ValidateIssueIdServiceFilter]
-    [ValidateModelStateServiceFilter]
+    [ProducesHateoasResponseTypes(StatusCodes.Status200OK, VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml, typeof(IssueDto), typeof(IssueDtoWithLinks))]
+    [OpenApiLink(RouteNames.Update, StatusCodes.Status200OK, "id, $request.path.id", Description = "update existing issue matching id")]
+    [OpenApiLink(RouteNames.Patch, StatusCodes.Status200OK, "id, $request.path.id", Description = "partial update existing issue matching id")]
+    [OpenApiLink(RouteNames.Delete, StatusCodes.Status200OK, "id, $request.path.id", Description = "delete existing issue matching id")]
     public Task<IActionResult> GetWithHateoasResponse([FromRoute] string id, CancellationToken cancellationToken)
     {
-        return base.GetIssueById(IssueIdentifier.FromString(id), true, cancellationToken);
+        bool includeLinks = HttpContext.Request.Accepts(
+            VendorMediaTypeNames.Application.HateoasPlusJson,
+            VendorMediaTypeNames.Application.HateoasPlusXml);
+        return base.GetIssueById(IssueIdentifier.FromString(id), includeLinks, cancellationToken);
     }
 
     /// <summary>
@@ -124,7 +104,8 @@ public sealed class IssuesController : IssuesControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
     [ProducesHateoasResponseTypes(StatusCodes.Status200OK, VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml, typeof(IssueSummaryPage), typeof(IssueSummaryPageWithLinks))]
     [ValidateModelStateServiceFilter]
-    [OpenApiLink(RouteNames.GetWithHateoasResponse, StatusCodes.Status200OK, "id, $request.path.id", Description = "get existing issue matching id")]
+    [OpenApiLink(RouteNames.Create, StatusCodes.Status200OK, "", Description = "create new issue matching id")]
+    [OpenApiLink(RouteNames.Get, StatusCodes.Status200OK, "id, $request.path.id", Description = "get existing issue matching id")]
     [OpenApiLink(RouteNames.Update, StatusCodes.Status200OK, "id, $request.path.id", Description = "update existing issue matching id")]
     [OpenApiLink(RouteNames.Patch, StatusCodes.Status200OK, "id, $request.path.id", Description = "partial update existing issue matching id")]
     [OpenApiLink(RouteNames.Delete, StatusCodes.Status200OK, "id, $request.path.id", Description = "delete existing issue matching id")]
@@ -174,12 +155,12 @@ public sealed class IssuesController : IssuesControllerBase
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
     [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
     [ValidateModelStateServiceFilter]
-    [OpenApiLink(RouteNames.GetWithHateoasResponse, StatusCodes.Status201Created, "id, $request.path.id", Description = "Returns issue matching id")]
+    [OpenApiLink(RouteNames.Get, StatusCodes.Status201Created, "id, $request.path.id", Description = "Returns issue matching id")]
     [OpenApiLink(RouteNames.Delete, StatusCodes.Status201Created, "id, $request.path.id", Description = "delete issue matching id")]
 
     public Task<IActionResult> CreateIssueWithHateoasResponse([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
-        return base.Create(RouteNames.GetWithHateoasResponse, model, true, cancellationToken);
+        return base.Create(RouteNames.Get, model, true, cancellationToken);
     }
 
     /// <summary>
@@ -287,7 +268,7 @@ public sealed class IssuesController : IssuesControllerBase
             {
                 rel = "get-issue";
             }
-            yield return new LinkDto(Url.Link(RouteNames.GetWithHateoasResponse, new { id = issueId }), rel, "GET");
+            yield return new LinkDto(Url.Link(RouteNames.Get, new { id = issueId }), rel, "GET");
         }
 
         if (ignoredLInk != "create-issue")
