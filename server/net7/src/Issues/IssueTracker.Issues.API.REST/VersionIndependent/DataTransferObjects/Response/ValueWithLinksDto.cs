@@ -21,7 +21,7 @@ public abstract class ValueWithLinksDto<T>
     public T Value { get; init; }
 
     /// <summary>
-    /// ZATEOAS Links for the Value
+    /// HATEOAS Links for the Value
     /// </summary>
     public IReadOnlyList<LinkDto> Links { get; init; }
 

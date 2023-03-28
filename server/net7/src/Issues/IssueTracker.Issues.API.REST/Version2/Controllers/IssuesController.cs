@@ -81,7 +81,7 @@ public sealed class IssuesController : IssuesControllerBase
     [OpenApiLink(RouteNames.Update, StatusCodes.Status200OK, "id, $request.path.id", Description = "update existing issue matching id")]
     [OpenApiLink(RouteNames.Patch, StatusCodes.Status200OK, "id, $request.path.id", Description = "partial update existing issue matching id")]
     [OpenApiLink(RouteNames.Delete, StatusCodes.Status200OK, "id, $request.path.id", Description = "delete existing issue matching id")]
-    public Task<IActionResult> GetWithHateoasResponse([FromRoute] string id, CancellationToken cancellationToken)
+    public Task<IActionResult> Get([FromRoute] string id, CancellationToken cancellationToken)
     {
         bool includeLinks = HttpContext.Request.Accepts(
             VendorMediaTypeNames.Application.HateoasPlusJson,
