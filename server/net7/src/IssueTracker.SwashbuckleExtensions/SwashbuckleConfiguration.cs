@@ -93,6 +93,7 @@ public class SwashbuckleConfiguration : ConfigureNamedOptions<SwaggerGenOptions,
         options.OperationFilter<AddResponseHeaderOperationFilter>();
         options.OperationFilter<LinksOperationFilter>();
         options.OperationFilter<ProducesHateoasResponseTypesOperationFilter>();
+        options.OperationFilter<ProducesProblemDetailsReponseOperationFilter>();
         options.CustomSchemaIds(SetSchemaName);
 
         static void AddSwaggerDocsPerVersion(SwaggerGenOptions options, IEnumerable<ApiVersionDescription> versionDescriptions)

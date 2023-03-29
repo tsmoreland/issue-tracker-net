@@ -49,8 +49,6 @@ public sealed class IssuesController : IssuesControllerBase
         public const string Patch = "PatchIssue";
         public const string Delete = "DeleteIssue";
         public const string UpdateState = "UpdateIssueState";
-
-        public const string CreateWithHateoasResponse = "CreateWithHateoasResponse";
     }
 
     /// <summary>
@@ -78,6 +76,7 @@ public sealed class IssuesController : IssuesControllerBase
     [Filters.ValidateIssueIdServiceFilter]
     [ValidateModelStateServiceFilter]
     [ProducesHateoasResponseTypes(StatusCodes.Status200OK, VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml, typeof(IssueDto), typeof(IssueDtoWithLinks))]
+    [ProducesProblemDetailsResponse]
     [OpenApiLink(RouteNames.Update, StatusCodes.Status200OK, "id, $request.path.id", Description = "update existing issue matching id")]
     [OpenApiLink(RouteNames.Patch, StatusCodes.Status200OK, "id, $request.path.id", Description = "partial update existing issue matching id")]
     [OpenApiLink(RouteNames.Delete, StatusCodes.Status200OK, "id, $request.path.id", Description = "delete existing issue matching id")]
@@ -103,6 +102,7 @@ public sealed class IssuesController : IssuesControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IssueSummaryPage))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
     [ProducesHateoasResponseTypes(StatusCodes.Status200OK, VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml, typeof(IssueSummaryPage), typeof(IssueSummaryPageWithLinks))]
+    [ProducesProblemDetailsResponse]
     [ValidateModelStateServiceFilter]
     [OpenApiLink(RouteNames.Create, StatusCodes.Status200OK, "", Description = "create new issue matching id")]
     [OpenApiLink(RouteNames.Get, StatusCodes.Status200OK, "id, $request.path.id", Description = "get existing issue matching id")]
@@ -127,40 +127,26 @@ public sealed class IssuesController : IssuesControllerBase
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>newly created <see cref="IssueDto"/></returns>
     [HttpPost(Name = RouteNames.Create)]
-    [RequestMatchesMediaType("Accept", "*/*", MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [RequestMatchesMediaType("Accept","*/*", MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml, VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
     [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerOperation(OperationId = RouteNames.Create)]
-    [SwaggerResponse(StatusCodes.Status201Created, "Successful Response", typeof(IssueDtoWithLinks), MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
-    [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
+    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml, VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(IssueDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ProblemDetails))]
+    [ProducesHateoasResponseTypes(StatusCodes.Status201Created, VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml, typeof(IssueDto), typeof(IssueDtoWithLinks))]
+    [ProducesProblemDetailsResponse]
     [ValidateModelStateServiceFilter]
     [OpenApiLink(RouteNames.Get, StatusCodes.Status201Created, "id, $request.path.id", Description = "Returns issue matching id")]
-    [OpenApiLink(RouteNames.Delete, StatusCodes.Status201Created, "id, $request.path.id", Description = "delete issue matching id")]
+    [OpenApiLink(RouteNames.Get, StatusCodes.Status201Created, "id, $request.path.id", Description = "get existing issue matching id")]
+    [OpenApiLink(RouteNames.Update, StatusCodes.Status201Created, "id, $request.path.id", Description = "update existing issue matching id")]
+    [OpenApiLink(RouteNames.Patch, StatusCodes.Status201Created, "id, $request.path.id", Description = "partial update existing issue matching id")]
+    [OpenApiLink(RouteNames.Delete, StatusCodes.Status201Created, "id, $request.path.id", Description = "delete existing issue matching id")]
     public Task<IActionResult> CreateIssue([FromBody] AddIssueDto model, CancellationToken cancellationToken)
     {
-        return base.Create(RouteNames.Get, model, false, cancellationToken);
-    }
-
-    /// <summary>
-    /// Adds a new issue 
-    /// </summary>
-    /// <param name="model">the issue to add</param>
-    /// <param name="cancellationToken">A cancellation token</param>
-    /// <returns>newly created <see cref="IssueDto"/></returns>
-    [HttpPost(Name = RouteNames.CreateWithHateoasResponse)]
-    [RequestMatchesMediaType("Accept",VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
-    [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [SwaggerOperation(OperationId = RouteNames.CreateWithHateoasResponse)]
-    [SwaggerResponse(StatusCodes.Status201Created, "Successful Response", typeof(IssueDtoWithLinks), VendorMediaTypeNames.Application.HateoasPlusJson, VendorMediaTypeNames.Application.HateoasPlusXml)]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
-    [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
-    [ValidateModelStateServiceFilter]
-    [OpenApiLink(RouteNames.Get, StatusCodes.Status201Created, "id, $request.path.id", Description = "Returns issue matching id")]
-    [OpenApiLink(RouteNames.Delete, StatusCodes.Status201Created, "id, $request.path.id", Description = "delete issue matching id")]
-
-    public Task<IActionResult> CreateIssueWithHateoasResponse([FromBody] AddIssueDto model, CancellationToken cancellationToken)
-    {
-        return base.Create(RouteNames.Get, model, true, cancellationToken);
+        bool includeLinks = HttpContext.Request.Accepts(
+            VendorMediaTypeNames.Application.HateoasPlusJson,
+            VendorMediaTypeNames.Application.HateoasPlusXml);
+        return base.Create(RouteNames.Get, model, includeLinks, cancellationToken);
     }
 
     /// <summary>
@@ -209,6 +195,15 @@ public sealed class IssuesController : IssuesControllerBase
     public IActionResult GetIssuesOptions()
     {
         Response.Headers.Add("Allow", "GET,HEAD,POST,OPTIONS");
+        return Ok();
+    }
+
+    [HttpOptions("{id}")]
+    [Filters.ValidateIssueIdServiceFilter]
+    public IActionResult GetIssuesOptions(string id)
+    {
+        _ = id;
+        Response.Headers.Add("Allow", "GET,HEAD,PUT,PATCH,OPTIONS");
         return Ok();
     }
 
@@ -273,7 +268,7 @@ public sealed class IssuesController : IssuesControllerBase
 
         if (ignoredLInk != "create-issue")
         {
-            yield return new LinkDto(Url.Link(RouteNames.CreateWithHateoasResponse, null), "create-issue", "POST");
+            yield return new LinkDto(Url.Link(RouteNames.Create, null), "create-issue", "POST");
         }
 
         if (ignoredLInk != "update-issue")
