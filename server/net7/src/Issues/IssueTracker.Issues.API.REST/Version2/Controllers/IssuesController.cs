@@ -159,6 +159,7 @@ public sealed class IssuesController : IssuesControllerBase
     [HttpPut("{id}", Name = RouteNames.Update)]
     [RequestMatchesMediaType("Accept", "*/*", MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [ProducesProblemDetailsResponse]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
     [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
@@ -181,6 +182,7 @@ public sealed class IssuesController : IssuesControllerBase
     [RequestMatchesMediaType("Accept", "*/*", MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Consumes("application/json-patch+json")]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [ProducesProblemDetailsResponse]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful Response")]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
     [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), "application/problem+json", "application/problem+xml")]
@@ -218,6 +220,7 @@ public sealed class IssuesController : IssuesControllerBase
     [SwaggerResponse(StatusCodes.Status204NoContent, "Successful Response", ContentTypes = new[] { MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml })]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid arguments", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
+    [ProducesProblemDetailsResponse]
     [Filters.ValidateIssueIdServiceFilter]
     public Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
     {
@@ -240,6 +243,7 @@ public sealed class IssuesController : IssuesControllerBase
     [SwaggerResponse(StatusCodes.Status422UnprocessableEntity, "valid data format with invalid content", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Issue not found", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
     [SwaggerResponse(StatusCodes.Status409Conflict, "state change not possible", typeof(ProblemDetails), VendorMediaTypeNames.ProblemDetails.Json, VendorMediaTypeNames.ProblemDetails.Xml)]
+    [ProducesProblemDetailsResponse]
     [Filters.ValidateIssueIdServiceFilter]
     [ValidateModelStateServiceFilter]
     public Task<IActionResult> ChangeState(string id, ChangeIssueStateDto changeState, CancellationToken cancellationToken)
