@@ -46,8 +46,6 @@
 
     <PackageReference Include="System.Text.Encodings.Web" Version="7.0.0" />
 
-    <PackageReference Include="Tcell.Agent" Version="3.2.0" />
-
     <!--
 
     Current approach is to use concrete projects as project referenes which doesn't seem to copy this transitive
