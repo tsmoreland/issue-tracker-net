@@ -85,7 +85,7 @@ public static class WebApplicationBuilderExtensions
                     new DefaultJsonTypeInfoResolver());
             });
 
-        services.AddSecurityHeaders(builder.Configuration);
+        services.AddSecurityHeaders(configuration);
         services
             .Configure<MvcOptions>(config =>
             {
