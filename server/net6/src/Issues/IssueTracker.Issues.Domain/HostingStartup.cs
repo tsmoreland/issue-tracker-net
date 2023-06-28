@@ -32,6 +32,6 @@ public sealed class HostingStartup : IHostingStartup
     {
         // this can be called multiple times so we're safe to do this here and any number of other places
         // because MediatR uses a singleton (static class) to track the items added
-        services.AddMediatR(typeof(HostingStartup).Assembly);
+        services.AddMediatR(options => options.RegisterServicesFromAssembly(typeof(HostingStartup).Assembly));
     }
 }

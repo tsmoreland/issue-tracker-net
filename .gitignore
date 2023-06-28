@@ -362,3 +362,4 @@ MigrationBackup/
 
 # tcell configuration
 tcell_agent.config
+**/.idea

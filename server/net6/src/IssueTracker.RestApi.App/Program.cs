@@ -31,11 +31,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
-using Polly;
-using Polly.Caching;
-using Polly.Registry;
 using Serilog;
-using Tcell.Agent.AspNetCore;
 using TSMoreland.Text.Json.NamingStrategies;
 using TSMoreland.Text.Json.NamingStrategies.Strategies;
 
@@ -54,8 +50,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Host
     .UseSerilog((context, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(context.Configuration));
 builder.WebHost
-    .ConfigureKestrel(kestrelServerOptions => kestrelServerOptions.AddServerHeader = false)
-    .UseTcellAgent(environemnt => (environemnt.IsProduction() || environemnt.IsDevelopment()) && File.Exists(Path.Combine(environemnt.ContentRootPath, "TcellAgent.config")));
+    .ConfigureKestrel(kestrelServerOptions => kestrelServerOptions.AddServerHeader = false);
 
 // Add services to the container.
 
