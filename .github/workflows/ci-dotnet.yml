@@ -15,7 +15,7 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: |
-          6.0.411
+          6.0.412
     - name: Restore dependencies
       working-directory: v1/net6
       run: dotnet restore
