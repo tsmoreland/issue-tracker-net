@@ -11,7 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using Microsoft.AspNetCore.Mvc.Versioning;
+using Asp.Versioning;
 
 namespace IssueTracker.RestApi.App.Filters;
 
@@ -45,8 +45,12 @@ public sealed class AggregateApiVersionReader : IApiVersionReader
     }
 
     /// <inheritdoc />
-    public string? Read(HttpRequest request)
+    public IReadOnlyList<string> Read(HttpRequest request)
     {
-        return _urlSegmentApiVersionReader.Read(request) ?? _headerApiVersionReader.Read(request) ?? _queryStringApiVersionReader.Read(request);
+        IReadOnlyList<string> urlResult = _urlSegmentApiVersionReader.Read(request);
+        IReadOnlyList<string> headerResult = _headerApiVersionReader.Read(request);
+        IReadOnlyList<string> queryResult = _queryStringApiVersionReader.Read(request);
+
+        return urlResult.Union(headerResult).Union(queryResult).AsEnumerable().Distinct().ToList().AsReadOnly();
     }
 }

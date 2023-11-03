@@ -12,10 +12,10 @@
 //
 
 using System.Threading.RateLimiting;
+using Asp.Versioning.ApiExplorer;
 using IssueTracker.Issues.Domain.DataContracts;
 using IssueTracker.Middelware.SecurityHeaders;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Writers;

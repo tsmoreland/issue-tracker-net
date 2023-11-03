@@ -99,18 +99,17 @@ public static class WebApplicationBuilderExtensions
 
             });
         services
-            .AddVersionedApiExplorer(options =>
+            .AddApiVersioning(static options =>
+            {
+                options.ApiVersionReader = new AggregateApiVersionReader();
+                options.ReportApiVersions = true;
+                options.DefaultApiVersion = new Asp.Versioning.ApiVersion(1);
+                options.AssumeDefaultVersionWhenUnspecified = true;
+            })
+            .AddApiExplorer(static options =>
             {
                 options.GroupNameFormat = "'v'V";
                 options.SubstituteApiVersionInUrl = true;
-            });
-        services.AddApiVersioning(
-            options =>
-            {
-                options.ReportApiVersions = true;
-                options.ApiVersionReader = new AggregateApiVersionReader();
-                options.DefaultApiVersion = new ApiVersion(1, 0);
-                options.AssumeDefaultVersionWhenUnspecified = true;
             });
 
         services

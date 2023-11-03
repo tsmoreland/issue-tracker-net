@@ -12,10 +12,11 @@
 //
 
 using System.Reflection;
+using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
 using IssueTracker.ServiceDiscovery;
 using IssueTracker.Shared;
 using IssueTracker.SwashbuckleExtensions.Filters;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
