@@ -7,7 +7,7 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <NoWarn>1591</NoWarn>
     <Product>Issue Tracker Sample REST API</Product>
-    <Copyright>Copyright (c) 2022 Terry Moreland</Copyright>
+    <Copyright>Copyright (c) 2023 Terry Moreland</Copyright>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
 
